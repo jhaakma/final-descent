@@ -1,0 +1,50 @@
+[gd_scene load_steps=2 format=3 uid="uid://c6t5yl2p1e8oi"]
+
+[ext_resource type="Script" uid="uid://dm1be6mv5sabt" path="res://popups/confirmation_popup.gd" id="1_confirmation"]
+
+[node name="ConfirmationPopup" type="Window"]
+initial_position = 2
+size = Vector2i(240, 141)
+wrap_controls = true
+transient = true
+exclusive = true
+borderless = true
+script = ExtResource("1_confirmation")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="MessageLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+text = "Are you sure you want to leave this run?"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="ButtonContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="YesBtn" type="Button" parent="MarginContainer/VBoxContainer/ButtonContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Yes"
+
+[node name="NoBtn" type="Button" parent="MarginContainer/VBoxContainer/ButtonContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "No"

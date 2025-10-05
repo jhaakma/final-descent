@@ -5,7 +5,7 @@ class_name PoisonEffect extends TimedEffect
 func _init(dmg: int = 2, turns: int = 3):
     super._init("Poison", turns)
     damage_per_turn = dmg
-    effect_color = EffectColor.NEGATIVE
+    effect_type = EffectType.NEGATIVE
     max_stacks = 3  # Allow poison to stack up to 3 times
 
 # Override apply_effect to implement poison damage logic
@@ -15,8 +15,8 @@ func apply_effect(target) -> StatusEffectResult:
     # Apply damage to target
     target.take_damage(total_damage)
 
-    # Log the poison damage with appropriate color
-    LogManager.log_poison("Takes %d poison damage!" % total_damage)
+    # Use enhanced logging with target context
+    LogManager.log_status_effect_damage(target, effect_name, total_damage)
 
     return StatusEffectResult.new(
         effect_name,

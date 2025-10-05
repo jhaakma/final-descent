@@ -1,8 +1,29 @@
-[gd_resource type="Resource" script_class="EnemyResource" load_steps=4 format=3 uid="uid://dij2m52fyjwqp"]
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=11 format=3 uid="uid://dij2m52fyjwqp"]
 
+[ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://loot/loot_pick.gd" id="1_ay8s6"]
 [ext_resource type="Script" uid="uid://b4y5n724vd0ph" path="res://enemies/enemy_resource.gd" id="1_vrxfw"]
+[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://items/Item.gd" id="2_0bara"]
 [ext_resource type="Script" uid="uid://ds3csuhxyytgv" path="res://attacks/special_attack.gd" id="2_v2ajb"]
-[ext_resource type="Resource" uid="uid://dboq7ga5had80" path="res://resources/attacks/PoisonAttack.tres" id="3_msrxf"]
+[ext_resource type="Resource" uid="uid://cmrvbyehuqds8" path="res://resources/attacks/PoisonAttack.tres" id="3_msrxf"]
+[ext_resource type="Resource" uid="uid://bpscdhoshmjls" path="res://resources/items/potions/Antidote.tres" id="3_pbona"]
+[ext_resource type="Resource" uid="uid://2s77tota5kam" path="res://resources/items/potions/BasicHealthPotion.tres" id="4_11xwu"]
+[ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://loot/loot_component.gd" id="5_qi64t"]
+
+[sub_resource type="Resource" id="Resource_fsbsf"]
+script = ExtResource("1_ay8s6")
+loot_table = Array[ExtResource("2_0bara")]([ExtResource("3_pbona"), ExtResource("4_11xwu")])
+count = 1
+chance_none = 0.75
+pick_method = 0
+floor_min = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"
+
+[sub_resource type="Resource" id="Resource_tqj67"]
+script = ExtResource("5_qi64t")
+gold_min = 0
+gold_max = 5
+loot_table = Array[ExtResource("1_ay8s6")]([SubResource("Resource_fsbsf")])
+metadata/_custom_type_script = "uid://lj0e532l0dyu"
 
 [resource]
 script = ExtResource("1_vrxfw")
@@ -10,5 +31,6 @@ special_attacks = Array[ExtResource("2_v2ajb")]([ExtResource("3_msrxf")])
 name = "Snake"
 max_hp = 10
 attack = 2
+loot_component = SubResource("Resource_tqj67")
 avoid_chance = 0.5
 metadata/_custom_type_script = "uid://b4y5n724vd0ph"

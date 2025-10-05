@@ -163,7 +163,10 @@ func show_loot_screen(loot_data: LootComponent.LootResult ) -> void:
     # Don't free the combat popup immediately - wait for victory popup to finish
 
 func _on_enemy_action(action_type: String, value: int, message: String) -> void:
-    LogManager.log_combat(message)
+    # Message is now handled by the enemy's enhanced logging
+    # Only log if there's still a message (for backwards compatibility)
+    if message != "":
+        LogManager.log_combat(message)
 
     match action_type:
         "attack":
@@ -172,7 +175,6 @@ func _on_enemy_action(action_type: String, value: int, message: String) -> void:
             # Enemy is now defending, no immediate effect
             pass
         "flee_success":
-            LogManager.log_warning("The enemy escaped!")
             emit_signal("combat_fled")  # Enemy fled, no loot
             queue_free()
         "flee_fail":
@@ -198,6 +200,7 @@ func _process_status_effects() -> void:
     # Process player status effects
     var player_results = GameState.process_player_status_effects()
     for result in player_results:
+        # Only log if there's a message (for backwards compatibility with older effects)
         if result.message != "":
             LogManager.log_message(result.message)
 
@@ -207,6 +210,7 @@ func _process_status_effects() -> void:
     # Process enemy status effects
     var enemy_results = current_enemy.process_status_effects()
     for result in enemy_results:
+        # Only log if there's a message (for backwards compatibility with older effects)
         if result.message != "":
             LogManager.log_message(result.message)
 
@@ -237,21 +241,22 @@ func _on_defend() -> void:
     # Add temporary defense bonus for this turn
     var defend_bonus = GameState.player.calculate_defend_bonus()
     GameState.player.add_temporary_defense_bonus(defend_bonus)
-    LogManager.log_combat("You brace yourself. (+%d DEF this turn)" % defend_bonus)
+
+    # Use enhanced logging
+    LogManager.log_defend(GameState.player)
 
     _enemy_turn()
-
     # Remove the temporary defense bonus after the enemy's turn
     GameState.player.remove_temporary_defense_bonus(defend_bonus)
-    _check_end()
 
 func _on_flee() -> void:
-    if randf() < current_enemy.resource.avoid_chance:
-        LogManager.log_success("You fled successfully.")
+    var success = randf() < current_enemy.resource.avoid_chance
+    LogManager.log_flee_attempt(GameState.player, success)
+
+    if success:
         emit_signal("combat_fled")
         queue_free()
     else:
-        LogManager.log_warning("You fail to flee!")
         _enemy_turn()
         _check_end()
 

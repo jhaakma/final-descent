@@ -24,6 +24,7 @@ func _on_pray(room_screen: RoomScreen) -> void:
     GameState.add_gold(-blessing_cost)
     # Grant a random buff from the possible buffs
     if possible_buffs.size() > 0:
+        LogManager.log_success("You pray at the shrine and feel blessed!")
         var random_buff = possible_buffs[GameState.rng.randi() % possible_buffs.size()]
         GameState.add_buff(random_buff)
         room_screen.update()
@@ -37,14 +38,16 @@ func _on_cure(room_screen: RoomScreen) -> void:
         LogManager.log_warning("Not enough gold.")
         return
     GameState.add_gold(-cure_cost)
-    var removed_effects := GameState.player.clear_all_status_effects()
+    var removed_effects := GameState.player.clear_all_negative_status_effects()
     if removed_effects.size() > 0:
+        LogManager.log_success("You pray at the shrine and feel cleansed!")
         for effect in removed_effects:
             LogManager.log_success("Cured status effect: %s" % effect.effect_name)
+            room_screen.update()
+            room_screen.mark_cleared()
     else:
-        LogManager.log_message("You pray at the shrine, but you have no status effects to cure.")
-    room_screen.update()
-    room_screen.mark_cleared()
+        LogManager.log_message("You have no status effects to cure.")
+
 
 func on_heal(room_screen: RoomScreen) -> void:
     if not GameState.has_gold(heal_cost):
@@ -58,7 +61,6 @@ func on_heal(room_screen: RoomScreen) -> void:
 
 func _on_loot(room_screen: RoomScreen) -> void:
     var loot_data = loot_component.generate_loot()
-
     # DIf curse triggers, start combat with ghost
     if GameState.rng.randf() < loot_curse_chance:
         var ghost_enemy: EnemyResource = curse_enemy

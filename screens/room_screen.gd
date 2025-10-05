@@ -62,7 +62,7 @@ func _ready() -> void:
     next_btn.pressed.connect(func():
         if cleared:
             emit_signal("room_cleared"))
-    leave_btn.pressed.connect(func(): GameState.emit_signal("run_ended", false))
+    leave_btn.pressed.connect(_on_leave_run_pressed)
 
 func _load_all_rooms() -> void:
     """Automatically load all room resources from resources/rooms directory"""
@@ -224,6 +224,8 @@ func _on_item_selected(index: int) -> void:
     _update_use_button()
 
 func _push_log(text: String, color_code: String) -> void:
+    if text == "":
+        return
     log_label.append_text("[color=%s]%s[/color]\n" % [color_code, text])
     # Use call_deferred to ensure content is rendered before scrolling, and use proper 0-based index
     log_label.call_deferred("scroll_to_line", log_label.get_line_count() - 1)
@@ -380,3 +382,15 @@ func _on_child_removed(node: Node) -> void:
     # Update UI when combat popup is removed
     if node is CombatPopup:
         update()
+
+func _on_leave_run_pressed() -> void:
+    """Show confirmation popup when player tries to leave the run"""
+    var confirmation_popup = load("res://popups/ConfirmationPopup.tscn").instantiate()
+    add_child(confirmation_popup)
+    confirmation_popup.show_confirmation("Are you sure you want to leave this run? All progress will be lost.")
+
+    # Connect signals
+    confirmation_popup.confirmed.connect(func():
+        GameState.emit_signal("run_ended", false)
+    )
+    # No need to connect cancelled signal as it just closes the popup

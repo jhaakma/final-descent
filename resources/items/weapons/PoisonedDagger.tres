@@ -1,12 +1,12 @@
-[gd_resource type="Resource" script_class="PoisonWeapon" load_steps=2 format=3 uid="uid://fj0lhss0j1ad"]
+[gd_resource type="Resource" script_class="InflictingWeapon" load_steps=3 format=3 uid="uid://fj0lhss0j1ad"]
 
-[ext_resource type="Script" uid="uid://cm7drx334klov" path="res://items/weapons/PoisonWeapon.gd" id="1_poison_weapon"]
+[ext_resource type="Script" uid="uid://de14peynwsgrq" path="res://items/weapons/InflictingWeapon.gd" id="1_7oiy8"]
+[ext_resource type="Resource" uid="uid://dvaxva0shp6yy" path="res://resources/effects/PoisonSimple.tres" id="2_tihms"]
 
 [resource]
-script = ExtResource("1_poison_weapon")
-poison_damage_per_turn = 2
-poison_turns = 3
-poison_chance = 0.5
+script = ExtResource("1_7oiy8")
+status_effect = ExtResource("2_tihms")
+effect_apply_chance = 0.5
 damage = 1
 name = "Poisoned Dagger"
 description = "A sharp dagger coated with deadly poison."

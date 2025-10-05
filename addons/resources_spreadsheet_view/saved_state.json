@@ -2,85 +2,85 @@
   "column_properties": {
     "res://attacks/resources/": {
       "metadata/_custom_type_script": {
-        "visibility": 0
+        "visibility": 0.0
       },
       "resource_local_to_scene": {
-        "visibility": 0
+        "visibility": 0.0
       },
       "resource_name": {
-        "visibility": 0
+        "visibility": 0.0
       }
     },
     "res://enemies/resources/": {
       "metadata/_custom_type_script": {
-        "visibility": 0
+        "visibility": 0.0
       },
       "resource_local_to_scene": {
-        "visibility": 0
+        "visibility": 0.0
       },
       "resource_name": {
-        "visibility": 0
+        "visibility": 0.0
       }
     },
     "res://resources/potions/": {
       "metadata/_custom_type_script": {
-        "visibility": 0
+        "visibility": 0.0
       },
       "resource_local_to_scene": {
-        "visibility": 0
+        "visibility": 0.0
       },
       "resource_name": {
-        "visibility": 0
+        "visibility": 0.0
       }
     },
     "res://resources/rooms/": {
       "metadata/_custom_type_script": {
-        "visibility": 0
+        "visibility": 0.0
       },
       "mimic_enemy": {
-        "visibility": 0
+        "visibility": 0.0
       },
       "resource_local_to_scene": {
-        "visibility": 0
+        "visibility": 0.0
       },
       "resource_name": {
-        "visibility": 0
+        "visibility": 0.0
       },
       "resource_path": {
-        "visibility": 0
+        "visibility": 0.0
       }
     },
     "res://resources/rooms/chest_rooms/": {
       "metadata/_custom_type_script": {
-        "visibility": 0
+        "visibility": 0.0
       },
       "resource_local_to_scene": {
-        "visibility": 0
+        "visibility": 0.0
       },
       "resource_name": {
-        "visibility": 0
+        "visibility": 0.0
       }
     },
     "res://resources/rooms/mimic_rooms/": {
       "metadata/_custom_type_script": {
-        "visibility": 0
+        "visibility": 0.0
       },
       "resource_local_to_scene": {
-        "visibility": 0
+        "visibility": 0.0
       },
       "resource_name": {
-        "visibility": 0
+        "visibility": 0.0
       }
     },
     "res://resources/weapons/": {
       "metadata/_custom_type_script": {
-        "visibility": 0
+        "visibility": 0.0
       },
       "resource_local_to_scene": {
-        "visibility": 0
+        "visibility": 0.0
       },
       "resource_name": {
-        "visibility": 0
+        "visibility": 0.0
       }
     }
   },
@@ -94,6 +94,11 @@
     "res://resources/weapons/"
   ],
   "table_functions": {
-
+    "filter": [
+      "return true"
+    ],
+    "process": [
+      "return value"
+    ]
   }
 }

@@ -216,6 +216,15 @@ func clear_all_status_effects() -> Array[StatusEffect]:
     emit_signal("stats_changed")
     return removed_effects
 
+func clear_all_negative_status_effects() -> Array[StatusEffect]:
+    var removed_effects: Array[StatusEffect] = []
+    for effect in status_effect_manager.get_all_effects():
+        if effect.effect_type == StatusEffect.EffectType.NEGATIVE:
+            status_effect_manager.remove_effect(effect.effect_name)
+            removed_effects.append(effect)
+    if removed_effects.size() > 0:
+        emit_signal("stats_changed")
+    return removed_effects
 
 # Get descriptions of all active status effects
 func get_status_effects_description() -> String:

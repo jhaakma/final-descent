@@ -5,7 +5,7 @@ class_name RegenerationEffect extends TimedEffect
 func _init(healing: int = 2, turns: int = 3):
     super._init("Regeneration", turns)
     healing_per_turn = healing
-    effect_color = EffectColor.POSITIVE
+    effect_type = EffectType.POSITIVE
     max_stacks = 5  # Allow regeneration to stack up to 5 times
 
 # Override apply_effect to implement healing logic
@@ -15,8 +15,8 @@ func apply_effect(target) -> StatusEffectResult:
     # Apply healing to target
     target.heal(total_healing)
 
-    # Log the regeneration with appropriate color
-    LogManager.log_success("Regenerated %d damage!" % total_healing)
+    # Use enhanced logging with target context
+    LogManager.log_status_effect_healing(target, effect_name, total_healing)
 
     return StatusEffectResult.new(
         effect_name,

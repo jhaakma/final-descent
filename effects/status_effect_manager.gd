@@ -15,12 +15,11 @@ func apply_effect(effect: StatusEffect, target = null) -> void:
         return
 
     var effect_name = effect.effect_name
+    var effect_target = target if target else get_parent()
 
     # Handle instant effects immediately (non-TimedEffect subclasses)
     if not effect is TimedEffect:
         # Apply the instant effect immediately
-        # Use target if provided, otherwise try to get parent
-        var effect_target = target if target else get_parent()
         if effect_target:
             var result = effect.apply_effect(effect_target)
             effect_processed.emit(effect_name, result)
@@ -31,23 +30,33 @@ func apply_effect(effect: StatusEffect, target = null) -> void:
         return
 
     # Handle timed effects (TimedEffect subclasses)
+    var was_existing = active_effects.has(effect_name)
+
     # Check if we already have this effect
-    if active_effects.has(effect_name):
+    if was_existing:
         var existing_effect = active_effects[effect_name]
         if existing_effect.can_stack_with(effect):
             existing_effect.stack_with(effect)
+            # No additional logging for stacking, the effect description will show stack count
         else:
             # Replace with new effect (refresh duration)
             active_effects[effect_name] = effect
+            var duration = effect.remaining_turns if effect is TimedEffect else 0
+            LogManager.log_status_effect_applied(effect_target, effect_name, duration)
     else:
         # Add new effect
         active_effects[effect_name] = effect
+        var duration = effect.remaining_turns if effect is TimedEffect else 0
+        LogManager.log_status_effect_applied(effect_target, effect_name, duration)
 
     effect_applied.emit(effect_name)
 
 # Remove a specific status effect
 func remove_effect(effect_name: String) -> void:
     if active_effects.has(effect_name):
+        var target = get_parent()
+        if target:
+            LogManager.log_status_effect_removed(target, effect_name, "removed")
         active_effects.erase(effect_name)
         effect_removed.emit(effect_name)
 
@@ -91,7 +100,10 @@ func process_turn(target) -> Array[StatusEffectResult]:
 
     # Remove expired effects
     for effect_name in effects_to_remove:
-        remove_effect(effect_name)
+        if active_effects.has(effect_name):
+            LogManager.log_status_effect_removed(target, effect_name, "expired")
+            active_effects.erase(effect_name)
+            effect_removed.emit(effect_name)
 
     return results
 

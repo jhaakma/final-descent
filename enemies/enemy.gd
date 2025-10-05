@@ -101,8 +101,9 @@ func _perform_attack() -> void:
         is_defending = false
 
     var damage = base_damage + randi() % 3
-    var message = "%s attacks for %d damage!" % [resource.name, damage]
-    action_performed.emit("attack", damage, message)
+    # Use enhanced logging with target context
+    LogManager.log_attack(self, GameState.player, damage)
+    action_performed.emit("attack", damage, "")
 
 func _perform_special_attack(attack) -> void:
     var damage = attack.get_damage()
@@ -111,24 +112,26 @@ func _perform_special_attack(attack) -> void:
         damage = int(damage * 0.5)
         is_defending = false
 
-    # Execute the attack and get the message
-    var message = attack.execute_attack(resource.name, GameState.player)
+    # Execute the attack with full attacker object for better logging
+    attack.execute_attack(self, GameState.player)
 
-    # Emit the attack signal with the damage
-    action_performed.emit("attack", damage, message)
+    # Emit the attack signal (message is now handled by LogManager)
+    action_performed.emit("attack", damage, "")
 
 func _perform_defend() -> void:
     is_defending = true
-    var message = "%s braces for defense!" % resource.name
-    action_performed.emit("defend", 0, message)
+    # Use enhanced logging with target context
+    LogManager.log_defend(self)
+    action_performed.emit("defend", 0, "")
 
 func _attempt_flee() -> void:
-    if randf() < flee_chance:
-        var message = "%s attempts to flee!" % resource.name
-        action_performed.emit("flee_success", 0, message)
+    var success = randf() < flee_chance
+    LogManager.log_flee_attempt(self, success)
+
+    if success:
+        action_performed.emit("flee_success", 0, "")
     else:
-        var message = "%s tries to flee but fails!" % resource.name
-        action_performed.emit("flee_fail", 0, message)
+        action_performed.emit("flee_fail", 0, "")
         # Failed flee attempt still counts as an action, enemy is vulnerable
         _perform_attack()
 

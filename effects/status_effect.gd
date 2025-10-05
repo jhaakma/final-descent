@@ -1,18 +1,18 @@
 class_name StatusEffect extends Resource
 
 var effect_name: String = ""
-var effect_color: EffectColor = EffectColor.NEUTRAL
+var effect_type: EffectType = EffectType.NEUTRAL
 
-enum EffectColor {
+enum EffectType {
     NEUTRAL,
     POSITIVE,
     NEGATIVE
 }
 
-static var EffectColorMap = {
-    EffectColor.NEUTRAL: "white", # White
-    EffectColor.POSITIVE: "green", # Green
-    EffectColor.NEGATIVE: "red"  # Red
+static var EffectTypeMap = {
+    EffectType.NEUTRAL: "white", # White
+    EffectType.POSITIVE: "green", # Green
+    EffectType.NEGATIVE: "red"  # Red
 }
 
 func _init(name: String = ""):

@@ -51,17 +51,10 @@ func show_loot(loot_data: LootComponent.LootResult, open_message: String) -> voi
             items_label.modulate = Color.LIGHT_BLUE
 
             for item in loot_data.items_gained:
-                var item_container = HBoxContainer.new()
-                var bullet_label = Label.new()
-                bullet_label.text = "  • "
-                bullet_label.modulate = Color.WHITE
                 var item_label = Label.new()
-                item_label.text = item.name
+                item_label.text = " • %s" % item.name
                 item_label.modulate = Color.WHITE
-
-                item_container.add_child(bullet_label)
-                item_container.add_child(item_label)
-                items_list.add_child(item_container)
+                items_list.add_child(item_label)
         else:
             items_label.visible = false
     else:

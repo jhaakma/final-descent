@@ -5,7 +5,7 @@ class_name InstantHealEffect extends StatusEffect
 func _init(healing: int = 5):
     super._init("Instant Heal")  # 0 turns for instant effect
     heal_amount = healing
-    effect_color = EffectColor.POSITIVE
+    effect_type = EffectType.POSITIVE
 
 # Override apply_effect to implement instant healing logic
 func apply_effect(target) -> StatusEffectResult:
