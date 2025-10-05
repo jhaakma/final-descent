@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="PoisonWeapon" load_steps=2 format=3 uid="uid://fj0lhss0j1ad"]
+
+[ext_resource type="Script" uid="uid://cm7drx334klov" path="res://items/weapons/PoisonWeapon.gd" id="1_poison_weapon"]
+
+[resource]
+script = ExtResource("1_poison_weapon")
+poison_damage_per_turn = 2
+poison_turns = 3
+poison_chance = 0.5
+damage = 1
+name = "Poisoned Dagger"
+description = "A sharp dagger coated with deadly poison."
+consumable = false
+purchase_value = 20

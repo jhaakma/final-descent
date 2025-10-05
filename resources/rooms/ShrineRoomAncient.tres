@@ -1,0 +1,54 @@
+[gd_resource type="Resource" script_class="ShrineRoomResource" load_steps=14 format=3 uid="uid://ddgo03rs1qvck"]
+
+[ext_resource type="Resource" uid="uid://cc0x7rr8ri1m0" path="res://resources/enemies/Ghost.tres" id="1_6b3sh"]
+[ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://loot/loot_pick.gd" id="1_eaur7"]
+[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://items/Item.gd" id="2_g15dw"]
+[ext_resource type="Resource" uid="uid://bjvu3fmob3t2k" path="res://resources/items/weapons/Staff.tres" id="4_ewu44"]
+[ext_resource type="Resource" uid="uid://drc4rx6xim1bu" path="res://resources/items/potions/SuperiorHealthPotion.tres" id="5_ppc15"]
+[ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://loot/loot_component.gd" id="5_stdmh"]
+[ext_resource type="Script" uid="uid://bxldx47l3mk01" path="res://buffs/Buff.gd" id="7_6b3sh"]
+[ext_resource type="Resource" path="res://resources/buffs/BalanceBlessing.tres" id="10_xtw6j"]
+[ext_resource type="Resource" path="res://resources/buffs/VitalityBlessing.tres" id="11_qjogt"]
+[ext_resource type="Script" uid="uid://bnlue0rcqdx6d" path="res://rooms/shrine_room_resource.gd" id="12_4okh8"]
+
+[sub_resource type="Resource" id="Resource_sybd7"]
+script = ExtResource("1_eaur7")
+loot_table = Array[ExtResource("2_g15dw")]([ExtResource("4_ewu44")])
+count = 1
+chance_none = 0.9
+pick_method = 0
+floor_min = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"
+
+[sub_resource type="Resource" id="Resource_0wc5j"]
+script = ExtResource("1_eaur7")
+loot_table = Array[ExtResource("2_g15dw")]([ExtResource("5_ppc15")])
+count = 1
+chance_none = 0.0
+pick_method = 0
+floor_min = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"
+
+[sub_resource type="Resource" id="Resource_cwbmv"]
+script = ExtResource("5_stdmh")
+gold_min = 10
+gold_max = 20
+loot_table = Array[ExtResource("1_eaur7")]([SubResource("Resource_sybd7"), SubResource("Resource_0wc5j")])
+metadata/_custom_type_script = "uid://lj0e532l0dyu"
+
+[resource]
+script = ExtResource("12_4okh8")
+blessing_cost = 10
+cure_cost = 5
+heal_cost = 8
+possible_buffs = Array[ExtResource("7_6b3sh")]([ExtResource("10_xtw6j"), ExtResource("11_qjogt")])
+heal_amount = 10
+loot_component = SubResource("Resource_cwbmv")
+loot_curse_chance = 0.3
+curse_enemy = ExtResource("1_6b3sh")
+title = "Ancient Shrine"
+description = "A shrine to a long-forgotten God"
+weight = 40
+min_floor = 0
+max_floor = -1
+metadata/_custom_type_script = "uid://bnlue0rcqdx6d"

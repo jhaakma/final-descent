@@ -1,0 +1,95 @@
+[gd_scene load_steps=5 format=3 uid="uid://in5kt0j6adyh"]
+
+[ext_resource type="Script" uid="uid://bycmmd62nwin1" path="res://popups/combat_popup.gd" id="1_bl1wl"]
+[ext_resource type="PackedScene" uid="uid://d4kfoqy7h5f0d" path="res://uielements/hp_bar.tscn" id="2_i1i2c"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wto6d"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i1i2c"]
+bg_color = Color(0.97982, 0.233158, 5.77569e-07, 1)
+
+[node name="CombatPopup" type="Window"]
+initial_position = 2
+size = Vector2i(248, 200)
+wrap_controls = true
+transient = true
+exclusive = true
+borderless = true
+script = ExtResource("1_bl1wl")
+metadata/_custom_type_script = "uid://bycmmd62nwin1"
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="EnemyLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HeaderMedium"
+text = "ENEMY"
+horizontal_alignment = 1
+
+[node name="PlayerHPBlock" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/PlayerHPBlock"]
+custom_minimum_size = Vector2(70, 0)
+layout_mode = 2
+text = "You: "
+
+[node name="PlayerHP" parent="MarginContainer/VBoxContainer/PlayerHPBlock" instance=ExtResource("2_i1i2c")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="EnemyHPBlock" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/EnemyHPBlock"]
+custom_minimum_size = Vector2(70, 0)
+layout_mode = 2
+text = "Enemy: "
+
+[node name="EnemyHP" type="ProgressBar" parent="MarginContainer/VBoxContainer/EnemyHPBlock"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24.625)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/background = SubResource("StyleBoxFlat_wto6d")
+theme_override_styles/fill = SubResource("StyleBoxFlat_i1i2c")
+value = 58.0
+rounded = true
+show_percentage = false
+
+[node name="Actions" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="AttackBtn" type="Button" parent="MarginContainer/VBoxContainer/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Attack"
+
+[node name="DefendBtn" type="Button" parent="MarginContainer/VBoxContainer/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Defend"
+
+[node name="UseItemBtn" type="MenuButton" parent="MarginContainer/VBoxContainer/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Use Item"
+
+[node name="FleeBtn" type="Button" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Flee"

@@ -1,0 +1,382 @@
+class_name RoomScreen extends Control
+
+signal room_cleared
+signal run_ended(victory: bool)
+
+var available_rooms: Array[RoomResource] = []
+
+@onready var floor_label: Label = %FloorLabel
+@onready var hp_label: Label = %HPLabel
+@onready var hp_bar: ProgressBar = %HPBar
+@onready var atk_value: Label = %AtkValue
+@onready var def_value: Label = %DefValue
+@onready var gold_value: Label = %GoldValue
+@onready var buffs_block: Container = %BuffsBlock
+@onready var inv_list: ItemList = %Inventory
+@onready var use_item_btn: Button = %UseItemBtn
+@onready var log_label: RichTextLabel = %Log
+@onready var actions_grid: GridContainer = %Actions
+@onready var next_btn: Button = %NextFloorBtn
+@onready var leave_btn: Button = %LeaveRunBtn
+@onready var room_title: Label = %RoomTitle
+@onready var room_desc: Label = %RoomDescription
+
+var current_room: RoomResource
+var cleared: bool = false
+var selected_item: Item = null
+static var recent_room_history: Array[RoomResource] = []  # Track recent room class names
+var max_history_size: int = 3  # How many recent rooms to remember
+var weight_penalty: float = 0.01  # Multiplier for recently used rooms (0.3 = 30% of original weight)
+
+func _ready() -> void:
+    print("RoomScreen ready")
+
+    # Get all rooms from resources/rooms
+    _load_all_rooms()
+
+    GameState.stats_changed.connect(_on_stats_changed)
+    GameState.player.inventory_changed.connect(_refresh_inventory)
+    GameState.buffs_changed.connect(_refresh_stats)  # Refresh stats when buffs change
+    LogManager.log_pushed.connect(_push_log)
+    GameState.run_ended.connect(func(v: bool): emit_signal("run_ended", v))
+
+    # Connect inventory selection
+    inv_list.item_selected.connect(_on_item_selected)
+    use_item_btn.pressed.connect(_on_use_item_pressed)
+
+    # Connect to child_entered_tree to detect when combat popups are added
+    child_entered_tree.connect(_on_child_added)
+    child_exiting_tree.connect(_on_child_removed)
+
+    next_btn.disabled = true
+    _refresh_stats()
+    _refresh_buffs()
+    _refresh_inventory()
+
+    # Restore log history from previous rooms
+    LogManager.restore_log_history(log_label)
+
+    _generate_room()
+    _update_use_button()
+
+    next_btn.pressed.connect(func():
+        if cleared:
+            emit_signal("room_cleared"))
+    leave_btn.pressed.connect(func(): GameState.emit_signal("run_ended", false))
+
+func _load_all_rooms() -> void:
+    """Automatically load all room resources from resources/rooms directory"""
+    available_rooms.clear()
+
+    var dir = DirAccess.open("res://resources/rooms/")
+    if dir:
+        dir.list_dir_begin()
+        var file_name = dir.get_next()
+        var file_names: Array[String] = []
+
+        # Collect all .tres files first
+        while file_name != "":
+            if file_name.ends_with(".tres"):
+                file_names.append(file_name)
+            file_name = dir.get_next()
+
+        dir.list_dir_end()
+
+        # Sort files for consistent loading order
+        file_names.sort()
+
+        # Load all room resources
+        for file in file_names:
+            var resource_path = "res://resources/rooms/" + file
+            var room_resource = load(resource_path) as RoomResource
+
+            if room_resource:
+                available_rooms.append(room_resource)
+                print("Loaded room: ", file, " (", room_resource.title, ")")
+            else:
+                print("Warning: Failed to load room resource: ", file)
+
+        print("Total rooms loaded: ", available_rooms.size())
+
+        if available_rooms.is_empty():
+            print("Warning: No rooms were loaded from resources/rooms/")
+    else:
+        print("Error: Failed to open resources/rooms directory")
+
+# Public method to reload all rooms (useful for development)
+func reload_rooms() -> void:
+    """Reload all room resources from the resources/rooms directory"""
+    _load_all_rooms()
+
+# Call this to refresh all UI elements
+func update() -> void:
+    _refresh_stats()
+    _refresh_buffs()
+    _refresh_inventory()
+    _update_use_button()
+
+# Called when stats change (including status effect changes)
+func _on_stats_changed() -> void:
+    _refresh_stats()
+    _refresh_buffs()  # Also refresh buffs since status effects are shown there
+
+func _refresh_stats() -> void:
+    floor_label.text = "FLOOR: %d" % GameState.current_floor
+    hp_label.text = "HP: %d/%d" % [GameState.player.hp, GameState.player.max_hp]
+    hp_bar.max_value = GameState.player.max_hp
+    hp_bar.value = GameState.player.hp
+    gold_value.text = str(GameState.player.gold)
+
+    # Update HP bar tooltip to show buff information
+    var buff_info = ""
+    var attack_bonus = GameState.player.get_total_attack_bonus()
+    var defense_bonus = GameState.player.get_total_defense_bonus()
+
+    if attack_bonus > 0 or defense_bonus > 0:
+        buff_info = " (ATK +%d, DEF +%d)" % [attack_bonus, defense_bonus]
+
+    # Add active buff count and tooltip
+    var active_buff_count = GameState.player.active_buffs.size()
+    var hp_tooltip_text = "HP: %d/%d%s" % [GameState.player.hp, GameState.player.max_hp, buff_info]
+
+    if active_buff_count > 0:
+        var buff_text = "\nActive Buffs (%d):" % active_buff_count
+        for buff in GameState.player.active_buffs:
+            buff_text += "\n• %s (%d turns)" % [buff.name, buff.remaining_duration]
+        hp_tooltip_text += buff_text
+
+    # Add status effects
+    var effects_description = GameState.get_player_status_effects_description()
+    if effects_description != "":
+        var effects_text = "\nStatus Effects:\n• %s" % effects_description
+        hp_tooltip_text += effects_text
+
+    hp_bar.tooltip_text = hp_tooltip_text
+
+    atk_value.text = "ATK: %s" % GameState.player.get_total_attack_display()
+    def_value.text = "DEF: %s" % GameState.player.get_total_defense_bonus()
+
+
+func _refresh_buffs() -> void:
+    # Clear existing StatusRow instances immediately
+    for child in buffs_block.get_children():
+        if child is StatusRow:
+            buffs_block.remove_child(child)
+            child.queue_free()
+
+    var has_content = false
+
+    # Add active buffs
+    if GameState.player.active_buffs.size() > 0:
+        has_content = true
+        print("Adding %d active buffs" % GameState.player.active_buffs.size())
+        for buff in GameState.player.active_buffs:
+            var status_row = StatusRow.new()
+            buffs_block.add_child(status_row)
+            status_row.initialize_with_buff(buff)
+            print("Added buff StatusRow, children count: %d" % buffs_block.get_child_count())
+
+    # Add status effects
+    var status_effects = GameState.get_player_status_effects()
+    if status_effects.size() > 0:
+        has_content = true
+        print("Adding %d status effects" % status_effects.size())
+        for effect in status_effects:
+            var status_row = StatusRow.new()
+            buffs_block.add_child(status_row)
+            status_row.initialize_with_status_effect(effect)
+            print("Added effect StatusRow, children count: %d" % buffs_block.get_child_count())
+
+    # Handle display logic
+    if not has_content:
+        print("No buffs or effects, adding 'None' row")
+        # Show "None" message when no buffs/effects
+        var none_row = StatusRow.new()
+        buffs_block.add_child(none_row)
+        none_row.bbcode_enabled = true
+        none_row.clear()
+        none_row.append_text("[color=gray]None[/color]")
+        none_row.tooltip_text = "No active buffs or status effects"
+        buffs_block.visible = true
+        print("Added 'None' row, children count: %d" % buffs_block.get_child_count())
+    else:
+        buffs_block.visible = true
+        print("Buffs block visible with %d children" % buffs_block.get_child_count())
+
+func _refresh_inventory() -> void:
+    inv_list.clear()
+    selected_item = null
+    for item in GameState.player.inventory:
+        var item_text = item.name + " x%d" % GameState.player.inventory[item]
+        # Add equipped indicator for weapons
+        if item is ItemWeapon and GameState.player.equipped_weapon == item:
+            item_text += " (Equipped)"
+        inv_list.add_item(item_text)
+        inv_list.set_item_tooltip(inv_list.get_item_count() - 1, item.get_description())
+    _update_use_button()
+
+func _on_item_selected(index: int) -> void:
+    var items = GameState.player.inventory.keys()
+    if index >= 0 and index < items.size():
+        selected_item = items[index]
+    else:
+        selected_item = null
+    _update_use_button()
+
+func _push_log(text: String, color_code: String) -> void:
+    log_label.append_text("[color=%s]%s[/color]\n" % [color_code, text])
+    # Use call_deferred to ensure content is rendered before scrolling, and use proper 0-based index
+    log_label.call_deferred("scroll_to_line", log_label.get_line_count() - 1)
+
+
+
+func _calculate_room_weights(valid_rooms: Array[RoomResource]) -> Array[float]:
+    var weights: Array[float] = []
+    for room in valid_rooms:
+        var base_weight = float(room.weight)
+        # Apply penalty each time this room type appears in recent history
+        for recent_room in recent_room_history:
+            if recent_room == room:
+                base_weight *= weight_penalty
+        weights.append(base_weight)
+    return weights
+
+func _generate_room() -> void:
+
+    var valid_rooms : Array[RoomResource] = []
+    for room in available_rooms:
+        if room.valid_for_floor(GameState.current_floor):
+            valid_rooms.append(room)
+
+    # Calculate adjusted weights based on recent history
+    print("=== Room Generation Debug ===")
+    print("Recent room history: ", recent_room_history)
+    print("Weight penalty: ", weight_penalty)
+
+    var adjusted_weights:= _calculate_room_weights(valid_rooms)
+    var total_weight = 0.0
+    for w in adjusted_weights:
+        total_weight += w
+
+    print("Total weight: ", total_weight)
+    print("Adjusted weights: ", adjusted_weights)
+
+
+    # Weighted random selection using adjusted weights
+    var random_value := GameState.rng.randf_range(0.0, total_weight)
+    var current_weight := 0.0
+
+    for i in range(valid_rooms.size()):
+        current_weight += adjusted_weights[i]
+        if random_value <= current_weight:
+            current_room = valid_rooms[i]
+            print("Selected room: ", current_room.get_script().get_global_name())
+            break
+
+    if current_room:
+        # Track this room type in history
+        recent_room_history.append(current_room)
+
+        # Keep history within size limit
+        while recent_room_history.size() > max_history_size:
+            recent_room_history.pop_front()
+
+        current_room.on_room_entered(self)
+        _render_room()
+
+func _render_room() -> void:
+    if not current_room:
+        return
+
+    room_title.text = current_room.title
+    room_desc.text = current_room.description
+    _build_actions()
+
+    # Ensure log history is preserved when rendering a new room
+    LogManager.restore_log_history(log_label)
+
+    # Check if room should be cleared by default
+    if current_room.cleared_by_default:
+        _mark_cleared_by_default()
+
+func _build_actions() -> void:
+    for c in actions_grid.get_children():
+        c.queue_free()
+
+    if current_room:
+        current_room.build_actions(actions_grid, self)
+
+func _mark_cleared() -> void:
+    print("Room marked as cleared")
+    cleared = true
+    next_btn.disabled = false
+
+    # Disable all action buttons when room is cleared
+    for child in actions_grid.get_children():
+        if child is Button:
+            child.disabled = true
+
+    if not current_room.cleared_by_default:
+        LogManager.log_success("Room cleared! Proceed when ready.")
+
+func _mark_cleared_by_default() -> void:
+    print("Room cleared by default")
+    cleared = true
+    next_btn.disabled = false
+
+# Public method that room resources can call
+func mark_cleared() -> void:
+    _mark_cleared()
+
+func _on_use_item_pressed() -> void:
+    if selected_item:
+        if selected_item is ItemWeapon:
+            # Weapons can be equipped/unequipped even during combat
+            if GameState.player.equipped_weapon == selected_item:
+                # Unequip the weapon
+                GameState.unequip_weapon()
+            else:
+                # Equip the weapon (this will automatically unequip any current weapon)
+                GameState.equip_weapon(selected_item)
+            update()
+        else:
+            selected_item.use()
+            _refresh_inventory()
+
+        update()
+
+func _update_use_button() -> void:
+
+    use_item_btn.text = "Use Item"
+    use_item_btn.disabled = _is_combat_active()
+
+
+    if selected_item is ItemWeapon:
+        # Weapons can always be equipped/unequipped
+        if GameState.player.equipped_weapon == selected_item:
+            use_item_btn.text = "Unequip " + selected_item.name
+        else:
+            use_item_btn.text = "Equip " + selected_item.name
+    elif selected_item:
+        use_item_btn.text = "Use " + selected_item.name
+    else:
+        use_item_btn.text = "Use Item"
+        use_item_btn.disabled = true
+
+
+func _is_combat_active() -> bool:
+    # Check if there's an active combat popup as a child
+    for child in get_children():
+        if child is CombatPopup:
+            return true
+    return false
+
+func _on_child_added(node: Node) -> void:
+    # Update UI when combat popup is added
+    if node is CombatPopup:
+        update()
+
+func _on_child_removed(node: Node) -> void:
+    # Update UI when combat popup is removed
+    if node is CombatPopup:
+        update()

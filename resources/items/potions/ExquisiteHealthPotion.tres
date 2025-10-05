@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemPotion" load_steps=4 format=3 uid="uid://humesd68wuei"]
+
+[ext_resource type="Script" uid="uid://btj1mgjp6gjy1" path="res://effects/instant/instant_heal_effect.gd" id="1_70e0i"]
+[ext_resource type="Script" uid="uid://dikmkr6vyadjj" path="res://items/Potion.gd" id="2_o3tvx"]
+
+[sub_resource type="Resource" id="Resource_irdg2"]
+script = ExtResource("1_70e0i")
+heal_amount = 100
+metadata/_custom_type_script = "uid://btj1mgjp6gjy1"
+
+[resource]
+script = ExtResource("2_o3tvx")
+effect = SubResource("Resource_irdg2")
+name = "Exquisite Health Potion"
+description = "A very large health potion."
+consumable = true
+purchase_value = 80
+metadata/_custom_type_script = "uid://dikmkr6vyadjj"

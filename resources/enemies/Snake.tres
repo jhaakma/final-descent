@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=4 format=3 uid="uid://dij2m52fyjwqp"]
+
+[ext_resource type="Script" uid="uid://b4y5n724vd0ph" path="res://enemies/enemy_resource.gd" id="1_vrxfw"]
+[ext_resource type="Script" uid="uid://ds3csuhxyytgv" path="res://attacks/special_attack.gd" id="2_v2ajb"]
+[ext_resource type="Resource" uid="uid://dboq7ga5had80" path="res://resources/attacks/PoisonAttack.tres" id="3_msrxf"]
+
+[resource]
+script = ExtResource("1_vrxfw")
+special_attacks = Array[ExtResource("2_v2ajb")]([ExtResource("3_msrxf")])
+name = "Snake"
+max_hp = 10
+attack = 2
+avoid_chance = 0.5
+metadata/_custom_type_script = "uid://b4y5n724vd0ph"

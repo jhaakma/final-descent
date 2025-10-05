@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://d4kfoqy7h5f0d"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wto6d"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gs8sm"]
+bg_color = Color(4.09111e-07, 0.450699, 0.234689, 1)
+
+[node name="HPBar" type="ProgressBar"]
+custom_minimum_size = Vector2(0, 24.625)
+offset_right = 4.0
+offset_bottom = 27.0
+size_flags_horizontal = 3
+theme_override_styles/background = SubResource("StyleBoxFlat_wto6d")
+theme_override_styles/fill = SubResource("StyleBoxFlat_gs8sm")
+value = 58.0
+rounded = true
+show_percentage = false

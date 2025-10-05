@@ -1,0 +1,57 @@
+[gd_scene load_steps=3 format=3 uid="uid://dmyy37gkgwf0f"]
+
+[ext_resource type="Script" uid="uid://ynao84b0jakv" path="res://screens/title_screen.gd" id="1_lywbp"]
+[ext_resource type="Theme" uid="uid://ch0ahyx502rlq" path="res://theme.tres" id="2_dmk5c"]
+
+[node name="TitleScene" type="Control" node_paths=PackedStringArray("start_btn", "quit_btn")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_lywbp")
+start_btn = NodePath("CenterContainer/MarginContainer/PanelContainer/VBoxContainer/Start")
+quit_btn = NodePath("CenterContainer/MarginContainer/PanelContainer/VBoxContainer/Quit")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0627333, 0.052, 0.08, 1)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer"]
+layout_mode = 2
+theme = ExtResource("2_dmk5c")
+
+[node name="PanelContainer" type="PanelContainer" parent="CenterContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/MarginContainer/PanelContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+
+[node name="TITLE" type="Label" parent="CenterContainer/MarginContainer/PanelContainer/VBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"HeaderLarge"
+text = "FINAL DESCENT"
+horizontal_alignment = 1
+
+[node name="Start" type="Button" parent="CenterContainer/MarginContainer/PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Start"
+
+[node name="Quit" type="Button" parent="CenterContainer/MarginContainer/PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Quit"

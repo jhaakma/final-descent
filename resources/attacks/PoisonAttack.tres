@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="PoisonAttack" load_steps=2 format=3 uid="uid://dboq7ga5had80"]
+
+[ext_resource type="Script" uid="uid://df8c3vn02vu82" path="res://attacks/poison_attack.gd" id="1_3f5xf"]
+
+[resource]
+script = ExtResource("1_3f5xf")
+attack_name = "Poison Attack"
+base_damage = 3
+description = "An attack that poisons the target."
+poison_damage_per_turn = 2
+poison_duration = 3
+metadata/_custom_type_script = "uid://df8c3vn02vu82"

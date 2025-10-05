@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="CombatRoomResource" load_steps=6 format=3 uid="uid://dt8u500wdj8ww"]
+
+[ext_resource type="Script" uid="uid://bqxhtkn1xkeqv" path="res://rooms/combat_room_resource.gd" id="1_4ityu"]
+[ext_resource type="Script" uid="uid://b4y5n724vd0ph" path="res://enemies/enemy_resource.gd" id="1_18ni0"]
+[ext_resource type="Resource" uid="uid://b6dwx6cyxq8a6" path="res://resources/enemies/Goblin.tres" id="2_o3uu3"]
+[ext_resource type="Resource" uid="uid://dij2m52fyjwqp" path="res://resources/enemies/Snake.tres" id="3_25rw3"]
+[ext_resource type="Resource" uid="uid://b5lgukv8r3muy" path="res://resources/enemies/Rat.tres" id="4_87hxs"]
+
+[resource]
+script = ExtResource("1_4ityu")
+enemy_list = Array[ExtResource("1_18ni0")]([ExtResource("2_o3uu3"), ExtResource("3_25rw3"), ExtResource("4_87hxs")])
+title = "A Dark Room"
+description = "An enemy lurks in the darkness..."
+weight = 60
+min_floor = 0
+max_floor = -1
+metadata/_custom_type_script = "uid://bqxhtkn1xkeqv"

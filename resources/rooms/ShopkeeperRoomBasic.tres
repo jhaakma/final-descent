@@ -1,0 +1,59 @@
+[gd_resource type="Resource" script_class="ShopkeeperRoomResource" load_steps=17 format=3 uid="uid://i5l4a63bwaev"]
+
+[ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://loot/loot_pick.gd" id="1_5sg42"]
+[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://items/Item.gd" id="2_yw5km"]
+[ext_resource type="Resource" uid="uid://2s77tota5kam" path="res://resources/items/potions/BasicHealthPotion.tres" id="3_3d1du"]
+[ext_resource type="Resource" uid="uid://drc4rx6xim1bu" path="res://resources/items/potions/SuperiorHealthPotion.tres" id="4_btyxu"]
+[ext_resource type="Resource" uid="uid://c31wbx2iwa0s7" path="res://resources/items/potions/RegenerationPotion.tres" id="5_c8ten"]
+[ext_resource type="Resource" uid="uid://cttpxikq24nx" path="res://resources/items/weapons/Dagger.tres" id="6_5j2nv"]
+[ext_resource type="Resource" uid="uid://bpscdhoshmjls" path="res://resources/items/potions/Antidote.tres" id="6_yq1wu"]
+[ext_resource type="Resource" uid="uid://clyabowguvivm" path="res://resources/items/weapons/ShortSword.tres" id="7_dootk"]
+[ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://loot/loot_component.gd" id="8_16j6s"]
+[ext_resource type="Resource" uid="uid://bjvu3fmob3t2k" path="res://resources/items/weapons/Staff.tres" id="8_tqxsn"]
+[ext_resource type="Resource" uid="uid://meq6o4s58qqk" path="res://resources/items/weapons/WarAxe.tres" id="9_4aml0"]
+[ext_resource type="Script" uid="uid://dunspfeq3g380" path="res://rooms/shopkeeper_room_resource.gd" id="11_mjfg3"]
+
+[sub_resource type="Resource" id="Resource_4aml0"]
+script = ExtResource("1_5sg42")
+loot_table = Array[ExtResource("2_yw5km")]([ExtResource("3_3d1du"), ExtResource("4_btyxu"), ExtResource("5_c8ten"), ExtResource("6_yq1wu")])
+count = 1
+chance_none = 0.3
+pick_method = 0
+floor_min = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"
+
+[sub_resource type="Resource" id="Resource_8wt3s"]
+script = ExtResource("1_5sg42")
+loot_table = Array[ExtResource("2_yw5km")]([ExtResource("6_5j2nv"), ExtResource("7_dootk")])
+count = null
+chance_none = 0.4
+pick_method = 0
+floor_min = null
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"
+
+[sub_resource type="Resource" id="Resource_6ejp6"]
+script = ExtResource("1_5sg42")
+loot_table = Array[ExtResource("2_yw5km")]([ExtResource("8_tqxsn"), ExtResource("9_4aml0")])
+count = 1
+chance_none = 0.7
+pick_method = 0
+floor_min = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"
+
+[sub_resource type="Resource" id="Resource_e7vp4"]
+script = ExtResource("8_16j6s")
+gold_min = 20
+gold_max = 50
+loot_table = Array[ExtResource("1_5sg42")]([SubResource("Resource_4aml0"), SubResource("Resource_8wt3s"), SubResource("Resource_6ejp6")])
+metadata/_custom_type_script = "uid://lj0e532l0dyu"
+
+[resource]
+script = ExtResource("11_mjfg3")
+shopkeeper_name = "Kael the Merchant"
+greeting_message = "Welcome, brave adventurer! I have just what you need for your journey!"
+loot_component = SubResource("Resource_e7vp4")
+title = "Merchant's Shop"
+description = "A cozy shop filled with various items and a friendly merchant."
+weight = 20
+min_floor = 5
+max_floor = -1

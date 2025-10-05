@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="LootPick" load_steps=3 format=3 uid="uid://b3cf085lrhdjy"]
+
+[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://items/Item.gd" id="1_0f62c"]
+[ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://loot/loot_pick.gd" id="2_3o4vi"]
+
+[resource]
+script = ExtResource("2_3o4vi")
+loot_table = Array[ExtResource("1_0f62c")]([])
+count = 1
+chance_none = 0.0
+pick_method = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"

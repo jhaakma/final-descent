@@ -1,0 +1,212 @@
+[gd_scene load_steps=3 format=3 uid="uid://c0cpy5xfdy2nb"]
+
+[ext_resource type="Script" uid="uid://bi2w4gopbk7mv" path="res://screens/room_screen.gd" id="1_vxldv"]
+[ext_resource type="PackedScene" uid="uid://d4kfoqy7h5f0d" path="res://uielements/hp_bar.tscn" id="2_71ary"]
+
+[node name="RoomScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_vxldv")
+metadata/_edit_vertical_guides_ = [-118.0]
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="LeftPanel" type="PanelContainer" parent="MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(280, 0)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/LeftPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="VBoxStats" type="VBoxContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="FloorLabel" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "FLOOR: X"
+horizontal_alignment = 1
+
+[node name="HPBlock" type="HBoxContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="HPLabel" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HPBlock"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(77.79, 0)
+layout_mode = 2
+text = "HP: 0/0"
+
+[node name="HPBar" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HPBlock" instance=ExtResource("2_71ary")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats"]
+layout_mode = 2
+
+[node name="StatsBlock" type="VBoxContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AtkBonus" type="HBoxContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer/StatsBlock"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AtkValue" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer/StatsBlock/AtkBonus"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "ATK: 0"
+
+[node name="DefBonus" type="HBoxContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer/StatsBlock"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DefValue" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer/StatsBlock/DefBonus"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "DEF: 0"
+
+[node name="GoldBlock" type="HBoxContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="GoldLabel" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer/GoldBlock"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.949337, 0.698159, 0, 1)
+text = "Gold: "
+
+[node name="GoldValue" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer/GoldBlock"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94902, 0.698039, 0, 1)
+text = "X"
+
+[node name="HSeparator2" type="HSeparator" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats"]
+layout_mode = 2
+
+[node name="BuffsBlock" type="VBoxContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 112.825)
+layout_mode = 2
+
+[node name="PanelInventory" type="PanelContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 192.27)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxInventory" type="VBoxContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PanelInventory"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PanelInventory/VBoxInventory"]
+layout_mode = 2
+text = "Inventory"
+horizontal_alignment = 1
+
+[node name="Inventory" type="ItemList" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PanelInventory/VBoxInventory"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+tooltip_text = "
+"
+
+[node name="UseItemBtn" type="Button" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PanelInventory/VBoxInventory"]
+unique_name_in_owner = true
+layout_mode = 2
+disabled = true
+text = "Use Item"
+
+[node name="PanelLog" type="PanelContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxLog" type="VBoxContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PanelLog"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PanelLog/VBoxLog"]
+layout_mode = 2
+text = "Log"
+horizontal_alignment = 1
+
+[node name="Log" type="RichTextLabel" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PanelLog/VBoxLog"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 136.51)
+layout_mode = 2
+scroll_following = true
+
+[node name="RightPanel" type="PanelContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/RightPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="RoomTitle" type="Label" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HeaderLarge"
+text = "Room Name"
+horizontal_alignment = 1
+
+[node name="RoomDescription" type="Label" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Room Description goes here."
+horizontal_alignment = 1
+
+[node name="Actions" type="GridContainer" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="NextFloorBtn" type="Button" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Next Floor"
+
+[node name="LeaveRunBtn" type="Button" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Leave Run"
