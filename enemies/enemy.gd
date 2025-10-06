@@ -4,47 +4,43 @@ class_name Enemy extends RefCounted
 signal action_performed(action_type: String, value: int, message: String)
 
 var resource: EnemyResource
-var current_hp: int
+var health_component: HealthComponent
 var is_defending: bool = false
 var flee_chance: float = 0.3  # Base flee chance
 var planned_action: Callable  # Store the action planned at start of turn
 
 # Status effects
-var status_effect_manager: StatusEffectManager = StatusEffectManager.new()
+var status_effect_component: StatusEffectComponent = StatusEffectComponent.new()
 
 func _init(enemy_resource: EnemyResource) -> void:
     resource = enemy_resource
-    current_hp = resource.max_hp
+    health_component = HealthComponent.new(resource.max_hp)
 
 func get_name() -> String:
     return resource.name
 
 func get_max_hp() -> int:
-    return resource.max_hp
+    return health_component.get_max_hp()
 
 func get_current_hp() -> int:
-    return current_hp
+    return health_component.get_current_hp()
 
 func get_attack() -> int:
     return resource.attack
 
 func is_alive() -> bool:
-    return current_hp > 0
+    return health_component.is_alive()
 
 func take_damage(damage: int) -> int:
-    var actual_damage = max(0, damage)
-    current_hp = max(0, current_hp - actual_damage)
-    return actual_damage
+    return health_component.take_damage(damage)
 
 func heal(amount: int) -> int:
-    var actual_heal = min(amount, resource.max_hp - current_hp)
-    current_hp = min(resource.max_hp, current_hp + actual_heal)
-    return actual_heal
+    return health_component.heal(amount)
 
 # Enemy AI decision making - call this at the start of turn before damage
 func plan_action() -> void:
     # Simple AI logic - can be expanded later
-    var hp_percentage = float(current_hp) / float(resource.max_hp)
+    var hp_percentage = health_component.get_hp_percentage()
 
     # If health is low, consider fleeing or defending
     if hp_percentage <= 0.3:
@@ -148,30 +144,30 @@ func calculate_incoming_damage(base_damage: int) -> int:
 
 # === STATUS EFFECT MANAGEMENT ===
 func apply_status_effect(effect: StatusEffect) -> void:
-    status_effect_manager.apply_effect(effect, self)
+    status_effect_component.apply_effect(effect, self)
 
 func has_status_effect(effect_name: String) -> bool:
-    return status_effect_manager.has_effect(effect_name)
+    return status_effect_component.has_effect(effect_name)
 
 func process_status_effects() -> Array[StatusEffectResult]:
-    return status_effect_manager.process_turn(self)
+    return status_effect_component.process_turn(self)
 
 func get_status_effect_description(effect_name: String) -> String:
-    var status_effect = status_effect_manager.get_effect(effect_name)
+    var status_effect = status_effect_component.get_effect(effect_name)
     if status_effect:
         return status_effect.get_description()
     return ""
 
 func remove_status_effect(effect_name: String) -> void:
-    status_effect_manager.remove_effect(effect_name)
+    status_effect_component.remove_effect(effect_name)
 
 func clear_all_status_effects() -> void:
-    status_effect_manager.clear_all_effects()
+    status_effect_component.clear_all_effects()
 
 # Get descriptions of all active status effects
 func get_status_effects_description() -> String:
-    return status_effect_manager.get_effects_description()
+    return status_effect_component.get_effects_description()
 
 # Get all active status effects
 func get_all_status_effects() -> Array[StatusEffect]:
-    return status_effect_manager.get_all_effects()
+    return status_effect_component.get_all_effects()

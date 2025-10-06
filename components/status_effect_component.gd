@@ -1,4 +1,4 @@
-class_name StatusEffectManager extends Node
+class_name StatusEffectComponent extends Node
 
 # Dictionary to store active status effects by name
 var active_effects: Dictionary = {}

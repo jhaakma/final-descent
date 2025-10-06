@@ -81,11 +81,11 @@ func log_warning(text: String) -> void:
 # Internal function to add entries to history
 func _add_to_history(text: String, color: String) -> void:
     var entry = LogEntry.new(text, color)
-    log_history.append(entry)
+    log_history.push_front(entry)  # Add new entries to the beginning
 
     # Keep history within limits
     while log_history.size() > max_log_entries:
-        log_history.pop_front()
+        log_history.pop_back()  # Remove oldest entries from the end
 
 # Function to restore log history to a RichTextLabel
 # Function to restore log history to a RichTextLabel
@@ -93,21 +93,7 @@ func restore_log_history(log_label: RichTextLabel) -> void:
     log_label.clear()
     for entry in log_history:
         log_label.append_text("[color=%s]%s[/color]\n" % [entry.color, entry.text])
-    # Use a more robust scrolling approach
-    _ensure_scroll_to_bottom(log_label)
-
-# Helper function to ensure scrolling to bottom works reliably
-func _ensure_scroll_to_bottom(log_label: RichTextLabel) -> void:
-    # Use call_deferred with a lambda/callable to wait for rendering
-    log_label.call_deferred("scroll_to_line", 999999)  # Scroll to a very large line number to ensure bottom
-    # Also try the proper approach after a frame
-    call_deferred("_scroll_after_frame", log_label)
-
-# This ensures we scroll after content is fully processed
-func _scroll_after_frame(log_label: RichTextLabel) -> void:
-    var line_count = log_label.get_line_count()
-    if line_count > 0:
-        log_label.scroll_to_line(line_count - 1)
+    # No scrolling needed since newest entries are already at the top
 
 # Function to clear log history (useful for new runs)
 func clear_log_history() -> void:

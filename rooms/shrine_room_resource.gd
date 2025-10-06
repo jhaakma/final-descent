@@ -37,14 +37,15 @@ func _on_cure(room_screen: RoomScreen) -> void:
     if not GameState.has_gold(cure_cost):
         LogManager.log_warning("Not enough gold.")
         return
-    GameState.add_gold(-cure_cost)
+
     var removed_effects := GameState.player.clear_all_negative_status_effects()
     if removed_effects.size() > 0:
+        GameState.add_gold(-cure_cost)
         LogManager.log_success("You pray at the shrine and feel cleansed!")
         for effect in removed_effects:
             LogManager.log_success("Cured status effect: %s" % effect.effect_name)
-            room_screen.update()
-            room_screen.mark_cleared()
+        room_screen.update()
+        room_screen.mark_cleared()
     else:
         LogManager.log_message("You have no status effects to cure.")
 

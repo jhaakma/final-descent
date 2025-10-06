@@ -139,8 +139,6 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-tooltip_text = "
-"
 
 [node name="UseItemBtn" type="Button" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PanelInventory/VBoxInventory"]
 unique_name_in_owner = true
@@ -148,26 +146,56 @@ layout_mode = 2
 disabled = true
 text = "Use Item"
 
-[node name="PanelLog" type="PanelContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="VBoxLog" type="VBoxContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PanelLog"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PanelLog/VBoxLog"]
-layout_mode = 2
-text = "Log"
-horizontal_alignment = 1
-
-[node name="Log" type="RichTextLabel" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PanelLog/VBoxLog"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 136.51)
-layout_mode = 2
-scroll_following = true
-
-[node name="RightPanel" type="PanelContainer" parent="MarginContainer/HBoxContainer"]
+[node name="CenterPanel" type="PanelContainer" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/CenterPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/CenterPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="RoomTitle" type="Label" parent="MarginContainer/HBoxContainer/CenterPanel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HeaderLarge"
+text = "Room Name"
+horizontal_alignment = 1
+
+[node name="RoomDescription" type="Label" parent="MarginContainer/HBoxContainer/CenterPanel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Room Description goes here."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Actions" type="GridContainer" parent="MarginContainer/HBoxContainer/CenterPanel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/CenterPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="NextFloorBtn" type="Button" parent="MarginContainer/HBoxContainer/CenterPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Next Floor"
+
+[node name="LeaveRunBtn" type="Button" parent="MarginContainer/HBoxContainer/CenterPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Leave Run"
+
+[node name="RightPanel" type="PanelContainer" parent="MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(280, 0)
+layout_mode = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/RightPanel"]
 layout_mode = 2
@@ -176,37 +204,26 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer"]
+[node name="PanelLog" type="PanelContainer" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer"]
 layout_mode = 2
 
-[node name="RoomTitle" type="Label" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer/VBoxContainer"]
-unique_name_in_owner = true
+[node name="VBoxLog" type="VBoxContainer" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer/PanelLog"]
 layout_mode = 2
-theme_type_variation = &"HeaderLarge"
-text = "Room Name"
+
+[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer/PanelLog/VBoxLog"]
+layout_mode = 2
+text = "Log"
 horizontal_alignment = 1
 
-[node name="RoomDescription" type="Label" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer/VBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Room Description goes here."
-horizontal_alignment = 1
-
-[node name="Actions" type="GridContainer" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer/VBoxContainer"]
-unique_name_in_owner = true
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer/PanelLog/VBoxLog"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
 
-[node name="HBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer/VBoxContainer"]
-layout_mode = 2
-alignment = 1
-
-[node name="NextFloorBtn" type="Button" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="Log" type="RichTextLabel" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer/PanelLog/VBoxLog/MarginContainer"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 136.51)
 layout_mode = 2
-text = "Next Floor"
-
-[node name="LeaveRunBtn" type="Button" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer/VBoxContainer/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Leave Run"

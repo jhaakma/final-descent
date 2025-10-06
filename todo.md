@@ -18,6 +18,11 @@
     - Holds logic for determining next room
     - Room difficulty increases as player descends
 
+## More Rooms
+- Unsafe rest rooms
+    - Like Mimics, the description can give it away
+    - Chance to be attacked in your sleep
+
 ## Quest System
 - Encounter a room with an NPC
 - Accept a quest
@@ -32,7 +37,7 @@
     - Reward: magic item
 
 ## Overarching Story
-- Rooms with options to explore, find clues, unravel some sort of plot
+- Rooms with options to explore, find clues, unravel some sort of plote
 
 ## Difficulty Scaling
 - Higher difficulty enemies, better items as you descend floors

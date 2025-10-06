@@ -88,13 +88,13 @@ func _enable_action_buttons() -> void:
 
 
 func _refresh_bars() -> void:
-    you_bar.max_value = GameState.player.max_hp
-    you_bar.value = GameState.player.hp
+    you_bar.max_value = GameState.player.get_max_hp()
+    you_bar.value = GameState.player.get_hp()
     foe_bar.max_value = current_enemy.get_max_hp()
     foe_bar.value = current_enemy.get_current_hp()
 
     # Update tooltips with status effects
-    var player_tooltip = "HP: %d/%d" % [GameState.player.hp, GameState.player.max_hp]
+    var player_tooltip = "HP: %d/%d" % [GameState.player.get_hp(), GameState.player.get_max_hp()]
     var player_effects_desc = GameState.get_player_status_effects_description()
     if player_effects_desc != "":
         player_tooltip += "\n%s" % player_effects_desc
@@ -119,7 +119,7 @@ func _check_end() -> void:
         LogManager.log_success("You defeated the %s!" % current_enemy.get_name())
         emit_signal("combat_resolved", true)
         # Don't queue_free() here - let the loot screen handle it
-    elif GameState.player.hp <= 0:
+    elif GameState.player.get_hp() <= 0:
         # Disable buttons to prevent input during death sequence
         _disable_action_buttons()
         # Death delay is now handled in Player.take_damage
@@ -133,7 +133,7 @@ func _check_end_with_delay() -> void:
         LogManager.log_success("You defeated the %s!" % current_enemy.get_name())
         emit_signal("combat_resolved", true)
         # Don't queue_free() here - let the loot screen handle it
-    elif GameState.player.hp <= 0:
+    elif GameState.player.get_hp() <= 0:
         # Disable buttons to prevent input during death sequence
         _disable_action_buttons()
         # Death delay is now handled in Player.take_damage

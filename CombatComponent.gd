@@ -318,7 +318,7 @@ func _check_combat_end() -> void:
     if not current_enemy.is_alive():
         LogManager.log_success("You defeated the %s!" % current_enemy.get_name())
         _end_combat_victory()
-    elif GameState.player.hp <= 0:
+    elif GameState.player.get_hp() <= 0:
         # Disable buttons to prevent input during death sequence
         _disable_combat_buttons()
         # Death delay is now handled in Player.take_damage

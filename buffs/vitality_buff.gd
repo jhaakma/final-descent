@@ -9,12 +9,15 @@ func _init():
     duration_turns = 12
 
 func apply_effects() -> void:
-    GameState.player.max_hp += max_hp_bonus
-    GameState.player.hp += max_hp_bonus  # Also heal when gaining max HP
+    # Increase max HP and heal by the bonus amount
+    var new_max_hp = GameState.player.get_max_hp() + max_hp_bonus
+    GameState.player.set_max_hp(new_max_hp)
+    # Heal the player by the max HP bonus amount
+    GameState.player.heal(max_hp_bonus)
     LogManager.log_success("Buff applied: %s (+%d MAX HP, %d turns)" % [name, max_hp_bonus, remaining_duration])
 
 func remove_effects() -> void:
-    GameState.player.max_hp -= max_hp_bonus
-    # Don't reduce current HP below the new max
-    GameState.player.hp = min(GameState.player.hp, GameState.player.max_hp)
+    var new_max_hp = GameState.player.get_max_hp() - max_hp_bonus
+    GameState.player.set_max_hp(new_max_hp)
+    # The HealthComponent automatically clamps current HP when max HP is reduced
     LogManager.log_warning("Buff expired: %s" % name)

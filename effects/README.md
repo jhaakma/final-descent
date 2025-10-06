@@ -9,7 +9,7 @@ The status effect system has been refactored to use a generic, component-based a
 ### Core Components
 
 1. **StatusEffect** (base class) - Defines the interface for all status effects
-2. **StatusEffectManager** (component) - Handles applying, tracking, and processing status effects
+2. **StatusEffectComponent** (component) - Handles applying, tracking, and processing status effects
 3. **StatusEffectResult** (data class) - Typed result from status effect application
 
 ### Key Classes
@@ -19,7 +19,7 @@ The status effect system has been refactored to use a generic, component-based a
 - Handles common functionality like duration, stacking, and expiration
 - Override `apply_effect()` to implement specific behavior
 
-#### StatusEffectManager
+#### StatusEffectComponent
 - Component attached to Player and Enemy classes
 - Manages a collection of active status effects
 - Processes all effects each turn and handles cleanup
@@ -62,7 +62,7 @@ func apply_effect(target) -> StatusEffectResult:
 # In weapon or attack code
 func apply_burn_to_target(target, damage: int, duration: int):
     var burn_effect = BurnEffect.new(damage, duration)
-    target.status_effect_manager.apply_effect(burn_effect)
+    target.status_effect_component.apply_effect(burn_effect)
 ```
 
 ### Processing Status Effects (Turn-Based)
@@ -71,7 +71,7 @@ func apply_burn_to_target(target, damage: int, duration: int):
 # Status effects are processed in both Player.process_status_effects() and Enemy.process_status_effects()
 # You can access all effects like this:
 func process_all_status_effects():
-    var results = status_effect_manager.process_turn(self)
+    var results = status_effect_component.process_turn(self)
     for result in results:
         if result.message != "":
             print("Effect applied: %s - %s" % [result.effect_name, result.message])

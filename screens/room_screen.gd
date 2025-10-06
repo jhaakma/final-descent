@@ -24,6 +24,14 @@ var available_rooms: Array[RoomResource] = []
 var current_room: RoomResource
 var cleared: bool = false
 var selected_item: Item = null
+
+# Combat state management
+var is_in_combat: bool = false
+var current_enemy: Enemy = null
+var enemy_resource: EnemyResource = null
+var enemy_first: bool = false
+var avoid_failure: bool = false
+var stored_room_actions: Array[Button] = []  # Store original room actions
 static var recent_room_history: Array[RoomResource] = []  # Track recent room class names
 var max_history_size: int = 3  # How many recent rooms to remember
 var weight_penalty: float = 0.01  # Multiplier for recently used rooms (0.3 = 30% of original weight)
@@ -62,7 +70,7 @@ func _ready() -> void:
     next_btn.pressed.connect(func():
         if cleared:
             emit_signal("room_cleared"))
-    leave_btn.pressed.connect(_on_leave_run_pressed)
+    leave_btn.pressed.connect(func(): GameState.emit_signal("run_ended", false))
 
 func _load_all_rooms() -> void:
     """Automatically load all room resources from resources/rooms directory"""
@@ -122,9 +130,9 @@ func _on_stats_changed() -> void:
 
 func _refresh_stats() -> void:
     floor_label.text = "FLOOR: %d" % GameState.current_floor
-    hp_label.text = "HP: %d/%d" % [GameState.player.hp, GameState.player.max_hp]
-    hp_bar.max_value = GameState.player.max_hp
-    hp_bar.value = GameState.player.hp
+    hp_label.text = "HP: %d/%d" % [GameState.player.get_hp(), GameState.player.get_max_hp()]
+    hp_bar.max_value = GameState.player.get_max_hp()
+    hp_bar.value = GameState.player.get_hp()
     gold_value.text = str(GameState.player.gold)
 
     # Update HP bar tooltip to show buff information
@@ -137,7 +145,7 @@ func _refresh_stats() -> void:
 
     # Add active buff count and tooltip
     var active_buff_count = GameState.player.active_buffs.size()
-    var hp_tooltip_text = "HP: %d/%d%s" % [GameState.player.hp, GameState.player.max_hp, buff_info]
+    var hp_tooltip_text = "HP: %d/%d%s" % [GameState.player.get_hp(), GameState.player.get_max_hp(), buff_info]
 
     if active_buff_count > 0:
         var buff_text = "\nActive Buffs (%d):" % active_buff_count
@@ -224,8 +232,6 @@ func _on_item_selected(index: int) -> void:
     _update_use_button()
 
 func _push_log(text: String, color_code: String) -> void:
-    if text == "":
-        return
     log_label.append_text("[color=%s]%s[/color]\n" % [color_code, text])
     # Use call_deferred to ensure content is rendered before scrolling, and use proper 0-based index
     log_label.call_deferred("scroll_to_line", log_label.get_line_count() - 1)
@@ -348,10 +354,8 @@ func _on_use_item_pressed() -> void:
         update()
 
 func _update_use_button() -> void:
-
     use_item_btn.text = "Use Item"
-    use_item_btn.disabled = _is_combat_active()
-
+    use_item_btn.disabled = is_in_combat
 
     if selected_item is ItemWeapon:
         # Weapons can always be equipped/unequipped
@@ -366,13 +370,6 @@ func _update_use_button() -> void:
         use_item_btn.disabled = true
 
 
-func _is_combat_active() -> bool:
-    # Check if there's an active combat popup as a child
-    for child in get_children():
-        if child is CombatPopup:
-            return true
-    return false
-
 func _on_child_added(node: Node) -> void:
     # Update UI when combat popup is added
     if node is CombatPopup:
@@ -382,15 +379,3 @@ func _on_child_removed(node: Node) -> void:
     # Update UI when combat popup is removed
     if node is CombatPopup:
         update()
-
-func _on_leave_run_pressed() -> void:
-    """Show confirmation popup when player tries to leave the run"""
-    var confirmation_popup = load("res://popups/ConfirmationPopup.tscn").instantiate()
-    add_child(confirmation_popup)
-    confirmation_popup.show_confirmation("Are you sure you want to leave this run? All progress will be lost.")
-
-    # Connect signals
-    confirmation_popup.confirmed.connect(func():
-        GameState.emit_signal("run_ended", false)
-    )
-    # No need to connect cancelled signal as it just closes the popup

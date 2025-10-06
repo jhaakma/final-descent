@@ -8,8 +8,7 @@ signal death_with_delay  # Emitted when player dies, with delay for UI to show 0
 signal death_fade_start  # Emitted immediately when player dies to start fade effect
 
 # Core stats
-var max_hp: int = 20
-var hp: int = 20
+var health_component: HealthComponent
 var gold: int = 0
 
 # Inventory and equipment
@@ -22,7 +21,7 @@ var buff_attack_bonus: int = 0
 var buff_defense_bonus: int = 0
 
 # Status effects
-var status_effect_manager: StatusEffectManager = null
+var status_effect_component: StatusEffectComponent = null
 
 # Constants for combat calculations
 const BASE_ATTACK_MIN: int = 2
@@ -30,12 +29,16 @@ const BASE_ATTACK_MAX: int = 5  # This gives 2-5 damage (2 + randi() % 4 gives 2
 const BASE_DEFENSE_WHEN_DEFENDING: int = 2
 
 func _init():
+    health_component = HealthComponent.new(20)
+    # Connect health component signals to player signals
+    health_component.health_changed.connect(_on_health_changed)
+    health_component.died.connect(_on_health_component_died)
     reset()
 
 # Reset player to starting state
 func reset() -> void:
-    max_hp = 20
-    hp = 20
+    if health_component:
+        health_component.reset(20)
     gold = 0
     inventory.clear()
     equipped_weapon = null
@@ -44,9 +47,9 @@ func reset() -> void:
     buff_defense_bonus = 0
 
     # Initialize status effect manager
-    if status_effect_manager:
-        status_effect_manager.queue_free()
-    status_effect_manager = StatusEffectManager.new()
+    if status_effect_component:
+        status_effect_component.queue_free()
+    status_effect_component = StatusEffectComponent.new()
 
     emit_signal("stats_changed")
     emit_signal("inventory_changed")
@@ -69,30 +72,38 @@ func spend_gold(amount: int) -> bool:
 
 # === HEALTH MANAGEMENT ===
 func heal(amount: int) -> void:
-    hp = clamp(hp + amount, 0, max_hp)
-    emit_signal("stats_changed")
+    health_component.heal(amount)
 
 func take_damage(amount: int) -> int:
     var defense_bonus = get_total_defense_bonus()
-    var reduced_damage = max(1, amount - defense_bonus)  # Minimum 1 damage
-    hp = clamp(hp - reduced_damage, 0, max_hp)
-    emit_signal("stats_changed")
-
-    # If player died, emit death_with_delay signal after a brief delay
-    if hp <= 0:
-        # Start fade effect immediately
-        emit_signal("death_fade_start")
-        # Use a timer to delay the death signal so UI can show 0 HP and fade
-        var tree = Engine.get_main_loop() as SceneTree
-        if tree:
-            tree.create_timer(1.0).timeout.connect(func():  # Increased to 2.5s for fade + delay
-                emit_signal("death_with_delay")
-            )
-
-    return reduced_damage
+    return health_component.take_damage(amount, defense_bonus)
 
 func is_alive() -> bool:
-    return hp > 0
+    return health_component.is_alive()
+
+# Health component getters for compatibility
+func get_hp() -> int:
+    return health_component.get_current_hp()
+
+func get_max_hp() -> int:
+    return health_component.get_max_hp()
+
+func set_max_hp(new_max_hp: int) -> void:
+    health_component.set_max_hp(new_max_hp)
+
+# Signal handlers for health component
+func _on_health_changed(_current_hp: int, _max_hp: int) -> void:
+    emit_signal("stats_changed")
+
+func _on_health_component_died() -> void:
+    # Start fade effect immediately
+    emit_signal("death_fade_start")
+    # Use a timer to delay the death signal so UI can show 0 HP and fade
+    var tree = Engine.get_main_loop() as SceneTree
+    if tree:
+        tree.create_timer(1.0).timeout.connect(func():  # Increased to 2.5s for fade + delay
+            emit_signal("death_with_delay")
+        )
 
 # === INVENTORY MANAGEMENT ===
 func add_item(item: Item) -> void:
@@ -187,40 +198,40 @@ func remove_temporary_defense_bonus(amount: int) -> void:
 
 # === STATUS EFFECT MANAGEMENT ===
 func apply_status_effect(effect: StatusEffect) -> void:
-    status_effect_manager.apply_effect(effect, self)
+    status_effect_component.apply_effect(effect, self)
     emit_signal("stats_changed")
 
 func has_status_effect(effect_name: String) -> bool:
-    return status_effect_manager.has_effect(effect_name)
+    return status_effect_component.has_effect(effect_name)
 
 func process_status_effects() -> Array[StatusEffectResult]:
-    var results = status_effect_manager.process_turn(self)
+    var results = status_effect_component.process_turn(self)
 
     # Note: stats_changed signal is automatically emitted by take_damage() and heal()
     # methods when status effects are applied, so no need to emit it here
     return results
 
 func get_status_effect_description(effect_name: String) -> String:
-    var status_effect = status_effect_manager.get_effect(effect_name)
+    var status_effect = status_effect_component.get_effect(effect_name)
     if status_effect:
         return status_effect.get_description()
     return ""
 
 func remove_status_effect(effect_name: String) -> void:
-    status_effect_manager.remove_effect(effect_name)
+    status_effect_component.remove_effect(effect_name)
     emit_signal("stats_changed")
 
 func clear_all_status_effects() -> Array[StatusEffect]:
-    var removed_effects = status_effect_manager.get_all_effects().duplicate()
-    status_effect_manager.clear_all_effects()
+    var removed_effects = status_effect_component.get_all_effects().duplicate()
+    status_effect_component.clear_all_effects()
     emit_signal("stats_changed")
     return removed_effects
 
 func clear_all_negative_status_effects() -> Array[StatusEffect]:
     var removed_effects: Array[StatusEffect] = []
-    for effect in status_effect_manager.get_all_effects():
+    for effect in status_effect_component.get_all_effects():
         if effect.effect_type == StatusEffect.EffectType.NEGATIVE:
-            status_effect_manager.remove_effect(effect.effect_name)
+            status_effect_component.remove_effect(effect.effect_name)
             removed_effects.append(effect)
     if removed_effects.size() > 0:
         emit_signal("stats_changed")
@@ -228,11 +239,11 @@ func clear_all_negative_status_effects() -> Array[StatusEffect]:
 
 # Get descriptions of all active status effects
 func get_status_effects_description() -> String:
-    return status_effect_manager.get_effects_description()
+    return status_effect_component.get_effects_description()
 
 # Get all active status effects
 func get_all_status_effects() -> Array[StatusEffect]:
-    return status_effect_manager.get_all_effects()
+    return status_effect_component.get_all_effects()
 
 # === COMBAT CALCULATIONS ===
 func calculate_attack_damage() -> int:
@@ -247,8 +258,8 @@ func calculate_defend_bonus() -> int:
 # === STATUS INFORMATION ===
 func get_status_summary() -> Dictionary:
     return {
-        "hp": hp,
-        "max_hp": max_hp,
+        "hp": health_component.get_current_hp(),
+        "max_hp": health_component.get_max_hp(),
         "gold": gold,
         "attack_bonus": get_total_attack_bonus(),
         "defense_bonus": get_total_defense_bonus(),
