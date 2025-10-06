@@ -10,6 +10,3 @@ func _init() -> void:
 
 func _on_use() -> void:
     GameState.equip_weapon(self)
-
-func get_description() -> String:
-    return "%s\nDamage: %d" % [description, damage]

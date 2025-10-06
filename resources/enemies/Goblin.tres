@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://items/Item.gd" id="2_qudxx"]
 [ext_resource type="Resource" uid="uid://cttpxikq24nx" path="res://resources/items/weapons/Dagger.tres" id="3_mmyce"]
 [ext_resource type="Resource" uid="uid://fj0lhss0j1ad" path="res://resources/items/weapons/PoisonedDagger.tres" id="4_cynw3"]
-[ext_resource type="Resource" uid="uid://2s77tota5kam" path="res://resources/items/potions/BasicHealthPotion.tres" id="5_ismv4"]
+[ext_resource type="Resource" uid="uid://2s77tota5kam" path="res://resources/items/potions/HealthPotionSmall.tres" id="5_ismv4"]
 [ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://loot/loot_component.gd" id="6_237ec"]
 [ext_resource type="Script" uid="uid://b4y5n724vd0ph" path="res://enemies/enemy_resource.gd" id="7_arjqi"]
 [ext_resource type="Script" uid="uid://ds3csuhxyytgv" path="res://attacks/special_attack.gd" id="8_ui6lq"]

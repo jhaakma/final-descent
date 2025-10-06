@@ -6,7 +6,7 @@
 script = ExtResource("1_mpiug")
 damage = 5
 name = "Shortsword"
-description = "An iron shortsword."
+description = ""
 consumable = false
-purchase_value = null
+purchase_value = 10
 metadata/_custom_type_script = "uid://cp8w78pilenje"

@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://items/Item.gd" id="2_fxh5e"]
 [ext_resource type="Resource" uid="uid://cttpxikq24nx" path="res://resources/items/weapons/Dagger.tres" id="3_xjp3h"]
 [ext_resource type="Resource" uid="uid://clyabowguvivm" path="res://resources/items/weapons/ShortSword.tres" id="4_gjxe1"]
-[ext_resource type="Resource" uid="uid://2s77tota5kam" path="res://resources/items/potions/BasicHealthPotion.tres" id="5_eaqpx"]
+[ext_resource type="Resource" uid="uid://2s77tota5kam" path="res://resources/items/potions/HealthPotionSmall.tres" id="5_eaqpx"]
 [ext_resource type="Resource" uid="uid://bpscdhoshmjls" path="res://resources/items/potions/Antidote.tres" id="6_fsrti"]
 [ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://loot/loot_component.gd" id="7_5k4w7"]
 [ext_resource type="Script" uid="uid://cuib3tlx6u7dn" path="res://rooms/chest_room_resource.gd" id="8_sxa5o"]

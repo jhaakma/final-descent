@@ -37,46 +37,71 @@ class LogEntry:
 var log_history: Array[LogEntry] = []
 var max_log_entries: int = 100  # Limit log entries to prevent memory issues
 
-signal log_pushed(text: String, color: String)
+# Track registered log displays for automatic updates
+var registered_log_displays: Array[RichTextLabel] = []
+
+# Register a log display for automatic updates
+func register_log_display(log_label: RichTextLabel) -> void:
+    if log_label not in registered_log_displays:
+        registered_log_displays.append(log_label)
+        # Immediately restore history to the new display
+        restore_log_history(log_label)
+
+# Unregister a log display
+func unregister_log_display(log_label: RichTextLabel) -> void:
+    var index = registered_log_displays.find(log_label)
+    if index >= 0:
+        registered_log_displays.remove_at(index)
+
+# Update all registered log displays
+func _update_all_displays() -> void:
+    for log_label in registered_log_displays:
+        if is_instance_valid(log_label):
+            restore_log_history(log_label)
+        else:
+            # Remove invalid references
+            var index = registered_log_displays.find(log_label)
+            if index >= 0:
+                registered_log_displays.remove_at(index)
 
 # Logging convenience functions for different message types
 func log_message(text: String, color: LogColor = LogColor.DEFAULT) -> void:
     var color_str = LogColors.get(color, LogColors.DEFAULT)
     _add_to_history(text, color_str)
-    emit_signal("log_pushed", text, color_str)
+    _update_all_displays()
 
 # Backward compatibility - this maintains the old single-parameter interface
 func push_log(text: String) -> void:
     _add_to_history(text, LogColors.DEFAULT)
-    emit_signal("log_pushed", text, LogColors.DEFAULT)
+    _update_all_displays()
 
 func log_damage(text: String) -> void:
     _add_to_history(text, LogColors.DAMAGE)
-    emit_signal("log_pushed", text, LogColors.DAMAGE)
+    _update_all_displays()
 
 func log_healing(text: String) -> void:
     _add_to_history(text, LogColors.HEALING)
-    emit_signal("log_pushed", text, LogColors.HEALING)
+    _update_all_displays()
 
 func log_inflict_status(text: String) -> void:
     _add_to_history(text, LogColors.POISON)
-    emit_signal("log_pushed", text, LogColors.POISON)
+    _update_all_displays()
 
 func log_equipment(text: String) -> void:
     _add_to_history(text, LogColors.EQUIPMENT)
-    emit_signal("log_pushed", text, LogColors.EQUIPMENT)
+    _update_all_displays()
 
 func log_combat(text: String) -> void:
     _add_to_history(text, LogColors.COMBAT)
-    emit_signal("log_pushed", text, LogColors.COMBAT)
+    _update_all_displays()
 
 func log_success(text: String) -> void:
     _add_to_history(text, LogColors.SUCCESS)
-    emit_signal("log_pushed", text, LogColors.SUCCESS)
+    _update_all_displays()
 
 func log_warning(text: String) -> void:
     _add_to_history(text, LogColors.WARNING)
-    emit_signal("log_pushed", text, LogColors.WARNING)
+    _update_all_displays()
 
 # Internal function to add entries to history
 func _add_to_history(text: String, color: String) -> void:

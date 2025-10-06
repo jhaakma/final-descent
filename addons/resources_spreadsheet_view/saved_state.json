@@ -22,6 +22,28 @@
         "visibility": 0.0
       }
     },
+    "res://resources/items/potions/": {
+      "metadata/_custom_type_script": {
+        "visibility": 0.0
+      },
+      "resource_local_to_scene": {
+        "visibility": 0.0
+      },
+      "resource_name": {
+        "visibility": 0.0
+      }
+    },
+    "res://resources/items/weapons/": {
+      "metadata/_custom_type_script": {
+        "visibility": 0.0
+      },
+      "resource_local_to_scene": {
+        "visibility": 0.0
+      },
+      "resource_name": {
+        "visibility": 0.0
+      }
+    },
     "res://resources/potions/": {
       "metadata/_custom_type_script": {
         "visibility": 0.0
@@ -91,7 +113,9 @@
     "res://resources/rooms/chest_rooms/",
     "res://resources/rooms/mimic_rooms/",
     "res://resources/potions/",
-    "res://resources/weapons/"
+    "res://resources/weapons/",
+    "res://resources/items/potions/",
+    "res://resources/items/weapons/"
   ],
   "table_functions": {
     "filter": [

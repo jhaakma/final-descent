@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://loot/loot_pick.gd" id="2_jf7xf"]
 [ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://items/Item.gd" id="3_am5yn"]
 [ext_resource type="Resource" uid="uid://bjvu3fmob3t2k" path="res://resources/items/weapons/Staff.tres" id="4_jf7xf"]
-[ext_resource type="Resource" uid="uid://drc4rx6xim1bu" path="res://resources/items/potions/SuperiorHealthPotion.tres" id="5_am5yn"]
+[ext_resource type="Resource" uid="uid://drc4rx6xim1bu" path="res://resources/items/potions/HealthPotionMedium.tres" id="5_am5yn"]
 [ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://loot/loot_component.gd" id="6_u0cpa"]
 [ext_resource type="Script" uid="uid://bxldx47l3mk01" path="res://buffs/Buff.gd" id="7_hevet"]
 [ext_resource type="Resource" path="res://resources/buffs/StrengthBlessing.tres" id="8_b4vxb"]

@@ -1,8 +1,19 @@
 # To do
 
+## Theme
+Create and use a consistent theme
+Remove all unnecessary theme overrides
+
+## Weapon degradation
+When equipped, weapon splits into new stack
+Has condition that decreases when striking an enemy
+Breaks when condition reaches 0
+integrations:
+- Random shrine event repairs items
+- Blacksmith room to repair or even improve gear
+
 ## ItemPick
 - Fix to use count value
-
 
 ## Combat Enhancements
 - Status effects
@@ -11,6 +22,12 @@
 - Special abilities
     - Power Up - use this turn to prepare an extra powerful attack next turn
     - Slam - stun opponent
+
+## Magic
+- Scrolls for single use spells
+- Books to learn spells, consumes mana
+- Staves improve spell effectiveness
+- Wands with limited spell use
 
 ## Managers
 - Room Manager

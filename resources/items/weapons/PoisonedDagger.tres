@@ -9,6 +9,6 @@ status_effect = ExtResource("2_tihms")
 effect_apply_chance = 0.5
 damage = 1
 name = "Poisoned Dagger"
-description = "A sharp dagger coated with deadly poison."
+description = "Deadly poison drips from the blade."
 consumable = false
 purchase_value = 20

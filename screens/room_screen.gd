@@ -12,8 +12,7 @@ var available_rooms: Array[RoomResource] = []
 @onready var def_value: Label = %DefValue
 @onready var gold_value: Label = %GoldValue
 @onready var buffs_block: Container = %BuffsBlock
-@onready var inv_list: ItemList = %Inventory
-@onready var use_item_btn: Button = %UseItemBtn
+@onready var inventory_component: InventoryComponent = %InventoryComponent
 @onready var log_label: RichTextLabel = %Log
 @onready var actions_grid: GridContainer = %Actions
 @onready var next_btn: Button = %NextFloorBtn
@@ -23,7 +22,6 @@ var available_rooms: Array[RoomResource] = []
 
 var current_room: RoomResource
 var cleared: bool = false
-var selected_item: Item = null
 
 # Combat state management
 var is_in_combat: bool = false
@@ -43,14 +41,12 @@ func _ready() -> void:
     _load_all_rooms()
 
     GameState.stats_changed.connect(_on_stats_changed)
-    GameState.player.inventory_changed.connect(_refresh_inventory)
     GameState.buffs_changed.connect(_refresh_stats)  # Refresh stats when buffs change
-    LogManager.log_pushed.connect(_push_log)
     GameState.run_ended.connect(func(v: bool): emit_signal("run_ended", v))
 
-    # Connect inventory selection
-    inv_list.item_selected.connect(_on_item_selected)
-    use_item_btn.pressed.connect(_on_use_item_pressed)
+    # Connect inventory component signals
+    inventory_component.item_used.connect(_on_item_used)
+    inventory_component.inventory_updated.connect(_on_inventory_updated)
 
     # Connect to child_entered_tree to detect when combat popups are added
     child_entered_tree.connect(_on_child_added)
@@ -59,18 +55,16 @@ func _ready() -> void:
     next_btn.disabled = true
     _refresh_stats()
     _refresh_buffs()
-    _refresh_inventory()
 
-    # Restore log history from previous rooms
-    LogManager.restore_log_history(log_label)
+    # Register log display with LogManager for automatic updates
+    LogManager.register_log_display(log_label)
 
     _generate_room()
-    _update_use_button()
 
     next_btn.pressed.connect(func():
         if cleared:
             emit_signal("room_cleared"))
-    leave_btn.pressed.connect(func(): GameState.emit_signal("run_ended", false))
+    leave_btn.pressed.connect(_on_leave_run_pressed)
 
 func _load_all_rooms() -> void:
     """Automatically load all room resources from resources/rooms directory"""
@@ -120,8 +114,7 @@ func reload_rooms() -> void:
 func update() -> void:
     _refresh_stats()
     _refresh_buffs()
-    _refresh_inventory()
-    _update_use_button()
+    inventory_component.refresh()
 
 # Called when stats change (including status effect changes)
 func _on_stats_changed() -> void:
@@ -211,31 +204,13 @@ func _refresh_buffs() -> void:
         buffs_block.visible = true
         print("Buffs block visible with %d children" % buffs_block.get_child_count())
 
-func _refresh_inventory() -> void:
-    inv_list.clear()
-    selected_item = null
-    for item in GameState.player.inventory:
-        var item_text = item.name + " x%d" % GameState.player.inventory[item]
-        # Add equipped indicator for weapons
-        if item is ItemWeapon and GameState.player.equipped_weapon == item:
-            item_text += " (Equipped)"
-        inv_list.add_item(item_text)
-        inv_list.set_item_tooltip(inv_list.get_item_count() - 1, item.get_description())
-    _update_use_button()
+# Inventory component callbacks
+func _on_item_used() -> void:
+    update()
 
-func _on_item_selected(index: int) -> void:
-    var items = GameState.player.inventory.keys()
-    if index >= 0 and index < items.size():
-        selected_item = items[index]
-    else:
-        selected_item = null
-    _update_use_button()
-
-func _push_log(text: String, color_code: String) -> void:
-    log_label.append_text("[color=%s]%s[/color]\n" % [color_code, text])
-    # Use call_deferred to ensure content is rendered before scrolling, and use proper 0-based index
-    log_label.call_deferred("scroll_to_line", log_label.get_line_count() - 1)
-
+func _on_inventory_updated() -> void:
+    # Update inventory component combat state when needed
+    inventory_component.set_combat_disabled(is_in_combat)
 
 
 func _calculate_room_weights(valid_rooms: Array[RoomResource]) -> Array[float]:
@@ -300,9 +275,6 @@ func _render_room() -> void:
     room_desc.text = current_room.description
     _build_actions()
 
-    # Ensure log history is preserved when rendering a new room
-    LogManager.restore_log_history(log_label)
-
     # Check if room should be cleared by default
     if current_room.cleared_by_default:
         _mark_cleared_by_default()
@@ -336,46 +308,34 @@ func _mark_cleared_by_default() -> void:
 func mark_cleared() -> void:
     _mark_cleared()
 
-func _on_use_item_pressed() -> void:
-    if selected_item:
-        if selected_item is ItemWeapon:
-            # Weapons can be equipped/unequipped even during combat
-            if GameState.player.equipped_weapon == selected_item:
-                # Unequip the weapon
-                GameState.unequip_weapon()
-            else:
-                # Equip the weapon (this will automatically unequip any current weapon)
-                GameState.equip_weapon(selected_item)
-            update()
-        else:
-            selected_item.use()
-            _refresh_inventory()
-
-        update()
-
-func _update_use_button() -> void:
-    use_item_btn.text = "Use Item"
-    use_item_btn.disabled = is_in_combat
-
-    if selected_item is ItemWeapon:
-        # Weapons can always be equipped/unequipped
-        if GameState.player.equipped_weapon == selected_item:
-            use_item_btn.text = "Unequip " + selected_item.name
-        else:
-            use_item_btn.text = "Equip " + selected_item.name
-    elif selected_item:
-        use_item_btn.text = "Use " + selected_item.name
-    else:
-        use_item_btn.text = "Use Item"
-        use_item_btn.disabled = true
-
-
 func _on_child_added(node: Node) -> void:
     # Update UI when combat popup is added
     if node is CombatPopup:
+        is_in_combat = true
+        inventory_component.set_combat_disabled(true)
         update()
 
 func _on_child_removed(node: Node) -> void:
     # Update UI when combat popup is removed
     if node is CombatPopup:
+        is_in_combat = false
+        inventory_component.set_combat_disabled(false)
         update()
+
+func _exit_tree() -> void:
+    # Unregister log display when room screen is destroyed
+    if log_label:
+        LogManager.unregister_log_display(log_label)
+
+func _on_leave_run_pressed() -> void:
+    """Show confirmation popup before leaving the run"""
+    var confirmation_popup = load("res://popups/ConfirmationPopup.tscn").instantiate()
+    add_child(confirmation_popup)
+
+    confirmation_popup.show_confirmation("Are you sure you want to leave this run?")
+
+    # Connect signals
+    confirmation_popup.confirmed.connect(func():
+        GameState.emit_signal("run_ended", false))
+    confirmation_popup.cancelled.connect(func():
+        pass)  # Do nothing, popup will close automatically

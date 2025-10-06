@@ -6,7 +6,7 @@
 [ext_resource type="Resource" uid="uid://meq6o4s58qqk" path="res://resources/items/weapons/WarAxe.tres" id="4_4vwlp"]
 [ext_resource type="Resource" uid="uid://fj0lhss0j1ad" path="res://resources/items/weapons/PoisonedDagger.tres" id="5_ytmfo"]
 [ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://loot/loot_component.gd" id="6_h7wi8"]
-[ext_resource type="Resource" uid="uid://drc4rx6xim1bu" path="res://resources/items/potions/SuperiorHealthPotion.tres" id="6_xc5k6"]
+[ext_resource type="Resource" uid="uid://drc4rx6xim1bu" path="res://resources/items/potions/HealthPotionMedium.tres" id="6_xc5k6"]
 [ext_resource type="Resource" uid="uid://c31wbx2iwa0s7" path="res://resources/items/potions/RegenerationPotion.tres" id="7_o3oe0"]
 [ext_resource type="Resource" uid="uid://bpscdhoshmjls" path="res://resources/items/potions/Antidote.tres" id="8_85wif"]
 [ext_resource type="Script" uid="uid://cuib3tlx6u7dn" path="res://rooms/chest_room_resource.gd" id="10_kr1ns"]

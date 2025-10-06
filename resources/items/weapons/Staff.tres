@@ -6,7 +6,7 @@
 script = ExtResource("1_mgxhe")
 damage = 5
 name = "Staff"
-description = "A menacing looking wooden staff."
+description = ""
 consumable = false
 purchase_value = 8
 metadata/_custom_type_script = "uid://cp8w78pilenje"

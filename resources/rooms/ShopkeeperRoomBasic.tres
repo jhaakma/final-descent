@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://loot/loot_pick.gd" id="1_5sg42"]
 [ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://items/Item.gd" id="2_yw5km"]
-[ext_resource type="Resource" uid="uid://2s77tota5kam" path="res://resources/items/potions/BasicHealthPotion.tres" id="3_3d1du"]
-[ext_resource type="Resource" uid="uid://drc4rx6xim1bu" path="res://resources/items/potions/SuperiorHealthPotion.tres" id="4_btyxu"]
+[ext_resource type="Resource" uid="uid://2s77tota5kam" path="res://resources/items/potions/HealthPotionSmall.tres" id="3_3d1du"]
+[ext_resource type="Resource" uid="uid://drc4rx6xim1bu" path="res://resources/items/potions/HealthPotionMedium.tres" id="4_btyxu"]
 [ext_resource type="Resource" uid="uid://c31wbx2iwa0s7" path="res://resources/items/potions/RegenerationPotion.tres" id="5_c8ten"]
 [ext_resource type="Resource" uid="uid://cttpxikq24nx" path="res://resources/items/weapons/Dagger.tres" id="6_5j2nv"]
 [ext_resource type="Resource" uid="uid://bpscdhoshmjls" path="res://resources/items/potions/Antidote.tres" id="6_yq1wu"]

@@ -112,6 +112,10 @@ func _setup_use_item_menu() -> void:
     for item in GameState.player.inventory.keys():
         var quantity = GameState.player.inventory[item]
         _popup.add_item("%s (%d)" % [item.name, quantity])
+
+    # Disconnect the signal if it's already connected to avoid duplicate connections
+    if _popup.index_pressed.is_connected(_on_use_item_index):
+        _popup.index_pressed.disconnect(_on_use_item_index)
     _popup.index_pressed.connect(_on_use_item_index)
 
 func _check_end() -> void:
