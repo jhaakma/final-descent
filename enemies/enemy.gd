@@ -9,12 +9,19 @@ var is_defending: bool = false
 var flee_chance: float = 0.3  # Base flee chance
 var planned_action: Callable  # Store the action planned at start of turn
 
+# Optional inventory for enemies that can carry items
+var inventory_component = null
+
 # Status effects
 var status_effect_component: StatusEffectComponent = StatusEffectComponent.new()
 
 func _init(enemy_resource: EnemyResource) -> void:
     resource = enemy_resource
     health_component = HealthComponent.new(resource.max_hp)
+
+    # Initialize inventory if this enemy should carry items
+    # This can be extended based on enemy type or resource configuration
+    inventory_component = preload("res://components/item_inventory_component.gd").new()
 
 func get_name() -> String:
     return resource.name
@@ -128,8 +135,7 @@ func _attempt_flee() -> void:
         action_performed.emit("flee_success", 0, "")
     else:
         action_performed.emit("flee_fail", 0, "")
-        # Failed flee attempt still counts as an action, enemy is vulnerable
-        _perform_attack()
+        # Failed flee attempt still counts as an action, enemy loses their turn
 
 # Calculate damage taken considering defense state
 func calculate_incoming_damage(base_damage: int) -> int:
@@ -171,3 +177,56 @@ func get_status_effects_description() -> String:
 # Get all active status effects
 func get_all_status_effects() -> Array[StatusEffect]:
     return status_effect_component.get_all_effects()
+
+# === INVENTORY MANAGEMENT ===
+# Methods for managing enemy inventory and loot
+
+# Add an item to this enemy's inventory
+func add_item(item: Item, amount: int = 1) -> bool:
+    if inventory_component:
+        return inventory_component.add_item(item, amount)
+    return false
+
+# Add an item with specific instance data
+func add_item_with_data(item: Item, item_data = null) -> bool:
+    if inventory_component:
+        return inventory_component.add_item_instance(item, item_data)
+    return false
+
+# Check if enemy has an item
+func has_item(item: Item, amount: int = 1) -> bool:
+    if inventory_component:
+        return inventory_component.has_item(item, amount)
+    return false
+
+# Get count of an item
+func get_item_count(item: Item) -> int:
+    if inventory_component:
+        return inventory_component.get_item_count(item)
+    return 0
+
+# Get all items this enemy carries (for loot drops)
+func get_all_items() -> Array[Item]:
+    if inventory_component:
+        return inventory_component.get_all_items()
+    return []
+
+# Transfer all items to another inventory (used for loot drops)
+func transfer_all_items_to(target_inventory) -> Array[Item]:
+    var failed_items: Array[Item] = []
+    if inventory_component and target_inventory:
+        failed_items = target_inventory.merge_from(inventory_component)
+        inventory_component.clear()
+    return failed_items
+
+# Drop specific items (remove from inventory and return ItemData instances)
+func drop_items(item: Item, amount: int = 1) -> Array:
+    if inventory_component:
+        return inventory_component.take_items(item, amount)
+    return []
+
+# Get detailed inventory for UI or loot display
+func get_inventory_display_info() -> Array:
+    if inventory_component:
+        return inventory_component.get_inventory_display_info()
+    return []

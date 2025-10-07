@@ -109,9 +109,10 @@ func _refresh_bars() -> void:
 func _setup_use_item_menu() -> void:
     var _popup := use_btn.get_popup()
     _popup.clear()
-    for item in GameState.player.inventory.keys():
-        var quantity = GameState.player.inventory[item]
-        _popup.add_item("%s (%d)" % [item.name, quantity])
+    for item in GameState.player.get_all_inventory_items():
+        var quantity = GameState.player.get_item_count(item)
+        if quantity > 0:
+            _popup.add_item("%s (%d)" % [item.name, quantity])
 
     # Disconnect the signal if it's already connected to avoid duplicate connections
     if _popup.index_pressed.is_connected(_on_use_item_index):
@@ -237,6 +238,9 @@ func _on_attack() -> void:
 
     LogManager.log_combat(attack_message)
 
+    # Reduce weapon condition after logging the attack
+    GameState.player.reduce_weapon_condition()
+
     if current_enemy.is_alive():
         _enemy_turn()
     _check_end()
@@ -265,12 +269,13 @@ func _on_flee() -> void:
         _check_end()
 
 func _on_use_item_index(idx: int) -> void:
-    var inventory_keys = GameState.player.inventory.keys()
-    if idx >= 0 and idx < inventory_keys.size():
-        var item: Item = inventory_keys[idx]
-
-        # Use the item's use method
-        item.use()
+    var inventory_items = GameState.player.get_all_inventory_items()
+    if idx >= 0 and idx < inventory_items.size():
+        var item: Item = inventory_items[idx]
+        # Only use if we still have the item
+        if GameState.player.has_item(item):
+            # Use the item's use method
+            item.use()
 
         # Refresh the use item menu to reflect updated quantities
         _setup_use_item_menu()

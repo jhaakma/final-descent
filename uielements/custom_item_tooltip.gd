@@ -13,6 +13,7 @@ class_name CustomItemTooltip extends Control
 
 var current_item: Item
 var current_count: int = 1
+var current_item_data = null  # ItemData for the item instance
 var setup_pending: bool = false
 
 func _ready() -> void:
@@ -20,9 +21,10 @@ func _ready() -> void:
         _update_display()
 
 ## Setup the tooltip with item data
-func setup_tooltip(item: Item, count: int = 1) -> void:
+func setup_tooltip(item: Item, count: int = 1, item_data = null) -> void:
     current_item = item
     current_count = count
+    current_item_data = item_data
 
     if not item:
         hide()
@@ -165,4 +167,5 @@ func _update_stats() -> void:
 func _update_gold_value() -> void:
     if not sell_value_label:
         return
-    sell_value_label.text = "🪙 Value: %d gold" % current_item.purchase_value
+    var sell_value = Item.calculate_sell_value(current_item, current_item_data)
+    sell_value_label.text = "🪙 Sell Value: %d gold" % sell_value

@@ -9,7 +9,7 @@ signal shop_closed()
 @onready var player_items_list: VBoxContainer = %PlayerItemsList
 @onready var close_btn: Button = %CloseBtn
 
-var shop_item_row_scene = preload("res://uielements/shop_item/ShopItemRow.tscn")
+var inventory_row_scene = preload("res://uielements/inventory/InventoryRow.tscn")
 var shopkeeper_name: String
 var items_for_sale: Array[Item] = []
 var shopkeeper_gold: int = 0
@@ -65,9 +65,9 @@ func _setup_buy_tab() -> void:
     # Add each item for sale
     for item in items_for_sale:
         print("Adding item for sale: %s" % item.name)
-        var item_info = shop_item_row_scene.instantiate()
-        item_info.setup(item, 1, true, shopkeeper_gold < item.purchase_value)
-        item_info.buy_item.connect(_on_buy_item)
+        var item_info = inventory_row_scene.instantiate()
+        item_info.setup_for_shop(item, 1, InventoryRow.DisplayMode.SHOP_BUY, "", null, shopkeeper_gold)
+        item_info.item_bought.connect(_on_buy_item)
         items_for_sale_list.add_child(item_info)
 
 func _setup_sell_tab() -> void:
@@ -87,13 +87,31 @@ func _update_inventory_display() -> void:
         player_items_list.add_child(no_items_label)
         return
 
-    # Add each item in inventory
-    for item in GameState.player.inventory.keys():
-        var quantity = GameState.player.inventory[item]
-        var item_container = shop_item_row_scene.instantiate()
-        item_container.setup(item, quantity, false, shopkeeper_gold < item.get_sell_value())
-        item_container.sell_item.connect(_on_sell_item)
-        player_items_list.add_child(item_container)
+    # Get detailed inventory information including ItemData
+    var inventory_display_info = GameState.player.get_inventory_display_info()
+
+    for stack_info in inventory_display_info:
+        var item = stack_info.item
+        var generic_count = stack_info.generic_count
+
+        # Add generic items (without specific ItemData) as one row
+        if generic_count > 0:
+            var item_container = inventory_row_scene.instantiate()
+            item_container.setup_for_shop(item, generic_count, InventoryRow.DisplayMode.SHOP_SELL, "", null, shopkeeper_gold)
+            item_container.item_sold.connect(_on_sell_item)
+            player_items_list.add_child(item_container)
+
+        # Add each unique instance as separate rows
+        for instance_info in stack_info.unique_instances:
+            var instance_data = instance_info.item_data
+            var display_name = item.name
+            if instance_info.description != "":
+                display_name += " " + instance_info.description
+
+            var item_container = inventory_row_scene.instantiate()
+            item_container.setup_for_shop(item, 1, InventoryRow.DisplayMode.SHOP_SELL, display_name, instance_data, shopkeeper_gold)
+            item_container.item_sold.connect(_on_sell_item)
+            player_items_list.add_child(item_container)
 
 func _on_buy_item(item: Item) -> void:
     if GameState.player.gold >= item.purchase_value:
@@ -105,17 +123,23 @@ func _on_buy_item(item: Item) -> void:
         # Update displays and refresh the buy tab
         _update()
 
-func _on_sell_item(item: Item) -> void:
-    if item in GameState.player.inventory and GameState.player.inventory[item] > 0:
-        var sell_value = item.get_sell_value()
+func _on_sell_item(item: Item, item_data = null) -> void:
+    if GameState.player.has_item(item):
+        var sell_value = Item.calculate_sell_value(item, item_data)
 
         # Check if shopkeeper can afford this item
         if shopkeeper_gold < sell_value:
             LogManager.log_warning("Shopkeeper cannot afford %s (needs %d gold)" % [item.name, sell_value])
             return
 
-        # Complete the transaction
-        GameState.remove_item(item)
+        # Complete the transaction - remove the specific item instance if item_data is provided
+        if item_data:
+            # Remove specific instance using the new method
+            GameState.remove_item_instance(item, item_data)
+        else:
+            # Remove generic item
+            GameState.remove_item(item)
+
         GameState.add_gold(sell_value)
         shopkeeper_gold -= sell_value
         LogManager.log_success("Sold %s for %d gold" % [item.name, sell_value])

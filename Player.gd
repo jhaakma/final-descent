@@ -11,9 +11,10 @@ signal death_fade_start  # Emitted immediately when player dies to start fade ef
 var health_component: HealthComponent
 var gold: int = 0
 
-# Inventory and equipment
-var inventory: Dictionary[Item, int] = {}
+# Inventory and equipment - using new inventory component
+var inventory: ItemInventoryComponent
 var equipped_weapon: ItemWeapon = null
+var equipped_weapon_data = null  # ItemData instance for the equipped weapon
 
 # Buff system
 var active_buffs: Array[Buff] = []
@@ -30,9 +31,12 @@ const BASE_DEFENSE_WHEN_DEFENDING: int = 2
 
 func _init():
     health_component = HealthComponent.new(20)
+    inventory = preload("res://components/item_inventory_component.gd").new()
     # Connect health component signals to player signals
     health_component.health_changed.connect(_on_health_changed)
     health_component.died.connect(_on_health_component_died)
+    # Connect inventory signals
+    inventory.inventory_changed.connect(_on_inventory_changed)
     reset()
 
 # Reset player to starting state
@@ -40,8 +44,10 @@ func reset() -> void:
     if health_component:
         health_component.reset(20)
     gold = 0
-    inventory.clear()
+    if inventory:
+        inventory.clear()
     equipped_weapon = null
+    equipped_weapon_data = null
     active_buffs.clear()
     buff_attack_bonus = 0
     buff_defense_bonus = 0
@@ -105,53 +111,123 @@ func _on_health_component_died() -> void:
             emit_signal("death_with_delay")
         )
 
+# Signal handler for inventory component
+func _on_inventory_changed() -> void:
+    emit_signal("inventory_changed")
+
 # === INVENTORY MANAGEMENT ===
 func add_item(item: Item) -> void:
-    if item in inventory:
-        inventory[item] += 1
-    else:
-        inventory[item] = 1
-    emit_signal("inventory_changed")
+    inventory.add_item(item, 1)
     item.on_pickup()
 
 func remove_item(item: Item) -> void:
-    if item in inventory:
-        inventory[item] -= 1
-        if inventory[item] <= 0:
-            inventory.erase(item)
-        emit_signal("inventory_changed")
-    # Unequip if it's the equipped weapon and there are none left
-    if item == equipped_weapon and item not in inventory:
+    inventory.remove_item(item, 1)
+    # Only unequip if the equipped weapon is generic (no specific item_data)
+    # and there are none left of this item type
+    if item == equipped_weapon and not equipped_weapon_data and not inventory.has_item(item):
         unequip_weapon()
 
+# Remove a specific item instance with ItemData
+func remove_item_instance(item: Item, item_data) -> bool:
+    var success = inventory.remove_item_instance(item, item_data)
+
+    # Unequip if we removed the specific equipped weapon instance
+    if success and item == equipped_weapon and equipped_weapon_data == item_data:
+        unequip_weapon()
+
+    return success
+
 func has_item(item: Item) -> bool:
-    return item in inventory and inventory[item] > 0
+    return inventory.has_item(item)
 
 func get_item_count(item: Item) -> int:
-    return inventory.get(item, 0)
+    return inventory.get_item_count(item)
 
 # === WEAPON MANAGEMENT ===
-func equip_weapon(weapon: ItemWeapon) -> void:
-    equipped_weapon = weapon
-    emit_signal("inventory_changed")  # Refresh inventory display
+func equip_weapon(weapon: ItemWeapon, weapon_data = null) -> void:
+    # Unequip current weapon first if there is one
+    if equipped_weapon:
+        unequip_weapon()
+
+    # Check if we have this weapon in inventory
+    if not inventory.has_item(weapon):
+        return
+
+    if weapon_data:
+        # Equipping a specific instance - remove it from inventory
+        if inventory.take_item_instance(weapon, weapon_data):
+            equipped_weapon = weapon
+            equipped_weapon_data = weapon_data
+            emit_signal("inventory_changed")
+    else:
+        # Equipping a generic item - take one from stack
+        var taken_data = inventory.get_item_stack(weapon).take_one()
+        if taken_data:
+            equipped_weapon = weapon
+            equipped_weapon_data = null  # No ItemData until damaged
+            emit_signal("inventory_changed")
 
 func unequip_weapon() -> void:
-    if equipped_weapon:
-        equipped_weapon = null
-        emit_signal("inventory_changed")  # Refresh inventory display
+    if not equipped_weapon:
+        return
+
+    # Return weapon to inventory based on whether it has unique data
+    if equipped_weapon_data and equipped_weapon_data.is_unique():
+        # Has unique data (damaged/enchanted) - add as instance
+        inventory.add_item_instance(equipped_weapon, equipped_weapon_data)
+    else:
+        # Undamaged - add as generic item
+        inventory.add_item(equipped_weapon, 1)
+
+    # Clear equipped weapon
+    equipped_weapon = null
+    equipped_weapon_data = null
+    emit_signal("inventory_changed")
 
 func get_weapon_damage() -> int:
     if equipped_weapon:
-        return equipped_weapon.damage
+        var base_damage = equipped_weapon.damage
+        if equipped_weapon_data:
+            # Weapon has taken damage, scale by condition
+            var current_condition = equipped_weapon_data.current_condition
+            var condition_ratio = float(current_condition) / float(equipped_weapon.condition)
+            return int(base_damage * condition_ratio)
+        else:
+            # Weapon is undamaged, return full damage
+            return base_damage
     return 0
 
 func get_weapon_name() -> String:
-    if equipped_weapon:
-        return equipped_weapon.name
-    return ""
+    return equipped_weapon.name
 
 func has_weapon_equipped() -> bool:
     return equipped_weapon != null
+
+# Get current weapon condition information
+func get_weapon_condition() -> Dictionary:
+    if equipped_weapon:
+        if equipped_weapon_data:
+            # Weapon has condition data
+            var current_condition = equipped_weapon_data.current_condition
+            var max_condition = equipped_weapon.condition
+            return {
+                "current": current_condition,
+                "max": max_condition,
+                "percentage": float(current_condition) / float(max_condition),
+                "is_damaged": current_condition < max_condition,
+                "is_broken": current_condition <= 0
+            }
+        else:
+            # Weapon is undamaged
+            var max_condition = equipped_weapon.condition
+            return {
+                "current": max_condition,
+                "max": max_condition,
+                "percentage": 1.0,
+                "is_damaged": false,
+                "is_broken": false
+            }
+    return {"current": 0, "max": 0, "percentage": 0.0, "is_damaged": false, "is_broken": true}
 
 # === BUFF MANAGEMENT ===
 func add_buff(buff: Buff) -> void:
@@ -252,6 +328,33 @@ func calculate_attack_damage() -> int:
     var buff_dmg = get_total_attack_bonus()
     return base_dmg + weapon_dmg + buff_dmg
 
+# Reduce weapon condition after attack - call this after damage logging
+func reduce_weapon_condition() -> void:
+    if not equipped_weapon:
+        return
+
+    # Create ItemData if it doesn't exist yet (first damage)
+    if not equipped_weapon_data:
+        equipped_weapon_data = preload("res://components/item_data.gd").new()
+        equipped_weapon_data.current_condition = equipped_weapon.condition
+
+    var current_condition = equipped_weapon_data.current_condition
+    current_condition -= 1
+    equipped_weapon_data.current_condition = current_condition
+
+    # Emit signal to update UI immediately when weapon condition changes
+    emit_signal("inventory_changed")
+
+    # Check if weapon is destroyed
+    if current_condition <= 0:
+        var weapon_name = equipped_weapon.name
+        LogManager.log_warning("%s has broken and is destroyed!" % weapon_name)
+        # Destroy the weapon (don't return it to inventory)
+        equipped_weapon = null
+        equipped_weapon_data = null
+        # Emit signal again to update UI when weapon is destroyed
+        emit_signal("inventory_changed")
+
 func calculate_defend_bonus() -> int:
     return BASE_DEFENSE_WHEN_DEFENDING
 
@@ -277,3 +380,30 @@ func get_total_attack_display() -> String:
     var min_damage = BASE_ATTACK_MIN + bonus
     var max_damage = BASE_ATTACK_MAX + bonus
     return "%d-%d" % [min_damage, max_damage]
+
+# === INVENTORY COMPATIBILITY METHODS ===
+# These provide compatibility with systems that expect the old inventory format
+
+# Get inventory as Dictionary for compatibility with existing systems
+func get_inventory_dict() -> Dictionary:
+    return inventory.get_legacy_inventory()
+
+# Get detailed inventory information for UI display
+func get_inventory_display_info() -> Array:
+    return inventory.get_inventory_display_info()# Get all items in inventory
+func get_all_inventory_items() -> Array[Item]:
+    return inventory.get_all_items()
+
+# Add item with instance data (for items with condition damage, enchantments, etc.)
+func add_item_with_data(item: Item, item_data = null) -> void:
+    inventory.add_item_instance(item, item_data)
+    if item_data == null:
+        item.on_pickup()
+
+# Take items and get their ItemData instances
+func take_items(item: Item, amount: int = 1) -> Array:
+    var taken_items = inventory.take_items(item, amount)
+    # Unequip if it's the equipped weapon and there are none left
+    if item == equipped_weapon and not inventory.has_item(item):
+        unequip_weapon()
+    return taken_items

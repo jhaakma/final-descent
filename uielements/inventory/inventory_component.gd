@@ -5,6 +5,9 @@ class_name InventoryComponent extends Node
 ## This component manages the inventory list, item selection, and item usage.
 ## It encapsulates all inventory-related functionality to promote single responsibility
 ## and componentization as per the project guidelines.
+##
+## Updated to work with the new ItemInventoryComponent system that supports
+## ItemStacks with instance data for items like weapons with condition damage.
 
 signal item_used
 signal inventory_updated
@@ -48,29 +51,73 @@ func _refresh_inventory() -> void:
     inventory_rows.clear()
     selected_item = null
 
-    # Prepare inventory items, sort by name, equipped item first
-    var inventory_items := []
-    var equipped_item := GameState.player.equipped_weapon
+    # Get detailed inventory information from the new system
+    var inventory_display_info = GameState.player.get_inventory_display_info()
+    var equipped_weapon = GameState.player.equipped_weapon
+    var equipped_weapon_data = GameState.player.equipped_weapon_data
 
-    for item in GameState.player.inventory.keys():
-        inventory_items.append(item)
+    # Collect all display entries (stacks + individual instances)
+    var display_entries = []
 
-    inventory_items.sort_custom(func(a, b):
-        # Equipped item comes first
-        if a == equipped_item:
+    # Add equipped weapon as separate entry (it's not in inventory anymore)
+    if equipped_weapon:
+        var weapon_description = ""
+        if equipped_weapon_data:
+            weapon_description = equipped_weapon_data.get_instance_description()
+
+        display_entries.append({
+            "item": equipped_weapon,
+            "count": 1,
+            "is_stack": false,
+            "is_equipped": true,
+            "instance_data": equipped_weapon_data,
+            "description_suffix": weapon_description
+        })
+
+    for stack_info in inventory_display_info:
+        var item = stack_info.item
+
+        # Add individual unique instances (no longer checking for equipped since it's separate)
+        for instance_info in stack_info.unique_instances:
+            display_entries.append({
+                "item": item,
+                "count": 1,
+                "is_stack": false,
+                "is_equipped": false,
+                "instance_data": instance_info.item_data,
+                "description_suffix": instance_info.description
+            })
+
+        # Add stack entry if there are available items
+        if stack_info.generic_count > 0:
+            display_entries.append({
+                "item": item,
+                "count": stack_info.generic_count,
+                "is_stack": true,
+                "is_equipped": false,
+                "instance_data": null,
+                "description_suffix": ""
+            })    # Sort entries: equipped first, then by name
+    display_entries.sort_custom(func(a, b):
+        if a.is_equipped and not b.is_equipped:
             return true
-        if b == equipped_item:
+        if b.is_equipped and not a.is_equipped:
             return false
-        return a.name < b.name
+        return a.item.name < b.item.name
     )
 
-    # Create new inventory rows
-    for item in inventory_items:
-        var count = GameState.player.inventory[item]
+    # Create inventory rows for each display entry
+    for entry in display_entries:
         var row = INVENTORY_ROW_SCENE.instantiate() as InventoryRow
-
         inventory_list.add_child(row)
-        row.setup(item, count, is_combat_disabled)
+
+        # Setup the row with appropriate display name
+        var display_name = entry.item.name
+        if entry.description_suffix:
+            display_name += " " + entry.description_suffix
+
+        # Use a modified setup that handles the display name
+        row.setup_with_custom_name(entry.item, entry.count, is_combat_disabled, display_name, entry.instance_data, entry.is_equipped)
 
         # Connect signals
         row.item_selected.connect(_on_item_selected)
@@ -87,15 +134,18 @@ func _on_item_selected(item: Item) -> void:
     for row in inventory_rows:
         row.set_selected(row.item_resource == selected_item)
 
-func _on_item_used(item: Item) -> void:
+func _on_item_used(item: Item, item_data) -> void:
     if item is ItemWeapon:
-        # Weapons can be equipped/unequipped even during combat
-        if GameState.player.equipped_weapon == item:
-            # Unequip the weapon
-            GameState.unequip_weapon()
+        # Check if this specific instance is equipped
+        var is_this_equipped = (GameState.player.equipped_weapon == item and
+                               GameState.player.equipped_weapon_data == item_data)
+
+        if is_this_equipped:
+            # Unequip the current weapon
+            GameState.player.unequip_weapon()
         else:
-            # Equip the weapon (this will automatically unequip any current weapon)
-            GameState.equip_weapon(item)
+            # Equip this weapon instance (either specific or from generic stack)
+            GameState.player.equip_weapon(item, item_data)
     else:
         item.use()
         _refresh_inventory()

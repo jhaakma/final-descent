@@ -43,6 +43,9 @@ func add_item(item: Item) -> void:
 func remove_item(item: Item) -> void:
     player.remove_item(item)
 
+func remove_item_instance(item: Item, item_data) -> bool:
+    return player.remove_item_instance(item, item_data)
+
 func heal(amount: int) -> void:
     player.heal(amount)
 
