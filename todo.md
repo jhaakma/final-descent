@@ -15,6 +15,9 @@ integrations:
 ## ItemPick
 - Fix to use count value
 
+## Options Menu
+- Clear High Scores
+
 ## Combat Enhancements
 - Status effects
     - Stun - skip next turn

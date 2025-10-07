@@ -57,9 +57,7 @@ func next_floor() -> void:
     current_floor += 1
 
     # Process both buffs and status effects when entering a new room
-    var expired_buffs = player.process_buff_turns()
-    for buff in expired_buffs:
-        LogManager.log_warning("Buff expired: %s" % buff.name)
+    player.process_buff_turns()
 
     # Process status effects and apply their effects
     var status_results = process_player_status_effects()
