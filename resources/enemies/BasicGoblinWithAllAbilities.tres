@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=6 format=3 uid="uid://bqp8v7lvxkmwb"]
+
+[ext_resource type="Script" uid="uid://bkhqo7pjlc7bi" path="res://abilities/Ability.gd" id="1_4xr8c"]
+[ext_resource type="Script" uid="uid://b4y5n724vd0ph" path="res://enemies/enemy_resource.gd" id="1_enemy_resource"]
+[ext_resource type="Resource" path="res://resources/abilities/BasicAttack.tres" id="2_basic_attack"]
+[ext_resource type="Resource" path="res://resources/abilities/BasicDefend.tres" id="3_basic_defend"]
+[ext_resource type="Resource" path="res://resources/abilities/BasicFlee.tres" id="4_basic_flee"]
+
+[resource]
+script = ExtResource("1_enemy_resource")
+abilities = Array[ExtResource("1_4xr8c")]([ExtResource("2_basic_attack"), ExtResource("3_basic_defend"), ExtResource("4_basic_flee")])
+name = "Basic Goblin"
+max_hp = 12
+attack = 3
+avoid_chance = 0.5

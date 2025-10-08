@@ -12,8 +12,7 @@ max_stacks = 5
 
 [resource]
 script = ExtResource("2_lhenj")
-effect = SubResource("RegenerationEffect_1")
+status_effect = SubResource("RegenerationEffect_1")
 name = "Regeneration Potion"
 description = "A potion that provides healing over time."
-consumable = true
 purchase_value = 25

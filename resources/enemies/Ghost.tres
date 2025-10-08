@@ -1,11 +1,13 @@
-[gd_resource type="Resource" script_class="EnemyResource" load_steps=9 format=3 uid="uid://cc0x7rr8ri1m0"]
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=11 format=3 uid="uid://cc0x7rr8ri1m0"]
 
+[ext_resource type="Script" uid="uid://bkhqo7pjlc7bi" path="res://abilities/Ability.gd" id="1_7ig88"]
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://loot/loot_pick.gd" id="1_ru244"]
 [ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://items/Item.gd" id="2_wv6l3"]
+[ext_resource type="Resource" path="res://resources/abilities/BasicAttack.tres" id="2_x8mbl"]
+[ext_resource type="Resource" path="res://resources/abilities/BasicDefend.tres" id="3_ok3oy"]
 [ext_resource type="Resource" uid="uid://2s77tota5kam" path="res://resources/items/potions/HealthPotionSmall.tres" id="3_x1p5v"]
 [ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://loot/loot_component.gd" id="4_7ig88"]
 [ext_resource type="Script" uid="uid://b4y5n724vd0ph" path="res://enemies/enemy_resource.gd" id="5_x8mbl"]
-[ext_resource type="Script" uid="uid://ds3csuhxyytgv" path="res://attacks/special_attack.gd" id="6_ok3oy"]
 
 [sub_resource type="Resource" id="Resource_vnjkq"]
 script = ExtResource("1_ru244")
@@ -25,7 +27,7 @@ metadata/_custom_type_script = "uid://lj0e532l0dyu"
 
 [resource]
 script = ExtResource("5_x8mbl")
-special_attacks = Array[ExtResource("6_ok3oy")]([])
+abilities = Array[ExtResource("1_7ig88")]([ExtResource("2_x8mbl"), ExtResource("3_ok3oy")])
 name = "Vengeful Spirit"
 max_hp = 14
 attack = 4

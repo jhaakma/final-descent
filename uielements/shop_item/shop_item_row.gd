@@ -1,7 +1,7 @@
 class_name ShopItemRow extends VBoxContainer
 
 signal buy_item(item: Item)
-signal sell_item(item: Item, item_data)
+signal sell_item(item: Item, item_data: ItemData)
 
 @onready var item_name_label: Label = %ItemName
 @onready var item_desc_label: Label = %ItemDescription

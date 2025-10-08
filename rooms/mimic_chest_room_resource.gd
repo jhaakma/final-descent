@@ -6,7 +6,7 @@ func _init():
     cleared_by_default = true
 
 func build_actions(_actions_grid: GridContainer, _room_screen: RoomScreen) -> void:
-    add_action_button(_actions_grid, "Open Chest", _on_open_chest.bind(_room_screen))
+    add_action_button(_actions_grid, ActionButton.new("Open Chest", "This chest looks suspicious..."), _on_open_chest.bind(_room_screen))
 
 func _on_open_chest(room_screen: RoomScreen) -> void:
     # Instead of giving loot, trigger combat with the mimic

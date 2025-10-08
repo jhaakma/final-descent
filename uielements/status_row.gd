@@ -9,25 +9,14 @@ func _ready() -> void:
     custom_minimum_size = Vector2(200, 20)
     size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
-# Initialize the StatusRow with either a Buff or StatusEffect
-func initialize_with_buff(buff: Buff) -> void:
-    var color = Buff.EffectColorMap[buff.effect_color]
-    var display_text = "[color=%s]%s (%d turns)[/color]" % [color, buff.name, buff.remaining_duration]
-    print("Initializing StatusRow with buff: %s" % display_text)
-
-    bbcode_enabled = true
-    clear()
-    append_text(display_text)
-    tooltip_text = buff.description
-    print("StatusRow text set, visible: %s, size: %s" % [visible, size])
-
 # Initialize the StatusRow with a StatusEffect
 func initialize_with_status_effect(effect: StatusEffect) -> void:
-    var color = StatusEffect.EffectTypeMap[effect.effect_type]
+    var color: String = StatusEffect.EffectTypeMap[effect.effect_type]
     var display_text: String
 
     if effect is TimedEffect:
-        display_text = "[color=%s]%s (%d turns)[/color]" % [color, effect.effect_name, effect.remaining_turns]
+        var timed_effect := effect as TimedEffect
+        display_text = "[color=%s]%s (%d turns)[/color]" % [color, effect.effect_name, timed_effect.remaining_turns]
     else:
         display_text = "[color=%s]%s[/color]" % [color, effect.effect_name]
 

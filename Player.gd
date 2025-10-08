@@ -1,37 +1,31 @@
 # Player.gd
-class_name Player extends RefCounted
+class_name Player extends CombatEntity
+
+var name: String = "Player"
 
 signal stats_changed
 signal inventory_changed
-signal buffs_changed
 signal death_with_delay  # Emitted when player dies, with delay for UI to show 0 HP
 signal death_fade_start  # Emitted immediately when player dies to start fade effect
 
 # Core stats
-var health_component: HealthComponent
 var gold: int = 0
 
 # Inventory and equipment - using new inventory component
 var inventory: ItemInventoryComponent
 var equipped_weapon: ItemWeapon = null
-var equipped_weapon_data = null  # ItemData instance for the equipped weapon
-
-# Buff system
-var active_buffs: Array[Buff] = []
-var buff_attack_bonus: int = 0
-var buff_defense_bonus: int = 0
-
-# Status effects
-var status_effect_component: StatusEffectComponent = null
+var equipped_weapon_data :ItemData = null  # ItemData instance for the equipped weapon
 
 # Constants for combat calculations
 const BASE_ATTACK_MIN: int = 2
 const BASE_ATTACK_MAX: int = 5  # This gives 2-5 damage (2 + randi() % 4 gives 2-5)
-const BASE_DEFENSE_WHEN_DEFENDING: int = 2
 
-func _init():
-    health_component = HealthComponent.new(20)
+func _init() -> void:
+    # Initialize base combat entity with starting health
+    _init_combat_entity(20)
+
     inventory = preload("res://components/item_inventory_component.gd").new()
+
     # Connect health component signals to player signals
     health_component.health_changed.connect(_on_health_changed)
     health_component.died.connect(_on_health_component_died)
@@ -48,18 +42,15 @@ func reset() -> void:
         inventory.clear()
     equipped_weapon = null
     equipped_weapon_data = null
-    active_buffs.clear()
-    buff_attack_bonus = 0
-    buff_defense_bonus = 0
 
-    # Initialize status effect manager
-    if status_effect_component:
-        status_effect_component.queue_free()
-    status_effect_component = StatusEffectComponent.new()
+    # Clear status effects using inherited component
+    clear_all_status_effects()
 
     emit_signal("stats_changed")
     emit_signal("inventory_changed")
-    emit_signal("buffs_changed")
+
+func get_name() -> String:
+    return name
 
 # === GOLD MANAGEMENT ===
 func has_gold(amount: int) -> bool:
@@ -77,25 +68,28 @@ func spend_gold(amount: int) -> bool:
     return false
 
 # === HEALTH MANAGEMENT ===
-func heal(amount: int) -> void:
-    health_component.heal(amount)
+func heal(amount: int) -> int:
+    return health_component.heal(amount)
 
 func take_damage(amount: int) -> int:
-    var defense_bonus = get_total_defense_bonus()
-    return health_component.take_damage(amount, defense_bonus)
-
-func is_alive() -> bool:
-    return health_component.is_alive()
+    var defense_bonus := get_total_defense_bonus()
+    # Use unified damage calculation through combat actor
+    var final_damage: int = calculate_incoming_damage(max(1, amount - defense_bonus))
+    return health_component.take_damage(final_damage)
 
 # Health component getters for compatibility
 func get_hp() -> int:
-    return health_component.get_current_hp()
+    return get_current_hp()
 
-func get_max_hp() -> int:
-    return health_component.get_max_hp()
+func get_current_hp() -> int:
+    return health_component.get_current_hp()
 
 func set_max_hp(new_max_hp: int) -> void:
     health_component.set_max_hp(new_max_hp)
+
+func get_max_hp() -> int:
+    # Base max HP plus bonuses from status effects
+    return health_component.get_max_hp() + get_total_max_hp_bonus()
 
 # Signal handlers for health component
 func _on_health_changed(_current_hp: int, _max_hp: int) -> void:
@@ -105,9 +99,9 @@ func _on_health_component_died() -> void:
     # Start fade effect immediately
     emit_signal("death_fade_start")
     # Use a timer to delay the death signal so UI can show 0 HP and fade
-    var tree = Engine.get_main_loop() as SceneTree
+    var tree := Engine.get_main_loop() as SceneTree
     if tree:
-        tree.create_timer(1.0).timeout.connect(func():  # Increased to 2.5s for fade + delay
+        tree.create_timer(1.0).timeout.connect(func()-> void:  # Increased to 2.5s for fade + delay
             emit_signal("death_with_delay")
         )
 
@@ -128,8 +122,8 @@ func remove_item(item: Item) -> void:
         unequip_weapon()
 
 # Remove a specific item instance with ItemData
-func remove_item_instance(item: Item, item_data) -> bool:
-    var success = inventory.remove_item_instance(item, item_data)
+func remove_item_instance(item: Item, item_data: ItemData) -> bool:
+    var success := inventory.remove_item_instance(item, item_data)
 
     # Unequip if we removed the specific equipped weapon instance
     if success and item == equipped_weapon and equipped_weapon_data == item_data:
@@ -144,7 +138,7 @@ func get_item_count(item: Item) -> int:
     return inventory.get_item_count(item)
 
 # === WEAPON MANAGEMENT ===
-func equip_weapon(weapon: ItemWeapon, weapon_data = null) -> void:
+func equip_weapon(weapon: ItemWeapon, weapon_data: ItemData = null) -> void:
     # Unequip current weapon first if there is one
     if equipped_weapon:
         unequip_weapon()
@@ -161,7 +155,7 @@ func equip_weapon(weapon: ItemWeapon, weapon_data = null) -> void:
             emit_signal("inventory_changed")
     else:
         # Equipping a generic item - take one from stack
-        var taken_data = inventory.get_item_stack(weapon).take_one()
+        var taken_data : ItemData = inventory.get_item_stack(weapon).take_one()
         if taken_data:
             equipped_weapon = weapon
             equipped_weapon_data = null  # No ItemData until damaged
@@ -184,13 +178,16 @@ func unequip_weapon() -> void:
     equipped_weapon_data = null
     emit_signal("inventory_changed")
 
+func get_equipped_weapon() -> ItemInstance:
+    return ItemInstance.new(equipped_weapon, equipped_weapon_data) if equipped_weapon else null
+
 func get_weapon_damage() -> int:
     if equipped_weapon:
-        var base_damage = equipped_weapon.damage
+        var base_damage := equipped_weapon.damage
         if equipped_weapon_data:
             # Weapon has taken damage, scale by condition
-            var current_condition = equipped_weapon_data.current_condition
-            var condition_ratio = float(current_condition) / float(equipped_weapon.condition)
+            var current_condition := equipped_weapon_data.current_condition
+            var condition_ratio := float(current_condition) / float(equipped_weapon.condition)
             return int(base_damage * condition_ratio)
         else:
             # Weapon is undamaged, return full damage
@@ -208,8 +205,8 @@ func get_weapon_condition() -> Dictionary:
     if equipped_weapon:
         if equipped_weapon_data:
             # Weapon has condition data
-            var current_condition = equipped_weapon_data.current_condition
-            var max_condition = equipped_weapon.condition
+            var current_condition := equipped_weapon_data.current_condition
+            var max_condition := equipped_weapon.condition
             return {
                 "current": current_condition,
                 "max": max_condition,
@@ -219,7 +216,7 @@ func get_weapon_condition() -> Dictionary:
             }
         else:
             # Weapon is undamaged
-            var max_condition = equipped_weapon.condition
+            var max_condition := equipped_weapon.condition
             return {
                 "current": max_condition,
                 "max": max_condition,
@@ -229,79 +226,48 @@ func get_weapon_condition() -> Dictionary:
             }
     return {"current": 0, "max": 0, "percentage": 0.0, "is_damaged": false, "is_broken": true}
 
-# === BUFF MANAGEMENT ===
-func add_buff(buff: Buff) -> void:
-    # Create a copy to avoid modifying the original resource
-    var buff_copy = buff.duplicate()
-    buff_copy.remaining_duration = buff_copy.duration_turns
-    active_buffs.append(buff_copy)
-    buff_copy.apply_effects()
-    emit_signal("buffs_changed")
-    emit_signal("stats_changed")
-
-func remove_buff(buff: Buff) -> void:
-    if buff in active_buffs:
-        buff.remove_effects()
-        active_buffs.erase(buff)
-        emit_signal("buffs_changed")
-        emit_signal("stats_changed")
-
-func process_buff_turns() -> Array[Buff]:
-    var expired_buffs: Array[Buff] = []
-
-    for buff in active_buffs:
-        buff.tick_turn()
-        if buff.is_expired():
-            expired_buffs.append(buff)
-
-    # Remove expired buffs and return them for logging
-    for buff in expired_buffs:
-        remove_buff(buff)
-
-    return expired_buffs
-
 func get_total_attack_bonus() -> int:
-    return buff_attack_bonus
+    var total_bonus: int = 0
 
+    # Add bonuses from status effects - generic approach
+    for effect in status_effect_component.get_all_effects():
+        if effect is StatBoostEffect:
+            total_bonus += (effect as StatBoostEffect).get_attack_bonus()
+
+    return total_bonus
+
+# Now uses status effects only
 func get_total_defense_bonus() -> int:
-    return buff_defense_bonus
+    var total_bonus: int = 0
 
-func add_temporary_defense_bonus(amount: int) -> void:
-    buff_defense_bonus += amount
+    # Add bonuses from status effects - generic approach
+    for effect in status_effect_component.get_all_effects():
+        if effect is StatBoostEffect:
+            total_bonus += (effect as StatBoostEffect).get_defense_bonus()
 
-func remove_temporary_defense_bonus(amount: int) -> void:
-    buff_defense_bonus -= amount
+    return total_bonus
+
+# Get total max HP bonus from status effects
+func get_total_max_hp_bonus() -> int:
+    var total_bonus: int = 0
+
+    # Add bonuses from status effects - generic approach
+    for effect in status_effect_component.get_all_effects():
+        if effect is StatBoostEffect:
+            total_bonus += (effect as StatBoostEffect).get_max_hp_bonus()
+
+    return total_bonus
 
 # === STATUS EFFECT MANAGEMENT ===
+# Override the base method to emit stats_changed signal for UI updates
 func apply_status_effect(effect: StatusEffect) -> void:
-    status_effect_component.apply_effect(effect, self)
+    super.apply_status_effect(effect)
     emit_signal("stats_changed")
 
-func has_status_effect(effect_name: String) -> bool:
-    return status_effect_component.has_effect(effect_name)
-
-func process_status_effects() -> Array[StatusEffectResult]:
-    var results = status_effect_component.process_turn(self)
-
-    # Note: stats_changed signal is automatically emitted by take_damage() and heal()
-    # methods when status effects are applied, so no need to emit it here
-    return results
-
-func get_status_effect_description(effect_name: String) -> String:
-    var status_effect = status_effect_component.get_effect(effect_name)
-    if status_effect:
-        return status_effect.get_description()
-    return ""
-
+# Override the base method to emit stats_changed signal for UI updates
 func remove_status_effect(effect_name: String) -> void:
-    status_effect_component.remove_effect(effect_name)
+    super.remove_status_effect(effect_name)
     emit_signal("stats_changed")
-
-func clear_all_status_effects() -> Array[StatusEffect]:
-    var removed_effects = status_effect_component.get_all_effects().duplicate()
-    status_effect_component.clear_all_effects()
-    emit_signal("stats_changed")
-    return removed_effects
 
 func clear_all_negative_status_effects() -> Array[StatusEffect]:
     var removed_effects: Array[StatusEffect] = []
@@ -313,19 +279,11 @@ func clear_all_negative_status_effects() -> Array[StatusEffect]:
         emit_signal("stats_changed")
     return removed_effects
 
-# Get descriptions of all active status effects
-func get_status_effects_description() -> String:
-    return status_effect_component.get_effects_description()
-
-# Get all active status effects
-func get_all_status_effects() -> Array[StatusEffect]:
-    return status_effect_component.get_all_effects()
-
 # === COMBAT CALCULATIONS ===
 func calculate_attack_damage() -> int:
-    var base_dmg = BASE_ATTACK_MIN + randi() % (BASE_ATTACK_MAX - BASE_ATTACK_MIN + 1)
-    var weapon_dmg = get_weapon_damage()
-    var buff_dmg = get_total_attack_bonus()
+    var base_dmg := BASE_ATTACK_MIN + randi() % (BASE_ATTACK_MAX - BASE_ATTACK_MIN + 1)
+    var weapon_dmg := get_weapon_damage()
+    var buff_dmg := get_total_attack_bonus()
     return base_dmg + weapon_dmg + buff_dmg
 
 # Reduce weapon condition after attack - call this after damage logging
@@ -338,7 +296,7 @@ func reduce_weapon_condition() -> void:
         equipped_weapon_data = preload("res://components/item_data.gd").new()
         equipped_weapon_data.current_condition = equipped_weapon.condition
 
-    var current_condition = equipped_weapon_data.current_condition
+    var current_condition := equipped_weapon_data.current_condition
     current_condition -= 1
     equipped_weapon_data.current_condition = current_condition
 
@@ -347,16 +305,13 @@ func reduce_weapon_condition() -> void:
 
     # Check if weapon is destroyed
     if current_condition <= 0:
-        var weapon_name = equipped_weapon.name
+        var weapon_name := equipped_weapon.name
         LogManager.log_warning("%s has broken and is destroyed!" % weapon_name)
         # Destroy the weapon (don't return it to inventory)
         equipped_weapon = null
         equipped_weapon_data = null
         # Emit signal again to update UI when weapon is destroyed
         emit_signal("inventory_changed")
-
-func calculate_defend_bonus() -> int:
-    return BASE_DEFENSE_WHEN_DEFENDING
 
 # === STATUS INFORMATION ===
 func get_status_summary() -> Dictionary:
@@ -366,19 +321,20 @@ func get_status_summary() -> Dictionary:
         "gold": gold,
         "attack_bonus": get_total_attack_bonus(),
         "defense_bonus": get_total_defense_bonus(),
+        "is_defending": get_is_defending(),
         "weapon_damage": get_weapon_damage(),
         "weapon_name": get_weapon_name(),
         "has_weapon": has_weapon_equipped(),
-        "active_buffs_count": active_buffs.size(),
-        "active_buffs": active_buffs.duplicate()
+        "active_status_effects_count": status_effect_component.get_effect_count(),
+        "active_status_effects": status_effect_component.get_all_effects()
     }
 
 func get_total_attack_display() -> String:
     # This shows the total attack power for UI display purposes
     # Base damage average + weapon + buffs
-    var bonus = get_total_attack_bonus() + get_weapon_damage()
-    var min_damage = BASE_ATTACK_MIN + bonus
-    var max_damage = BASE_ATTACK_MAX + bonus
+    var bonus := get_total_attack_bonus() + get_weapon_damage()
+    var min_damage := BASE_ATTACK_MIN + bonus
+    var max_damage := BASE_ATTACK_MAX + bonus
     return "%d-%d" % [min_damage, max_damage]
 
 # === INVENTORY COMPATIBILITY METHODS ===
@@ -395,14 +351,14 @@ func get_all_inventory_items() -> Array[Item]:
     return inventory.get_all_items()
 
 # Add item with instance data (for items with condition damage, enchantments, etc.)
-func add_item_with_data(item: Item, item_data = null) -> void:
+func add_item_with_data(item: Item, item_data: ItemData = null) -> void:
     inventory.add_item_instance(item, item_data)
     if item_data == null:
         item.on_pickup()
 
 # Take items and get their ItemData instances
 func take_items(item: Item, amount: int = 1) -> Array:
-    var taken_items = inventory.take_items(item, amount)
+    var taken_items := inventory.take_items(item, amount)
     # Unequip if it's the equipped weapon and there are none left
     if item == equipped_weapon and not inventory.has_item(item):
         unequip_weapon()

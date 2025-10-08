@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AttackAbility" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://abilities/AttackAbility.gd" id="1_basic_attack"]
+
+[resource]
+script = ExtResource("1_basic_attack")
+ability_name = "Basic Attack"
+description = "A simple attack dealing basic damage."
+use_chance = 1.0
+priority = 10
+base_damage = 0
+damage_variance = 3
+status_effect = null
+effect_chance = 1.0

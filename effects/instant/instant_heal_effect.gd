@@ -8,17 +8,14 @@ func _init(healing: int = 5):
     effect_type = EffectType.POSITIVE
 
 # Override apply_effect to implement instant healing logic
-func apply_effect(target) -> StatusEffectResult:
+func apply_effect(target) -> bool:
     # Apply healing to target
     target.heal(heal_amount)
 
     # Log the healing effect
     LogManager.log_healing("Healed %d HP instantly!" % heal_amount)
 
-    return StatusEffectResult.new(
-        effect_name,
-        "Healed %d HP instantly!" % heal_amount
-    )
+    return true
 
 # Override get_description for instant heal formatting
 func get_description() -> String:

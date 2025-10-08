@@ -134,7 +134,7 @@ func _on_item_selected(item: Item) -> void:
     for row in inventory_rows:
         row.set_selected(row.item_resource == selected_item)
 
-func _on_item_used(item: Item, item_data) -> void:
+func _on_item_used(item: Item, item_data: ItemData) -> void:
     if item is ItemWeapon:
         # Check if this specific instance is equipped
         var is_this_equipped = (GameState.player.equipped_weapon == item and

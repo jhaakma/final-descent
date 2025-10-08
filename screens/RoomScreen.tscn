@@ -1,5 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://c0cpy5xfdy2nb"]
+[gd_scene load_steps=5 format=3 uid="uid://c0cpy5xfdy2nb"]
 
+[ext_resource type="Theme" uid="uid://ch0ahyx502rlq" path="res://theme.tres" id="1_fqbyh"]
 [ext_resource type="Script" uid="uid://bi2w4gopbk7mv" path="res://screens/room_screen.gd" id="1_vxldv"]
 [ext_resource type="PackedScene" uid="uid://d4kfoqy7h5f0d" path="res://uielements/hp_bar.tscn" id="2_71ary"]
 [ext_resource type="PackedScene" uid="uid://cp3266w0ukw23" path="res://uielements/inventory/InventoryComponent.tscn" id="3_vun85"]
@@ -11,6 +12,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_fqbyh")
 script = ExtResource("1_vxldv")
 metadata/_edit_vertical_guides_ = [-118.0]
 
@@ -149,6 +151,7 @@ horizontal_alignment = 1
 
 [node name="RoomDescription" type="Label" parent="MarginContainer/HBoxContainer/CenterPanel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 text = "Room Description goes here."
 horizontal_alignment = 1

@@ -7,7 +7,7 @@ func _init():
     cleared_by_default = true
 
 func build_actions(_actions_grid: GridContainer, _room_screen: RoomScreen) -> void:
-    add_action_button(_actions_grid, "Open Chest", _on_open_chest.bind(_room_screen))
+    add_action_button(_actions_grid, ActionButton.new("Open Chest", "Open the chest to see what's inside"), _on_open_chest.bind(_room_screen))
 
 func _on_open_chest(room_screen: RoomScreen) -> void:
     # Look for a LootComponent node first, fallback to legacy loot_table

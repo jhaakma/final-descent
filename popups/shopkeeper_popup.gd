@@ -123,7 +123,7 @@ func _on_buy_item(item: Item) -> void:
         # Update displays and refresh the buy tab
         _update()
 
-func _on_sell_item(item: Item, item_data = null) -> void:
+func _on_sell_item(item: Item, item_data: ItemData = null) -> void:
     if GameState.player.has_item(item):
         var sell_value = Item.calculate_sell_value(item, item_data)
 

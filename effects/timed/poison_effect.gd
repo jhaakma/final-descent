@@ -9,7 +9,7 @@ func _init(dmg: int = 2, turns: int = 3):
     max_stacks = 3  # Allow poison to stack up to 3 times
 
 # Override apply_effect to implement poison damage logic
-func apply_effect(target) -> StatusEffectResult:
+func apply_effect(target) -> bool:
     var total_damage = int(damage_per_turn * get_stack_multiplier())
 
     # Apply damage to target
@@ -18,10 +18,7 @@ func apply_effect(target) -> StatusEffectResult:
     # Use enhanced logging with target context
     LogManager.log_status_effect_damage(target, effect_name, total_damage)
 
-    return StatusEffectResult.new(
-        effect_name,
-        ""  # Empty message since we already logged it with proper color
-    )
+    return true
 
 # Override get_description for better poison-specific formatting
 func get_description() -> String:

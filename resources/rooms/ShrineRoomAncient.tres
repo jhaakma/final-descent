@@ -6,9 +6,9 @@
 [ext_resource type="Resource" uid="uid://bjvu3fmob3t2k" path="res://resources/items/weapons/Staff.tres" id="4_ewu44"]
 [ext_resource type="Resource" uid="uid://drc4rx6xim1bu" path="res://resources/items/potions/HealthPotionMedium.tres" id="5_ppc15"]
 [ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://loot/loot_component.gd" id="5_stdmh"]
-[ext_resource type="Script" uid="uid://bxldx47l3mk01" path="res://buffs/Buff.gd" id="7_6b3sh"]
-[ext_resource type="Resource" path="res://resources/buffs/BalanceBlessing.tres" id="10_xtw6j"]
-[ext_resource type="Resource" path="res://resources/buffs/VitalityBlessing.tres" id="11_qjogt"]
+[ext_resource type="Script" uid="uid://rglym38nsnwg" path="res://effects/status_effect.gd" id="7_qtild"]
+[ext_resource type="Resource" uid="uid://b4bgygnw5ixi3" path="res://resources/effects/buffs/BlessingAttack.tres" id="8_qtild"]
+[ext_resource type="Resource" uid="uid://d0wo221xl4jj0" path="res://resources/effects/buffs/BlessingDefense.tres" id="9_x288u"]
 [ext_resource type="Script" uid="uid://bnlue0rcqdx6d" path="res://rooms/shrine_room_resource.gd" id="12_4okh8"]
 
 [sub_resource type="Resource" id="Resource_sybd7"]
@@ -41,7 +41,7 @@ script = ExtResource("12_4okh8")
 blessing_cost = 10
 cure_cost = 5
 heal_cost = 8
-possible_buffs = Array[ExtResource("7_6b3sh")]([ExtResource("10_xtw6j"), ExtResource("11_qjogt")])
+possible_status_effects = Array[ExtResource("7_qtild")]([ExtResource("8_qtild"), ExtResource("9_x288u")])
 heal_amount = 10
 loot_component = SubResource("Resource_cwbmv")
 loot_curse_chance = 0.3

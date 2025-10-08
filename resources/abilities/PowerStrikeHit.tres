@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="AttackAbility" load_steps=4 format=3 uid="uid://ci1ppvbx5hkdb"]
+
+[ext_resource type="Script" uid="uid://b3hu85dtjat08" path="res://abilities/AttackAbility.gd" id="1_basic_attack"]
+[ext_resource type="Script" uid="uid://cfj1k6xrdhdm4" path="res://effects/timed/stun_effect.gd" id="2_7g1bl"]
+
+[sub_resource type="Resource" id="Resource_6x3p2"]
+script = ExtResource("2_7g1bl")
+remaining_turns = 2
+stacks = 1
+max_stacks = 1
+effect_name = "Stun"
+metadata/_custom_type_script = "uid://cfj1k6xrdhdm4"
+
+[resource]
+script = ExtResource("1_basic_attack")
+base_damage = 5
+damage_variance = 2
+status_effect = SubResource("Resource_6x3p2")
+effect_chance = 1.0
+ability_name = "Power Strike"
+description = ""
+use_chance = 1.0
+priority = 10

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="FleeAbility" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://abilities/FleeAbility.gd" id="1_flee_ability"]
+
+[resource]
+script = ExtResource("1_flee_ability")
+ability_name = "Flee"
+description = "Attempt to flee from combat."
+use_chance = 1.0
+priority = 20

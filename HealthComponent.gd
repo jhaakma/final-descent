@@ -48,7 +48,7 @@ func heal(amount: int) -> int:
 	if amount <= 0 or current_hp >= max_hp:
 		return 0
 
-	var actual_heal = min(amount, max_hp - current_hp)
+	var actual_heal: int = min(amount, max_hp - current_hp)
 	current_hp += actual_heal
 
 	healed.emit(actual_heal)
@@ -60,8 +60,8 @@ func take_damage(damage: int, defense_bonus_override: int = -1) -> int:
 		return 0
 
 	# Use provided defense bonus or the component's default
-	var effective_defense = defense_bonus_override if defense_bonus_override >= 0 else defense_bonus
-	var reduced_damage = max(1, damage - effective_defense)  # Minimum 1 damage
+	var effective_defense := defense_bonus_override if defense_bonus_override >= 0 else defense_bonus
+	var reduced_damage: int = max(1, damage - effective_defense)  # Minimum 1 damage
 
 	current_hp = max(0, current_hp - reduced_damage)
 
@@ -75,7 +75,7 @@ func take_damage(damage: int, defense_bonus_override: int = -1) -> int:
 	return reduced_damage
 
 func set_hp(new_hp: int) -> void:
-	var old_hp = current_hp
+	var old_hp := current_hp
 	current_hp = clamp(new_hp, 0, max_hp)
 
 	if current_hp != old_hp:

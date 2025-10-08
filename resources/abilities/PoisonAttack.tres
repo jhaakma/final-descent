@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="AttackAbility" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://abilities/AttackAbility.gd" id="1_attack_ability"]
+[ext_resource type="Resource" uid="uid://dvaxva0shp6yy" path="res://resources/effects/PoisonSimple.tres" id="2_poison_effect"]
+
+[resource]
+script = ExtResource("1_attack_ability")
+ability_name = "Poison Attack"
+description = "An attack that poisons the target."
+use_chance = 0.5
+priority = 12
+base_damage = 1
+damage_variance = 2
+status_effect = ExtResource("2_poison_effect")
+effect_chance = 1.0

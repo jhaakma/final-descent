@@ -10,9 +10,8 @@ metadata/_custom_type_script = "uid://g8fqfpwlfdk3"
 
 [resource]
 script = ExtResource("1_m18rj")
-effect = SubResource("Resource_3ty1n")
+status_effect = SubResource("Resource_3ty1n")
 name = "Antidote"
-description = "Cures Poison"
-consumable = true
+description = ""
 purchase_value = 15
 metadata/_custom_type_script = "uid://dikmkr6vyadjj"

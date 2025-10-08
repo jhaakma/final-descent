@@ -6,9 +6,9 @@ class_name InventoryRow extends MarginContainer
 ## and adapts its display and functionality based on the display mode.
 
 signal item_selected(item: Item)
-signal item_used(item: Item, item_data)
+signal item_used(item: Item, item_data: ItemData)
 signal item_bought(item: Item)
-signal item_sold(item: Item, item_data)
+signal item_sold(item: Item, item_data: ItemData)
 
 enum DisplayMode {
     INVENTORY,   # Show Use/Equip buttons
@@ -239,7 +239,7 @@ func _make_custom_tooltip(_for_text: String) -> Control:
     if not item_resource:
         return null
 
-    var tooltip = CUSTOM_TOOLTIP_SCENE.instantiate()
+    var tooltip := CUSTOM_TOOLTIP_SCENE.instantiate() as CustomItemTooltip
     tooltip.setup_tooltip(item_resource, count, item_data)
     return tooltip
 

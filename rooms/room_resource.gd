@@ -18,10 +18,15 @@ func on_room_entered(_room_screen: RoomScreen) -> void:
     pass
 
 # Helper method for subclasses to add action buttons
-func add_action_button(actions_grid: GridContainer, text: String, callback: Callable) -> Button:
+func add_action_button(actions_grid: GridContainer, action_button: ActionButton, callback: Callable) -> Button:
     var button := Button.new()
-    button.text = text
+    button.text = action_button.button_text
     button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+
+    # Set tooltip if provided
+    if action_button.tooltip != "":
+        button.tooltip_text = action_button.tooltip
+
     actions_grid.add_child(button)
     button.pressed.connect(callback)
     return button

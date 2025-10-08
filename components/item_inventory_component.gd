@@ -6,7 +6,7 @@ signal inventory_changed
 signal item_added(item: Item, amount: int)
 signal item_removed(item: Item, amount: int)
 
-var item_stacks: Dictionary = {}  # Item -> ItemStack mapping
+var item_stacks: Dictionary[Item, ItemStack] = {}  # Item -> ItemStack mapping
 var max_slots: int = -1  # -1 means unlimited slots
 
 func _init(max_inventory_slots: int = -1) -> void:
@@ -40,7 +40,7 @@ func add_item(item: Item, amount: int = 1) -> bool:
     return true
 
 # Add an item with specific instance data
-func add_item_instance(item: Item, item_data = null) -> bool:
+func add_item_instance(item: Item, item_data: ItemData = null) -> bool:
     # Check slot limit
     if max_slots > 0 and item not in item_stacks and get_used_slots() >= max_slots:
         return false
@@ -66,7 +66,7 @@ func add_item_instance(item: Item, item_data = null) -> bool:
     return true
 
 # Add an item instance back without changing total count (for returning equipped items)
-func add_item_instance_no_count_change(item: Item, item_data) -> bool:
+func add_item_instance_no_count_change(item: Item, item_data: ItemData) -> bool:
     # Get existing stack (must exist since weapon was taken from it)
     if item not in item_stacks:
         return false
@@ -102,12 +102,12 @@ func remove_item(item: Item, amount: int = 1) -> int:
     return to_remove
 
 # Remove a specific item instance with ItemData
-func remove_item_instance(item: Item, item_data) -> bool:
+func remove_item_instance(item: Item, item_data: ItemData) -> bool:
     if item not in item_stacks:
         return false
 
     var stack: ItemStack = item_stacks[item]
-    var success = stack.remove_instance_by_reference(item_data)
+    var success := stack.remove_instance_by_reference(item_data)
 
     if success:
         # Remove empty stacks
@@ -126,7 +126,7 @@ func take_items(item: Item, amount: int = 1) -> Array:
         return []
 
     var stack: ItemStack = item_stacks[item]
-    var taken_items = stack.remove_any(amount)
+    var taken_items := stack.remove_any(amount)
 
     # Remove empty stacks
     if stack.is_empty():
@@ -140,12 +140,12 @@ func take_items(item: Item, amount: int = 1) -> Array:
     return taken_items
 
 # Take a specific item instance by its ItemData
-func take_item_instance(item: Item, item_data) -> bool:
+func take_item_instance(item: Item, item_data: ItemData) -> bool:
     if item not in item_stacks:
         return false
 
     var stack: ItemStack = item_stacks[item]
-    var success = stack.remove_instance_by_reference(item_data)
+    var success := stack.remove_instance_by_reference(item_data)
 
     if success:
         # Remove empty stacks
@@ -179,14 +179,14 @@ func get_item_stack(item: Item) -> ItemStack:
 # Get all items in inventory
 func get_all_items() -> Array[Item]:
     var items: Array[Item] = []
-    for item in item_stacks.keys():
+    for item: Item in item_stacks.keys():
         items.append(item)
     return items
 
 # Get all item stacks
 func get_all_stacks() -> Array[ItemStack]:
     var stacks: Array[ItemStack] = []
-    for stack in item_stacks.values():
+    for stack: ItemStack in item_stacks.values():
         stacks.append(stack)
     return stacks
 
@@ -212,7 +212,7 @@ func is_empty() -> bool:
 
 # Clear all items from inventory
 func clear() -> void:
-    for stack in item_stacks.values():
+    for stack: ItemStack in item_stacks.values():
         stack.stack_changed.disconnect(_on_stack_changed)
     item_stacks.clear()
     inventory_changed.emit()
@@ -221,9 +221,9 @@ func clear() -> void:
 func get_inventory_display_info() -> Array:
     var display_info: Array = []
 
-    for item in item_stacks.keys():
+    for item: Item in item_stacks.keys():
         var stack: ItemStack = item_stacks[item]
-        var stack_info = stack.get_display_info()
+        var stack_info := stack.get_display_info()
         display_info.append(stack_info)
 
     return display_info
@@ -233,8 +233,8 @@ func merge_from(other_inventory: ItemInventoryComponent) -> Array[Item]:
     var failed_items: Array[Item] = []
 
     for item in other_inventory.get_all_items():
-        var other_stack = other_inventory.get_item_stack(item)
-        var stack_info = other_stack.get_display_info()
+        var other_stack := other_inventory.get_item_stack(item)
+        var stack_info := other_stack.get_display_info()
 
         # Try to add stack count
         if stack_info.stack_count > 0:
@@ -242,7 +242,7 @@ func merge_from(other_inventory: ItemInventoryComponent) -> Array[Item]:
                 failed_items.append(item)
 
         # Try to add each unique instance
-        for instance_info in stack_info.unique_instances:
+        for instance_info: Variant in stack_info.unique_instances:
             if not add_item_instance(item, instance_info.item_data):
                 failed_items.append(item)
 
@@ -251,36 +251,12 @@ func merge_from(other_inventory: ItemInventoryComponent) -> Array[Item]:
 # Get total value of all items in inventory
 func get_total_value() -> int:
     var total: int = 0
-    for item in item_stacks.keys():
-        var count = get_item_count(item)
+    for item: Item in item_stacks.keys():
+        var count := get_item_count(item)
         total += item.purchase_value * count
     return total
 
-# Find all items of a specific type/class
-func find_items_by_type(item_class: String) -> Array[Item]:
-    var found_items: Array[Item] = []
-    for item in item_stacks.keys():
-        if item.get_script() and item.get_script().get_global_name() == item_class:
-            found_items.append(item)
-    return found_items
 
-# === COMPATIBILITY METHODS ===
-# These provide compatibility with the old inventory system
-
-# Get inventory as Dictionary[Item, int] for compatibility
-func get_legacy_inventory() -> Dictionary:
-    var legacy_inv: Dictionary = {}
-    for item in item_stacks.keys():
-        legacy_inv[item] = get_item_count(item)
-    return legacy_inv
-
-# Set inventory from legacy Dictionary[Item, int]
-func set_from_legacy_inventory(legacy_inv: Dictionary) -> void:
-    clear()
-    for item in legacy_inv.keys():
-        var count = legacy_inv[item]
-        if count > 0:
-            add_item(item, count)
 
 # === PRIVATE METHODS ===
 

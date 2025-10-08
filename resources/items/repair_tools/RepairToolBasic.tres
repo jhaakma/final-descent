@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="RepairTool" load_steps=2 format=3 uid="uid://dwqgodsd7t16e"]
+
+[ext_resource type="Script" uid="uid://dpgvhol02aovl" path="res://items/RepairTool.gd" id="1_but3v"]
+
+[resource]
+script = ExtResource("1_but3v")
+repair_amount = 5
+name = "Simple Repair Kit"
+description = ""
+consumable = true
+purchase_value = 10
+metadata/_custom_type_script = "uid://dpgvhol02aovl"

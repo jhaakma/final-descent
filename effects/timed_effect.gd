@@ -4,7 +4,7 @@ class_name TimedEffect extends StatusEffect
 @export var stacks: int = 1  # How many times this effect is applied
 @export var max_stacks: int = 1  # Maximum stacks allowed
 
-func _init(name: String = "", turns: int = 1):
+func _init(name: String = "", turns: int = 1)->void:
     super._init(name)
     remaining_turns = turns
 
@@ -13,9 +13,11 @@ func can_stack_with(other_effect: StatusEffect) -> bool:
     return effect_name == other_effect.effect_name and stacks < max_stacks
 
 # Stack this effect with another (add stacks or refresh duration)
-func stack_with(other_effect: StatusEffect) -> void:
+func stack_with(other_effect: TimedEffect) -> void:
     if can_stack_with(other_effect):
         stacks = min(stacks + other_effect.stacks, max_stacks)
+        # Reset duration to incoming effect's duration when stacking
+        remaining_turns = other_effect.remaining_turns
 
 
 # Get the total magnitude of the effect based on stacks
@@ -32,5 +34,5 @@ func is_expired() -> bool:
 
 # Get descriptive text for UI
 func get_description() -> String:
-    var stack_text = " x%d" % stacks if stacks > 1 else ""
+    var stack_text := " x%d" % stacks if stacks > 1 else ""
     return "%s (%d turns)%s" % [effect_name, remaining_turns, stack_text]

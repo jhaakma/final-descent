@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://dmcfvemajvy2t"]
+[gd_scene load_steps=4 format=3 uid="uid://dmcfvemajvy2t"]
 
 [ext_resource type="Script" uid="uid://c32ydt5uj7uoh" path="res://scenes/main.gd" id="1_elqb8"]
 [ext_resource type="PackedScene" uid="uid://dmyy37gkgwf0f" path="res://screens/TitleScreen.tscn" id="2_rvslj"]
+[ext_resource type="Theme" uid="uid://ch0ahyx502rlq" path="res://theme.tres" id="3_0bbpv"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_elqb8")
@@ -10,6 +11,7 @@ script = ExtResource("1_elqb8")
 unique_name_in_owner = true
 
 [node name="TitleScene" parent="ScreenLayer" instance=ExtResource("2_rvslj")]
+theme = ExtResource("3_0bbpv")
 
 [node name="OverlayLayer" type="CanvasLayer" parent="."]
 

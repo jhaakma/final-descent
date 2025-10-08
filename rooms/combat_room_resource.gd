@@ -6,8 +6,8 @@ var selected_enemy: EnemyResource = null
 
 func build_actions(_actions_grid: GridContainer, _room_screen: RoomScreen) -> void:
     selected_enemy = enemy_list[GameState.rng.randi_range(0, enemy_list.size() - 1)]
-    add_action_button(_actions_grid, "Fight", _on_fight_pressed.bind(_room_screen))
-    add_action_button(_actions_grid, "Avoid", _on_avoid_pressed.bind(_room_screen))
+    add_action_button(_actions_grid, ActionButton.new("Fight", "Engage in combat with the %s" % selected_enemy.name), _on_fight_pressed.bind(_room_screen))
+    add_action_button(_actions_grid, ActionButton.new("Avoid", "Try to sneak past the enemy (%.0f%% chance)" % (selected_enemy.avoid_chance * 100)), _on_avoid_pressed.bind(_room_screen))
 
 func _on_avoid_pressed(room_screen: RoomScreen) -> void:
     print("Avoid chance: %f" % selected_enemy.avoid_chance)

@@ -41,8 +41,7 @@ func _ready() -> void:
     _load_all_rooms()
 
     GameState.stats_changed.connect(_on_stats_changed)
-    GameState.buffs_changed.connect(_refresh_stats)  # Refresh stats when buffs change
-    GameState.run_ended.connect(func(v: bool): emit_signal("run_ended", v))
+    GameState.run_ended.connect(func(v: bool) -> void: emit_signal("run_ended", v))
 
     # Connect inventory component signals
     inventory_component.item_used.connect(_on_item_used)
@@ -61,7 +60,7 @@ func _ready() -> void:
 
     _generate_room()
 
-    next_btn.pressed.connect(func():
+    next_btn.pressed.connect(func() -> void:
         if cleared:
             emit_signal("room_cleared"))
     leave_btn.pressed.connect(_on_leave_run_pressed)
@@ -70,10 +69,10 @@ func _load_all_rooms() -> void:
     """Automatically load all room resources from resources/rooms directory"""
     available_rooms.clear()
 
-    var dir = DirAccess.open("res://resources/rooms/")
+    var dir := DirAccess.open("res://resources/rooms/")
     if dir:
         dir.list_dir_begin()
-        var file_name = dir.get_next()
+        var file_name := dir.get_next()
         var file_names: Array[String] = []
 
         # Collect all .tres files first
@@ -89,8 +88,8 @@ func _load_all_rooms() -> void:
 
         # Load all room resources
         for file in file_names:
-            var resource_path = "res://resources/rooms/" + file
-            var room_resource = load(resource_path) as RoomResource
+            var resource_path := "res://resources/rooms/" + file
+            var room_resource := load(resource_path) as RoomResource
 
             if room_resource:
                 available_rooms.append(room_resource)
@@ -129,27 +128,21 @@ func _refresh_stats() -> void:
     gold_value.text = str(GameState.player.gold)
 
     # Update HP bar tooltip to show buff information
-    var buff_info = ""
-    var attack_bonus = GameState.player.get_total_attack_bonus()
-    var defense_bonus = GameState.player.get_total_defense_bonus()
+    var buff_info := ""
+    var attack_bonus := GameState.player.get_total_attack_bonus()
+    var defense_bonus := GameState.player.get_total_defense_bonus()
 
     if attack_bonus > 0 or defense_bonus > 0:
         buff_info = " (ATK +%d, DEF +%d)" % [attack_bonus, defense_bonus]
 
-    # Add active buff count and tooltip
-    var active_buff_count = GameState.player.active_buffs.size()
-    var hp_tooltip_text = "HP: %d/%d%s" % [GameState.player.get_hp(), GameState.player.get_max_hp(), buff_info]
+    # Add status effects count and tooltip
+    var active_effects := GameState.get_player_status_effects()
+    var hp_tooltip_text := "HP: %d/%d%s" % [GameState.player.get_hp(), GameState.player.get_max_hp(), buff_info]
 
-    if active_buff_count > 0:
-        var buff_text = "\nActive Buffs (%d):" % active_buff_count
-        for buff in GameState.player.active_buffs:
-            buff_text += "\n• %s (%d turns)" % [buff.name, buff.remaining_duration]
-        hp_tooltip_text += buff_text
-
-    # Add status effects
-    var effects_description = GameState.get_player_status_effects_description()
-    if effects_description != "":
-        var effects_text = "\nStatus Effects:\n• %s" % effects_description
+    if active_effects.size() > 0:
+        var effects_text := "\nActive Status Effects (%d):" % active_effects.size()
+        for effect in active_effects:
+            effects_text += "\n• %s" % effect.get_description()
         hp_tooltip_text += effects_text
 
     hp_bar.tooltip_text = hp_tooltip_text
@@ -165,25 +158,15 @@ func _refresh_buffs() -> void:
             buffs_block.remove_child(child)
             child.queue_free()
 
-    var has_content = false
-
-    # Add active buffs
-    if GameState.player.active_buffs.size() > 0:
-        has_content = true
-        print("Adding %d active buffs" % GameState.player.active_buffs.size())
-        for buff in GameState.player.active_buffs:
-            var status_row = StatusRow.new()
-            buffs_block.add_child(status_row)
-            status_row.initialize_with_buff(buff)
-            print("Added buff StatusRow, children count: %d" % buffs_block.get_child_count())
+    var has_content := false
 
     # Add status effects
-    var status_effects = GameState.get_player_status_effects()
+    var status_effects := GameState.get_player_status_effects()
     if status_effects.size() > 0:
         has_content = true
         print("Adding %d status effects" % status_effects.size())
         for effect in status_effects:
-            var status_row = StatusRow.new()
+            var status_row := StatusRow.new()
             buffs_block.add_child(status_row)
             status_row.initialize_with_status_effect(effect)
             print("Added effect StatusRow, children count: %d" % buffs_block.get_child_count())
@@ -192,7 +175,7 @@ func _refresh_buffs() -> void:
     if not has_content:
         print("No buffs or effects, adding 'None' row")
         # Show "None" message when no buffs/effects
-        var none_row = StatusRow.new()
+        var none_row := StatusRow.new()
         buffs_block.add_child(none_row)
         none_row.bbcode_enabled = true
         none_row.clear()
@@ -216,7 +199,7 @@ func _on_inventory_updated() -> void:
 func _calculate_room_weights(valid_rooms: Array[RoomResource]) -> Array[float]:
     var weights: Array[float] = []
     for room in valid_rooms:
-        var base_weight = float(room.weight)
+        var base_weight := float(room.weight)
         # Apply penalty each time this room type appears in recent history
         for recent_room in recent_room_history:
             if recent_room == room:
@@ -237,7 +220,7 @@ func _generate_room() -> void:
     print("Weight penalty: ", weight_penalty)
 
     var adjusted_weights:= _calculate_room_weights(valid_rooms)
-    var total_weight = 0.0
+    var total_weight := 0.0
     for w in adjusted_weights:
         total_weight += w
 
@@ -253,7 +236,6 @@ func _generate_room() -> void:
         current_weight += adjusted_weights[i]
         if random_value <= current_weight:
             current_room = valid_rooms[i]
-            print("Selected room: ", current_room.get_script().get_global_name())
             break
 
     if current_room:
@@ -294,7 +276,7 @@ func _mark_cleared() -> void:
     # Disable all action buttons when room is cleared
     for child in actions_grid.get_children():
         if child is Button:
-            child.disabled = true
+            (child as Button).disabled = true
 
     if not current_room.cleared_by_default:
         LogManager.log_success("Room cleared! Proceed when ready.")
@@ -329,13 +311,13 @@ func _exit_tree() -> void:
 
 func _on_leave_run_pressed() -> void:
     """Show confirmation popup before leaving the run"""
-    var confirmation_popup = load("res://popups/ConfirmationPopup.tscn").instantiate()
+    var confirmation_popup: ConfirmationPopup = (load("res://popups/ConfirmationPopup.tscn") as PackedScene).instantiate()
     add_child(confirmation_popup)
 
     confirmation_popup.show_confirmation("Are you sure you want to leave this run?")
 
     # Connect signals
-    confirmation_popup.confirmed.connect(func():
+    confirmation_popup.confirmed.connect(func() -> void:
         GameState.emit_signal("run_ended", false))
-    confirmation_popup.cancelled.connect(func():
+    confirmation_popup.cancelled.connect(func() -> void:
         pass)  # Do nothing, popup will close automatically

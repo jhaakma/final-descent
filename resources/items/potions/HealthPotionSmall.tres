@@ -10,9 +10,8 @@ metadata/_custom_type_script = "uid://btj1mgjp6gjy1"
 
 [resource]
 script = ExtResource("2_w2lx6")
-effect = SubResource("Resource_43ay8")
+status_effect = SubResource("Resource_43ay8")
 name = "Health Potion (Small)"
 description = ""
-consumable = true
 purchase_value = 15
 metadata/_custom_type_script = "uid://dikmkr6vyadjj"

@@ -4,24 +4,24 @@ extends Node
 
 enum LogColor {
     DEFAULT,
-    DAMAGE,
+    DAMAGE_YOU,
+    DAMAGE_THEM,
     HEALING,
-    POISON,
-    EQUIPMENT,
+    BUFF,
     COMBAT,
     SUCCESS,
     WARNING,
 }
 
-var LogColors = {
-    DEFAULT = "#ff4444",
-    DAMAGE = "#44ff44",
-    HEALING = "#aa44ff",
-    POISON = "#4488ff",
-    EQUIPMENT = "#4682b4",
-    COMBAT = "#ff8844",
-    SUCCESS = "#88ff88", #light green
-    WARNING = "#ffffff",
+var LogColors: Dictionary[LogColor, String]= {
+    LogColor.DEFAULT: "#ffffffff",
+    LogColor.DAMAGE_YOU: "#ff0000ff",
+    LogColor.DAMAGE_THEM: "#b47bffff",
+    LogColor.HEALING: "#a1f7afff",
+    LogColor.BUFF: "#79fbffff",
+    LogColor.COMBAT: "#ff9900ff",
+    LogColor.SUCCESS: "#00ff00ff",
+    LogColor.WARNING: "#fffb00ff",
 }
 
 # Structure to store log entries
@@ -29,7 +29,7 @@ class LogEntry:
     var text: String
     var color: String
 
-    func _init(log_text: String, log_color: String):
+    func _init(log_text: String, log_color: String)->void:
         text = log_text
         color = log_color
 
@@ -49,7 +49,7 @@ func register_log_display(log_label: RichTextLabel) -> void:
 
 # Unregister a log display
 func unregister_log_display(log_label: RichTextLabel) -> void:
-    var index = registered_log_displays.find(log_label)
+    var index := registered_log_displays.find(log_label)
     if index >= 0:
         registered_log_displays.remove_at(index)
 
@@ -60,52 +60,46 @@ func _update_all_displays() -> void:
             restore_log_history(log_label)
         else:
             # Remove invalid references
-            var index = registered_log_displays.find(log_label)
+            var index := registered_log_displays.find(log_label)
             if index >= 0:
                 registered_log_displays.remove_at(index)
 
 # Logging convenience functions for different message types
 func log_message(text: String, color: LogColor = LogColor.DEFAULT) -> void:
-    var color_str = LogColors.get(color, LogColors.DEFAULT)
-    _add_to_history(text, color_str)
+    _add_to_history(text, color)
     _update_all_displays()
 
-# Backward compatibility - this maintains the old single-parameter interface
-func push_log(text: String) -> void:
-    _add_to_history(text, LogColors.DEFAULT)
-    _update_all_displays()
-
-func log_damage(text: String) -> void:
-    _add_to_history(text, LogColors.DAMAGE)
+func log_damage(text: String, you: bool = true) -> void:
+    if you:
+        _add_to_history(text, LogColor.DAMAGE_YOU)
+    else:
+        _add_to_history(text, LogColor.DAMAGE_THEM)
     _update_all_displays()
 
 func log_healing(text: String) -> void:
-    _add_to_history(text, LogColors.HEALING)
+    _add_to_history(text, LogColor.HEALING)
     _update_all_displays()
 
-func log_inflict_status(text: String) -> void:
-    _add_to_history(text, LogColors.POISON)
-    _update_all_displays()
-
-func log_equipment(text: String) -> void:
-    _add_to_history(text, LogColors.EQUIPMENT)
+func log_buff(text: String) -> void:
+    _add_to_history(text, LogColor.BUFF)
     _update_all_displays()
 
 func log_combat(text: String) -> void:
-    _add_to_history(text, LogColors.COMBAT)
+    _add_to_history(text, LogColor.COMBAT)
     _update_all_displays()
 
 func log_success(text: String) -> void:
-    _add_to_history(text, LogColors.SUCCESS)
+    _add_to_history(text, LogColor.SUCCESS)
     _update_all_displays()
 
 func log_warning(text: String) -> void:
-    _add_to_history(text, LogColors.WARNING)
+    _add_to_history(text, LogColor.WARNING)
     _update_all_displays()
 
 # Internal function to add entries to history
-func _add_to_history(text: String, color: String) -> void:
-    var entry = LogEntry.new(text, color)
+func _add_to_history(text: String, color: LogColor) -> void:
+    var color_str: String = LogColors[color]
+    var entry := LogEntry.new(text, color_str)
     log_history.push_front(entry)  # Add new entries to the beginning
 
     # Keep history within limits
@@ -131,22 +125,22 @@ func get_log_history() -> Array[LogEntry]:
 # === ENHANCED COMBAT LOGGING WITH TARGET CONTEXT ===
 
 # Helper function to get display name for any target
-func _get_target_name(target) -> String:
+func _get_target_name(target: Object) -> String:
     if target == null:
         return "Unknown"
     elif target == GameState.player:
         return "you"
     elif target.has_method("get_name"):
-        return target.get_name()
+        return target.call("get_name")
     elif target.has_method("get_display_name"):
-        return target.get_display_name()
+        return target.call("get_display_name")
     else:
         return "Unknown"
 
 # Enhanced combat logging methods with target context
-func log_attack(attacker, target, damage: int, weapon_name: String = "") -> void:
-    var attacker_name = _get_target_name(attacker)
-    var target_name = _get_target_name(target)
+func log_attack(attacker: CombatEntity, target: CombatEntity, damage: int, weapon_name: String = "") -> void:
+    var attacker_name := _get_target_name(attacker)
+    var target_name := _get_target_name(target)
 
     var message: String
     if weapon_name != "":
@@ -160,20 +154,20 @@ func log_attack(attacker, target, damage: int, weapon_name: String = "") -> void
         else:
             message = "%s attacks %s for %d damage!" % [attacker_name.capitalize(), target_name, damage]
 
-    log_combat(message)
+    log_damage(message, target == GameState.player)
 
-func log_special_attack(attacker, target, attack_name: String, damage: int, additional_effects: String = "") -> void:
-    var attacker_name = _get_target_name(attacker)
-    var target_name = _get_target_name(target)
+func log_special_attack(attacker: CombatEntity, target: CombatEntity, attack_name: String, damage: int, additional_effects: String = "") -> void:
+    var attacker_name := _get_target_name(attacker)
+    var target_name := _get_target_name(target)
 
-    var message = "%s uses %s on %s for %d damage!" % [attacker_name.capitalize(), attack_name, target_name, damage]
+    var message := "%s uses %s on %s for %d damage!" % [attacker_name.capitalize(), attack_name, target_name, damage]
     if additional_effects != "":
         message += " " + additional_effects
 
-    log_combat(message)
+    log_damage(message, target == GameState.player)
 
-func log_defend(defender) -> void:
-    var defender_name = _get_target_name(defender)
+func log_defend(defender: CombatEntity) -> void:
+    var defender_name := _get_target_name(defender)
     var message: String
     if defender == GameState.player:
         message = "You brace yourself for defense."
@@ -181,47 +175,53 @@ func log_defend(defender) -> void:
         message = "%s braces for defense!" % defender_name.capitalize()
     log_combat(message)
 
-func log_status_effect_applied(target, effect_name: String, duration: int = 0) -> void:
+func log_status_effect_applied(target: CombatEntity, effect: StatusEffect, duration: int = 0) -> void:
     var message: String
+
+    var positive := effect.effect_type == StatusEffect.EffectType.POSITIVE
+    var effect_verb := "bestowed" if positive else "afflicted"
 
     if target == GameState.player:
         if duration > 0:
-            message = "You are afflicted with %s (%d turns)!" % [effect_name, duration]
+            message = "You are %s with %s (%d turns)!" % [effect_verb, effect.effect_name, duration]
         else:
-            message = "You are afflicted with %s!" % [effect_name]
+            message = "You are %s with %s!" % [effect_verb, effect.effect_name]
     else:
-        var target_name = _get_target_name(target)
+        var target_name := _get_target_name(target)
         if duration > 0:
-            message = "%s is afflicted with %s (%d turns)!" % [target_name.capitalize(), effect_name, duration]
+            message = "%s is %s with %s (%d turns)!" % [target_name.capitalize(), effect_verb, effect.effect_name, duration]
         else:
-            message = "%s is afflicted with %s!" % [target_name.capitalize(), effect_name]
+            message = "%s is %s with %s!" % [target_name.capitalize(), effect_verb, effect.effect_name]
 
-    log_combat(message)
+    if positive:
+        log_buff(message)
+    else:
+        log_warning(message)
 
-func log_status_effect_damage(target, effect_name: String, damage: int) -> void:
+func log_status_effect_damage(target: CombatEntity, effect_name: String, damage: int) -> void:
     var message: String
 
     if target == GameState.player:
         message = "You take %d damage from %s!" % [damage, effect_name]
     else:
-        var target_name = _get_target_name(target)
+        var target_name := _get_target_name(target)
         message = "%s takes %d damage from %s!" % [target_name.capitalize(), damage, effect_name]
 
-    log_inflict_status(message)
+    log_damage(message, target == GameState.player)
 
-func log_status_effect_healing(target, effect_name: String, healing: int) -> void:
+func log_status_effect_healing(target: CombatEntity, effect_name: String, healing: int) -> void:
     var message: String
 
     if target == GameState.player:
         message = "You heal %d HP from %s!" % [healing, effect_name]
     else:
-        var target_name = _get_target_name(target)
+        var target_name := _get_target_name(target)
         message = "%s heals %d HP from %s!" % [target_name.capitalize(), healing, effect_name]
 
     log_healing(message)
 
-func log_status_effect_removed(target, effect_name: String, reason: String = "expired") -> void:
-    var target_name = _get_target_name(target)
+func log_status_effect_removed(target: CombatEntity, effect_name: String, reason: String = "expired") -> void:
+    var target_name := _get_target_name(target)
     var message: String
 
     if target == GameState.player:
@@ -231,20 +231,20 @@ func log_status_effect_removed(target, effect_name: String, reason: String = "ex
 
     log_warning(message)
 
-func log_flee_attempt(attacker, success: bool) -> void:
+func log_flee_attempt(attacker: CombatEntity, success: bool) -> void:
     var message: String
 
     if success:
         if attacker == GameState.player:
             message = "You flee successfully!"
         else:
-            var attacker_name = _get_target_name(attacker)
+            var attacker_name := _get_target_name(attacker)
             message = "%s flees from combat!" % attacker_name.capitalize()
         log_success(message)
     else:
         if attacker == GameState.player:
             message = "You fail to flee!"
         else:
-            var attacker_name = _get_target_name(attacker)
+            var attacker_name := _get_target_name(attacker)
             message = "%s tries to flee but fails!" % attacker_name.capitalize()
         log_warning(message)

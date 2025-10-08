@@ -1,27 +1,33 @@
-class_name StatusEffectComponent extends Node
+class_name StatusEffectComponent extends RefCounted
 
 # Dictionary to store active status effects by name
-var active_effects: Dictionary = {}
+var active_effects: Dictionary[String, StatusEffect] = {}
+# The owning CombatEntity
+var parent_entity: CombatEntity = null
 
 # Signals for status effect events
 signal effect_applied(effect_name: String)
 signal effect_removed(effect_name: String)
-signal effect_processed(effect_name: String, result: StatusEffectResult)
+signal effect_processed(effect_name: String, result: bool)
+
+
+# Initialise with parent CombatEntity
+func _init(parent: CombatEntity) -> void:
+    parent_entity = parent
 
 # Apply a status effect to the entity
-func apply_effect(effect: StatusEffect, target = null) -> void:
+func apply_effect(effect: StatusEffect, effect_target: CombatEntity = null) -> void:
     if not effect:
         push_error("Attempted to apply null status effect")
         return
 
-    var effect_name = effect.effect_name
-    var effect_target = target if target else get_parent()
+    var effect_name := effect.effect_name
 
     # Handle instant effects immediately (non-TimedEffect subclasses)
     if not effect is TimedEffect:
         # Apply the instant effect immediately
         if effect_target:
-            var result = effect.apply_effect(effect_target)
+            var result := effect.apply_effect(effect_target)
             effect_processed.emit(effect_name, result)
             effect_applied.emit(effect_name)
         else:
@@ -30,33 +36,41 @@ func apply_effect(effect: StatusEffect, target = null) -> void:
         return
 
     # Handle timed effects (TimedEffect subclasses)
-    var was_existing = active_effects.has(effect_name)
+    var was_existing := active_effects.has(effect_name)
 
     # Check if we already have this effect
+    var timed_effect := effect as TimedEffect
+
     if was_existing:
-        var existing_effect = active_effects[effect_name]
+        var existing_effect := active_effects[effect_name] as TimedEffect
         if existing_effect.can_stack_with(effect):
             existing_effect.stack_with(effect)
             # No additional logging for stacking, the effect description will show stack count
         else:
-            # Replace with new effect (refresh duration)
-            active_effects[effect_name] = effect
-            var duration = effect.remaining_turns if effect is TimedEffect else 0
-            LogManager.log_status_effect_applied(effect_target, effect_name, duration)
+            # For timed effects that can't stack (at max stacks), refresh duration but keep max stacks
+            if existing_effect.effect_name == timed_effect.effect_name:
+                existing_effect.remaining_turns = timed_effect.remaining_turns
+                var duration := existing_effect.remaining_turns
+                LogManager.log_status_effect_applied(effect_target, existing_effect, duration)
+            else:
+                # Replace with new effect for other cases
+                active_effects[effect_name] = effect
+                var duration := timed_effect.remaining_turns if effect is TimedEffect else 0
+                LogManager.log_status_effect_applied(effect_target, effect, duration)
     else:
         # Add new effect
         active_effects[effect_name] = effect
-        var duration = effect.remaining_turns if effect is TimedEffect else 0
-        LogManager.log_status_effect_applied(effect_target, effect_name, duration)
+        var duration := timed_effect.remaining_turns if effect is TimedEffect else 0
+        LogManager.log_status_effect_applied(effect_target, effect, duration)
 
     effect_applied.emit(effect_name)
 
 # Remove a specific status effect
 func remove_effect(effect_name: String) -> void:
     if active_effects.has(effect_name):
-        var target = get_parent()
-        if target:
-            LogManager.log_status_effect_removed(target, effect_name, "removed")
+
+        if parent_entity:
+            LogManager.log_status_effect_removed(parent_entity, effect_name, "removed")
         active_effects.erase(effect_name)
         effect_removed.emit(effect_name)
 
@@ -64,10 +78,10 @@ func remove_effect(effect_name: String) -> void:
 func has_effect(effect_name: String) -> bool:
     if not active_effects.has(effect_name):
         return false
-    var effect = active_effects[effect_name]
+    var effect := active_effects[effect_name]
     # Only timed effects can expire, instant effects are removed immediately after application
     if effect is TimedEffect:
-        return not effect.is_expired()
+        return not (effect as TimedEffect).is_expired()
     return true
 
 # Get a specific status effect
@@ -77,23 +91,18 @@ func get_effect(effect_name: String) -> StatusEffect:
     return null
 
 # Process all status effects for one turn
-func process_turn(target) -> Array[StatusEffectResult]:
-    var results: Array[StatusEffectResult] = []
+func process_turn(target: CombatEntity) -> void:
     var effects_to_remove: Array[String] = []
-
-    for effect_name in active_effects.keys():
-        var effect = active_effects[effect_name]
-
+    for effect_name: String in active_effects.keys():
+        var effect := active_effects[effect_name]
         # Apply the effect
-        var result = effect.apply_effect(target)
-        results.append(result)
+        var result := effect.apply_effect(target)
 
         # Tick the effect's turn counter if it's a timed effect
         if effect is TimedEffect:
-            effect.tick_turn()
-
+            (effect as TimedEffect).tick_turn()
         # Mark expired effects for removal (only timed effects can expire)
-        if effect is TimedEffect and effect.is_expired():
+        if effect is TimedEffect and (effect as TimedEffect).is_expired():
             effects_to_remove.append(effect_name)
 
         effect_processed.emit(effect_name, result)
@@ -105,15 +114,14 @@ func process_turn(target) -> Array[StatusEffectResult]:
             active_effects.erase(effect_name)
             effect_removed.emit(effect_name)
 
-    return results
 
 # Get all active status effects
 func get_all_effects() -> Array[StatusEffect]:
     var effects: Array[StatusEffect] = []
-    for effect in active_effects.values():
+    for effect: StatusEffect in active_effects.values():
         # Only include effects that haven't expired (for timed effects)
         if effect is TimedEffect:
-            if not effect.is_expired():
+            if not (effect as TimedEffect).is_expired():
                 effects.append(effect)
         else:
             # Non-timed effects are always active if they're in the dictionary
@@ -131,7 +139,7 @@ func get_effects_description() -> String:
 
 # Clear all status effects
 func clear_all_effects() -> void:
-    for effect_name in active_effects.keys():
+    for effect_name: String in active_effects.keys():
         effect_removed.emit(effect_name)
     active_effects.clear()
 

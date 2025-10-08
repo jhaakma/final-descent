@@ -1,8 +1,10 @@
-[gd_resource type="Resource" script_class="EnemyResource" load_steps=16 format=3 uid="uid://cvx4kbxgbv6cq"]
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=17 format=3 uid="uid://cvx4kbxgbv6cq"]
 
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://loot/loot_pick.gd" id="1_2e6c4"]
+[ext_resource type="Script" uid="uid://bkhqo7pjlc7bi" path="res://abilities/Ability.gd" id="1_wym4u"]
 [ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://items/Item.gd" id="2_awbqc"]
 [ext_resource type="Resource" uid="uid://cttpxikq24nx" path="res://resources/items/weapons/Dagger.tres" id="3_ctcoa"]
+[ext_resource type="Resource" uid="uid://bxhc5gwyvpwrd" path="res://resources/abilities/PowerStrike.tres" id="4_1hkbx"]
 [ext_resource type="Resource" uid="uid://clyabowguvivm" path="res://resources/items/weapons/ShortSword.tres" id="4_fntsa"]
 [ext_resource type="Resource" uid="uid://bjvu3fmob3t2k" path="res://resources/items/weapons/Staff.tres" id="5_wym4u"]
 [ext_resource type="Resource" uid="uid://meq6o4s58qqk" path="res://resources/items/weapons/WarAxe.tres" id="6_fcj01"]
@@ -10,7 +12,6 @@
 [ext_resource type="Resource" uid="uid://2s77tota5kam" path="res://resources/items/potions/HealthPotionSmall.tres" id="8_1hkbx"]
 [ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://loot/loot_component.gd" id="9_kyv3g"]
 [ext_resource type="Script" uid="uid://b4y5n724vd0ph" path="res://enemies/enemy_resource.gd" id="10_isltm"]
-[ext_resource type="Script" uid="uid://ds3csuhxyytgv" path="res://attacks/special_attack.gd" id="11_5n110"]
 
 [sub_resource type="Resource" id="Resource_j5rkl"]
 script = ExtResource("1_2e6c4")
@@ -48,7 +49,7 @@ metadata/_custom_type_script = "uid://lj0e532l0dyu"
 
 [resource]
 script = ExtResource("10_isltm")
-special_attacks = Array[ExtResource("11_5n110")]([])
+abilities = Array[ExtResource("1_wym4u")]([ExtResource("4_1hkbx")])
 name = "Mimic"
 max_hp = 25
 attack = 5

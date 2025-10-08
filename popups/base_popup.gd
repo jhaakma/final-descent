@@ -11,26 +11,17 @@ func _center_on_screen() -> void:
 func _do_center() -> void:
     """Actually perform the centering calculation"""
     # Debug: Print current values
-    print("Centering popup - Current size: ", size)
-    print("Centering popup - Current position: ", position)
 
     # Try using the root viewport instead
-    var main_viewport = get_tree().root
+    var main_viewport := get_tree().root
     if main_viewport:
-        var screen_size = main_viewport.get_visible_rect().size
-        print("Screen size: ", screen_size)
-
-        var popup_size = size
-        var new_position = Vector2i(
-            (screen_size.x - popup_size.x) / 2,
-            (screen_size.y - popup_size.y) / 2
+        var screen_size := main_viewport.get_visible_rect().size
+        var popup_size := size
+        var new_position := Vector2i(
+            int((screen_size.x - popup_size.x) / 2),
+            int((screen_size.y - popup_size.y) / 2)
         )
-        print("Calculated new position: ", new_position)
-
         position = new_position
-        print("Position after setting: ", position)
-    else:
-        print("No main viewport found!")
 
 func _center_on_screen_after_frame() -> void:
     """Centers the popup after waiting one frame for layout to complete"""

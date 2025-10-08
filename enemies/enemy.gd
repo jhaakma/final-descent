@@ -1,23 +1,27 @@
 # enemies/Enemy.gd
-class_name Enemy extends RefCounted
+class_name Enemy extends CombatEntity
 
-signal action_performed(action_type: String, value: int, message: String)
+signal action_performed(action_type: Ability.AbilityType, value: int, message: String)
+
+# AI Component for decision making
+@export var ai_component: EnemyAIComponent = null
 
 var resource: EnemyResource
-var health_component: HealthComponent
-var is_defending: bool = false
 var flee_chance: float = 0.3  # Base flee chance
-var planned_action: Callable  # Store the action planned at start of turn
+var planned_ability: Ability = null  # Store the ability planned at start of turn
 
 # Optional inventory for enemies that can carry items
-var inventory_component = null
-
-# Status effects
-var status_effect_component: StatusEffectComponent = StatusEffectComponent.new()
+var inventory_component : ItemInventoryComponent = null
 
 func _init(enemy_resource: EnemyResource) -> void:
     resource = enemy_resource
-    health_component = HealthComponent.new(resource.max_hp)
+
+    # Initialize base combat entity with enemy health
+    _init_combat_entity(resource.max_hp)
+
+    # Initialize with default strategic AI if no AI component is set
+    if ai_component == null:
+        ai_component = RandomAIComponent.new()
 
     # Initialize inventory if this enemy should carry items
     # This can be extended based on enemy type or resource configuration
@@ -26,157 +30,85 @@ func _init(enemy_resource: EnemyResource) -> void:
 func get_name() -> String:
     return resource.name
 
-func get_max_hp() -> int:
-    return health_component.get_max_hp()
+# Set the AI component for this enemy
+func set_ai_component(new_ai_component: EnemyAIComponent) -> void:
+    ai_component = new_ai_component
 
-func get_current_hp() -> int:
-    return health_component.get_current_hp()
+# Get the current AI component
+func get_ai_component() -> EnemyAIComponent:
+    return ai_component
 
 func get_attack() -> int:
     return resource.attack
 
-func is_alive() -> bool:
-    return health_component.is_alive()
-
-func take_damage(damage: int) -> int:
-    return health_component.take_damage(damage)
-
-func heal(amount: int) -> int:
-    return health_component.heal(amount)
-
 # Enemy AI decision making - call this at the start of turn before damage
+# This method delegates to the AI component for intelligent decision making
 func plan_action() -> void:
-    # Simple AI logic - can be expanded later
-    var hp_percentage = health_component.get_hp_percentage()
+    # Get available abilities from the resource
+    var available_abilities: Array[Ability] = get_available_abilities()
+    if available_abilities.is_empty():
+        # If no abilities available, use legacy system
+        planned_ability = null
+        return
 
-    # If health is low, consider fleeing or defending
-    if hp_percentage <= 0.3:
-        print("Enemy health low, considering flee or defend")
-        var action_roll = randf()
-        if action_roll < 0.4:
-            planned_action = _attempt_flee
-        elif action_roll < 0.7:
-            planned_action = _perform_defend
-        else:
-            planned_action = _perform_attack
-    # If health is moderate, sometimes defend
-    elif hp_percentage <= 0.6:
-        if randf() < 0.2:
-            planned_action = _perform_defend
-        else:
-            planned_action = _perform_attack
-    # If health is good, mostly attack
-    else:
-        if randf() < 0.1:
-            planned_action = _perform_defend
-        else:
-            planned_action = _perform_attack
+    # Delegate decision making to the AI component
+    planned_ability = ai_component.plan_action(self, available_abilities, health_component.get_hp_percentage())
 
-# Execute the action that was planned at the start of the turn
+# Execute the ability that was planned at the start of the turn
 func perform_planned_action() -> void:
-    if planned_action != null:
-        planned_action.call()
-    else:
-        # Fallback to attack if no action was planned
-        _perform_attack()
+    # Check if this entity should skip their turn (e.g., due to stun)
+    if process_turn_start():
+        LogManager.log_combat("%s is stunned and skips their turn!" % get_name())
+        return
 
-# Legacy method for backwards compatibility - now just plans and executes immediately
+    if planned_ability != null:
+        planned_ability.execute(self, GameState.player)
+
+        # If the ability is not a multi-turn ability, mark it as completed
+        if not planned_ability.is_executing():
+            planned_ability.current_state = Ability.AbilityState.COMPLETED
+            planned_ability.reset_ability_state()
+            planned_ability = null
+
+
+# Legacy method for backwards compatibility - now checks ability state before planning
 func perform_action() -> void:
-    plan_action()
-    perform_planned_action()
+    # Check if this entity should skip their turn (e.g., due to stun)
+    if process_turn_start():
+        LogManager.log_combat("%s is stunned and skips their turn!" % get_name())
+        return
 
-func _perform_attack() -> void:
-    var special_attacks := resource.get_special_attacks()
-    if special_attacks.size() > 0:
-        var eligible_attacks = []
-        for attack in special_attacks:
-            if attack.can_use(self) and randf() < attack.use_chance:
-                eligible_attacks.append(attack)
-        if eligible_attacks.size() > 0:
-            var chosen_attack = eligible_attacks[randi() % eligible_attacks.size()]
-            _perform_special_attack(chosen_attack)
-            return
+    # Check if we have an ability that's currently executing (multi-turn)
+    if planned_ability != null and planned_ability.is_executing():
+        # Continue the current ability's execution
+        planned_ability.continue_execution()
 
-    # Regular attack
-    var base_damage = resource.attack
-    if is_defending:
-        base_damage = int(base_damage * 0.5)  # Defending reduces next attack
-        is_defending = false
-
-    var damage = base_damage + randi() % 3
-    # Use enhanced logging with target context
-    LogManager.log_attack(self, GameState.player, damage)
-    action_performed.emit("attack", damage, "")
-
-func _perform_special_attack(attack) -> void:
-    var damage = attack.get_damage()
-
-    if is_defending:
-        damage = int(damage * 0.5)
-        is_defending = false
-
-    # Execute the attack with full attacker object for better logging
-    attack.execute_attack(self, GameState.player)
-
-    # Emit the attack signal (message is now handled by LogManager)
-    action_performed.emit("attack", damage, "")
-
-func _perform_defend() -> void:
-    is_defending = true
-    # Use enhanced logging with target context
-    LogManager.log_defend(self)
-    action_performed.emit("defend", 0, "")
-
-func _attempt_flee() -> void:
-    var success = randf() < flee_chance
-    LogManager.log_flee_attempt(self, success)
-
-    if success:
-        action_performed.emit("flee_success", 0, "")
+        # If the ability is now completed, reset it
+        if planned_ability.is_completed():
+            planned_ability.reset_ability_state()
+            planned_ability = null
     else:
-        action_performed.emit("flee_fail", 0, "")
-        # Failed flee attempt still counts as an action, enemy loses their turn
+        # No ongoing ability, plan and execute a new one
+        plan_action()
+        perform_planned_action()
 
+
+# === ABILITY SYSTEM HELPERS ===
+func get_available_abilities() -> Array[Ability]:
+    # Get abilities from the resource, combining new abilities with legacy special attacks
+    var abilities: Array[Ability] = []
+
+    # Add abilities from the new system if available
+    if resource.has_method("get_abilities"):
+        abilities.append_array(resource.get_abilities())
+
+    return abilities
+
+
+# === ABILITY COMPATIBILITY HELPERS ===
 # Calculate damage taken considering defense state
 func calculate_incoming_damage(base_damage: int) -> int:
-    var final_damage = base_damage
-    if is_defending:
-        print("Defending: Halving incoming damage")
-        final_damage = int(base_damage * 0.5)  # Defending halves incoming damage
-        is_defending = false  # Defense is consumed
-    else:
-        print("Not defending: Full damage taken")
-    return final_damage
-
-# === STATUS EFFECT MANAGEMENT ===
-func apply_status_effect(effect: StatusEffect) -> void:
-    status_effect_component.apply_effect(effect, self)
-
-func has_status_effect(effect_name: String) -> bool:
-    return status_effect_component.has_effect(effect_name)
-
-func process_status_effects() -> Array[StatusEffectResult]:
-    return status_effect_component.process_turn(self)
-
-func get_status_effect_description(effect_name: String) -> String:
-    var status_effect = status_effect_component.get_effect(effect_name)
-    if status_effect:
-        return status_effect.get_description()
-    return ""
-
-func remove_status_effect(effect_name: String) -> void:
-    status_effect_component.remove_effect(effect_name)
-
-func clear_all_status_effects() -> void:
-    status_effect_component.clear_all_effects()
-
-# Get descriptions of all active status effects
-func get_status_effects_description() -> String:
-    return status_effect_component.get_effects_description()
-
-# Get all active status effects
-func get_all_status_effects() -> Array[StatusEffect]:
-    return status_effect_component.get_all_effects()
+    return combat_actor.calculate_incoming_damage(base_damage)
 
 # === INVENTORY MANAGEMENT ===
 # Methods for managing enemy inventory and loot
@@ -188,7 +120,7 @@ func add_item(item: Item, amount: int = 1) -> bool:
     return false
 
 # Add an item with specific instance data
-func add_item_with_data(item: Item, item_data = null) -> bool:
+func add_item_with_data(item: Item, item_data: ItemData = null) -> bool:
     if inventory_component:
         return inventory_component.add_item_instance(item, item_data)
     return false
@@ -212,7 +144,7 @@ func get_all_items() -> Array[Item]:
     return []
 
 # Transfer all items to another inventory (used for loot drops)
-func transfer_all_items_to(target_inventory) -> Array[Item]:
+func transfer_all_items_to(target_inventory: ItemInventoryComponent) -> Array[Item]:
     var failed_items: Array[Item] = []
     if inventory_component and target_inventory:
         failed_items = target_inventory.merge_from(inventory_component)

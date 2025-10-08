@@ -6,7 +6,7 @@ class_name ItemData extends RefCounted
 
 # Common instance data that many items might have
 var current_condition: int = 20  # Current condition (item-specific, like weapon durability)
-var enchantments: Dictionary = {}  # String -> variant for enchantment data
+var enchantments: Dictionary[String, Variant] = {}  # String -> variant for enchantment data
 var custom_name: String = ""  # Player-assigned custom name
 var creation_time: float  # When this instance was created
 var custom_properties: Dictionary = {}  # Flexible storage for any custom data
@@ -48,7 +48,7 @@ func repair_condition(amount: int) -> void:
     current_condition = min(20, current_condition + amount)  # Assuming 20 is max condition
 
 # Add an enchantment to this item
-func add_enchantment(enchantment_name: String, enchantment_data) -> void:
+func add_enchantment(enchantment_name: String, enchantment_data: Variant) -> void:
     enchantments[enchantment_name] = enchantment_data
 
 # Remove an enchantment from this item
@@ -60,20 +60,20 @@ func has_enchantment(enchantment_name: String) -> bool:
     return enchantment_name in enchantments
 
 # Get enchantment data
-func get_enchantment(enchantment_name: String):
+func get_enchantment(enchantment_name: String) -> Variant:
     return enchantments.get(enchantment_name)
 
 # Set a custom property
-func set_custom_property(property_name: String, value) -> void:
+func set_custom_property(property_name: String, value: Variant) -> void:
     custom_properties[property_name] = value
 
 # Get a custom property
-func get_custom_property(property_name: String, default_value = null):
+func get_custom_property(property_name: String, default_value: Variant = null) -> Variant:
     return custom_properties.get(property_name, default_value)
 
 # Create a copy of this ItemData
 func duplicate() -> ItemData:
-    var copy = ItemData.new(current_condition)
+    var copy := ItemData.new(current_condition)
     copy.enchantments = enchantments.duplicate()
     copy.custom_name = custom_name
     copy.creation_time = creation_time

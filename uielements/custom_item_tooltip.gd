@@ -9,11 +9,13 @@ class_name CustomItemTooltip extends Control
 @onready var item_type_label: Label = %ItemType
 @onready var description_label: Label = %Description
 @onready var stats_container: VBoxContainer = %StatsContainer
+@onready var stats_separator: HSeparator = %StatsSeparator
+@onready var condition_label: Label = %ConditionLabel
 @onready var sell_value_label: Label = %SellValue
 
 var current_item: Item
 var current_count: int = 1
-var current_item_data = null  # ItemData for the item instance
+var current_item_data: ItemData = null  # ItemData for the item instance
 var setup_pending: bool = false
 
 func _ready() -> void:
@@ -21,7 +23,7 @@ func _ready() -> void:
         _update_display()
 
 ## Setup the tooltip with item data
-func setup_tooltip(item: Item, count: int = 1, item_data = null) -> void:
+func setup_tooltip(item: Item, count: int = 1, item_data: ItemData = null) -> void:
     current_item = item
     current_count = count
     current_item_data = item_data
@@ -50,6 +52,7 @@ func _update_display() -> void:
     _update_item_type()
     _update_description()
     _update_stats()
+    _update_condition_label()
     _update_gold_value()
 
     # Size the tooltip to fit its content
@@ -94,9 +97,7 @@ func _update_item_name() -> void:
 func _update_item_type() -> void:
     if not item_type_label:
         return
-
     var type_text = ""
-
     if current_item is ItemWeapon:
         type_text = "(Weapon"
         if GameState.player.equipped_weapon == current_item:
@@ -104,18 +105,9 @@ func _update_item_type() -> void:
         else:
             type_text += ")"
     elif current_item is ItemPotion:
-        type_text = "(Potion"
-        if current_item.consumable:
-            type_text += " - Consumable)"
-        else:
-            type_text += ")"
-    else:
-        if current_item.consumable:
-            type_text = "(Consumable)"
-        else:
-            type_text = "(Reusable)"
-
-    item_type_label.text = type_text
+        type_text = "(Potion)"
+    if type_text != "":
+        item_type_label.text = type_text
 
 ## Update the description display
 func _update_description() -> void:
@@ -133,9 +125,6 @@ func _update_description() -> void:
 
 ## Update the stats display (weapon damage, potion effects, etc.)
 func _update_stats() -> void:
-    if not stats_container:
-        return
-
     # Clear existing stats
     for child in stats_container.get_children():
         child.queue_free()
@@ -149,19 +138,35 @@ func _update_stats() -> void:
         damage_label.modulate = Color(1.0, 0.8, 0.6)
         stats_container.add_child(damage_label)
 
-    # Add potion-specific stats
-    if current_item is ItemPotion:
-        var potion = current_item as ItemPotion
-        if potion.effect:
-            var effect_label = Label.new()
-            effect_label.text = "✨ Effect: %s" % potion.effect.get_description()
-            effect_label.add_theme_font_size_override("font_size", 10)
-            effect_label.modulate = Color(0.6, 1.0, 0.8)
-            effect_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-            stats_container.add_child(effect_label)
+    # Add stats for items with status effects (e.g., potions, weapons)
+    if "status_effect" in current_item:
+        var effect_label = Label.new()
+        effect_label.text = "✨ Effect: %s" % current_item.status_effect.get_description()
+        effect_label.add_theme_font_size_override("font_size", 10)
+        effect_label.modulate = Color(0.6, 1.0, 0.8)
+        effect_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+        stats_container.add_child(effect_label)
 
     # Show/hide stats container based on content
     stats_container.visible = stats_container.get_child_count() > 0
+    stats_separator.visible = stats_container.visible
+
+func _update_condition_label() -> void:
+    if not condition_label:
+        return
+    if "condition" in current_item:
+        var current_condition = current_item.condition
+        var max_condition = current_item.condition
+
+        # Override with item data if available
+        if current_item_data and "current_condition" in current_item_data:
+            current_condition = current_item_data.current_condition
+
+        condition_label.text = "🛠️ Condition: %d/%d" % [current_condition, max_condition]
+        condition_label.show()
+    else:
+        condition_label.hide()
+
 
 ## Update the sell value display
 func _update_gold_value() -> void:

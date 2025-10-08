@@ -1,7 +1,0 @@
-[gd_resource type="Resource" script_class="VitalityBuff" load_steps=2 format=3]
-
-[ext_resource type="Script" path="res://buffs/vitality_buff.gd" id="1_0"]
-
-[resource]
-script = ExtResource("1_0")
-max_hp_bonus = 5

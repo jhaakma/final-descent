@@ -1,22 +1,17 @@
 # To do
 
+## Create AI component to override enemy AIs
+
 ## Theme
 Create and use a consistent theme
 Remove all unnecessary theme overrides
 
 ## Weapon degradation
-When equipped, weapon splits into new stack
-Has condition that decreases when striking an enemy
-Breaks when condition reaches 0
-integrations:
 - Random shrine event repairs items
 - Blacksmith room to repair or even improve gear
 
 ## ItemPick
 - Fix to use count value
-
-## Options Menu
-- Clear High Scores
 
 ## Combat Enhancements
 - Status effects
