@@ -2,3 +2,7 @@ Single Responsibiility Principle: Each mechanic should be put into its own class
 Componentisation: Use components to encapsulate related functionality
 Use spaces for indentation
 Put UI formatting into the scene file, rather than code
+Use strict typing
+Avoid "stringly typed" code, don't rely on names etc for logic
+Don't do "Legacy" methods, just update everythiung to use new systems
+Don't write readme files for every change

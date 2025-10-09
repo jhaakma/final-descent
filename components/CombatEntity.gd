@@ -84,8 +84,19 @@ func get_all_status_effects() -> Array[StatusEffect]:
 # === TURN MANAGEMENT ===
 # Check if this entity should skip their next turn
 func should_skip_turn() -> bool:
-    # Check if entity has an active stun effect
-    return has_status_effect("Stun")
+    # Check if entity has any active stun effect (any StunEffect instance)
+    var has_stun_effect := _is_stunned()
+    print("DEBUG: should_skip_turn() called - has stun effect: ", has_stun_effect)
+    return has_stun_effect
+
+# Helper method to check for any StunEffect instance regardless of name
+func _is_stunned() -> bool:
+    var all_effects := status_effect_component.get_all_effects()
+    for effect in all_effects:
+        if effect is StunEffect:
+            print("DEBUG: Found StunEffect with name: ", effect.effect_name)
+            return true
+    return false
 
 # Set whether this entity should skip their next turn (kept for compatibility)
 func set_skip_turn(skip: bool) -> void:

@@ -83,8 +83,8 @@ func remove_item(item: Item, amount: int = 1) -> int:
         return 0
 
     var stack: ItemStack = item_stacks[item]
-    var total_available = stack.get_total_count()
-    var to_remove = min(amount, total_available)
+    var total_available: int = stack.get_total_count()
+    var to_remove: int = min(amount, total_available)
 
     if to_remove == 0:
         return 0
@@ -227,6 +227,43 @@ func get_inventory_display_info() -> Array:
         display_info.append(stack_info)
 
     return display_info
+
+# Generate ItemTiles for consistent UI display across all systems
+func get_item_tiles() -> Array[ItemTile]:
+    var tiles: Array[ItemTile] = []
+
+    for item: Item in item_stacks.keys():
+        var stack: ItemStack = item_stacks[item]
+        var stack_info := stack.get_display_info()
+
+        # Add generic items if available
+        if stack_info.generic_count > 0:
+            var tile := ItemTile.new(
+                item,
+                null,  # no item_data for generic items
+                stack_info.generic_count,
+                item.name,
+                "",  # no description suffix for generic items
+                false  # not equipped (equipped items are separate)
+            )
+            tiles.append(tile)
+
+        # Add each unique instance as a separate tile
+        for instance_info: Dictionary in stack_info.unique_instances:
+            var instance_data: ItemData = instance_info.item_data
+            var description: String = instance_info.description
+
+            var tile := ItemTile.new(
+                item,
+                instance_data,
+                1,  # unique instances are always count 1
+                item.name,
+                description,
+                false  # not equipped (equipped items are separate)
+            )
+            tiles.append(tile)
+
+    return tiles
 
 # Merge items from another inventory
 func merge_from(other_inventory: ItemInventoryComponent) -> Array[Item]:

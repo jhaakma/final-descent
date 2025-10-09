@@ -16,5 +16,5 @@ func plan_action(enemy, available_abilities: Array[Ability], _hp_percentage: flo
         # If no abilities can be used, pick any available ability at random
         return available_abilities[randi() % available_abilities.size()]
 
-    # Simply select a random ability considering use_chance and priority
-    return select_random_ability_by_chance(usable_abilities)
+    # Simply select a random ability based on priority weighting
+    return select_random_ability_by_priority(usable_abilities)

@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="InflictingWeapon" load_steps=4 format=3 uid="uid://duwirm5y8y3ir"]
+
+[ext_resource type="Script" uid="uid://de14peynwsgrq" path="res://items/weapons/InflictingWeapon.gd" id="1_l8n24"]
+[ext_resource type="Script" uid="uid://cfj1k6xrdhdm4" path="res://effects/timed/stun_effect.gd" id="2_g164y"]
+
+[sub_resource type="Resource" id="Resource_6krym"]
+script = ExtResource("2_g164y")
+remaining_turns = 1
+stacks = 1
+max_stacks = 1
+effect_name = "Concussion"
+metadata/_custom_type_script = "uid://cfj1k6xrdhdm4"
+
+[resource]
+script = ExtResource("1_l8n24")
+status_effect = SubResource("Resource_6krym")
+effect_apply_chance = 0.25
+damage = 3
+condition = 10
+name = "Warhammer"
+description = ""
+purchase_value = 40
+metadata/_custom_type_script = "uid://de14peynwsgrq"

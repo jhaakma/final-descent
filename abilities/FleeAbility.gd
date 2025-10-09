@@ -3,7 +3,6 @@ class_name FleeAbility extends Ability
 func _init() -> void:
     ability_name = "Flee"
     description = "Attempt to flee from combat."
-    use_chance = 1.0
     priority = 20  # High priority when chosen
 
 func execute(caster, _target = null) -> void:

@@ -8,13 +8,17 @@ func _init():
 
 # Override apply_effect to implement cure logic
 func apply_effect(target) -> bool:
-    if target.has_status_effect(status_to_cure):
-        target.remove_status_effect(status_to_cure)
-        LogManager.log_status_effect_removed(target, status_to_cure, "was cured")
-        return true
+    var target_entity := target as CombatEntity
+    if target_entity:
+        if target_entity.has_status_effect(status_to_cure):
+            target_entity.remove_status_effect(status_to_cure)
+            LogManager.log_status_effect_removed(target_entity, status_to_cure, "was cured")
+            return true
+        else:
+            var target_name: String = "You are" if target_entity == GameState.player else "%s is" % target_entity.get_name()
+            LogManager.log_message("%s not affected by %s." % [target_name, status_to_cure])
+            return false
     else:
-        var target_name = "You are" if target == GameState.player else "%s is" % target.get_name()
-        LogManager.log_message("%s not affected by %s." % [target_name, status_to_cure])
         return false
 
 # Override get_description for better poison-specific formatting

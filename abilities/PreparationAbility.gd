@@ -6,7 +6,6 @@ class_name PreparationAbility extends Ability
 func _init() -> void:
     ability_name = "Preparation"
     description = "Prepare to perform a powerful ability next turn."
-    use_chance = 0.2  # 20% chance by default
     priority = 15  # High priority for strategic abilities
 
 func execute(caster: CombatEntity, target: CombatEntity = null) -> void:

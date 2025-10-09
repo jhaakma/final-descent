@@ -19,11 +19,11 @@ static var pick_methods: Dictionary[PickMethod, Callable] = {
         for i in count:
             if available_items.is_empty():
                 break
-            var index = GameState.rng.randi_range(0, available_items.size() - 1)
+            var index := GameState.rng.randi_range(0, available_items.size() - 1)
             resolved_items.append(available_items[index])
             available_items.remove_at(index)
         return resolved_items,
-    PickMethod.ALL: func(loot_table: Array[Item]) -> Array[Item]:
+    PickMethod.ALL: func(loot_table: Array[Item], _count: int) -> Array[Item]:
         print("Picking all items from loot table.")
         return loot_table.duplicate()
 }

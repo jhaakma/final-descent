@@ -2,7 +2,6 @@ class_name Ability extends Resource
 
 @export var ability_name: String = "Ability"
 @export var description: String = "A basic ability."
-@export var use_chance: float = 1.0  # Chance to select this ability when available (0.0 to 1.0)
 @export var priority: int = 0  # Higher priority abilities are preferred in AI selection
 
 # Types of abilities for categorization and AI decision making

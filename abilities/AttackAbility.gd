@@ -9,7 +9,6 @@ class_name AttackAbility extends Ability
 func _init() -> void:
     ability_name = "Attack"
     description = "A basic attack ability."
-    use_chance = 1.0
     priority = 10
 
 func execute(caster: CombatEntity, target: CombatEntity) -> void:

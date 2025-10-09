@@ -1,11 +1,10 @@
-[gd_resource type="Resource" script_class="DefendAbility" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="DefendAbility" load_steps=2 format=3 uid="uid://d4cfekbrastfr"]
 
-[ext_resource type="Script" path="res://abilities/DefendAbility.gd" id="1_defend"]
+[ext_resource type="Script" uid="uid://1x75hpgrl1li" path="res://abilities/DefendAbility.gd" id="1_defend"]
 
 [resource]
 script = ExtResource("1_defend")
+defense_multiplier = 0.5
 ability_name = "Defend"
 description = "Prepare to defend against incoming attacks, reducing damage by 50%."
-use_chance = 0.3
-priority = 5
-defense_multiplier = 0.5
+priority = 10

@@ -6,7 +6,6 @@ class_name BuffAbility extends Ability
 func _init() -> void:
     ability_name = "Buff"
     description = "Apply a beneficial effect."
-    use_chance = 0.25  # 25% chance by default
     priority = 12  # Medium-high priority
 
 func execute(caster: CombatEntity, target: CombatEntity = null) -> void:
@@ -35,7 +34,7 @@ func _apply_status_effect(actual_target: CombatEntity, caster: CombatEntity) -> 
         var target_name: String = _get_target_name(actual_target)
 
         if target_self:
-            LogManager.log_combat("%s applies %s to themselves!" % [caster_name.capitalize(), effect_copy.effect_name])
+            LogManager.log_combat("%s applies %s to themselves!" % [caster_name.capitalize(), ability_name])
         else:
             LogManager.log_combat("%s applies %s to %s!" % [caster_name.capitalize(), effect_copy.effect_name, target_name])
     else:

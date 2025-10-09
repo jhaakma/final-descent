@@ -9,5 +9,4 @@ prepared_ability = ExtResource("1_k5r7t")
 preparation_text = "charges up for a powerful strike..."
 ability_name = "Power Strike"
 description = "Prepare for a devastating attack on the next turn."
-use_chance = 0.2
-priority = 15
+priority = 5

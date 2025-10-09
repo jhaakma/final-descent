@@ -338,17 +338,39 @@ func get_total_attack_display() -> String:
     return "%d-%d" % [min_damage, max_damage]
 
 # === INVENTORY COMPATIBILITY METHODS ===
-# These provide compatibility with systems that expect the old inventory format
-
-# Get inventory as Dictionary for compatibility with existing systems
-func get_inventory_dict() -> Dictionary:
-    return inventory.get_legacy_inventory()
+# These provide modern inventory access methods
 
 # Get detailed inventory information for UI display
 func get_inventory_display_info() -> Array:
-    return inventory.get_inventory_display_info()# Get all items in inventory
+    return inventory.get_inventory_display_info()
+
 func get_all_inventory_items() -> Array[Item]:
     return inventory.get_all_items()
+
+# Get ItemTiles for UI display (includes equipped items)
+func get_item_tiles() -> Array[ItemTile]:
+    var tiles: Array[ItemTile] = []
+
+    # Add equipped weapon as a separate tile if present
+    if equipped_weapon:
+        var weapon_description := ""
+        if equipped_weapon_data:
+            weapon_description = equipped_weapon_data.get_instance_description()
+
+        var equipped_tile := ItemTile.new(
+            equipped_weapon,
+            equipped_weapon_data,
+            1,
+            equipped_weapon.name,
+            weapon_description,
+            true  # is_equipped = true
+        )
+        tiles.append(equipped_tile)
+
+    # Add inventory tiles
+    tiles.append_array(inventory.get_item_tiles())
+
+    return tiles
 
 # Add item with instance data (for items with condition damage, enchantments, etc.)
 func add_item_with_data(item: Item, item_data: ItemData = null) -> void:

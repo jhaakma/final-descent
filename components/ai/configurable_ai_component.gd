@@ -54,25 +54,25 @@ func _select_configurable_ability(categorized_abilities: CategorizedAbilities, h
     if is_critical_health:
         # Try to flee if flee tendency is high enough
         if categorized_abilities.flee.size() > 0 and randf() < flee_tendency * 1.5:
-            selected_ability = select_random_ability_by_chance(categorized_abilities.flee)
+            selected_ability = select_random_ability_by_priority(categorized_abilities.flee)
         # Defensive actions become more likely
         elif categorized_abilities.defend.size() > 0 and randf() < defensive_behavior * 1.2:
-            selected_ability = select_random_ability_by_chance(categorized_abilities.defend)
+            selected_ability = select_random_ability_by_priority(categorized_abilities.defend)
         # Use buffs for survival
         elif categorized_abilities.buff.size() > 0 and randf() < buff_usage * 0.8:
-            selected_ability = select_random_ability_by_chance(categorized_abilities.buff)
+            selected_ability = select_random_ability_by_priority(categorized_abilities.buff)
 
     # Low health behavior - balanced survival and offense
     elif is_low_health:
         # Moderate chance to flee
         if categorized_abilities.flee.size() > 0 and randf() < flee_tendency:
-            selected_ability = select_random_ability_by_chance(categorized_abilities.flee)
+            selected_ability = select_random_ability_by_priority(categorized_abilities.flee)
         # Defensive behavior based on setting
         elif categorized_abilities.defend.size() > 0 and randf() < defensive_behavior:
-            selected_ability = select_random_ability_by_chance(categorized_abilities.defend)
+            selected_ability = select_random_ability_by_priority(categorized_abilities.defend)
         # Buff usage for strategic advantage
         elif categorized_abilities.buff.size() > 0 and randf() < buff_usage:
-            selected_ability = select_random_ability_by_chance(categorized_abilities.buff)
+            selected_ability = select_random_ability_by_priority(categorized_abilities.buff)
 
     # Healthy behavior - focus on configured preferences
     else:
@@ -80,28 +80,28 @@ func _select_configurable_ability(categorized_abilities: CategorizedAbilities, h
         if aggression_level > 0.7:
             # Prefer preparation for powerful attacks
             if categorized_abilities.preparation.size() > 0 and randf() < preparation_preference * 1.3:
-                selected_ability = select_random_ability_by_chance(categorized_abilities.preparation)
+                selected_ability = select_random_ability_by_priority(categorized_abilities.preparation)
         # Medium aggression allows for buffs and preparation
         elif aggression_level > 0.3:
             # Balanced use of buffs and preparation
             if categorized_abilities.buff.size() > 0 and randf() < buff_usage:
-                selected_ability = select_random_ability_by_chance(categorized_abilities.buff)
+                selected_ability = select_random_ability_by_priority(categorized_abilities.buff)
             elif categorized_abilities.preparation.size() > 0 and randf() < preparation_preference:
-                selected_ability = select_random_ability_by_chance(categorized_abilities.preparation)
+                selected_ability = select_random_ability_by_priority(categorized_abilities.preparation)
         # Low aggression prefers defensive and support actions
         else:
             # More defensive behavior
             if categorized_abilities.defend.size() > 0 and randf() < defensive_behavior * 1.2:
-                selected_ability = select_random_ability_by_chance(categorized_abilities.defend)
+                selected_ability = select_random_ability_by_priority(categorized_abilities.defend)
             elif categorized_abilities.buff.size() > 0 and randf() < buff_usage * 1.1:
-                selected_ability = select_random_ability_by_chance(categorized_abilities.buff)
+                selected_ability = select_random_ability_by_priority(categorized_abilities.buff)
 
     # Fallback strategy: Default to attacks based on aggression, then any available ability
     if selected_ability == null:
         if categorized_abilities.attack.size() > 0:
             # Aggression affects attack selection probability
             if randf() < 0.5 + (aggression_level * 0.4):  # Range: 0.5 to 0.9
-                selected_ability = select_random_ability_by_chance(categorized_abilities.attack)
+                selected_ability = select_random_ability_by_priority(categorized_abilities.attack)
 
         # Final fallback: pick any available ability randomly
         if selected_ability == null:

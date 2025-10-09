@@ -5,7 +5,6 @@ class_name DefendAbility extends Ability
 func _init() -> void:
     ability_name = "Defend"
     description = "Prepare to defend against incoming attacks."
-    use_chance = 0.3  # 30% chance to defend by default
     priority = 5
 
 func execute(caster, _target = null) -> void:

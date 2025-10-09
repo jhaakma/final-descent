@@ -9,7 +9,7 @@ signal shop_closed()
 @onready var player_items_list: VBoxContainer = %PlayerItemsList
 @onready var close_btn: Button = %CloseBtn
 
-var inventory_row_scene = preload("res://uielements/inventory/InventoryRow.tscn")
+var inventory_row_scene: PackedScene = preload("res://uielements/inventory/InventoryRow.tscn")
 var shopkeeper_name: String
 var items_for_sale: Array[Item] = []
 var shopkeeper_gold: int = 0
@@ -57,7 +57,7 @@ func _setup_buy_tab() -> void:
         child.queue_free()
 
     if items_for_sale.is_empty():
-        var no_items_label = Label.new()
+        var no_items_label: Label = Label.new()
         no_items_label.text = "No items for sale."
         items_for_sale_list.add_child(no_items_label)
         return
@@ -65,7 +65,7 @@ func _setup_buy_tab() -> void:
     # Add each item for sale
     for item in items_for_sale:
         print("Adding item for sale: %s" % item.name)
-        var item_info = inventory_row_scene.instantiate()
+        var item_info: InventoryRow = inventory_row_scene.instantiate()
         item_info.setup_for_shop(item, 1, InventoryRow.DisplayMode.SHOP_BUY, "", null, shopkeeper_gold)
         item_info.item_bought.connect(_on_buy_item)
         items_for_sale_list.add_child(item_info)
@@ -82,36 +82,32 @@ func _update_inventory_display() -> void:
         child.queue_free()
 
     if GameState.player.inventory.is_empty():
-        var no_items_label = Label.new()
+        var no_items_label: Label = Label.new()
         no_items_label.text = "No items to sell."
         player_items_list.add_child(no_items_label)
         return
 
-    # Get detailed inventory information including ItemData
-    var inventory_display_info = GameState.player.get_inventory_display_info()
+    # Get ItemTiles from player (excludes equipped items for selling)
+    var all_tiles: Array[ItemTile] = GameState.player.get_item_tiles()
+    var inventory_tiles: Array[ItemTile] = []
 
-    for stack_info in inventory_display_info:
-        var item = stack_info.item
-        var generic_count = stack_info.generic_count
+    # Filter to only include inventory items (exclude equipped items)
+    for tile: ItemTile in all_tiles:
+        if not tile.is_equipped:
+            inventory_tiles.append(tile)
 
-        # Add generic items (without specific ItemData) as one row
-        if generic_count > 0:
-            var item_container = inventory_row_scene.instantiate()
-            item_container.setup_for_shop(item, generic_count, InventoryRow.DisplayMode.SHOP_SELL, "", null, shopkeeper_gold)
-            item_container.item_sold.connect(_on_sell_item)
-            player_items_list.add_child(item_container)
-
-        # Add each unique instance as separate rows
-        for instance_info in stack_info.unique_instances:
-            var instance_data = instance_info.item_data
-            var display_name = item.name
-            if instance_info.description != "":
-                display_name += " " + instance_info.description
-
-            var item_container = inventory_row_scene.instantiate()
-            item_container.setup_for_shop(item, 1, InventoryRow.DisplayMode.SHOP_SELL, display_name, instance_data, shopkeeper_gold)
-            item_container.item_sold.connect(_on_sell_item)
-            player_items_list.add_child(item_container)
+    for tile: ItemTile in inventory_tiles:
+        var item_container: InventoryRow = inventory_row_scene.instantiate()
+        item_container.setup_for_shop(
+            tile.item,
+            tile.count,
+            InventoryRow.DisplayMode.SHOP_SELL,
+            tile.get_full_display_name(),
+            tile.item_data,
+            shopkeeper_gold
+        )
+        item_container.item_sold.connect(_on_sell_item)
+        player_items_list.add_child(item_container)
 
 func _on_buy_item(item: Item) -> void:
     if GameState.player.gold >= item.purchase_value:
@@ -125,7 +121,7 @@ func _on_buy_item(item: Item) -> void:
 
 func _on_sell_item(item: Item, item_data: ItemData = null) -> void:
     if GameState.player.has_item(item):
-        var sell_value = Item.calculate_sell_value(item, item_data)
+        var sell_value: int = Item.calculate_sell_value(item, item_data)
 
         # Check if shopkeeper can afford this item
         if shopkeeper_gold < sell_value:

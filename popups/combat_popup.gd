@@ -17,6 +17,8 @@ var enemy_resource: EnemyResource
 var enemy_first: bool = false
 var avoid_failure: bool = false
 var death_delay_timer: Timer = null
+# Mapping of menu item indices to ItemTiles to prevent index mismatches
+var use_item_menu_mapping: Array[ItemTile] = []
 
 func set_enemy(enemy_res: EnemyResource) -> void:
     enemy_resource = enemy_res
@@ -131,14 +133,26 @@ func _update_button_states() -> void:
 func _setup_use_item_menu() -> void:
     var _popup := use_btn.get_popup()
     _popup.clear()
-    var inventory_items := GameState.player.get_all_inventory_items()
-    inventory_items.sort_custom(func(a: Item, b: Item)-> bool:
-        return a.name < b.name
+    use_item_menu_mapping.clear()
+
+    # Get ItemTiles from player (includes both inventory and equipped items)
+    var all_tiles: Array[ItemTile] = GameState.player.get_item_tiles()
+
+    # Filter to only include inventory items (exclude equipped items in combat menu)
+    var inventory_tiles: Array[ItemTile] = []
+    for tile: ItemTile in all_tiles:
+        if not tile.is_equipped:
+            inventory_tiles.append(tile)
+
+    # Sort tiles alphabetically by name (with instances after generic items for same type)
+    inventory_tiles.sort_custom(func(a: ItemTile, b: ItemTile) -> bool:
+        return a.get_sort_key() < b.get_sort_key()
     )
-    for item in inventory_items:
-        var quantity := GameState.player.get_item_count(item)
-        if quantity > 0:
-            _popup.add_item("%s (%d)" % [item.name, quantity])
+
+    # Build the popup menu and mapping
+    for tile: ItemTile in inventory_tiles:
+        _popup.add_item(tile.get_full_display_name())
+        use_item_menu_mapping.append(tile)
 
     # Disconnect the signal if it's already connected to avoid duplicate connections
     if _popup.index_pressed.is_connected(_on_use_item_index):
@@ -213,7 +227,18 @@ func _on_enemy_action(action_type: String, value: int, message: String) -> void:
             pass
 
 func _enemy_turn() -> void:
-    # Process status effects at start of turn
+    # Check if enemy should skip their turn BEFORE processing status effects
+    if current_enemy.should_skip_turn():
+        LogManager.log_combat("%s is stunned and skips their turn!" % current_enemy.get_name())
+        # Process status effects after skipping turn (this will tick down the stun)
+        _process_status_effects()
+        # Refresh bars to show updated status effects
+        _refresh_bars()
+        # Check if player should skip their turn after enemy turn ended
+        _check_player_turn_skip()
+        return
+
+    # Process status effects at start of turn (for non-stunned enemies)
     _process_status_effects()
 
     if current_enemy.is_alive():
@@ -295,38 +320,36 @@ func _on_flee() -> void:
         _check_end()
 
 func _on_use_item_index(idx: int) -> void:
-    var inventory_items := GameState.player.get_all_inventory_items()
-    if idx >= 0 and idx < inventory_items.size():
-        var item: Item = inventory_items[idx]
-        # Only use if we still have the item
-        if GameState.player.has_item(item):
-            # Special handling for weapons to ensure proper equipping during combat
-            if item is ItemWeapon:
-                # Check if this weapon is already equipped
-                var is_already_equipped: bool = (GameState.player.equipped_weapon == item)
+    print("DEBUG: _on_use_item_index called with index: ", idx)
 
-                if is_already_equipped:
-                    # Unequip the current weapon
-                    GameState.player.unequip_weapon()
-                else:
-                    # Get the item stack and take the first available item (generic or instance)
-                    var item_stack: ItemStack = GameState.player.inventory.get_item_stack(item)
-                    if item_stack:
-                        var item_data: ItemData = null
-                        # Check if there are any specific instances first
-                        if item_stack.item_instances.size() > 0:
-                            item_data = item_stack.item_instances[0]
+    # Check if the index is valid in our mapping
+    if idx < 0 or idx >= use_item_menu_mapping.size():
+        LogManager.log_message("Nothing happens…")
+        _enemy_turn()
+        _check_end()
+        return
 
-                        # Equip the weapon with the appropriate data
-                        GameState.player.equip_weapon(item, item_data)
-            else:
-                # Use the item's normal use method for non-weapons
-                item.use()
+    # Get the ItemTile from our mapping
+    var tile: ItemTile = use_item_menu_mapping[idx]
 
+    print("DEBUG: Using item: %s, is_unique_instance: %s" % [tile.item.name, tile.is_unique_instance()])
+
+    # Check if the item is still available
+    if not tile.is_available_in_inventory():
+        print("Item %s (or specific instance) is no longer available" % tile.item.name)
         # Refresh the use item menu to reflect updated quantities
         _setup_use_item_menu()
-    else:
-        LogManager.log_message("Nothing happens…")
+        _enemy_turn()
+        _check_end()
+        return
 
+    # Use the item through the tile's use_item method
+    if tile.use_item():
+        print("Successfully used item: %s" % tile.item.name)
+    else:
+        print("Failed to use item: %s" % tile.item.name)
+
+    # Refresh the use item menu to reflect updated quantities
+    _setup_use_item_menu()
     _enemy_turn()
     _check_end()

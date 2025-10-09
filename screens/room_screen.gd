@@ -5,6 +5,8 @@ signal run_ended(victory: bool)
 
 var available_rooms: Array[RoomResource] = []
 
+@export var starting_rooms: Array[RoomResource] = []
+
 @onready var floor_label: Label = %FloorLabel
 @onready var hp_label: Label = %HPLabel
 @onready var hp_bar: ProgressBar = %HPBar
@@ -208,6 +210,14 @@ func _calculate_room_weights(valid_rooms: Array[RoomResource]) -> Array[float]:
     return weights
 
 func _generate_room() -> void:
+
+    var num_starting_rooms := starting_rooms.size()
+    if num_starting_rooms > 0 and num_starting_rooms > GameState.current_floor - 1:
+        current_room = starting_rooms[GameState.current_floor - 1]
+        print("Selected starting room for floor %d: %s" % [GameState.current_floor, current_room.title])
+        current_room.on_room_entered(self)
+        _render_room()
+        return
 
     var valid_rooms : Array[RoomResource] = []
     for room in available_rooms:

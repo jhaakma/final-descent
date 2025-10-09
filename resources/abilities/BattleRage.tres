@@ -9,7 +9,7 @@ attack_bonus = 3
 remaining_turns = 2
 stacks = 1
 max_stacks = 1
-effect_name = ""
+effect_name = "Attack Bonus"
 metadata/_custom_type_script = "uid://bv0ioocawgocp"
 
 [resource]
@@ -18,5 +18,4 @@ target_self = true
 status_effect_to_apply = SubResource("Resource_e3n1g")
 ability_name = "Battle Rage"
 description = "Enter a battle rage, increasing attack power."
-use_chance = 0.15
 priority = 8

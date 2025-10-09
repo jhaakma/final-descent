@@ -44,26 +44,29 @@ func filter_usable_abilities(enemy: CombatEntity, available_abilities: Array[Abi
             usable_abilities.append(ability)
     return usable_abilities
 
-# Helper method to select a random ability considering use_chance and priority
+# Helper method to select a random ability based on priority weighting
 # This is provided as a utility for AI implementations
-func select_random_ability_by_chance(abilities: Array[Ability]) -> Ability:
+func select_random_ability_by_priority(abilities: Array[Ability]) -> Ability:
     if abilities.is_empty():
         return null
 
-    var weighted_abilities: Array[Ability] = []
-
+    # Calculate total priority sum
+    var total_priority: int = 0
     for ability in abilities:
-        if randf() < ability.use_chance:
-            # Add multiple entries for higher priority abilities
-            var weight: int = max(1, ability.priority / 5)  # Convert priority to weight
-            for i in range(weight):
-                weighted_abilities.append(ability)
+        total_priority += max(1, ability.priority)  # Ensure minimum priority of 1
 
-    if weighted_abilities.is_empty():
-        # If no abilities pass chance, pick randomly without chance consideration
-        return abilities[randi() % abilities.size()]
+    # Pick a random number within the total priority range
+    var random_value: int = randi() % total_priority
 
-    return weighted_abilities[randi() % weighted_abilities.size()]
+    # Find the ability that corresponds to this random value
+    var current_sum: int = 0
+    for ability in abilities:
+        current_sum += max(1, ability.priority)
+        if random_value < current_sum:
+            return ability
+
+    # Fallback to last ability (should not happen)
+    return abilities[abilities.size() - 1]
 
 # Categorize abilities by type for strategic AI decision making
 # Returns a CategorizedAbilities object with properly typed ability arrays:

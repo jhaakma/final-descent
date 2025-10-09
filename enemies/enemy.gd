@@ -56,8 +56,9 @@ func plan_action() -> void:
 
 # Execute the ability that was planned at the start of the turn
 func perform_planned_action() -> void:
-    # Check if this entity should skip their turn (e.g., due to stun)
-    if process_turn_start():
+    # Safety check: verify this entity should not skip their turn (e.g., due to stun)
+    # Note: This is primarily a safety check since _enemy_turn() should handle this
+    if should_skip_turn():
         LogManager.log_combat("%s is stunned and skips their turn!" % get_name())
         return
 
@@ -73,8 +74,9 @@ func perform_planned_action() -> void:
 
 # Legacy method for backwards compatibility - now checks ability state before planning
 func perform_action() -> void:
-    # Check if this entity should skip their turn (e.g., due to stun)
-    if process_turn_start():
+    # Safety check: verify this entity should not skip their turn (e.g., due to stun)
+    # Note: This is primarily a safety check since _enemy_turn() should handle this
+    if should_skip_turn():
         LogManager.log_combat("%s is stunned and skips their turn!" % get_name())
         return
 
@@ -161,4 +163,10 @@ func drop_items(item: Item, amount: int = 1) -> Array:
 func get_inventory_display_info() -> Array:
     if inventory_component:
         return inventory_component.get_inventory_display_info()
+    return []
+
+# Get ItemTiles for UI display
+func get_item_tiles() -> Array[ItemTile]:
+    if inventory_component:
+        return inventory_component.get_item_tiles()
     return []
