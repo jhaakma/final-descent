@@ -20,6 +20,9 @@ var death_delay_timer: Timer = null
 # Mapping of menu item indices to ItemTiles to prevent index mismatches
 var use_item_menu_mapping: Array[ItemTile] = []
 
+static func get_scene() -> PackedScene:
+    return load("uid://in5kt0j6adyh") as PackedScene
+
 func set_enemy(enemy_res: EnemyResource) -> void:
     enemy_resource = enemy_res
 
@@ -194,7 +197,7 @@ func show_loot_screen(loot_data: LootComponent.LootResult ) -> void:
     exclusive = false  # Allow interaction with loot popup
 
     # Create and show the loot popup
-    var loot_popup: LootPopup= (load("res://data/ui/popups/LootPopup.tscn") as PackedScene).instantiate()
+    var loot_popup: LootPopup= LootPopup.get_scene().instantiate()
     get_parent().add_child(loot_popup)
     loot_popup.show_loot(loot_data, "You search the remains and find:")
 

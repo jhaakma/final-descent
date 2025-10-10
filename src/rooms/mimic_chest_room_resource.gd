@@ -2,7 +2,7 @@ class_name MimicChestRoomResource extends RoomResource
 
 @export var mimic_enemy: EnemyResource
 
-func _init():
+func _init()->void:
     cleared_by_default = true
 
 func build_actions(_actions_grid: GridContainer, _room_screen: RoomScreen) -> void:
@@ -18,14 +18,14 @@ func _on_open_chest(room_screen: RoomScreen) -> void:
         return
 
     print("Spawning mimic enemy: %s" % mimic_enemy.name)
-    var popup: CombatPopup = load("res://data/ui/popups/CombatPopup.tscn").instantiate()
+    var popup: CombatPopup = CombatPopup.get_scene().instantiate()
     popup.set_enemy(mimic_enemy)
     room_screen.add_child(popup)
     popup.combat_resolved.connect(_on_mimic_combat_resolved.bind(room_screen, popup))
-    popup.combat_fled.connect(func():
+    popup.combat_fled.connect(func()->void:
         # Player fled from mimic - just mark room as cleared, no loot
         room_screen.mark_cleared())
-    popup.loot_collected.connect(func():
+    popup.loot_collected.connect(func()->void:
         room_screen.mark_cleared())
 
 func _on_mimic_combat_resolved(victory: bool, _room_screen: RoomScreen, popup: CombatPopup) -> void:

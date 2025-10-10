@@ -14,6 +14,9 @@ var shopkeeper_name: String
 var items_for_sale: Array[Item] = []
 var shopkeeper_gold: int = 0
 
+static func get_scene() -> PackedScene:
+    return load("uid://b7atjuptp522r") as PackedScene
+
 func _ready() -> void:
     # Enable auto-wrapping to content size
     wrap_controls = true

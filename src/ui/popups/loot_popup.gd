@@ -16,6 +16,9 @@ enum LootContext {
 var pending_loot_data: LootComponent.LootResult
 var loot_already_collected: bool = false
 
+static func get_scene() -> PackedScene:
+    return load("uid://dqm2tfsxynhis") as PackedScene
+
 func _ready() -> void:
     collect_btn.pressed.connect(_on_collect_loot)
 
@@ -32,7 +35,7 @@ func show_loot(loot_data: LootComponent.LootResult, open_message: String) -> voi
         child.queue_free()
 
     # Show/hide containers based on loot
-    var has_any_loot = loot_data.gold_total > 0 or loot_data.items_gained.size() > 0
+    var has_any_loot := loot_data.gold_total > 0 or loot_data.items_gained.size() > 0
 
     if has_any_loot:
         no_loot_label.visible = false
@@ -51,7 +54,7 @@ func show_loot(loot_data: LootComponent.LootResult, open_message: String) -> voi
             items_label.modulate = Color.LIGHT_BLUE
 
             for item in loot_data.items_gained:
-                var item_label = Label.new()
+                var item_label := Label.new()
                 item_label.text = " • %s" % item.name
                 item_label.modulate = Color.WHITE
                 items_list.add_child(item_label)

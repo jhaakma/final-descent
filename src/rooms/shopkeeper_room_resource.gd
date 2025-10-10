@@ -6,7 +6,7 @@ class_name ShopkeeperRoomResource extends RoomResource
 
 var loot_result: LootComponent.LootResult = null
 
-func _init():
+func _init()->void:
     cleared_by_default = true
 
 func build_actions(_actions_grid: GridContainer, _room_screen: RoomScreen) -> void:
@@ -15,7 +15,7 @@ func build_actions(_actions_grid: GridContainer, _room_screen: RoomScreen) -> vo
 
 func _on_talk_to_shopkeeper(room_screen: RoomScreen) -> void:
     # Show the shopkeeper popup
-    var shopkeeper_popup = load("res://data/ui/popups/ShopkeeperPopup.tscn").instantiate()
+    var shopkeeper_popup: ShopkeeperPopup = ShopkeeperPopup.get_scene().instantiate()
     room_screen.add_child(shopkeeper_popup)
 
     shopkeeper_popup.show_shop(loot_result, shopkeeper_name, greeting_message)

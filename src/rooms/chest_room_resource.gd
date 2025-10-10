@@ -3,7 +3,7 @@ class_name ChestRoomResource extends RoomResource
 @export var chance_empty: float = 0.2
 @export var loot_component: LootComponent
 
-func _init():
+func _init()->void:
     cleared_by_default = true
 
 func build_actions(_actions_grid: GridContainer, _room_screen: RoomScreen) -> void:
@@ -14,7 +14,7 @@ func _on_open_chest(room_screen: RoomScreen) -> void:
     var loot_data := loot_component.generate_loot()
 
     # Show the loot popup
-    var loot_popup : LootPopup= load("res://data/ui/popups/LootPopup.tscn").instantiate()
+    var loot_popup : LootPopup= LootPopup.get_scene().instantiate()
     room_screen.add_child(loot_popup)
     loot_popup.show_loot(loot_data, "You open the chest and find:")
 
