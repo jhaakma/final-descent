@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="LootPick" load_steps=4 format=3 uid="uid://c44lcbign4sfj"]
+
+[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/item.gd" id="1_djjju"]
+[ext_resource type="Resource" uid="uid://drc4rx6xim1bu" path="res://data/items/potions/HealthPotionMedium.tres" id="2_djjju"]
+[ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="3_c3ymg"]
+
+[resource]
+script = ExtResource("3_c3ymg")
+loot_table = Array[ExtResource("1_djjju")]([ExtResource("2_djjju")])
+count = 1
+chance_none = 0.0
+pick_method = 0
+floor_min = 5
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"

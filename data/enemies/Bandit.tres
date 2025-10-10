@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=17 format=3 uid="uid://dt82du713jwsh"]
+
+[ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="1_5dhhm"]
+[ext_resource type="Script" uid="uid://bkhqo7pjlc7bi" path="res://src/abilities/Ability.gd" id="1_vjv8i"]
+[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/item.gd" id="2_0n3l0"]
+[ext_resource type="Resource" uid="uid://dqsktrv7t6d4i" path="res://data/abilities/BasicAttack.tres" id="2_colof"]
+[ext_resource type="Resource" uid="uid://cttpxikq24nx" path="res://data/items/weapons/Dagger.tres" id="3_a62b8"]
+[ext_resource type="Resource" uid="uid://d4cfekbrastfr" path="res://data/abilities/BasicDefend.tres" id="3_mhg4q"]
+[ext_resource type="Resource" uid="uid://d0goc2masln3h" path="res://data/abilities/BattleRage.tres" id="4_kkrid"]
+[ext_resource type="Resource" uid="uid://clyabowguvivm" path="res://data/items/weapons/ShortSword.tres" id="4_slwqe"]
+[ext_resource type="Resource" uid="uid://2s77tota5kam" path="res://data/items/potions/HealthPotionSmall.tres" id="5_vjv8i"]
+[ext_resource type="Resource" uid="uid://drc4rx6xim1bu" path="res://data/items/potions/HealthPotionMedium.tres" id="6_colof"]
+[ext_resource type="Resource" uid="uid://c31wbx2iwa0s7" path="res://data/items/potions/RegenerationPotion.tres" id="7_mhg4q"]
+[ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="8_kkrid"]
+[ext_resource type="Script" uid="uid://b4y5n724vd0ph" path="res://src/enemies/enemy_resource.gd" id="9_10wms"]
+
+[sub_resource type="Resource" id="Resource_tggm1"]
+script = ExtResource("1_5dhhm")
+loot_table = Array[ExtResource("2_0n3l0")]([ExtResource("3_a62b8"), ExtResource("4_slwqe")])
+count = 1
+chance_none = 0.5
+pick_method = 0
+floor_min = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"
+
+[sub_resource type="Resource" id="Resource_73r10"]
+script = ExtResource("1_5dhhm")
+loot_table = Array[ExtResource("2_0n3l0")]([ExtResource("5_vjv8i"), ExtResource("6_colof"), ExtResource("7_mhg4q")])
+count = 1
+chance_none = 0.7
+pick_method = 0
+floor_min = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"
+
+[sub_resource type="Resource" id="Resource_ukg5r"]
+script = ExtResource("8_kkrid")
+gold_min = 10
+gold_max = 20
+loot_table = Array[ExtResource("1_5dhhm")]([SubResource("Resource_tggm1"), SubResource("Resource_73r10")])
+metadata/_custom_type_script = "uid://lj0e532l0dyu"
+
+[resource]
+script = ExtResource("9_10wms")
+abilities = Array[ExtResource("1_vjv8i")]([ExtResource("2_colof"), ExtResource("3_mhg4q"), ExtResource("4_kkrid")])
+name = "Bandit"
+max_hp = 18
+attack = 4
+loot_component = SubResource("Resource_ukg5r")
+avoid_chance = 0.5
+metadata/_custom_type_script = "uid://b4y5n724vd0ph"

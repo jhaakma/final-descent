@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3 uid="uid://dmcfvemajvy2t"]
+
+[ext_resource type="Script" uid="uid://c32ydt5uj7uoh" path="res://src/core/main.gd" id="1_elqb8"]
+[ext_resource type="PackedScene" uid="uid://dmyy37gkgwf0f" path="res://src/ui/screens/TitleScreen.tscn" id="2_rvslj"]
+[ext_resource type="Theme" uid="uid://ch0ahyx502rlq" path="res://data/themes/theme.tres" id="3_0bbpv"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_elqb8")
+
+[node name="ScreenLayer" type="CanvasLayer" parent="."]
+unique_name_in_owner = true
+
+[node name="TitleScene" parent="ScreenLayer" instance=ExtResource("2_rvslj")]
+theme = ExtResource("3_0bbpv")
+
+[node name="OverlayLayer" type="CanvasLayer" parent="."]
+
+[node name="FadeOverlay" type="ColorRect" parent="OverlayLayer"]
+unique_name_in_owner = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 0, 0, 0)

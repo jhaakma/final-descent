@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="PoisonEffect" load_steps=2 format=3 uid="uid://dvaxva0shp6yy"]
+
+[ext_resource type="Script" uid="uid://bnsjjjtwxudsp" path="res://src/effects/timed/poison_effect.gd" id="1_p53nu"]
+
+[resource]
+script = ExtResource("1_p53nu")
+damage_per_turn = 1
+remaining_turns = 5
+stacks = 1
+max_stacks = 3
+metadata/_custom_type_script = "uid://bnsjjjtwxudsp"

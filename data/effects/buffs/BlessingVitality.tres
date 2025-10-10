@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="VitalityBoostEffect" load_steps=2 format=3 uid="uid://djitipajvecp6"]
+
+[ext_resource type="Script" uid="uid://bprhm4eacabtk" path="res://src/effects/buffs/vitality_boost_effect.gd" id="1_d8las"]
+
+[resource]
+script = ExtResource("1_d8las")
+max_hp_bonus = 5
+remaining_turns = 10
+stacks = 1
+max_stacks = 1
+effect_name = "Blessing of Vitality"
+metadata/_custom_type_script = "uid://bprhm4eacabtk"

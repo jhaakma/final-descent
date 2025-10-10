@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="LootPick" load_steps=5 format=3 uid="uid://do8brech6sxxk"]
+
+[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/item.gd" id="1_3ul3r"]
+[ext_resource type="Resource" uid="uid://cttpxikq24nx" path="res://data/items/weapons/Dagger.tres" id="2_mnhtl"]
+[ext_resource type="Resource" uid="uid://clyabowguvivm" path="res://data/items/weapons/ShortSword.tres" id="3_wkehb"]
+[ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="4_vsxr2"]
+
+[resource]
+script = ExtResource("4_vsxr2")
+loot_table = Array[ExtResource("1_3ul3r")]([ExtResource("2_mnhtl"), ExtResource("3_wkehb")])
+count = null
+chance_none = null
+pick_method = null
+floor_min = null
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"

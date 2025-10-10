@@ -1,0 +1,54 @@
+[gd_resource type="Resource" script_class="ShrineRoomResource" load_steps=14 format=3 uid="uid://deugb73fiqik0"]
+
+[ext_resource type="Resource" uid="uid://bkonmcshbq6xa" path="res://data/enemies/Spectre.tres" id="1_i4hyo"]
+[ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="2_jf7xf"]
+[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/item.gd" id="3_am5yn"]
+[ext_resource type="Resource" uid="uid://bjvu3fmob3t2k" path="res://data/items/weapons/Staff.tres" id="4_jf7xf"]
+[ext_resource type="Resource" uid="uid://drc4rx6xim1bu" path="res://data/items/potions/HealthPotionMedium.tres" id="5_am5yn"]
+[ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="6_u0cpa"]
+[ext_resource type="Script" uid="uid://rglym38nsnwg" path="res://src/effects/status_effect.gd" id="7_003gl"]
+[ext_resource type="Resource" uid="uid://6d0tuu8bufre" path="res://data/effects/buffs/BlessingBalanced.tres" id="8_003gl"]
+[ext_resource type="Resource" uid="uid://djitipajvecp6" path="res://data/effects/buffs/BlessingVitality.tres" id="9_ytpuy"]
+[ext_resource type="Script" uid="uid://bnlue0rcqdx6d" path="res://src/rooms/shrine_room_resource.gd" id="12_p7pm6"]
+
+[sub_resource type="Resource" id="Resource_sybd7"]
+script = ExtResource("2_jf7xf")
+loot_table = Array[ExtResource("3_am5yn")]([ExtResource("4_jf7xf")])
+count = 1
+chance_none = 0.9
+pick_method = 0
+floor_min = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"
+
+[sub_resource type="Resource" id="Resource_0wc5j"]
+script = ExtResource("2_jf7xf")
+loot_table = Array[ExtResource("3_am5yn")]([ExtResource("5_am5yn")])
+count = 1
+chance_none = 0.0
+pick_method = 0
+floor_min = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"
+
+[sub_resource type="Resource" id="Resource_cwbmv"]
+script = ExtResource("6_u0cpa")
+gold_min = 10
+gold_max = 20
+loot_table = Array[ExtResource("2_jf7xf")]([SubResource("Resource_sybd7"), SubResource("Resource_0wc5j")])
+metadata/_custom_type_script = "uid://lj0e532l0dyu"
+
+[resource]
+script = ExtResource("12_p7pm6")
+blessing_cost = 13
+cure_cost = 5
+heal_cost = 4
+possible_status_effects = Array[ExtResource("7_003gl")]([ExtResource("8_003gl"), ExtResource("9_ytpuy")])
+heal_amount = 5
+loot_component = SubResource("Resource_cwbmv")
+loot_curse_chance = 0.8
+curse_enemy = ExtResource("1_i4hyo")
+title = "Evil Shrine"
+description = "This shrine emanates malice."
+weight = 30
+min_floor = 8
+max_floor = -1
+metadata/_custom_type_script = "uid://bnlue0rcqdx6d"

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="InflictingWeapon" load_steps=3 format=3 uid="uid://fj0lhss0j1ad"]
+
+[ext_resource type="Script" uid="uid://de14peynwsgrq" path="res://src/items/weapons/InflictingWeapon.gd" id="1_7oiy8"]
+[ext_resource type="Resource" uid="uid://dvaxva0shp6yy" path="res://data/effects/PoisonSimple.tres" id="2_tihms"]
+
+[resource]
+script = ExtResource("1_7oiy8")
+status_effect = ExtResource("2_tihms")
+effect_apply_chance = 0.5
+damage = 1
+name = "Poisoned Dagger"
+description = "Deadly poison drips from the blade."
+consumable = false
+purchase_value = 20

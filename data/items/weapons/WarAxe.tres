@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="ItemWeapon" load_steps=2 format=3 uid="uid://meq6o4s58qqk"]
+
+[ext_resource type="Script" uid="uid://cp8w78pilenje" path="res://src/items/Weapon.gd" id="1_pvpx4"]
+
+[resource]
+script = ExtResource("1_pvpx4")
+damage = 6
+name = "WarAxe"
+description = ""
+consumable = false
+purchase_value = 25
+metadata/_custom_type_script = "uid://cp8w78pilenje"

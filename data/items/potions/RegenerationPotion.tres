@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ItemPotion" load_steps=4 format=3 uid="uid://c31wbx2iwa0s7"]
+
+[ext_resource type="Script" uid="uid://dkg3x6icgybrk" path="res://src/effects/timed/regeneration_effect.gd" id="1_lryfk"]
+[ext_resource type="Script" uid="uid://dikmkr6vyadjj" path="res://src/items/Potion.gd" id="2_lhenj"]
+
+[sub_resource type="Resource" id="RegenerationEffect_1"]
+script = ExtResource("1_lryfk")
+healing_per_turn = 2
+remaining_turns = 10
+stacks = 1
+max_stacks = 5
+effect_name = ""
+
+[resource]
+script = ExtResource("2_lhenj")
+status_effect = SubResource("RegenerationEffect_1")
+name = "Regeneration Potion"
+description = "A potion that provides healing over time."
+purchase_value = 25
