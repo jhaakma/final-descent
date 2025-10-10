@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemPotion" load_steps=4 format=3 uid="uid://drc4rx6xim1bu"]
+
+[ext_resource type="Script" uid="uid://btj1mgjp6gjy1" path="res://src/effects/instant/instant_heal_effect.gd" id="1_eu20l"]
+[ext_resource type="Script" uid="uid://dikmkr6vyadjj" path="res://src/items/Potion.gd" id="2_ay05s"]
+
+[sub_resource type="Resource" id="Resource_irdg2"]
+script = ExtResource("1_eu20l")
+heal_amount = 15
+metadata/_custom_type_script = "uid://btj1mgjp6gjy1"
+
+[resource]
+script = ExtResource("2_ay05s")
+status_effect = SubResource("Resource_irdg2")
+name = "Health Potion (Medium)"
+description = ""
+purchase_value = 45
+metadata/_custom_type_script = "uid://dikmkr6vyadjj"

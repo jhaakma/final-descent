@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="BalancedBoostEffect" load_steps=2 format=3 uid="uid://6d0tuu8bufre"]
+
+[ext_resource type="Script" uid="uid://njc2axxd473o" path="res://src/effects/buffs/balanced_boost_effect.gd" id="1_lvyw0"]
+
+[resource]
+script = ExtResource("1_lvyw0")
+attack_bonus = 2
+defense_bonus = 1
+remaining_turns = 10
+stacks = 1
+max_stacks = 1
+effect_name = "Blessing of Balance"
+metadata/_custom_type_script = "uid://njc2axxd473o"

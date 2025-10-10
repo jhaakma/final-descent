@@ -1,0 +1,184 @@
+[gd_scene load_steps=13 format=3 uid="uid://c0cpy5xfdy2nb"]
+
+[ext_resource type="Script" uid="uid://bi2w4gopbk7mv" path="res://src/ui/screens/room_screen.gd" id="1_vxldv"]
+[ext_resource type="PackedScene" uid="uid://d4kfoqy7h5f0d" path="res://data/ui/widgets/hp_bar.tscn" id="2_71ary"]
+[ext_resource type="Script" uid="uid://bdbhlyvac2es6" path="res://src/rooms/room_resource.gd" id="2_fqbyh"]
+[ext_resource type="Resource" uid="uid://b6x4kbxgbv6cq" path="res://data/rooms/chest_rooms/resources/BasicChestRoom.tres" id="3_fqbyh"]
+[ext_resource type="Resource" uid="uid://dt8u500wdj8ww" path="res://data/rooms/combat_rooms/resources/EasyCombatRoom.tres" id="4_sy2ri"]
+[ext_resource type="Resource" uid="uid://c8q63s2m5b2yx" path="res://data/rooms/chest_rooms/resources/SuperiorChestRoom.tres" id="5_fckah"]
+[ext_resource type="Resource" uid="uid://bhfn488v1wa0x" path="res://data/rooms/mimic_rooms/BasicChestMimicRoom.tres" id="6_mimic"]
+[ext_resource type="Resource" uid="uid://i5l4a63bwaev" path="res://data/rooms/shopkeeper_rooms/BasicShopkeeperRoom.tres" id="7_syjj7"]
+[ext_resource type="Resource" uid="uid://qim8ji3f8vkh" path="res://data/rooms/mimic_rooms/SuperiorChestMimicRoom.tres" id="8_2vu3h"]
+[ext_resource type="Resource" uid="uid://b83y0nfhrk8vu" path="res://data/rooms/combat_rooms/resources/MediumCombatRoom.tres" id="9_p1ruj"]
+[ext_resource type="Resource" uid="uid://ca2g2w7mew1gy" path="res://data/rooms/rest_room/BasicRestRoom.tres" id="10_4gjwx"]
+[ext_resource type="Resource" uid="uid://bqqrowi2pf1ob" path="res://data/rooms/shrine_rooms/resources/BasicShrineRoom.tres" id="11_em7fl"]
+
+[node name="RoomScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_vxldv")
+available_rooms = Array[ExtResource("2_fqbyh")]([ExtResource("3_fqbyh"), ExtResource("5_fckah"), ExtResource("6_mimic"), ExtResource("8_2vu3h"), ExtResource("4_sy2ri"), ExtResource("9_p1ruj"), ExtResource("7_syjj7"), ExtResource("10_4gjwx"), ExtResource("11_em7fl")])
+metadata/_edit_vertical_guides_ = [-118.0]
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="LeftPanel" type="PanelContainer" parent="MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(280, 0)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/LeftPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="VBoxStats" type="VBoxContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="FloorLabel" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "FLOOR: X"
+horizontal_alignment = 1
+
+[node name="HP Block" type="HBoxContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HP Block"]
+layout_mode = 2
+text = "HP: "
+
+[node name="HPBar" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HP Block" instance=ExtResource("2_71ary")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Gold Block" type="HBoxContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats"]
+layout_mode = 2
+alignment = 1
+
+[node name="GoldLabel" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/Gold Block"]
+layout_mode = 2
+text = "Gold: "
+
+[node name="GoldValue" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/Gold Block"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "X"
+
+[node name="PanelInventory" type="PanelContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 192.27)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxInventory" type="VBoxContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PanelInventory"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PanelInventory/VBoxInventory"]
+layout_mode = 2
+text = "Inventory"
+horizontal_alignment = 1
+
+[node name="Inventory" type="ItemList" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PanelInventory/VBoxInventory"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="UseItemBtn" type="Button" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PanelInventory/VBoxInventory"]
+unique_name_in_owner = true
+layout_mode = 2
+disabled = true
+text = "Use Item"
+
+[node name="PanelLog" type="PanelContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxLog" type="VBoxContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PanelLog"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PanelLog/VBoxLog"]
+layout_mode = 2
+text = "Log"
+horizontal_alignment = 1
+
+[node name="Log" type="RichTextLabel" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PanelLog/VBoxLog"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 191.275)
+layout_mode = 2
+
+[node name="RightPanel" type="PanelContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/RightPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="RoomTitle" type="Label" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HeaderLarge"
+text = "Room Name"
+horizontal_alignment = 1
+
+[node name="RoomDescription" type="Label" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Room Description goes here."
+horizontal_alignment = 1
+
+[node name="Actions" type="GridContainer" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer/VBoxContainer"]
+layout_direction = 2
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="NextFloorBtn" type="Button" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Next Floor"
+
+[node name="LeaveRunBtn" type="Button" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_direction = 2
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Leave Run"

@@ -1,6 +1,6 @@
 {
   "column_properties": {
-    "res://attacks/resources/": {
+    "res://data/abilities/": {
       "metadata/_custom_type_script": {
         "visibility": 0.0
       },
@@ -11,7 +11,7 @@
         "visibility": 0.0
       }
     },
-    "res://enemies/resources/": {
+    "res://data/enemies/": {
       "metadata/_custom_type_script": {
         "visibility": 0.0
       },
@@ -22,7 +22,7 @@
         "visibility": 0.0
       }
     },
-    "res://resources/items/potions/": {
+    "res://data/items/potions/": {
       "metadata/_custom_type_script": {
         "visibility": 0.0
       },
@@ -33,7 +33,7 @@
         "visibility": 0.0
       }
     },
-    "res://resources/items/weapons/": {
+    "res://data/items/weapons/": {
       "metadata/_custom_type_script": {
         "visibility": 0.0
       },
@@ -44,7 +44,7 @@
         "visibility": 0.0
       }
     },
-    "res://resources/potions/": {
+    "res://data/items/potions/": {
       "metadata/_custom_type_script": {
         "visibility": 0.0
       },
@@ -55,7 +55,7 @@
         "visibility": 0.0
       }
     },
-    "res://resources/rooms/": {
+    "res://data/rooms/": {
       "metadata/_custom_type_script": {
         "visibility": 0.0
       },
@@ -72,7 +72,7 @@
         "visibility": 0.0
       }
     },
-    "res://resources/rooms/chest_rooms/": {
+    "res://data/rooms/chest_rooms/": {
       "metadata/_custom_type_script": {
         "visibility": 0.0
       },
@@ -83,7 +83,7 @@
         "visibility": 0.0
       }
     },
-    "res://resources/rooms/mimic_rooms/": {
+    "res://data/rooms/mimic_rooms/": {
       "metadata/_custom_type_script": {
         "visibility": 0.0
       },
@@ -94,7 +94,7 @@
         "visibility": 0.0
       }
     },
-    "res://resources/weapons/": {
+    "res://data/items/weapons/": {
       "metadata/_custom_type_script": {
         "visibility": 0.0
       },
@@ -107,15 +107,15 @@
     }
   },
   "recent_paths": [
-    "res://enemies/resources/",
-    "res://attacks/resources/",
-    "res://resources/rooms/",
-    "res://resources/rooms/chest_rooms/",
-    "res://resources/rooms/mimic_rooms/",
-    "res://resources/potions/",
-    "res://resources/weapons/",
-    "res://resources/items/potions/",
-    "res://resources/items/weapons/"
+    "res://data/enemies/",
+    "res://data/abilities/",
+    "res://data/rooms/",
+    "res://data/rooms/chest_rooms/",
+    "res://data/rooms/mimic_rooms/",
+    "res://data/items/potions/",
+    "res://data/items/weapons/",
+    "res://data/items/potions/",
+    "res://data/items/weapons/"
   ],
   "table_functions": {
     "filter": [

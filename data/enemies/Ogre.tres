@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=15 format=3 uid="uid://cwdl328syumjx"]
+
+[ext_resource type="Script" uid="uid://bkhqo7pjlc7bi" path="res://src/abilities/Ability.gd" id="1_08opu"]
+[ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="1_tsegy"]
+[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="2_1k2fp"]
+[ext_resource type="Resource" path="res://data/abilities/BasicAttack.tres" id="2_o8kiw"]
+[ext_resource type="Resource" path="res://data/abilities/BasicDefend.tres" id="3_812jh"]
+[ext_resource type="Resource" uid="uid://meq6o4s58qqk" path="res://data/items/weapons/WarAxe.tres" id="3_k4t58"]
+[ext_resource type="Resource" uid="uid://2s77tota5kam" path="res://data/items/potions/HealthPotionSmall.tres" id="4_ctox1"]
+[ext_resource type="Resource" uid="uid://bxhc5gwyvpwrd" path="res://data/abilities/PowerStrike.tres" id="4_fmvcd"]
+[ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="5_gwtnr"]
+[ext_resource type="Resource" path="res://data/abilities/BattleRage.tres" id="5_wnsvj"]
+[ext_resource type="Script" uid="uid://b4y5n724vd0ph" path="res://src/enemies/enemy_resource.gd" id="6_08opu"]
+
+[sub_resource type="Resource" id="Resource_6o68g"]
+script = ExtResource("1_tsegy")
+loot_table = Array[ExtResource("2_1k2fp")]([ExtResource("3_k4t58")])
+count = 1
+chance_none = 0.4
+pick_method = 0
+floor_min = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"
+
+[sub_resource type="Resource" id="Resource_4hsl1"]
+script = ExtResource("1_tsegy")
+loot_table = Array[ExtResource("2_1k2fp")]([ExtResource("4_ctox1")])
+count = 1
+chance_none = 0.7
+pick_method = 0
+floor_min = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"
+
+[sub_resource type="Resource" id="Resource_ukg5r"]
+script = ExtResource("5_gwtnr")
+gold_min = 10
+gold_max = 25
+loot_table = Array[ExtResource("1_tsegy")]([SubResource("Resource_6o68g"), SubResource("Resource_4hsl1")])
+metadata/_custom_type_script = "uid://lj0e532l0dyu"
+
+[resource]
+script = ExtResource("6_08opu")
+abilities = Array[ExtResource("1_08opu")]([ExtResource("2_o8kiw"), ExtResource("3_812jh"), ExtResource("4_fmvcd"), ExtResource("5_wnsvj")])
+name = "Ogre"
+max_hp = 20
+attack = 4
+loot_component = SubResource("Resource_ukg5r")
+avoid_chance = 0.8
+metadata/_custom_type_script = "uid://b4y5n724vd0ph"

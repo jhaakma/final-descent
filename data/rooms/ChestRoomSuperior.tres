@@ -1,0 +1,58 @@
+[gd_resource type="Resource" script_class="ChestRoomResource" load_steps=16 format=3 uid="uid://c8q63s2m5b2yx"]
+
+[ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="1_tqubp"]
+[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="2_02hfb"]
+[ext_resource type="Resource" uid="uid://bjvu3fmob3t2k" path="res://data/items/weapons/Staff.tres" id="3_m7738"]
+[ext_resource type="Resource" uid="uid://meq6o4s58qqk" path="res://data/items/weapons/WarAxe.tres" id="4_4vwlp"]
+[ext_resource type="Resource" uid="uid://fj0lhss0j1ad" path="res://data/items/weapons/PoisonedDagger.tres" id="5_ytmfo"]
+[ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="6_h7wi8"]
+[ext_resource type="Resource" uid="uid://drc4rx6xim1bu" path="res://data/items/potions/HealthPotionMedium.tres" id="6_xc5k6"]
+[ext_resource type="Resource" uid="uid://c31wbx2iwa0s7" path="res://data/items/potions/RegenerationPotion.tres" id="7_o3oe0"]
+[ext_resource type="Resource" uid="uid://bpscdhoshmjls" path="res://data/items/potions/Antidote.tres" id="8_85wif"]
+[ext_resource type="Resource" uid="uid://dwqgodsd7t16e" path="res://data/items/repair_tools/RepairToolBasic.tres" id="9_nf1ji"]
+[ext_resource type="Script" uid="uid://cuib3tlx6u7dn" path="res://src/rooms/chest_room_resource.gd" id="10_kr1ns"]
+
+[sub_resource type="Resource" id="Resource_o3oe0"]
+script = ExtResource("1_tqubp")
+loot_table = Array[ExtResource("2_02hfb")]([ExtResource("3_m7738"), ExtResource("4_4vwlp"), ExtResource("5_ytmfo")])
+count = 1
+chance_none = 0.3
+pick_method = 0
+floor_min = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"
+
+[sub_resource type="Resource" id="Resource_guvpa"]
+script = ExtResource("1_tqubp")
+loot_table = Array[ExtResource("2_02hfb")]([ExtResource("6_xc5k6"), ExtResource("7_o3oe0"), ExtResource("8_85wif")])
+count = 1
+chance_none = 0.4
+pick_method = 0
+floor_min = 5
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"
+
+[sub_resource type="Resource" id="Resource_q6jmq"]
+script = ExtResource("1_tqubp")
+loot_table = Array[ExtResource("2_02hfb")]([ExtResource("9_nf1ji")])
+count = 1
+chance_none = 0.8
+pick_method = 0
+floor_min = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"
+
+[sub_resource type="Resource" id="Resource_1l1mx"]
+script = ExtResource("6_h7wi8")
+gold_min = 10
+gold_max = 20
+loot_table = Array[ExtResource("1_tqubp")]([SubResource("Resource_o3oe0"), SubResource("Resource_guvpa"), SubResource("Resource_q6jmq")])
+metadata/_custom_type_script = "uid://lj0e532l0dyu"
+
+[resource]
+script = ExtResource("10_kr1ns")
+chance_empty = 0.1
+loot_component = SubResource("Resource_1l1mx")
+title = "Shiny Chest"
+description = "A chest adorned with fancy engravings."
+weight = 10
+min_floor = 10
+max_floor = -1
+metadata/_custom_type_script = "uid://cuib3tlx6u7dn"
