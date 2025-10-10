@@ -15,7 +15,7 @@ func _start_death_fade() -> void:
     fade_overlay.color = Color(1.0, 0.0, 0.0, 0.0)  # Transparent red
 
     # Create tween for smooth fade with dramatic timing
-    var tween = create_tween()
+    var tween := create_tween()
     # First phase: Quick fade to subtle red
     # Second phase: Slower fade to more intense red
     tween.tween_property(fade_overlay, "color:a", 0.7, 1.0)
@@ -25,7 +25,7 @@ func _start_death_fade() -> void:
 func show_title() -> void:
     _clear_layer()
     _reset_fade_overlay()
-    var s: TitleScreen = load("res://data/ui/screens/TitleScreen.tscn").instantiate()
+    var s: TitleScreen = TitleScreen.get_scene().instantiate()
     screen_layer.add_child(s)
     s.start_requested.connect(_on_start_requested)
 
@@ -35,7 +35,7 @@ func _on_start_requested() -> void:
 
 func show_room() -> void:
     _clear_layer()
-    var s: RoomScreen = load("res://data/ui/screens/RoomScreen.tscn").instantiate()
+    var s: RoomScreen = RoomScreen.get_scene().instantiate()
     screen_layer.add_child(s)
     s.room_cleared.connect(_on_room_cleared)
     s.run_ended.connect(_on_run_ended)
@@ -52,7 +52,7 @@ func _on_run_ended(victory: bool) -> void:
 
 func show_game_over() -> void:
     _clear_layer()
-    var s: GameOverScreen = load("res://data/ui/screens/GameOverScreen.tscn").instantiate()
+    var s: GameOverScreen = GameOverScreen.get_scene().instantiate()
     screen_layer.add_child(s)
     s.restart_requested.connect(_on_restart_requested)
     s.return_to_title_requested.connect(_on_return_to_title_requested)

@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="LootPick" load_steps=5 format=3 uid="uid://do8brech6sxxk"]
 
-[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="1_3ul3r"]
+[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/item.gd" id="1_3ul3r"]
 [ext_resource type="Resource" uid="uid://cttpxikq24nx" path="res://data/items/weapons/Dagger.tres" id="2_mnhtl"]
 [ext_resource type="Resource" uid="uid://clyabowguvivm" path="res://data/items/weapons/ShortSword.tres" id="3_wkehb"]
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="4_vsxr2"]

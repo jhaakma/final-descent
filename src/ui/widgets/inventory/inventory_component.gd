@@ -20,7 +20,7 @@ var is_combat_disabled: bool = false
 var inventory_rows: Array[InventoryRow] = []
 
 # Preload the InventoryRow scene
-const INVENTORY_ROW_SCENE = preload("res://data/ui/widgets/inventory/InventoryRow.tscn")
+var inventory_row_scene: PackedScene = InventoryRow.get_scene()
 
 func _ready() -> void:
     # Connect to GameState inventory changes
@@ -61,7 +61,7 @@ func _refresh_inventory() -> void:
 
     # Create inventory rows for each tile
     for tile: ItemTile in all_tiles:
-        var row: InventoryRow = INVENTORY_ROW_SCENE.instantiate() as InventoryRow
+        var row: InventoryRow = inventory_row_scene.instantiate() as InventoryRow
         inventory_list.add_child(row)
 
         # Setup the row using the tile information

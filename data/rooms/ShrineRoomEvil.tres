@@ -2,7 +2,7 @@
 
 [ext_resource type="Resource" uid="uid://bkonmcshbq6xa" path="res://data/enemies/Spectre.tres" id="1_i4hyo"]
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="2_jf7xf"]
-[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="3_am5yn"]
+[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/item.gd" id="3_am5yn"]
 [ext_resource type="Resource" uid="uid://bjvu3fmob3t2k" path="res://data/items/weapons/Staff.tres" id="4_jf7xf"]
 [ext_resource type="Resource" uid="uid://drc4rx6xim1bu" path="res://data/items/potions/HealthPotionMedium.tres" id="5_am5yn"]
 [ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="6_u0cpa"]

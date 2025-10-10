@@ -22,6 +22,9 @@ func _ready() -> void:
     if setup_pending:
         _update_display()
 
+static func get_scene() -> PackedScene:
+    return preload("uid://bhlr1m3q7ixjg") as PackedScene
+
 ## Setup the tooltip with item data
 func setup_tooltip(item: Item, count: int = 1, item_data: ItemData = null) -> void:
     current_item = item

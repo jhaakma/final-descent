@@ -36,6 +36,9 @@ static var recent_room_history: Array[RoomResource] = []  # Track recent room cl
 var max_history_size: int = 3  # How many recent rooms to remember
 var weight_penalty: float = 0.01  # Multiplier for recently used rooms (0.3 = 30% of original weight)
 
+static func get_scene() -> PackedScene:
+    return preload("uid://c0cpy5xfdy2nb") as PackedScene
+
 func _ready() -> void:
     print("RoomScreen ready")
 
@@ -321,7 +324,7 @@ func _exit_tree() -> void:
 
 func _on_leave_run_pressed() -> void:
     """Show confirmation popup before leaving the run"""
-    var confirmation_popup: ConfirmationPopup = (load("res://data/ui/popups/ConfirmationPopup.tscn") as PackedScene).instantiate()
+    var confirmation_popup: ConfirmationPopup = ConfirmationPopup.get_scene().instantiate()
     add_child(confirmation_popup)
 
     confirmation_popup.show_confirmation("Are you sure you want to leave this run?")

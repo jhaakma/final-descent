@@ -24,7 +24,7 @@ func _init() -> void:
     # Initialize base combat entity with starting health
     _init_combat_entity(20)
 
-    inventory = preload("res://src/components/item_inventory_component.gd").new()
+    inventory = ItemInventoryComponent.new()
 
     # Connect health component signals to player signals
     health_component.health_changed.connect(_on_health_changed)
@@ -293,7 +293,7 @@ func reduce_weapon_condition() -> void:
 
     # Create ItemData if it doesn't exist yet (first damage)
     if not equipped_weapon_data:
-        equipped_weapon_data = preload("res://src/components/item_data.gd").new()
+        equipped_weapon_data = ItemData.new()
         equipped_weapon_data.current_condition = equipped_weapon.condition
 
     var current_condition := equipped_weapon_data.current_condition

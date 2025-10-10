@@ -56,7 +56,7 @@ func add_item_instance(item: Item, item_data: ItemData = null) -> bool:
 
     # Create ItemData if none provided
     if item_data == null:
-        item_data = preload("res://src/components/item_data.gd").new()
+        item_data = ItemData.new()
 
     # Add instance
     stack.add_instance(item_data)

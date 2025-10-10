@@ -13,6 +13,9 @@ signal return_to_title_requested
 @onready var restart_btn: Button = %RestartBtn
 @onready var title_btn: Button = %TitleBtn
 
+static func get_scene() -> PackedScene:
+    return preload("uid://c7rm5at1hk0aj") as PackedScene
+
 func _ready() -> void:
     # Connect button signals
     restart_btn.pressed.connect(_on_restart_pressed)

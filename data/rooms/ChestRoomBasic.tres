@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="ChestRoomResource" load_steps=14 format=3 uid="uid://b6x4kbxgbv6cq"]
 
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="1_lulew"]
-[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="2_fxh5e"]
+[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/item.gd" id="2_fxh5e"]
 [ext_resource type="Resource" uid="uid://cttpxikq24nx" path="res://data/items/weapons/Dagger.tres" id="3_xjp3h"]
 [ext_resource type="Resource" uid="uid://clyabowguvivm" path="res://data/items/weapons/ShortSword.tres" id="4_gjxe1"]
 [ext_resource type="Resource" uid="uid://2s77tota5kam" path="res://data/items/potions/HealthPotionSmall.tres" id="5_eaqpx"]

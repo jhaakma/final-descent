@@ -16,8 +16,11 @@ enum DisplayMode {
     SHOP_SELL    # Show Sell button with price
 }
 
+static func get_scene() -> PackedScene:
+    return preload("uid://bqmch8xq2h1kp") as PackedScene
+
 # Preload the custom tooltip scene
-const CUSTOM_TOOLTIP_SCENE = preload("res://data/ui/widgets/CustomItemTooltip.tscn")
+var custom_tooltip_scene := CustomItemTooltip.get_scene()
 
 @onready var background: Panel = %Background
 @onready var item_name_label: Label = %ItemName
@@ -30,7 +33,7 @@ var count: int
 var is_selected: bool = false
 var is_combat_disabled: bool = false
 var custom_display_name: String = ""
-var item_data = null  # ItemData instance for this specific item
+var item_data: ItemData = null  # ItemData instance for this specific item
 var is_equipped: bool = false  # Simple flag to indicate if this entry represents equipped item
 var display_mode: DisplayMode = DisplayMode.INVENTORY
 var shopkeeper_gold: int = 0  # For shop contexts, to determine if items can be afforded
@@ -48,15 +51,15 @@ func setup(_item_resource: Item, _count: int, _is_combat_disabled: bool = false)
     setup_with_mode(_item_resource, _count, DisplayMode.INVENTORY, _is_combat_disabled, "", null, false, 0)
 
 ## Setup the row with custom display name and item data (inventory mode)
-func setup_with_custom_name(_item_resource: Item, _count: int, _is_combat_disabled: bool, _custom_name: String, _item_data = null, _is_equipped: bool = false) -> void:
+func setup_with_custom_name(_item_resource: Item, _count: int, _is_combat_disabled: bool, _custom_name: String, _item_data: ItemData = null, _is_equipped: bool = false) -> void:
     setup_with_mode(_item_resource, _count, DisplayMode.INVENTORY, _is_combat_disabled, _custom_name, _item_data, _is_equipped, 0)
 
 ## Setup the row for shop context
-func setup_for_shop(_item_resource: Item, _count: int, _display_mode: DisplayMode, _custom_name: String = "", _item_data = null, _shopkeeper_gold: int = 0) -> void:
+func setup_for_shop(_item_resource: Item, _count: int, _display_mode: DisplayMode, _custom_name: String = "", _item_data: ItemData = null, _shopkeeper_gold: int = 0) -> void:
     setup_with_mode(_item_resource, _count, _display_mode, false, _custom_name, _item_data, false, _shopkeeper_gold)
 
 ## Internal setup method with all parameters
-func setup_with_mode(_item_resource: Item, _count: int, _display_mode: DisplayMode, _is_combat_disabled: bool = false, _custom_name: String = "", _item_data = null, _is_equipped: bool = false, _shopkeeper_gold: int = 0) -> void:
+func setup_with_mode(_item_resource: Item, _count: int, _display_mode: DisplayMode, _is_combat_disabled: bool = false, _custom_name: String = "", _item_data: ItemData = null, _is_equipped: bool = false, _shopkeeper_gold: int = 0) -> void:
     item_resource = _item_resource
     count = _count
     display_mode = _display_mode
@@ -89,7 +92,7 @@ func _update_display() -> void:
         tooltip_text = ""
         return
 
-    var display_name = custom_display_name if custom_display_name else item_resource.name
+    var display_name := custom_display_name if custom_display_name else item_resource.name
 
     # Handle display based on mode
     match display_mode:
@@ -108,7 +111,7 @@ func _update_display() -> void:
                 item_name_label.text = display_name + " (x%d)" % count
             else:
                 item_name_label.text = display_name
-            var sell_value = Item.calculate_sell_value(item_resource, item_data)
+            var sell_value := Item.calculate_sell_value(item_resource, item_data)
             price_label.text = "%d gold" % sell_value
             price_label.visible = true
 
@@ -162,15 +165,15 @@ func _update_shop_sell_button() -> void:
     action_button.text = "Sell"
     action_button.custom_minimum_size.x = 60
     # Check if shopkeeper can afford this item
-    var sell_value = Item.calculate_sell_value(item_resource, item_data)
+    var sell_value := Item.calculate_sell_value(item_resource, item_data)
     action_button.disabled = shopkeeper_gold < sell_value
 
 func _update_background() -> void:
     # Create a StyleBoxFlat for custom background colors
-    var style_box = StyleBoxFlat.new()
+    var style_box := StyleBoxFlat.new()
 
     # Check if this entry represents equipped item
-    var is_this_equipped = (item_resource is ItemWeapon and is_equipped)
+    var is_this_equipped := (item_resource is ItemWeapon and is_equipped)
 
     if is_this_equipped:
         # Use a proper bright green
@@ -189,21 +192,21 @@ func _update_background() -> void:
 
 func _update_condition_bar() -> void:
     # Show condition bar for weapons with damage (in any display mode)
-    var should_show = (item_resource is ItemWeapon and
+    var should_show: bool = (item_resource is ItemWeapon and
                       item_data and
-                      item_data.current_condition < item_resource.condition)
+                      item_data.current_condition < (item_resource as ItemWeapon).condition)
 
     if should_show:
         # Update the progress bar value
-        var max_condition = item_resource.condition
-        var current_condition = item_data.current_condition
+        var max_condition := (item_resource as ItemWeapon).condition
+        var current_condition := item_data.current_condition
         condition_bar.max_value = max_condition
         condition_bar.value = current_condition
         condition_bar.visible = true
 
         # Update color based on condition level
-        var condition_ratio = float(current_condition) / float(max_condition)
-        var style_fill = StyleBoxFlat.new()
+        var condition_ratio := float(current_condition) / float(max_condition)
+        var style_fill := StyleBoxFlat.new()
         style_fill.set_corner_radius_all(2)
 
         if condition_ratio > 0.7:
@@ -219,7 +222,7 @@ func _update_condition_bar() -> void:
         condition_bar.visible = false
 
 func _on_background_input(event: InputEvent) -> void:
-    if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+    if event is InputEventMouseButton and (event as InputEventMouseButton).pressed and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
         item_selected.emit(item_resource)
 
 func _on_action_button_pressed() -> void:
@@ -239,7 +242,7 @@ func _make_custom_tooltip(_for_text: String) -> Control:
     if not item_resource:
         return null
 
-    var tooltip := CUSTOM_TOOLTIP_SCENE.instantiate() as CustomItemTooltip
+    var tooltip := custom_tooltip_scene.instantiate() as CustomItemTooltip
     tooltip.setup_tooltip(item_resource, count, item_data)
     return tooltip
 

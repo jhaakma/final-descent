@@ -6,6 +6,7 @@
 [sub_resource type="Resource" id="Resource_irdg2"]
 script = ExtResource("1_eu20l")
 heal_amount = 15
+effect_name = ""
 metadata/_custom_type_script = "uid://btj1mgjp6gjy1"
 
 [resource]

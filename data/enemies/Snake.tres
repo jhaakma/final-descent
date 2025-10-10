@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="1_ay8s6"]
 [ext_resource type="Script" uid="uid://bkhqo7pjlc7bi" path="res://src/abilities/Ability.gd" id="1_qi64t"]
 [ext_resource type="Script" uid="uid://b4y5n724vd0ph" path="res://src/enemies/enemy_resource.gd" id="1_vrxfw"]
-[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="2_0bara"]
+[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/item.gd" id="2_0bara"]
 [ext_resource type="Script" uid="uid://b3hu85dtjat08" path="res://src/abilities/AttackAbility.gd" id="2_fsbsf"]
 [ext_resource type="Resource" uid="uid://bpscdhoshmjls" path="res://data/items/potions/Antidote.tres" id="3_pbona"]
 [ext_resource type="Resource" uid="uid://dvaxva0shp6yy" path="res://data/effects/PoisonSimple.tres" id="3_tqj67"]

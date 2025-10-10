@@ -25,7 +25,7 @@ func _init(enemy_resource: EnemyResource) -> void:
 
     # Initialize inventory if this enemy should carry items
     # This can be extended based on enemy type or resource configuration
-    inventory_component = preload("res://src/components/item_inventory_component.gd").new()
+    inventory_component = ItemInventoryComponent.new()
 
 func get_name() -> String:
     return resource.name

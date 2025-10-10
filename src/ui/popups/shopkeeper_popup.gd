@@ -9,7 +9,7 @@ signal shop_closed()
 @onready var player_items_list: VBoxContainer = %PlayerItemsList
 @onready var close_btn: Button = %CloseBtn
 
-var inventory_row_scene: PackedScene = preload("res://data/ui/widgets/inventory/InventoryRow.tscn")
+var inventory_row_scene: PackedScene = InventoryRow.get_scene()
 var shopkeeper_name: String
 var items_for_sale: Array[Item] = []
 var shopkeeper_gold: int = 0

@@ -139,7 +139,7 @@ func take_one() -> ItemData:
         stack_count -= 1
         stack_changed.emit()
         # Return a new default ItemData for generic items
-        return preload("res://src/components/item_data.gd").new()
+        return ItemData.new()
     elif item_instances.size() > 0:
         # Take from instances
         var taken: ItemData = item_instances.pop_back()

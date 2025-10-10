@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="LootPick" load_steps=6 format=3 uid="uid://dfh2m4aqunyts"]
 
-[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="1_pia2a"]
+[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/item.gd" id="1_pia2a"]
 [ext_resource type="Resource" uid="uid://bjvu3fmob3t2k" path="res://data/items/weapons/Staff.tres" id="2_r167v"]
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="2_v7nl1"]
 [ext_resource type="Resource" uid="uid://meq6o4s58qqk" path="res://data/items/weapons/WarAxe.tres" id="3_hp1cy"]

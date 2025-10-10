@@ -8,6 +8,9 @@ signal cancelled()
 @onready var yes_btn: Button = %YesBtn
 @onready var no_btn: Button = %NoBtn
 
+static func get_scene() -> PackedScene:
+    return preload("uid://c6t5yl2p1e8oi") as PackedScene
+
 func _ready() -> void:
     # Connect button signals
     yes_btn.pressed.connect(_on_yes_pressed)

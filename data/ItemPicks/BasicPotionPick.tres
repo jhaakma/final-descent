@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="LootPick" load_steps=3 format=3 uid="uid://b3cf085lrhdjy"]
 
-[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="1_0f62c"]
+[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/item.gd" id="1_0f62c"]
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="2_3o4vi"]
 
 [resource]

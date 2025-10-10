@@ -9,6 +9,7 @@ healing_per_turn = 2
 remaining_turns = 10
 stacks = 1
 max_stacks = 5
+effect_name = ""
 
 [resource]
 script = ExtResource("2_lhenj")

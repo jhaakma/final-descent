@@ -7,11 +7,14 @@ signal start_requested
 @onready var quit_btn: Button = %QuitBtn
 
 # Options popup scene
-var options_popup_scene = preload("res://data/ui/popups/OptionsPopup.tscn")
-var current_options_popup = null
+var options_popup_scene := OptionsPopup.get_scene()
+var current_options_popup: OptionsPopup = null
+
+static func get_scene() -> PackedScene:
+    return preload("uid://dmyy37gkgwf0f") as PackedScene
 
 func _ready() -> void:
-    start_btn.pressed.connect(func(): emit_signal("start_requested"))
+    start_btn.pressed.connect(func()->void: emit_signal("start_requested"))
     options_btn.pressed.connect(_on_options_pressed)
     quit_btn.pressed.connect(get_tree().quit)
 
