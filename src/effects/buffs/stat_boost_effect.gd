@@ -3,9 +3,8 @@ class_name StatBoostEffect extends TimedEffect
 # Base class for stat-boosting effects
 # Subclasses should override the get_*_bonus methods they provide
 
-func _init(name: String = "", turns: int = 1) -> void:
-    super._init(name, turns)
-    effect_type = EffectType.POSITIVE
+func get_effect_type() -> EffectType:
+    return EffectType.POSITIVE
 
 # Apply effect per turn (no-op for stat boosts, handled by entity)
 func apply_effect(_target:CombatEntity) -> bool:

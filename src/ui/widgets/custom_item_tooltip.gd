@@ -65,7 +65,7 @@ func _update_display() -> void:
 ## Size the tooltip to fit its content
 func _size_to_content() -> void:
     # Get the VBoxContainer to measure its content
-    var vbox = get_node("MarginContainer/VBoxContainer") as VBoxContainer
+    var vbox := get_node("MarginContainer/VBoxContainer") as VBoxContainer
     if not vbox:
         return
 
@@ -74,11 +74,11 @@ func _size_to_content() -> void:
     await get_tree().process_frame
 
     # Calculate required size based on content
-    var content_size = vbox.get_combined_minimum_size()
-    var margin_size = Vector2(16, 12)  # 8px margin on each side
+    var content_size := vbox.get_combined_minimum_size()
+    var margin_size := Vector2(16, 12)  # 8px margin on each side
 
     # Set the tooltip size
-    var final_size = content_size + margin_size
+    var final_size := content_size + margin_size
     final_size.x = max(final_size.x, 200)  # Minimum width
     final_size.x = min(final_size.x, 400)  # Maximum width
     final_size.y = min(final_size.y, 300)  # Maximum height
@@ -92,7 +92,7 @@ func _update_item_name() -> void:
         return
 
     if current_count > 1:
-        item_name_label.text = "%s x%d" % [current_item.name, current_count]
+        item_name_label.text = "%s (%d)" % [current_item.name, current_count]
     else:
         item_name_label.text = current_item.name
 
@@ -100,7 +100,7 @@ func _update_item_name() -> void:
 func _update_item_type() -> void:
     if not item_type_label:
         return
-    var type_text = ""
+    var type_text := ""
     if current_item is ItemWeapon:
         type_text = "(Weapon"
         if GameState.player.equipped_weapon == current_item:
@@ -117,7 +117,7 @@ func _update_description() -> void:
     if not description_label:
         return
 
-    var description = current_item.get_description()
+    var description := current_item.get_description()
     if description and description.strip_edges() != "":
         description_label.text = description
         description_label.show()
@@ -134,8 +134,8 @@ func _update_stats() -> void:
 
     # Add weapon-specific stats
     if current_item is ItemWeapon:
-        var weapon = current_item as ItemWeapon
-        var damage_label = Label.new()
+        var weapon := current_item as ItemWeapon
+        var damage_label := Label.new()
         damage_label.text = "⚔️ Damage: %d" % weapon.damage
         damage_label.add_theme_font_size_override("font_size", 10)
         damage_label.modulate = Color(1.0, 0.8, 0.6)
@@ -143,12 +143,14 @@ func _update_stats() -> void:
 
     # Add stats for items with status effects (e.g., potions, weapons)
     if "status_effect" in current_item:
-        var effect_label = Label.new()
-        effect_label.text = "✨ Effect: %s" % current_item.status_effect.get_description()
-        effect_label.add_theme_font_size_override("font_size", 10)
-        effect_label.modulate = Color(0.6, 1.0, 0.8)
-        effect_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-        stats_container.add_child(effect_label)
+        var status_effect := current_item.get("status_effect") as StatusEffect
+        if status_effect:
+            var effect_label := Label.new()
+            effect_label.text = "✨ Effect: %s" % status_effect.get_description()
+            effect_label.add_theme_font_size_override("font_size", 10)
+            effect_label.modulate = Color(0.6, 1.0, 0.8)
+            effect_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+            stats_container.add_child(effect_label)
 
     # Show/hide stats container based on content
     stats_container.visible = stats_container.get_child_count() > 0
@@ -158,8 +160,8 @@ func _update_condition_label() -> void:
     if not condition_label:
         return
     if "condition" in current_item:
-        var current_condition = current_item.condition
-        var max_condition = current_item.condition
+        var current_condition := (current_item as ItemWeapon).condition
+        var max_condition := (current_item as ItemWeapon).get_max_condition()
 
         # Override with item data if available
         if current_item_data and "current_condition" in current_item_data:
@@ -175,5 +177,5 @@ func _update_condition_label() -> void:
 func _update_gold_value() -> void:
     if not sell_value_label:
         return
-    var sell_value = Item.calculate_sell_value(current_item, current_item_data)
+    var sell_value := current_item.calculate_sell_value(current_item_data)
     sell_value_label.text = "🪙 Sell Value: %d gold" % sell_value

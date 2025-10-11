@@ -10,8 +10,7 @@ signal shop_closed()
 @onready var close_btn: Button = %CloseBtn
 
 var inventory_row_scene: PackedScene = InventoryRow.get_scene()
-var shopkeeper_name: String
-var items_for_sale: Array[Item] = []
+var items_for_sale: Array[ItemStack] = []
 var shopkeeper_gold: int = 0
 
 static func get_scene() -> PackedScene:
@@ -29,8 +28,7 @@ func _ready() -> void:
     # Center the popup on screen
     _center_on_screen()
 
-func show_shop(loot_result: LootComponent.LootResult, merchant_name: String, greeting: String) -> void:
-    shopkeeper_name = merchant_name
+func show_shop(loot_result: LootComponent.LootResult, greeting: String) -> void:
     greeting_label.text = greeting
     items_for_sale = loot_result.items_gained
     shopkeeper_gold = loot_result.gold_total
@@ -66,12 +64,14 @@ func _setup_buy_tab() -> void:
         return
 
     # Add each item for sale
-    for item in items_for_sale:
-        print("Adding item for sale: %s" % item.name)
-        var item_info: InventoryRow = inventory_row_scene.instantiate()
-        item_info.setup_for_shop(item, 1, InventoryRow.DisplayMode.SHOP_BUY, "", null, shopkeeper_gold)
-        item_info.item_bought.connect(_on_buy_item)
-        items_for_sale_list.add_child(item_info)
+    for stack in items_for_sale:
+        var tiles := stack.get_item_tiles()
+        for tile in tiles:
+            print("Adding item for sale: %s" % stack.item.name)
+            var item_info: InventoryRow = inventory_row_scene.instantiate()
+            item_info.setup_for_shop(tile, InventoryRow.DisplayMode.SHOP_BUY, shopkeeper_gold)
+            item_info.item_bought.connect(_on_buy_item)
+            items_for_sale_list.add_child(item_info)
 
 func _setup_sell_tab() -> void:
     _update_inventory_display()
@@ -91,57 +91,66 @@ func _update_inventory_display() -> void:
         return
 
     # Get ItemTiles from player (excludes equipped items for selling)
-    var all_tiles: Array[ItemTile] = GameState.player.get_item_tiles()
-    var inventory_tiles: Array[ItemTile] = []
+    var all_tiles: Array[ItemInstance] = GameState.player.get_item_tiles()
+    var inventory_tiles: Array[ItemInstance] = []
 
     # Filter to only include inventory items (exclude equipped items)
-    for tile: ItemTile in all_tiles:
-        if not tile.is_equipped:
-            inventory_tiles.append(tile)
+    for tile: ItemInstance in all_tiles:
+        inventory_tiles.append(tile)
 
-    for tile: ItemTile in inventory_tiles:
+    for tile: ItemInstance in inventory_tiles:
         var item_container: InventoryRow = inventory_row_scene.instantiate()
         item_container.setup_for_shop(
-            tile.item,
-            tile.count,
+            tile,
             InventoryRow.DisplayMode.SHOP_SELL,
-            tile.get_full_display_name(),
-            tile.item_data,
             shopkeeper_gold
         )
         item_container.item_sold.connect(_on_sell_item)
         player_items_list.add_child(item_container)
 
-func _on_buy_item(item: Item) -> void:
-    if GameState.player.gold >= item.purchase_value:
-        GameState.add_gold(-item.purchase_value)
-        GameState.add_item(item)
-        shopkeeper_gold += item.purchase_value
-        LogManager.log_success("Bought %s for %d gold" % [item.name, item.purchase_value])
+func _on_buy_item(item_instance: ItemInstance) -> void:
 
+    if GameState.player.gold >= item_instance.item.purchase_value:
+        GameState.player.add_gold(-item_instance.item.purchase_value)
+        GameState.player.add_items(ItemInstance.new(item_instance.item, item_instance.item_data, 1))
+        shopkeeper_gold += item_instance.item.purchase_value
+
+        # find item stack and decrease count
+        for stack in items_for_sale:
+            if stack.item == item_instance.item:
+                stack.remove_instance_by_reference(item_instance.item_data)
+
+        LogManager.log_success("Bought %s for %d gold" % [item_instance.item.name, item_instance.item.purchase_value])
         # Update displays and refresh the buy tab
         _update()
 
-func _on_sell_item(item: Item, item_data: ItemData = null) -> void:
-    if GameState.player.has_item(item):
-        var sell_value: int = Item.calculate_sell_value(item, item_data)
+func _on_sell_item(item_instance: ItemInstance) -> void:
+    if GameState.player.has_item(item_instance.item):
+        var sell_value: int = item_instance.item.calculate_sell_value(item_instance.item_data)
 
         # Check if shopkeeper can afford this item
         if shopkeeper_gold < sell_value:
-            LogManager.log_warning("Shopkeeper cannot afford %s (needs %d gold)" % [item.name, sell_value])
+            LogManager.log_warning("Shopkeeper cannot afford %s (needs %d gold)" % [item_instance.item.name, sell_value])
             return
 
-        # Complete the transaction - remove the specific item instance if item_data is provided
-        if item_data:
-            # Remove specific instance using the new method
-            GameState.remove_item_instance(item, item_data)
-        else:
-            # Remove generic item
-            GameState.remove_item(item)
+        GameState.player.remove_item(item_instance)
 
-        GameState.add_gold(sell_value)
+        GameState.player.add_gold(sell_value)
         shopkeeper_gold -= sell_value
-        LogManager.log_success("Sold %s for %d gold" % [item.name, sell_value])
+        # Add to shopkeeper's inventory
+        var found_stack := false
+        for stack in items_for_sale:
+            if stack.item == item_instance.item:
+                stack.add_instance(item_instance.item_data)
+                found_stack = true
+                break
+        if not found_stack:
+            print("Creating new stack for sold item: %s" % item_instance.item.name)
+            var new_stack := ItemStack.new(item_instance.item, 1)
+            if item_instance.item_data:
+                new_stack.add_instance(item_instance.item_data)
+            items_for_sale.append(new_stack)
+        LogManager.log_success("Sold %s for %d gold" % [item_instance.item.name, sell_value])
 
         # Update displays
         _update()

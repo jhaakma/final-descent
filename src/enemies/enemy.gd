@@ -4,7 +4,7 @@ class_name Enemy extends CombatEntity
 signal action_performed(action_type: Ability.AbilityType, value: int, message: String)
 
 # AI Component for decision making
-@export var ai_component: EnemyAIComponent = null
+
 
 var resource: EnemyResource
 var flee_chance: float = 0.3  # Base flee chance
@@ -19,10 +19,6 @@ func _init(enemy_resource: EnemyResource) -> void:
     # Initialize base combat entity with enemy health
     _init_combat_entity(resource.max_hp)
 
-    # Initialize with default strategic AI if no AI component is set
-    if ai_component == null:
-        ai_component = RandomAIComponent.new()
-
     # Initialize inventory if this enemy should carry items
     # This can be extended based on enemy type or resource configuration
     inventory_component = ItemInventoryComponent.new()
@@ -32,11 +28,11 @@ func get_name() -> String:
 
 # Set the AI component for this enemy
 func set_ai_component(new_ai_component: EnemyAIComponent) -> void:
-    ai_component = new_ai_component
+    resource.ai_component = new_ai_component
 
 # Get the current AI component
 func get_ai_component() -> EnemyAIComponent:
-    return ai_component
+    return resource.ai_component
 
 func get_attack() -> int:
     return resource.attack
@@ -52,7 +48,7 @@ func plan_action() -> void:
         return
 
     # Delegate decision making to the AI component
-    planned_ability = ai_component.plan_action(self, available_abilities, health_component.get_hp_percentage())
+    planned_ability = resource.ai_component.plan_action(self, available_abilities, health_component.get_hp_percentage())
 
 # Execute the ability that was planned at the start of the turn
 func perform_planned_action() -> void:
@@ -118,14 +114,9 @@ func calculate_incoming_damage(base_damage: int) -> int:
 # Add an item to this enemy's inventory
 func add_item(item: Item, amount: int = 1) -> bool:
     if inventory_component:
-        return inventory_component.add_item(item, amount)
+        return inventory_component.add_item(ItemInstance.new(item, null, amount))
     return false
 
-# Add an item with specific instance data
-func add_item_with_data(item: Item, item_data: ItemData = null) -> bool:
-    if inventory_component:
-        return inventory_component.add_item_instance(item, item_data)
-    return false
 
 # Check if enemy has an item
 func has_item(item: Item, amount: int = 1) -> bool:
@@ -139,19 +130,6 @@ func get_item_count(item: Item) -> int:
         return inventory_component.get_item_count(item)
     return 0
 
-# Get all items this enemy carries (for loot drops)
-func get_all_items() -> Array[Item]:
-    if inventory_component:
-        return inventory_component.get_all_items()
-    return []
-
-# Transfer all items to another inventory (used for loot drops)
-func transfer_all_items_to(target_inventory: ItemInventoryComponent) -> Array[Item]:
-    var failed_items: Array[Item] = []
-    if inventory_component and target_inventory:
-        failed_items = target_inventory.merge_from(inventory_component)
-        inventory_component.clear()
-    return failed_items
 
 # Drop specific items (remove from inventory and return ItemData instances)
 func drop_items(item: Item, amount: int = 1) -> Array:
@@ -166,7 +144,7 @@ func get_inventory_display_info() -> Array:
     return []
 
 # Get ItemTiles for UI display
-func get_item_tiles() -> Array[ItemTile]:
+func get_item_tiles() -> Array[ItemInstance]:
     if inventory_component:
         return inventory_component.get_item_tiles()
     return []

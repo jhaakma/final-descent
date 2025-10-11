@@ -65,40 +65,44 @@ func _update_all_displays() -> void:
                 registered_log_displays.remove_at(index)
 
 # Logging convenience functions for different message types
-func log_message(text: String, color: LogColor = LogColor.DEFAULT) -> void:
-    _add_to_history(text, color)
+func log_message(text: String, color_str: String = _get_color_str(LogColor.DEFAULT)) -> void:
+
+    _add_to_history(text, color_str)
     _update_all_displays()
+
 
 func log_damage(text: String, you: bool = true) -> void:
     if you:
-        _add_to_history(text, LogColor.DAMAGE_YOU)
+        _add_to_history(text, _get_color_str(LogColor.DAMAGE_YOU))
     else:
-        _add_to_history(text, LogColor.DAMAGE_THEM)
+        _add_to_history(text, _get_color_str(LogColor.DAMAGE_THEM))
     _update_all_displays()
 
 func log_healing(text: String) -> void:
-    _add_to_history(text, LogColor.HEALING)
+    _add_to_history(text, _get_color_str(LogColor.HEALING))
     _update_all_displays()
 
 func log_buff(text: String) -> void:
-    _add_to_history(text, LogColor.BUFF)
+    _add_to_history(text, _get_color_str(LogColor.BUFF))
     _update_all_displays()
 
 func log_combat(text: String) -> void:
-    _add_to_history(text, LogColor.COMBAT)
+    _add_to_history(text, _get_color_str(LogColor.COMBAT))
     _update_all_displays()
 
 func log_success(text: String) -> void:
-    _add_to_history(text, LogColor.SUCCESS)
+    _add_to_history(text, _get_color_str(LogColor.SUCCESS))
     _update_all_displays()
 
 func log_warning(text: String) -> void:
-    _add_to_history(text, LogColor.WARNING)
+    _add_to_history(text, _get_color_str(LogColor.WARNING))
     _update_all_displays()
 
+func _get_color_str(color: LogColor) -> String:
+    return LogColors.get(color, "#ffffffff")
+
 # Internal function to add entries to history
-func _add_to_history(text: String, color: LogColor) -> void:
-    var color_str: String = LogColors[color]
+func _add_to_history(text: String, color_str: String) -> void:
     var entry := LogEntry.new(text, color_str)
     log_history.push_front(entry)  # Add new entries to the beginning
 
@@ -145,12 +149,12 @@ func log_attack(attacker: CombatEntity, target: CombatEntity, damage: int, weapo
     var message: String
     if weapon_name != "":
         if attacker == GameState.player:
-            message = "%s strike %s with %s for %d damage." % [attacker_name.capitalize(), target_name, weapon_name, damage]
+            message = "%s strike %s with %s for %d damage!" % [attacker_name.capitalize(), target_name, weapon_name, damage]
         else:
             message = "%s strikes %s with %s for %d damage!" % [attacker_name.capitalize(), target_name, weapon_name, damage]
     else:
         if attacker == GameState.player:
-            message = "%s strike %s for %d damage." % [attacker_name.capitalize(), target_name, damage]
+            message = "%s strike %s for %d damage!" % [attacker_name.capitalize(), target_name, damage]
         else:
             message = "%s attacks %s for %d damage!" % [attacker_name.capitalize(), target_name, damage]
 
@@ -178,20 +182,20 @@ func log_defend(defender: CombatEntity) -> void:
 func log_status_effect_applied(target: CombatEntity, effect: StatusEffect, duration: int = 0) -> void:
     var message: String
 
-    var positive := effect.effect_type == StatusEffect.EffectType.POSITIVE
+    var positive := effect.get_effect_type() == StatusEffect.EffectType.POSITIVE
     var effect_verb := "bestowed" if positive else "afflicted"
 
     if target == GameState.player:
         if duration > 0:
-            message = "You are %s with %s (%d turns)!" % [effect_verb, effect.effect_name, duration]
+            message = "You are %s with %s (%d turns)!" % [effect_verb, effect.get_effect_name(), duration]
         else:
-            message = "You are %s with %s!" % [effect_verb, effect.effect_name]
+            message = "You are %s with %s!" % [effect_verb, effect.get_effect_name()]
     else:
         var target_name := _get_target_name(target)
         if duration > 0:
-            message = "%s is %s with %s (%d turns)!" % [target_name.capitalize(), effect_verb, effect.effect_name, duration]
+            message = "%s is %s with %s (%d turns)!" % [target_name.capitalize(), effect_verb, effect.get_effect_name(), duration]
         else:
-            message = "%s is %s with %s!" % [target_name.capitalize(), effect_verb, effect.effect_name]
+            message = "%s is %s with %s!" % [target_name.capitalize(), effect_verb, effect.get_effect_name()]
 
     if positive:
         log_buff(message)
@@ -223,12 +227,10 @@ func log_status_effect_healing(target: CombatEntity, effect_name: String, healin
 func log_status_effect_removed(target: CombatEntity, effect_name: String, reason: String = "expired") -> void:
     var target_name := _get_target_name(target)
     var message: String
-
     if target == GameState.player:
         message = "Your %s effect %s." % [effect_name, reason]
     else:
         message = "%s's %s effect %s." % [target_name.capitalize(), effect_name, reason]
-
     log_warning(message)
 
 func log_flee_attempt(attacker: CombatEntity, success: bool) -> void:

@@ -3,8 +3,8 @@ class_name ItemInventoryComponent extends RefCounted
 
 # Manages an inventory using ItemStacks
 signal inventory_changed
-signal item_added(item: Item, amount: int)
-signal item_removed(item: Item, amount: int)
+signal item_added(item_instance: ItemInstance)
+signal item_removed(item_instance: ItemInstance)
 
 var item_stacks: Dictionary[Item, ItemStack] = {}  # Item -> ItemStack mapping
 var max_slots: int = -1  # -1 means unlimited slots
@@ -15,107 +15,80 @@ func _init(max_inventory_slots: int = -1) -> void:
 # === BASIC INVENTORY OPERATIONS ===
 
 # Add items to the inventory
-func add_item(item: Item, amount: int = 1) -> bool:
-    if amount <= 0:
+func add_item(item_instance: ItemInstance) -> bool:
+    if item_instance.count<= 0:
         return false
 
     # Check slot limit
-    if max_slots > 0 and item not in item_stacks and get_used_slots() >= max_slots:
+    if max_slots > 0 and item_instance.item not in item_stacks and get_used_slots() >= max_slots:
         return false
 
     # Get or create stack
     var stack: ItemStack
-    if item in item_stacks:
-        stack = item_stacks[item]
+    if item_instance.item in item_stacks:
+        stack = item_stacks[item_instance.item]
     else:
-        stack = ItemStack.new(item, 0)
-        item_stacks[item] = stack
+        stack = ItemStack.new(item_instance.item, 0)
+        item_stacks[item_instance.item] = stack
         stack.stack_changed.connect(_on_stack_changed)
 
     # Add to stack
-    stack.add_stack_count(amount)
+    if item_instance.item_data != null:
+        stack.add_instance(item_instance.item_data)
+    else:
+        stack.add_stack_count(item_instance.count)
 
-    item_added.emit(item, amount)
+
+    item_added.emit(item_instance)
     inventory_changed.emit()
     return true
 
 # Add an item with specific instance data
-func add_item_instance(item: Item, item_data: ItemData = null) -> bool:
+func add_item_instance(item_instance: ItemInstance) -> bool:
     # Check slot limit
-    if max_slots > 0 and item not in item_stacks and get_used_slots() >= max_slots:
+    if max_slots > 0 and item_instance.item not in item_stacks and get_used_slots() >= max_slots:
         return false
 
     # Get or create stack
     var stack: ItemStack
-    if item in item_stacks:
-        stack = item_stacks[item]
+    if item_instance.item in item_stacks:
+        stack = item_stacks[item_instance.item]
     else:
-        stack = ItemStack.new(item, 0)
-        item_stacks[item] = stack
+        stack = ItemStack.new(item_instance.item, 0)
+        item_stacks[item_instance.item] = stack
         stack.stack_changed.connect(_on_stack_changed)
 
     # Create ItemData if none provided
-    if item_data == null:
-        item_data = ItemData.new()
+    if item_instance.item_data == null:
+        item_instance.item_data = ItemData.new()
 
     # Add instance
-    stack.add_instance(item_data)
+    stack.add_instance(item_instance.item_data)
 
-    item_added.emit(item, 1)
+    item_added.emit(item_instance)
     inventory_changed.emit()
     return true
 
-# Add an item instance back without changing total count (for returning equipped items)
-func add_item_instance_no_count_change(item: Item, item_data: ItemData) -> bool:
-    # Get existing stack (must exist since weapon was taken from it)
-    if item not in item_stacks:
-        return false
 
-    var stack: ItemStack = item_stacks[item]
-    stack.add_instance_no_count_change(item_data)
-
-    inventory_changed.emit()
-    return true
-
-# Remove items from inventory (generic removal)
-func remove_item(item: Item, amount: int = 1) -> int:
-    if amount <= 0 or item not in item_stacks:
-        return 0
-
-    var stack: ItemStack = item_stacks[item]
-    var total_available: int = stack.get_total_count()
-    var to_remove: int = min(amount, total_available)
-
-    if to_remove == 0:
-        return 0
-
-    # Remove items from stack
-    stack.remove_any(to_remove)
-
-    # Remove empty stacks
-    if stack.is_empty():
-        stack.stack_changed.disconnect(_on_stack_changed)
-        item_stacks.erase(item)
-
-    item_removed.emit(item, to_remove)
-    inventory_changed.emit()
-    return to_remove
+# Remove items from inventory
+func remove_item(item_instance: ItemInstance) -> bool:
+    return remove_item_instance(item_instance)
 
 # Remove a specific item instance with ItemData
-func remove_item_instance(item: Item, item_data: ItemData) -> bool:
-    if item not in item_stacks:
+func remove_item_instance(item_instance: ItemInstance) -> bool:
+    if item_instance.item not in item_stacks:
         return false
 
-    var stack: ItemStack = item_stacks[item]
-    var success := stack.remove_instance_by_reference(item_data)
+    var stack: ItemStack = item_stacks[item_instance.item]
+    var success := stack.remove_instance_by_reference(item_instance.item_data)
 
     if success:
         # Remove empty stacks
         if stack.is_empty():
             stack.stack_changed.disconnect(_on_stack_changed)
-            item_stacks.erase(item)
+            item_stacks.erase(item_instance.item)
 
-        item_removed.emit(item, 1)
+        item_removed.emit(item_instance.item, 1)
         inventory_changed.emit()
 
     return success
@@ -176,12 +149,6 @@ func get_item_count(item: Item) -> int:
 func get_item_stack(item: Item) -> ItemStack:
     return item_stacks.get(item)
 
-# Get all items in inventory
-func get_all_items() -> Array[Item]:
-    var items: Array[Item] = []
-    for item: Item in item_stacks.keys():
-        items.append(item)
-    return items
 
 # Get all item stacks
 func get_all_stacks() -> Array[ItemStack]:
@@ -229,61 +196,13 @@ func get_inventory_display_info() -> Array:
     return display_info
 
 # Generate ItemTiles for consistent UI display across all systems
-func get_item_tiles() -> Array[ItemTile]:
-    var tiles: Array[ItemTile] = []
+func get_item_tiles() -> Array[ItemInstance]:
+    var tiles: Array[ItemInstance] = []
 
-    for item: Item in item_stacks.keys():
-        var stack: ItemStack = item_stacks[item]
-        var stack_info := stack.get_display_info()
-
-        # Add generic items if available
-        if stack_info.generic_count > 0:
-            var tile := ItemTile.new(
-                item,
-                null,  # no item_data for generic items
-                stack_info.generic_count,
-                item.name,
-                "",  # no description suffix for generic items
-                false  # not equipped (equipped items are separate)
-            )
-            tiles.append(tile)
-
-        # Add each unique instance as a separate tile
-        for instance_info: Dictionary in stack_info.unique_instances:
-            var instance_data: ItemData = instance_info.item_data
-            var description: String = instance_info.description
-
-            var tile := ItemTile.new(
-                item,
-                instance_data,
-                1,  # unique instances are always count 1
-                item.name,
-                description,
-                false  # not equipped (equipped items are separate)
-            )
-            tiles.append(tile)
+    for stack: ItemStack in item_stacks.values():
+        tiles.append_array(stack.get_item_tiles())
 
     return tiles
-
-# Merge items from another inventory
-func merge_from(other_inventory: ItemInventoryComponent) -> Array[Item]:
-    var failed_items: Array[Item] = []
-
-    for item in other_inventory.get_all_items():
-        var other_stack := other_inventory.get_item_stack(item)
-        var stack_info := other_stack.get_display_info()
-
-        # Try to add stack count
-        if stack_info.stack_count > 0:
-            if not add_item(item, stack_info.stack_count):
-                failed_items.append(item)
-
-        # Try to add each unique instance
-        for instance_info: Variant in stack_info.unique_instances:
-            if not add_item_instance(item, instance_info.item_data):
-                failed_items.append(item)
-
-    return failed_items
 
 # Get total value of all items in inventory
 func get_total_value() -> int:

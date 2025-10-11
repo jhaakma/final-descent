@@ -13,8 +13,7 @@ var gold: int = 0
 
 # Inventory and equipment - using new inventory component
 var inventory: ItemInventoryComponent
-var equipped_weapon: ItemWeapon = null
-var equipped_weapon_data :ItemData = null  # ItemData instance for the equipped weapon
+var equipped_weapon: ItemInstance = null
 
 # Constants for combat calculations
 const BASE_ATTACK_MIN: int = 2
@@ -41,7 +40,6 @@ func reset() -> void:
     if inventory:
         inventory.clear()
     equipped_weapon = null
-    equipped_weapon_data = null
 
     # Clear status effects using inherited component
     clear_all_status_effects()
@@ -110,26 +108,16 @@ func _on_inventory_changed() -> void:
     emit_signal("inventory_changed")
 
 # === INVENTORY MANAGEMENT ===
-func add_item(item: Item) -> void:
-    inventory.add_item(item, 1)
-    item.on_pickup()
+func add_items(item_instance: ItemInstance) -> void:
+    inventory.add_item(item_instance)
+    LogManager.log_message("Received item: %s (x%d)" % [item_instance.item.name, item_instance.count])
 
-func remove_item(item: Item) -> void:
-    inventory.remove_item(item, 1)
-    # Only unequip if the equipped weapon is generic (no specific item_data)
-    # and there are none left of this item type
-    if item == equipped_weapon and not equipped_weapon_data and not inventory.has_item(item):
+
+func remove_item(item_instance: ItemInstance) -> bool:
+    if equipped_weapon and item_instance.matches(equipped_weapon):
         unequip_weapon()
+    return inventory.remove_item(item_instance)
 
-# Remove a specific item instance with ItemData
-func remove_item_instance(item: Item, item_data: ItemData) -> bool:
-    var success := inventory.remove_item_instance(item, item_data)
-
-    # Unequip if we removed the specific equipped weapon instance
-    if success and item == equipped_weapon and equipped_weapon_data == item_data:
-        unequip_weapon()
-
-    return success
 
 func has_item(item: Item) -> bool:
     return inventory.has_item(item)
@@ -138,56 +126,63 @@ func get_item_count(item: Item) -> int:
     return inventory.get_item_count(item)
 
 # === WEAPON MANAGEMENT ===
-func equip_weapon(weapon: ItemWeapon, weapon_data: ItemData = null) -> void:
+func equip_weapon(item_instance: ItemInstance) -> bool:
+    var weapon: ItemWeapon = item_instance.item as ItemWeapon
     # Unequip current weapon first if there is one
     if equipped_weapon:
         unequip_weapon()
 
     # Check if we have this weapon in inventory
     if not inventory.has_item(weapon):
-        return
+        return false
 
-    if weapon_data:
+    if item_instance.item_data:
         # Equipping a specific instance - remove it from inventory
-        if inventory.take_item_instance(weapon, weapon_data):
-            equipped_weapon = weapon
-            equipped_weapon_data = weapon_data
+        if inventory.take_item_instance(item_instance.item, item_instance.item_data):
+            equipped_weapon = item_instance
             emit_signal("inventory_changed")
     else:
         # Equipping a generic item - take one from stack
-        var taken_data : ItemData = inventory.get_item_stack(weapon).take_one()
-        if taken_data:
-            equipped_weapon = weapon
-            equipped_weapon_data = null  # No ItemData until damaged
-            emit_signal("inventory_changed")
+        var taken : ItemInstance = inventory.get_item_stack(weapon).take_one()
+        if taken:
 
-func unequip_weapon() -> void:
+            equipped_weapon = taken
+            emit_signal("inventory_changed")
+    equipped_weapon.is_equipped = true
+    LogManager.log_message("Equipped %s" % weapon.name)
+    return true
+
+func unequip_weapon() -> bool:
     if not equipped_weapon:
-        return
+        return false
 
     # Return weapon to inventory based on whether it has unique data
-    if equipped_weapon_data and equipped_weapon_data.is_unique():
+    if equipped_weapon.item_data and equipped_weapon.item_data.is_unique():
         # Has unique data (damaged/enchanted) - add as instance
-        inventory.add_item_instance(equipped_weapon, equipped_weapon_data)
+        inventory.add_item_instance(equipped_weapon)
     else:
         # Undamaged - add as generic item
-        inventory.add_item(equipped_weapon, 1)
+        inventory.add_item(equipped_weapon)
 
+    LogManager.log_message("Unequipped %s" % equipped_weapon.item.name)
+
+    equipped_weapon.is_equipped = false
     # Clear equipped weapon
     equipped_weapon = null
-    equipped_weapon_data = null
     emit_signal("inventory_changed")
+    return true
 
 func get_equipped_weapon() -> ItemInstance:
-    return ItemInstance.new(equipped_weapon, equipped_weapon_data) if equipped_weapon else null
+    return equipped_weapon
 
 func get_weapon_damage() -> int:
     if equipped_weapon:
-        var base_damage := equipped_weapon.damage
-        if equipped_weapon_data:
+        var weapon := equipped_weapon.item as ItemWeapon
+        var base_damage := weapon.damage
+        if equipped_weapon.item_data:
             # Weapon has taken damage, scale by condition
-            var current_condition := equipped_weapon_data.current_condition
-            var condition_ratio := float(current_condition) / float(equipped_weapon.condition)
+            var current_condition := equipped_weapon.item_data.current_condition
+            var condition_ratio := float(current_condition) / float(weapon.condition)
             return int(base_damage * condition_ratio)
         else:
             # Weapon is undamaged, return full damage
@@ -195,18 +190,24 @@ func get_weapon_damage() -> int:
     return 0
 
 func get_weapon_name() -> String:
-    return equipped_weapon.name
+    return equipped_weapon.item.name
 
 func has_weapon_equipped() -> bool:
     return equipped_weapon != null
 
+func get_equipped_weapon_instance() -> ItemInstance:
+    if equipped_weapon:
+        return equipped_weapon
+    return null
+
 # Get current weapon condition information
 func get_weapon_condition() -> Dictionary:
     if equipped_weapon:
-        if equipped_weapon_data:
+        var weapon := equipped_weapon.item as ItemWeapon
+        if equipped_weapon.item_data:
             # Weapon has condition data
-            var current_condition := equipped_weapon_data.current_condition
-            var max_condition := equipped_weapon.condition
+            var current_condition := equipped_weapon.item_data.current_condition
+            var max_condition := weapon.condition
             return {
                 "current": current_condition,
                 "max": max_condition,
@@ -216,7 +217,7 @@ func get_weapon_condition() -> Dictionary:
             }
         else:
             # Weapon is undamaged
-            var max_condition := equipped_weapon.condition
+            var max_condition := weapon.condition
             return {
                 "current": max_condition,
                 "max": max_condition,
@@ -260,20 +261,22 @@ func get_total_max_hp_bonus() -> int:
 
 # === STATUS EFFECT MANAGEMENT ===
 # Override the base method to emit stats_changed signal for UI updates
-func apply_status_effect(effect: StatusEffect) -> void:
-    super.apply_status_effect(effect)
-    emit_signal("stats_changed")
+func apply_status_effect(effect: StatusEffect) -> bool:
+    var result := super.apply_status_effect(effect)
+    if result:
+        emit_signal("stats_changed")
+    return result
 
 # Override the base method to emit stats_changed signal for UI updates
-func remove_status_effect(effect_name: String) -> void:
-    super.remove_status_effect(effect_name)
+func remove_status_effect(effect: StatusEffect) -> void:
+    super.remove_status_effect(effect)
     emit_signal("stats_changed")
 
 func clear_all_negative_status_effects() -> Array[StatusEffect]:
     var removed_effects: Array[StatusEffect] = []
     for effect in status_effect_component.get_all_effects():
-        if effect.effect_type == StatusEffect.EffectType.NEGATIVE:
-            status_effect_component.remove_effect(effect.effect_name)
+        if effect.get_effect_type() == StatusEffect.EffectType.NEGATIVE:
+            status_effect_component.remove_effect(effect)
             removed_effects.append(effect)
     if removed_effects.size() > 0:
         emit_signal("stats_changed")
@@ -290,26 +293,27 @@ func calculate_attack_damage() -> int:
 func reduce_weapon_condition() -> void:
     if not equipped_weapon:
         return
+    var weapon := equipped_weapon.item as ItemWeapon
 
     # Create ItemData if it doesn't exist yet (first damage)
-    if not equipped_weapon_data:
-        equipped_weapon_data = ItemData.new()
-        equipped_weapon_data.current_condition = equipped_weapon.condition
+    if not equipped_weapon.item_data:
 
-    var current_condition := equipped_weapon_data.current_condition
+        equipped_weapon.item_data = ItemData.new()
+        equipped_weapon.item_data.current_condition = weapon.condition
+
+    var current_condition := equipped_weapon.item_data.current_condition
     current_condition -= 1
-    equipped_weapon_data.current_condition = current_condition
+    equipped_weapon.item_data.current_condition = current_condition
 
     # Emit signal to update UI immediately when weapon condition changes
     emit_signal("inventory_changed")
 
     # Check if weapon is destroyed
     if current_condition <= 0:
-        var weapon_name := equipped_weapon.name
+        var weapon_name := weapon.name
         LogManager.log_warning("%s has broken and is destroyed!" % weapon_name)
         # Destroy the weapon (don't return it to inventory)
         equipped_weapon = null
-        equipped_weapon_data = null
         # Emit signal again to update UI when weapon is destroyed
         emit_signal("inventory_changed")
 
@@ -344,39 +348,19 @@ func get_total_attack_display() -> String:
 func get_inventory_display_info() -> Array:
     return inventory.get_inventory_display_info()
 
-func get_all_inventory_items() -> Array[Item]:
-    return inventory.get_all_items()
-
 # Get ItemTiles for UI display (includes equipped items)
-func get_item_tiles() -> Array[ItemTile]:
-    var tiles: Array[ItemTile] = []
+func get_item_tiles() -> Array[ItemInstance]:
+    var tiles: Array[ItemInstance] = []
 
     # Add equipped weapon as a separate tile if present
     if equipped_weapon:
-        var weapon_description := ""
-        if equipped_weapon_data:
-            weapon_description = equipped_weapon_data.get_instance_description()
-
-        var equipped_tile := ItemTile.new(
-            equipped_weapon,
-            equipped_weapon_data,
-            1,
-            equipped_weapon.name,
-            weapon_description,
-            true  # is_equipped = true
-        )
-        tiles.append(equipped_tile)
+        tiles.append(equipped_weapon)
 
     # Add inventory tiles
     tiles.append_array(inventory.get_item_tiles())
 
     return tiles
 
-# Add item with instance data (for items with condition damage, enchantments, etc.)
-func add_item_with_data(item: Item, item_data: ItemData = null) -> void:
-    inventory.add_item_instance(item, item_data)
-    if item_data == null:
-        item.on_pickup()
 
 # Take items and get their ItemData instances
 func take_items(item: Item, amount: int = 1) -> Array:

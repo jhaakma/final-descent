@@ -57,6 +57,7 @@ folder_colors={
 
 [gui]
 
+timers/tooltip_delay_sec=0.2
 timers/name="UI Components"
 
 [rendering]

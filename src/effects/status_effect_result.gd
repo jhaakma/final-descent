@@ -1,8 +1,8 @@
 class_name StatusEffectResult extends Resource
 
-@export var effect_name: String = ""
+@export var effect_id: String = ""
 @export var message: String = ""
 
-func _init(p_effect_name: String = "", p_message: String = ""):
-    effect_name = p_effect_name
-    message = p_message
+func _init(_effect_id: String = "", _message: String = "") -> void:
+    effect_id = _effect_id
+    message = _message

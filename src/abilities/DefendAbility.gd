@@ -7,7 +7,7 @@ func _init() -> void:
     description = "Prepare to defend against incoming attacks."
     priority = 5
 
-func execute(caster, _target = null) -> void:
+func execute(caster: CombatEntity, _target: CombatEntity = null) -> void:
     # Apply unified defend action for both players and enemies
     if caster.has_method("set_defending"):
         # Use the unified defending system with configurable multiplier
@@ -23,7 +23,7 @@ func execute(caster, _target = null) -> void:
 func get_ability_type() -> Ability.AbilityType:
     return Ability.AbilityType.DEFEND
 
-func can_use(caster) -> bool:
+func can_use(caster: CombatEntity) -> bool:
     # Check if can defend
     if not caster or not caster.has_method("is_alive") or not caster.is_alive():
         return false

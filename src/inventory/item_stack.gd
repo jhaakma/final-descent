@@ -27,6 +27,7 @@ func get_instance_count() -> int:
 # Check if this stack is empty
 func is_empty() -> bool:
     return stack_count == 0# Add generic items to the stack
+
 func add_stack_count(amount: int) -> void:
     if amount > 0:
         stack_count += amount
@@ -37,22 +38,25 @@ func remove_stack_count(amount: int) -> int:
     var removed: int = min(amount, stack_count)
     stack_count -= removed
     if removed > 0:
+        # Check if we need to remove instances as well
+        while stack_count < item_instances.size():
+            item_instances.pop_back()
         stack_changed.emit()
     return removed
 
 # Add a specific item instance
 func add_instance(item_data: ItemData) -> void:
     # Try to merge with existing instances if possible
-    if not item_data.is_unique():
-        for existing_data in item_instances:
-            if item_data.can_stack_with(existing_data):
-                # Convert both instances to generic (remove from instances, don't change total count)
-                item_instances.erase(existing_data)
-                stack_changed.emit()
-                return
-
-    # Add as a unique instance and increase total count
-    item_instances.append(item_data)
+    if item_data != null:
+        if not item_data.is_unique():
+            for existing_data in item_instances:
+                if item_data.can_stack_with(existing_data):
+                    # Convert both instances to generic (remove from instances, don't change total count)
+                    item_instances.erase(existing_data)
+                    stack_changed.emit()
+                    return
+        # Add as a unique instance and increase total count
+        item_instances.append(item_data)
     stack_count += 1
     stack_changed.emit()
 
@@ -70,25 +74,25 @@ func convert_generic_to_instance(item_data: ItemData) -> bool:
         return true
     return false
 
-# Remove a specific item instance by index
-func remove_instance(index: int) -> ItemData:
-    if index >= 0 and index < item_instances.size():
-        var removed_data := item_instances[index]
-        item_instances.remove_at(index)
-        stack_count -= 1  # Decrease total count
-        stack_changed.emit()
-        return removed_data
-    return null
-
 # Remove a specific item instance by reference
 func remove_instance_by_reference(item_data: ItemData) -> bool:
-    var index := item_instances.find(item_data)
-    if index >= 0:
-        item_instances.remove_at(index)
-        stack_count -= 1  # Decrease total count
-        stack_changed.emit()
+    if item_data:
+        var index := item_instances.find(item_data)
+        if index >= 0:
+            item_instances.remove_at(index)
+            remove_stack_count(1)  # Decrease total count
+            return true
+    else:
+        remove_stack_count(1)  # Remove a generic item if no specific instance provided
         return true
     return false
+
+func remove(item_data: ItemData) -> bool:
+    if item_data:
+        return remove_instance_by_reference(item_data)
+    else:
+        # No specific instance provided, remove a generic item if available
+        return remove_stack_count(1) > 0
 
 # Get a specific item instance by index
 func get_instance(index: int) -> ItemData:
@@ -127,7 +131,7 @@ func remove_any(amount: int) -> Array:
     return removed_instances
 
 # Take a single item (preferring generic items first)
-func take_one() -> ItemData:
+func take_one() -> ItemInstance:
     if stack_count <= 0:
         return null
 
@@ -139,19 +143,15 @@ func take_one() -> ItemData:
         stack_count -= 1
         stack_changed.emit()
         # Return a new default ItemData for generic items
-        return ItemData.new()
+        return ItemInstance.new(item, null, 1)
     elif item_instances.size() > 0:
         # Take from instances
         var taken: ItemData = item_instances.pop_back()
         stack_count -= 1
         stack_changed.emit()
-        return taken
+        return ItemInstance.new(item, taken, 1)
 
     return null
-
-# Take a specific instance by index
-func take_instance(index: int) -> ItemData:
-    return remove_instance(index)
 
 # Check if this stack contains the same item type
 func contains_item(check_item: Item) -> bool:
@@ -166,7 +166,7 @@ func get_display_name() -> String:
 # Get the description for this stack
 func get_description() -> String:
     if item:
-        return item.description
+        return item.get_description()
     return "No description available"
 
 # Get stack information for UI display
@@ -233,3 +233,18 @@ func merge_with(other_stack: ItemStack) -> bool:
 
     stack_changed.emit()
     return true
+
+func get_item_tiles() -> Array[ItemInstance]:
+    var tiles: Array[ItemInstance] = []
+
+    # Add generic items as ItemTiles
+    if stack_count - item_instances.size() > 0:
+        var generic_tile := ItemInstance.new(item, null, stack_count - item_instances.size())
+        tiles.append(generic_tile)
+
+    # Add each specific instance as an ItemInstance
+    for instance_data in item_instances:
+        var instance_tile := ItemInstance.new(item, instance_data, 1)
+        tiles.append(instance_tile)
+
+    return tiles

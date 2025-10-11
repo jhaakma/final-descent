@@ -27,13 +27,13 @@ static func get_item_tooltip_text(item: Item, count: int = 1) -> String:
         tooltip_parts.append("Type: Item")
 
     # Add description
-    var description = item.get_description()
+    var description := item.get_description()
     if description and description != "":
         tooltip_parts.append("\n%s" % description)
 
     # Add weapon-specific stats
     if item is ItemWeapon:
-        var weapon = item as ItemWeapon
+        var weapon := item as ItemWeapon
         tooltip_parts.append("\nDamage: %d" % weapon.damage)
 
         # Show if currently equipped
@@ -42,14 +42,14 @@ static func get_item_tooltip_text(item: Item, count: int = 1) -> String:
 
     # Add potion-specific information
     if item is ItemPotion:
-        var potion = item as ItemPotion
-        if potion.effect:
+        var potion := item as ItemPotion
+        if potion.status_effect:
             tooltip_parts.append("\nEffect:")
-            tooltip_parts.append(potion.effect.get_description())
+            tooltip_parts.append(potion.status_effect.get_description())
 
     # Add value information
     tooltip_parts.append("\nValue: %d gold" % item.purchase_value)
-    if item.consumable:
+    if item.get_consumable():
         tooltip_parts.append("Consumable")
     else:
         tooltip_parts.append("Reusable")
@@ -70,12 +70,13 @@ static func get_simple_item_tooltip_text(item: Item, count: int = 1) -> String:
         tooltip_parts.append("%s" % item.name)
 
     # Basic description
-    if item.description and item.description != "":
-        tooltip_parts.append(item.description)
+    var description := item.get_description()
+    if description != "":
+        tooltip_parts.append(description)
 
     # Show damage for weapons
     if item is ItemWeapon:
-        var weapon = item as ItemWeapon
+        var weapon := item as ItemWeapon
         tooltip_parts.append("Damage: %d" % weapon.damage)
 
     return "\n".join(tooltip_parts)

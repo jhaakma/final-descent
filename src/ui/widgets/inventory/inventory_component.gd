@@ -51,28 +51,25 @@ func _refresh_inventory() -> void:
     inventory_rows.clear()
     selected_item = null
 
-    # Get ItemTiles from player (includes both inventory and equipped items)
-    var all_tiles: Array[ItemTile] = GameState.player.get_item_tiles()
+    # Get ItemTiles from player
+    var all_tiles: Array[ItemInstance] = GameState.player.get_item_tiles()
 
     # Sort tiles: equipped first, then by name (with instances after generic items for same type)
-    all_tiles.sort_custom(func(a: ItemTile, b: ItemTile) -> bool:
+    all_tiles.sort_custom(func(a: ItemInstance, b: ItemInstance) -> bool:
         return a.get_sort_key() < b.get_sort_key()
     )
 
     # Create inventory rows for each tile
-    for tile: ItemTile in all_tiles:
+    for tile: ItemInstance in all_tiles:
         var row: InventoryRow = inventory_row_scene.instantiate() as InventoryRow
         inventory_list.add_child(row)
 
         # Setup the row using the tile information
-        row.setup_with_custom_name(
-            tile.item,
-            tile.count,
-            is_combat_disabled,
-            tile.get_full_display_name(),
-            tile.item_data,
-            tile.is_equipped
+        row.setup(
+            tile,
+            is_combat_disabled
         )
+
 
         # Connect signals
         row.item_selected.connect(_on_item_selected)
@@ -87,22 +84,22 @@ func _on_item_selected(item: Item) -> void:
 
     # Update visual selection on all rows
     for row in inventory_rows:
-        row.set_selected(row.item_resource == selected_item)
+        row.set_selected(row.item_instance.item == selected_item)
 
-func _on_item_used(item: Item, item_data: ItemData) -> void:
-    if item is ItemWeapon:
+func _on_item_used(item_instance: ItemInstance) -> void:
+    if item_instance.item is ItemWeapon:
         # Check if this specific instance is equipped
-        var is_this_equipped: bool = (GameState.player.equipped_weapon == item and
-                               GameState.player.equipped_weapon_data == item_data)
+        var equipped_weapon: ItemInstance = GameState.player.get_equipped_weapon()
+        var is_this_equipped: bool = equipped_weapon and (equipped_weapon.item == item_instance.item and equipped_weapon.item_data == item_instance.item_data)
 
         if is_this_equipped:
             # Unequip the current weapon
             GameState.player.unequip_weapon()
         else:
             # Equip this weapon instance (either specific or from generic stack)
-            GameState.player.equip_weapon(item, item_data)
+            GameState.player.equip_weapon(item_instance)
     else:
-        item.use()
+        item_instance.use_item()
         _refresh_inventory()
 
-    item_used.emit()
+    item_used.emit(item_instance)

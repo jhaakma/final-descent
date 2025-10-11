@@ -141,7 +141,7 @@ func _refresh_stats() -> void:
         buff_info = " (ATK +%d, DEF +%d)" % [attack_bonus, defense_bonus]
 
     # Add status effects count and tooltip
-    var active_effects := GameState.get_player_status_effects()
+    var active_effects := GameState.player.get_all_status_effects()
     var hp_tooltip_text := "HP: %d/%d%s" % [GameState.player.get_hp(), GameState.player.get_max_hp(), buff_info]
 
     if active_effects.size() > 0:
@@ -166,7 +166,7 @@ func _refresh_buffs() -> void:
     var has_content := false
 
     # Add status effects
-    var status_effects := GameState.get_player_status_effects()
+    var status_effects := GameState.player.get_all_status_effects()
     if status_effects.size() > 0:
         has_content = true
         print("Adding %d status effects" % status_effects.size())
@@ -193,7 +193,7 @@ func _refresh_buffs() -> void:
         print("Buffs block visible with %d children" % buffs_block.get_child_count())
 
 # Inventory component callbacks
-func _on_item_used() -> void:
+func _on_item_used(_item_tile: ItemInstance) -> void:
     update()
 
 func _on_inventory_updated() -> void:
@@ -271,7 +271,7 @@ func _render_room() -> void:
     _build_actions()
 
     # Check if room should be cleared by default
-    if current_room.cleared_by_default:
+    if current_room.is_cleared_by_default():
         _mark_cleared_by_default()
 
 func _build_actions() -> void:
@@ -291,7 +291,7 @@ func _mark_cleared() -> void:
         if child is Button:
             (child as Button).disabled = true
 
-    if not current_room.cleared_by_default:
+    if not current_room.is_cleared_by_default():
         LogManager.log_success("Room cleared! Proceed when ready.")
 
 func _mark_cleared_by_default() -> void:

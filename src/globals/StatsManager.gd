@@ -15,8 +15,8 @@ func _ready() -> void:
 
 # Record a completed run and update best stats
 func record_run(floor_reached: int, gold_earned: int) -> RunAchievements:
-    var new_floor_record = false
-    var new_gold_record = false
+    var new_floor_record := false
+    var new_gold_record := false
 
     # Increment total runs
     total_runs += 1
@@ -31,7 +31,7 @@ func record_run(floor_reached: int, gold_earned: int) -> RunAchievements:
         new_gold_record = true
 
     # Create achievements object
-    var achievements = RunAchievements.new(
+    var achievements := RunAchievements.new(
         new_floor_record,
         new_gold_record,
         new_floor_record and new_gold_record
@@ -41,7 +41,7 @@ func record_run(floor_reached: int, gold_earned: int) -> RunAchievements:
     save_stats()
 
     # Emit signal for UI updates
-    var current_stats = get_stats()
+    var current_stats := get_stats()
     emit_signal("stats_updated", current_stats)
 
     return achievements
@@ -52,10 +52,10 @@ func get_stats() -> GameStats:
 
 # Save stats to file
 func save_stats() -> void:
-    var file = FileAccess.open(SAVE_FILE_PATH, FileAccess.WRITE)
+    var file := FileAccess.open(SAVE_FILE_PATH, FileAccess.WRITE)
     if file:
-        var current_stats = GameStats.new(best_floor_reached, best_gold_earned, total_runs)
-        var save_data = current_stats.to_dict()
+        var current_stats := GameStats.new(best_floor_reached, best_gold_earned, total_runs)
+        var save_data := current_stats.to_dict()
         save_data["version"] = 1  # For future compatibility
 
         file.store_string(JSON.stringify(save_data))
@@ -67,17 +67,17 @@ func save_stats() -> void:
 # Load stats from file
 func load_stats() -> void:
     if FileAccess.file_exists(SAVE_FILE_PATH):
-        var file = FileAccess.open(SAVE_FILE_PATH, FileAccess.READ)
+        var file := FileAccess.open(SAVE_FILE_PATH, FileAccess.READ)
         if file:
-            var json_string = file.get_as_text()
+            var json_string := file.get_as_text()
             file.close()
 
-            var json = JSON.new()
-            var parse_result = json.parse(json_string)
+            var json := JSON.new()
+            var parse_result := json.parse(json_string)
 
             if parse_result == OK:
-                var save_data = json.data
-                var loaded_stats = GameStats.from_dict(save_data)
+                var save_data := json.data as Dictionary
+                var loaded_stats := GameStats.from_dict(save_data)
                 best_floor_reached = loaded_stats.best_floor_reached
                 best_gold_earned = loaded_stats.best_gold_earned
                 total_runs = loaded_stats.total_runs
@@ -102,7 +102,7 @@ func _reset_stats() -> void:
 func reset_all_stats() -> void:
     _reset_stats()
     save_stats()
-    var current_stats = get_stats()
+    var current_stats := get_stats()
     emit_signal("stats_updated", current_stats)
     print("All stats have been reset")
 

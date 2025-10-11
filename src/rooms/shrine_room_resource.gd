@@ -9,21 +9,37 @@ class_name ShrineRoomResource extends RoomResource
 @export var loot_curse_chance: float = 0.3  # Chance to receive a curse when looting
 @export var curse_enemy: EnemyResource = null  # Enemy to spawn if cursed
 
-func _init()->void:
-    cleared_by_default = true
+func is_cleared_by_default() -> bool:
+    return true
 
-func build_actions(_actions_grid: GridContainer, _room_screen: RoomScreen) -> void:
-    add_action_button(_actions_grid, ActionButton.new("Blessing (%d gold)" % blessing_cost, "Pray for a random beneficial buff"), _on_pray.bind(_room_screen))
-    add_action_button(_actions_grid, ActionButton.new("Restoration (%d gold)" % cure_cost, "Pray to remove all negative status effects"), _on_cure.bind(_room_screen))  # Cure uses same logic as pray for now
-    add_action_button(_actions_grid, ActionButton.new("Healing (%d gold)" % heal_cost, "Pray to restore some hitpoints"), on_heal.bind(_room_screen))
-    add_action_button(_actions_grid, ActionButton.new("Loot the Shrine", "Search the shrine for treasure, but risk upsetting the spirits"), _on_loot.bind(_room_screen))
+func build_actions(actions_grid: GridContainer, room_screen: RoomScreen) -> void:
+
+    var blessing := RoomAction.new("Blessing (%d gold)" % blessing_cost, "Pray for a random beneficial buff")
+    blessing.is_enabled = GameState.player.has_gold(blessing_cost)
+    blessing.perform_action = _on_blessing
+    add_action_button(actions_grid, room_screen, blessing)
+
+    var restoration := RoomAction.new("Restoration (%d gold)" % cure_cost, "Pray to remove all negative status effects")
+    restoration.is_enabled = GameState.player.has_gold(cure_cost)
+    restoration.perform_action = _on_cure
+    add_action_button(actions_grid, room_screen, restoration)
+
+    var heal := RoomAction.new("Healing (%d gold)" % heal_cost, "Pray to restore some hitpoints")
+    heal.is_enabled = GameState.player.has_gold(heal_cost)
+    heal.perform_action = _on_heal
+    add_action_button(actions_grid, room_screen, heal)
+
+    var looting := RoomAction.new("Loot the Shrine", "Search the shrine for treasure, but risk upsetting the spirits")
+    looting.is_enabled = true
+    looting.perform_action = _on_loot
+    add_action_button(actions_grid, room_screen, looting)
 
 
-func _on_pray(room_screen: RoomScreen) -> void:
-    if not GameState.has_gold(blessing_cost):
+func _on_blessing(room_screen: RoomScreen) -> void:
+    if not GameState.player.has_gold(blessing_cost):
         LogManager.log_warning("Not enough gold.")
         return
-    GameState.add_gold(-blessing_cost)
+    GameState.player.add_gold(-blessing_cost)
 
     # Grant a random status effect
     if possible_status_effects.size() > 0:
@@ -38,28 +54,26 @@ func _on_pray(room_screen: RoomScreen) -> void:
 
 #Cure removes any status effects
 func _on_cure(room_screen: RoomScreen) -> void:
-    if not GameState.has_gold(cure_cost):
+    if not GameState.player.has_gold(cure_cost):
         LogManager.log_warning("Not enough gold.")
         return
 
+    LogManager.log_success("You pray at the shrine and feel cleansed!")
     var removed_effects := GameState.player.clear_all_negative_status_effects()
     if removed_effects.size() > 0:
-        GameState.add_gold(-cure_cost)
-        LogManager.log_success("You pray at the shrine and feel cleansed!")
-        for effect in removed_effects:
-            LogManager.log_success("Cured status effect: %s" % effect.effect_name)
+        GameState.player.add_gold(-cure_cost)
         room_screen.update()
         room_screen.mark_cleared()
     else:
         LogManager.log_message("You have no status effects to cure.")
 
 
-func on_heal(room_screen: RoomScreen) -> void:
-    if not GameState.has_gold(heal_cost):
+func _on_heal(room_screen: RoomScreen) -> void:
+    if not GameState.player.has_gold(heal_cost):
         LogManager.log_warning("Not enough gold.")
         return
-    GameState.add_gold(-heal_cost)
-    GameState.heal(heal_amount)
+    GameState.player.add_gold(-heal_cost)
+    GameState.player.heal(heal_amount)
     LogManager.log_success("You pray at the shrine and heal %d HP." % heal_amount)
     room_screen.update()
     room_screen.mark_cleared()
@@ -71,7 +85,7 @@ func _on_loot(room_screen: RoomScreen) -> void:
         var ghost_enemy: EnemyResource = curse_enemy
         if ghost_enemy != null:
             LogManager.log_combat("As you loot the shrine, a vengeful spirit appears!")
-            var popup: CombatPopup = Util.instantiate("res://data/ui/popups/CombatPopup.tscn")
+            var popup: CombatPopup = CombatPopup.get_scene().instantiate()
             popup.set_enemy(ghost_enemy)
             room_screen.add_child(popup)
             popup.combat_resolved.connect(func(victory: bool)->void:
@@ -91,6 +105,6 @@ func _on_loot(room_screen: RoomScreen) -> void:
             LogManager.log_warning("Error: No ghost enemy configured!")
 
     var gold := loot_component.generate_loot().gold_total
-    GameState.add_gold(gold)
+    GameState.player.add_gold(gold)
     LogManager.log_success("You loot the shrine and gain %d gold." % gold)
     room_screen.mark_cleared()

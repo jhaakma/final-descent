@@ -2,6 +2,11 @@
 
 ## Create AI component to override enemy AIs
 
+## Fixes:
+- Replace inventory function params with ItemStacks or ItemTiles
+- Have condition affect buy price in addition to sell price
+
+
 ## Theme
 Create and use a consistent theme
 Remove all unnecessary theme overrides
@@ -10,16 +15,10 @@ Remove all unnecessary theme overrides
 - Random shrine event repairs items
 - Blacksmith room to repair or even improve gear
 
-## ItemPick
-- Fix to use count value
-
 ## Combat Enhancements
 - Status effects
     - Stun - skip next turn
     - Weakness - reduced damage
-- Special abilities
-    - Power Up - use this turn to prepare an extra powerful attack next turn
-    - Slam - stun opponent
 
 ## Magic
 - Scrolls for single use spells

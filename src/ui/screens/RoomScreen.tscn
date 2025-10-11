@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://c0cpy5xfdy2nb"]
+[gd_scene load_steps=27 format=3 uid="uid://c0cpy5xfdy2nb"]
 
 [ext_resource type="Theme" uid="uid://ch0ahyx502rlq" path="res://data/themes/theme.tres" id="1_fqbyh"]
 [ext_resource type="Script" uid="uid://bi2w4gopbk7mv" path="res://src/ui/screens/room_screen.gd" id="1_vxldv"]
@@ -6,19 +6,25 @@
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="3_2vu3h"]
 [ext_resource type="Script" uid="uid://bdbhlyvac2es6" path="res://src/rooms/room_resource.gd" id="3_soduk"]
 [ext_resource type="PackedScene" uid="uid://cp3266w0ukw23" path="res://src/ui/widgets/inventory/InventoryComponent.tscn" id="3_vun85"]
-[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/item.gd" id="4_p1ruj"]
+[ext_resource type="Resource" uid="uid://i5l4a63bwaev" path="res://data/rooms/ShopkeeperRoomBasic.tres" id="4_31aom"]
+[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="4_p1ruj"]
 [ext_resource type="Resource" uid="uid://duwirm5y8y3ir" path="res://data/items/weapons/Warhammer.tres" id="5_4gjwx"]
 [ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="6_em7fl"]
 [ext_resource type="Resource" uid="uid://bpscdhoshmjls" path="res://data/items/potions/Antidote.tres" id="6_p1ruj"]
 [ext_resource type="Script" uid="uid://cuib3tlx6u7dn" path="res://src/rooms/chest_room_resource.gd" id="7_soduk"]
 [ext_resource type="Resource" uid="uid://humesd68wuei" path="res://data/items/potions/HealthPotionLarge.tres" id="7_thj5w"]
+[ext_resource type="Resource" uid="uid://dwqgodsd7t16e" path="res://data/items/repair_tools/RepairToolBasic.tres" id="9_t5d3n"]
 [ext_resource type="Script" uid="uid://b4y5n724vd0ph" path="res://src/enemies/enemy_resource.gd" id="9_thj5w"]
+[ext_resource type="Resource" uid="uid://cxkrul1kd2tmm" path="res://data/items/elixirs/ElixirOfStrength.tres" id="10_seokc"]
 [ext_resource type="Script" uid="uid://bqxhtkn1xkeqv" path="res://src/rooms/combat_room_resource.gd" id="11_am2x5"]
-[ext_resource type="Resource" uid="uid://dt82du713jwsh" path="res://data/enemies/Bandit.tres" id="12_yrwxm"]
+[ext_resource type="Resource" uid="uid://dij2m52fyjwqp" path="res://data/enemies/Snake.tres" id="12_qopf2"]
+[ext_resource type="Script" uid="uid://rglym38nsnwg" path="res://src/effects/status_effect.gd" id="17_wfawr"]
+[ext_resource type="Resource" uid="uid://b4bgygnw5ixi3" path="res://data/effects/buffs/BlessingAttack.tres" id="18_hoodt"]
+[ext_resource type="Script" uid="uid://bnlue0rcqdx6d" path="res://src/rooms/shrine_room_resource.gd" id="19_kigx5"]
 
 [sub_resource type="Resource" id="Resource_t5dep"]
 script = ExtResource("3_2vu3h")
-loot_table = Array[ExtResource("4_p1ruj")]([ExtResource("6_p1ruj"), ExtResource("7_thj5w"), ExtResource("5_4gjwx")])
+loot_table = Array[ExtResource("4_p1ruj")]([ExtResource("6_p1ruj"), ExtResource("7_thj5w"), ExtResource("5_4gjwx"), ExtResource("9_t5d3n"), ExtResource("10_seokc")])
 count = 2
 chance_none = 0.0
 pick_method = 1
@@ -27,14 +33,14 @@ metadata/_custom_type_script = "uid://w4ie0s4l7syw"
 
 [sub_resource type="Resource" id="Resource_bu8q4"]
 script = ExtResource("6_em7fl")
-gold_min = 0
-gold_max = 0
+gold_min = 50
+gold_max = 50
 loot_table = Array[ExtResource("3_2vu3h")]([SubResource("Resource_t5dep")])
 metadata/_custom_type_script = "uid://lj0e532l0dyu"
 
 [sub_resource type="Resource" id="Resource_4t8ue"]
 script = ExtResource("7_soduk")
-chance_empty = 0.2
+chance_empty = 0.0
 loot_component = SubResource("Resource_bu8q4")
 title = "Room"
 description = "Description"
@@ -45,13 +51,28 @@ metadata/_custom_type_script = "uid://cuib3tlx6u7dn"
 
 [sub_resource type="Resource" id="Resource_037r1"]
 script = ExtResource("11_am2x5")
-enemy_list = Array[ExtResource("9_thj5w")]([ExtResource("12_yrwxm")])
+enemy_list = Array[ExtResource("9_thj5w")]([ExtResource("12_qopf2")])
 title = "Room"
 description = "Description"
 weight = 10
 min_floor = 0
 max_floor = -1
 metadata/_custom_type_script = "uid://bqxhtkn1xkeqv"
+
+[sub_resource type="Resource" id="Resource_mm5rg"]
+script = ExtResource("19_kigx5")
+blessing_cost = 10
+cure_cost = 5
+heal_cost = 8
+possible_status_effects = Array[ExtResource("17_wfawr")]([ExtResource("18_hoodt")])
+heal_amount = 10
+loot_curse_chance = 0.3
+title = "Room"
+description = "Description"
+weight = 10
+min_floor = 0
+max_floor = -1
+metadata/_custom_type_script = "uid://bnlue0rcqdx6d"
 
 [node name="RoomScreen" type="Control"]
 layout_mode = 3
@@ -62,7 +83,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_fqbyh")
 script = ExtResource("1_vxldv")
-starting_rooms = Array[ExtResource("3_soduk")]([SubResource("Resource_4t8ue"), SubResource("Resource_037r1")])
+starting_rooms = Array[ExtResource("3_soduk")]([SubResource("Resource_4t8ue"), SubResource("Resource_037r1"), ExtResource("4_31aom"), SubResource("Resource_mm5rg")])
 metadata/_edit_vertical_guides_ = [-118.0]
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
@@ -263,3 +284,11 @@ theme_override_constants/margin_bottom = 10
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 136.51)
 layout_mode = 2
+theme_override_font_sizes/bold_italics_font_size = 14
+theme_override_font_sizes/italics_font_size = 14
+theme_override_font_sizes/mono_font_size = 14
+theme_override_font_sizes/normal_font_size = 14
+theme_override_font_sizes/bold_font_size = 14
+bbcode_enabled = true
+deselect_on_focus_loss_enabled = false
+drag_and_drop_selection_enabled = false

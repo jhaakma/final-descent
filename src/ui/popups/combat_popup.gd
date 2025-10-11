@@ -3,6 +3,7 @@ class_name CombatPopup extends BasePopup
 signal combat_resolved(victory: bool)
 signal combat_fled()
 signal loot_collected()
+signal turn_ended()
 
 @onready var you_bar: ProgressBar = %PlayerHP
 @onready var foe_bar: ProgressBar = %EnemyHP
@@ -18,7 +19,7 @@ var enemy_first: bool = false
 var avoid_failure: bool = false
 var death_delay_timer: Timer = null
 # Mapping of menu item indices to ItemTiles to prevent index mismatches
-var use_item_menu_mapping: Array[ItemTile] = []
+var use_item_menu_mapping: Array[ItemInstance] = []
 
 static func get_scene() -> PackedScene:
     return load("uid://in5kt0j6adyh") as PackedScene
@@ -111,7 +112,7 @@ func _refresh_bars() -> void:
 
     # Update tooltips with status effects
     var player_tooltip := "HP: %d/%d" % [GameState.player.get_hp(), GameState.player.get_max_hp()]
-    var player_effects_desc := GameState.get_player_status_effects_description()
+    var player_effects_desc := GameState.player.get_status_effects_description()
     if player_effects_desc != "":
         player_tooltip += "\n%s" % player_effects_desc
     you_bar.tooltip_text = player_tooltip
@@ -138,22 +139,22 @@ func _setup_use_item_menu() -> void:
     _popup.clear()
     use_item_menu_mapping.clear()
 
-    # Get ItemTiles from player (includes both inventory and equipped items)
-    var all_tiles: Array[ItemTile] = GameState.player.get_item_tiles()
+    # Get ItemTiles from player
+    var all_tiles: Array[ItemInstance] = GameState.player.get_item_tiles()
 
     # Filter to only include inventory items (exclude equipped items in combat menu)
-    var inventory_tiles: Array[ItemTile] = []
-    for tile: ItemTile in all_tiles:
+    var inventory_tiles: Array[ItemInstance] = []
+    for tile: ItemInstance in all_tiles:
         if not tile.is_equipped:
             inventory_tiles.append(tile)
 
     # Sort tiles alphabetically by name (with instances after generic items for same type)
-    inventory_tiles.sort_custom(func(a: ItemTile, b: ItemTile) -> bool:
+    inventory_tiles.sort_custom(func(a: ItemInstance, b: ItemInstance) -> bool:
         return a.get_sort_key() < b.get_sort_key()
     )
 
     # Build the popup menu and mapping
-    for tile: ItemTile in inventory_tiles:
+    for tile: ItemInstance in inventory_tiles:
         _popup.add_item(tile.get_full_display_name())
         use_item_menu_mapping.append(tile)
 
@@ -264,11 +265,13 @@ func _check_player_turn_skip() -> void:
         get_tree().create_timer(1.0).timeout.connect(func()->void:
             _enemy_turn()
             _check_end()
+            # Emit turn_ended signal for stunned player turn
+            emit_signal("turn_ended")
         )
 
 func _process_status_effects() -> void:
     # Process player status effects
-    GameState.process_player_status_effects()
+    GameState.player.process_status_effects()
 
     # Process enemy status effects
     current_enemy.process_status_effects()
@@ -276,40 +279,49 @@ func _process_status_effects() -> void:
     # Update button states after processing status effects
     _update_button_states()
 
+func resolve_turn() -> void:
+    """Unified method to handle all end-of-turn logic and emit turn_ended signal"""
+    # Check if combat has ended before processing turn
+    if not current_enemy.is_alive() or GameState.player.get_hp() <= 0:
+        _check_end()
+        return
+
+    # If combat is still ongoing, trigger enemy turn
+    _enemy_turn()
+
+    # Check end conditions after enemy turn
+    _check_end()
+
+    # Emit turn_ended signal to notify room screen to update
+    emit_signal("turn_ended")
+
 
 func _on_attack() -> void:
     var total_dmg := GameState.player.calculate_attack_damage()
     var final_damage := current_enemy.calculate_incoming_damage(total_dmg)
     current_enemy.take_damage(final_damage)
+    var weapon_instance := GameState.player.get_equipped_weapon_instance()
+    var weapon_name := weapon_instance.item.name if weapon_instance else ""
 
-    var attack_message: String
-    if GameState.player.has_weapon_equipped():
-        attack_message = "You strike with %s for %d damage." % [GameState.player.get_weapon_name(), final_damage]
-
+    LogManager.log_attack(GameState.player, current_enemy, final_damage, weapon_name)
+    if weapon_instance:
         # Check if weapon has special attack effects
-        var weapon := GameState.player.equipped_weapon
-        if weapon.has_method("on_attack_hit"):
-            weapon.on_attack_hit(current_enemy)
-    else:
-        attack_message = "You strike for %d damage." % final_damage
-
-    LogManager.log_damage(attack_message, false)
+        var weapon := weapon_instance.item as ItemWeapon
+        weapon.on_attack_hit(current_enemy)
 
     # Reduce weapon condition after logging the attack
     GameState.player.reduce_weapon_condition()
 
-    if current_enemy.is_alive():
-        _enemy_turn()
-    _check_end()
+    # Use unified turn resolution
+    resolve_turn()
 
 func _on_defend() -> void:
     # Use the shared defend ability for consistency
     var defend_ability := DefendAbility.new()
     defend_ability.execute(GameState.player)
 
-    _enemy_turn()
-    # Defense is now automatically consumed by the unified system
-    _check_end()
+    # Use unified turn resolution
+    resolve_turn()
 
 func _on_flee() -> void:
     var success := randf() < current_enemy.resource.avoid_chance
@@ -319,8 +331,8 @@ func _on_flee() -> void:
         emit_signal("combat_fled")
         queue_free()
     else:
-        _enemy_turn()
-        _check_end()
+        # Use unified turn resolution when flee fails
+        resolve_turn()
 
 func _on_use_item_index(idx: int) -> void:
     print("DEBUG: _on_use_item_index called with index: ", idx)
@@ -328,12 +340,12 @@ func _on_use_item_index(idx: int) -> void:
     # Check if the index is valid in our mapping
     if idx < 0 or idx >= use_item_menu_mapping.size():
         LogManager.log_message("Nothing happens…")
-        _enemy_turn()
-        _check_end()
+        # Use unified turn resolution
+        resolve_turn()
         return
 
-    # Get the ItemTile from our mapping
-    var tile: ItemTile = use_item_menu_mapping[idx]
+    # Get the ItemInstance from our mapping
+    var tile: ItemInstance = use_item_menu_mapping[idx]
 
     print("DEBUG: Using item: %s, is_unique_instance: %s" % [tile.item.name, tile.is_unique_instance()])
 
@@ -342,8 +354,8 @@ func _on_use_item_index(idx: int) -> void:
         print("Item %s (or specific instance) is no longer available" % tile.item.name)
         # Refresh the use item menu to reflect updated quantities
         _setup_use_item_menu()
-        _enemy_turn()
-        _check_end()
+        # Use unified turn resolution
+        resolve_turn()
         return
 
     # Use the item through the tile's use_item method
@@ -354,5 +366,5 @@ func _on_use_item_index(idx: int) -> void:
 
     # Refresh the use item menu to reflect updated quantities
     _setup_use_item_menu()
-    _enemy_turn()
-    _check_end()
+    # Use unified turn resolution
+    resolve_turn()

@@ -53,9 +53,9 @@ func show_loot(loot_data: LootComponent.LootResult, open_message: String) -> voi
             items_label.visible = true
             items_label.modulate = Color.LIGHT_BLUE
 
-            for item in loot_data.items_gained:
+            for stack in loot_data.items_gained:
                 var item_label := Label.new()
-                item_label.text = " • %s" % item.name
+                item_label.text = " • %s (x%d)" % [stack.item.name, stack.stack_count]
                 item_label.modulate = Color.WHITE
                 items_list.add_child(item_label)
         else:
@@ -97,9 +97,10 @@ func _on_popup_closed() -> void:
 func _apply_loot_to_game_state(loot_data: LootComponent.LootResult) -> void:
     # Add gold
     if loot_data.gold_total > 0:
-        GameState.add_gold(loot_data.gold_total)
+        GameState.player.add_gold(loot_data.gold_total)
 
     # Add items
     if loot_data.items_gained.size() > 0:
         for item in loot_data.items_gained:
-            GameState.add_item(item)
+            for item_instance in item.get_item_tiles():
+                GameState.player.add_items(item_instance)

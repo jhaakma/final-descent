@@ -36,7 +36,7 @@ func _apply_status_effect(actual_target: CombatEntity, caster: CombatEntity) -> 
         if target_self:
             LogManager.log_combat("%s applies %s to themselves!" % [caster_name.capitalize(), ability_name])
         else:
-            LogManager.log_combat("%s applies %s to %s!" % [caster_name.capitalize(), effect_copy.effect_name, target_name])
+            LogManager.log_combat("%s applies %s to %s!" % [caster_name.capitalize(), effect_copy.get_effect_name(), target_name])
     else:
         push_error("Target does not support status effects (missing apply_status_effect method)")
 
@@ -52,7 +52,7 @@ func can_use(caster: CombatEntity) -> bool:
 
 func get_status_text(_caster: CombatEntity) -> String:
     if status_effect_to_apply:
-        return "Status Effect: %s" % status_effect_to_apply.effect_name
+        return "Status Effect: %s" % status_effect_to_apply.get_effect_name()
     return ""
 
 func _get_target_name(target: CombatEntity) -> String:

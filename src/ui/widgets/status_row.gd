@@ -11,14 +11,14 @@ func _ready() -> void:
 
 # Initialize the StatusRow with a StatusEffect
 func initialize_with_status_effect(effect: StatusEffect) -> void:
-    var color: String = StatusEffect.EffectTypeMap[effect.effect_type]
+    var color: String = StatusEffect.EffectTypeMap[effect.get_effect_type()]
     var display_text: String
 
     if effect is TimedEffect:
         var timed_effect := effect as TimedEffect
-        display_text = "[color=%s]%s (%d turns)[/color]" % [color, effect.effect_name, timed_effect.remaining_turns]
+        display_text = "[color=%s]%s (%d turns)[/color]" % [color, effect.get_effect_name(), timed_effect.remaining_turns]
     else:
-        display_text = "[color=%s]%s[/color]" % [color, effect.effect_name]
+        display_text = "[color=%s]%s[/color]" % [color, effect.get_effect_name()]
 
     print("Initializing StatusRow with status effect: %s" % display_text)
 

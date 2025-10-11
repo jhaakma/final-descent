@@ -1,10 +1,13 @@
 class_name StunEffect extends TimedEffect
 
+func get_effect_id() -> String:
+    return "stun"
 
-func _init(turns: int = 2)->void:
-    super._init("Stun", turns)
-    effect_type = EffectType.NEGATIVE
-    max_stacks = 3  # Allow stun to stack up to 3 times
+func get_effect_name() -> String:
+    return "Stun"
+
+func get_effect_type() -> EffectType:
+    return EffectType.NEGATIVE
 
 # Override apply_effect to implement stun logic
 func apply_effect(_target: CombatEntity) -> bool:

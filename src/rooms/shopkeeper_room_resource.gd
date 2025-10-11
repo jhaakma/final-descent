@@ -1,25 +1,26 @@
 class_name ShopkeeperRoomResource extends RoomResource
 
-@export var shopkeeper_name: String = "Merchant"
-@export var greeting_message: String = "Welcome, traveler! What can I interest you in today?"
 @export var loot_component: LootComponent
 
 var loot_result: LootComponent.LootResult = null
 
-func _init()->void:
-    cleared_by_default = true
+func is_cleared_by_default() -> bool:
+    return true
 
-func build_actions(_actions_grid: GridContainer, _room_screen: RoomScreen) -> void:
+func build_actions(actions_grid: GridContainer, room_screen: RoomScreen) -> void:
     loot_result = loot_component.generate_loot()
-    add_action_button(_actions_grid, ActionButton.new("Talk to %s" % shopkeeper_name, "Browse the merchant's wares"), _on_talk_to_shopkeeper.bind(_room_screen))
+
+    var talk_action := RoomAction.new("Talk to the Merchant")
+    talk_action.is_enabled = true
+    talk_action.perform_action = _on_talk_to_shopkeeper
+
+    add_action_button(actions_grid, room_screen, talk_action)
 
 func _on_talk_to_shopkeeper(room_screen: RoomScreen) -> void:
     # Show the shopkeeper popup
     var shopkeeper_popup: ShopkeeperPopup = ShopkeeperPopup.get_scene().instantiate()
     room_screen.add_child(shopkeeper_popup)
-
-    shopkeeper_popup.show_shop(loot_result, shopkeeper_name, greeting_message)
-
+    shopkeeper_popup.show_shop(loot_result, title)
     # Connect the shop closed signal to allow leaving the room
     shopkeeper_popup.shop_closed.connect(_on_shop_closed.bind(room_screen))
 

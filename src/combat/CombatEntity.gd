@@ -52,23 +52,23 @@ func calculate_incoming_damage(base_damage: int) -> int:
     return combat_actor.calculate_incoming_damage(base_damage)
 
 # === STATUS EFFECT MANAGEMENT ===
-func apply_status_effect(effect: StatusEffect) -> void:
-    status_effect_component.apply_effect(effect, self)
+func apply_status_effect(effect: StatusEffect) -> bool:
+    return status_effect_component.apply_effect(effect, self)
 
-func has_status_effect(effect_name: String) -> bool:
-    return status_effect_component.has_effect(effect_name)
+func has_status_effect(effect_id: String) -> bool:
+    return status_effect_component.has_effect(effect_id)
 
 func process_status_effects() -> void:
     status_effect_component.process_turn(self)
 
-func get_status_effect_description(effect_name: String) -> String:
-    var status_effect: StatusEffect = status_effect_component.get_effect(effect_name)
+func get_status_effect_description(effect_id: String) -> String:
+    var status_effect: StatusEffect = status_effect_component.get_effect(effect_id)
     if status_effect:
         return status_effect.get_description()
     return ""
 
-func remove_status_effect(effect_name: String) -> void:
-    status_effect_component.remove_effect(effect_name)
+func remove_status_effect(effect: StatusEffect) -> void:
+    status_effect_component.remove_effect(effect)
 
 func clear_all_status_effects() -> void:
     status_effect_component.clear_all_effects()
@@ -94,7 +94,7 @@ func _is_stunned() -> bool:
     var all_effects := status_effect_component.get_all_effects()
     for effect in all_effects:
         if effect is StunEffect:
-            print("DEBUG: Found StunEffect with name: ", effect.effect_name)
+            print("DEBUG: Found StunEffect with name: ", effect.get_effect_name())
             return true
     return false
 

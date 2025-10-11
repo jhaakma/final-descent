@@ -8,7 +8,6 @@ script = ExtResource("2_g164y")
 remaining_turns = 1
 stacks = 1
 max_stacks = 1
-effect_name = "Concussion"
 metadata/_custom_type_script = "uid://cfj1k6xrdhdm4"
 
 [resource]
@@ -18,6 +17,5 @@ effect_apply_chance = 0.25
 damage = 3
 condition = 10
 name = "Warhammer"
-description = ""
 purchase_value = 40
 metadata/_custom_type_script = "uid://de14peynwsgrq"

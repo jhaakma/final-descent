@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="ShopkeeperRoomResource" load_steps=19 format=3 uid="uid://i5l4a63bwaev"]
 
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="1_5sg42"]
-[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/item.gd" id="2_yw5km"]
+[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="2_yw5km"]
 [ext_resource type="Resource" uid="uid://2s77tota5kam" path="res://data/items/potions/HealthPotionSmall.tres" id="3_3d1du"]
 [ext_resource type="Resource" uid="uid://drc4rx6xim1bu" path="res://data/items/potions/HealthPotionMedium.tres" id="4_btyxu"]
 [ext_resource type="Resource" uid="uid://c31wbx2iwa0s7" path="res://data/items/potions/RegenerationPotion.tres" id="5_c8ten"]
@@ -59,8 +59,6 @@ metadata/_custom_type_script = "uid://lj0e532l0dyu"
 
 [resource]
 script = ExtResource("11_mjfg3")
-shopkeeper_name = "Kael the Merchant"
-greeting_message = "Welcome, brave adventurer! I have just what you need for your journey!"
 loot_component = SubResource("Resource_e7vp4")
 title = "Merchant's Shop"
 description = "A cozy shop filled with various items and a friendly merchant."

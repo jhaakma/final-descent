@@ -6,7 +6,7 @@ class_name LootComponent extends Resource
 
 class LootResult:
     var gold_total: int = 0
-    var items_gained: Array[Item] = []
+    var items_gained: Array[ItemStack] = []
 
 # Generate loot based on the configuration
 func generate_loot() -> LootResult:
@@ -26,10 +26,5 @@ func generate_loot() -> LootResult:
 
 func apply_gold(loot_result: LootResult) -> void:
     if loot_result.gold_total > 0:
-        GameState.add_gold(loot_result.gold_total)
+        GameState.player.add_gold(loot_result.gold_total)
         LogManager.log_success("Received %d gold." % loot_result.gold_total)
-
-func apply_loot(loot_result: LootResult) -> void:
-    for item in loot_result.items_gained:
-        GameState.add_item(item)
-        LogManager.log_success("Received item: %s" % item.name)
