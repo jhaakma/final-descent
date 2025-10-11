@@ -35,6 +35,7 @@ metadata/_custom_type_script = "uid://w4ie0s4l7syw"
 script = ExtResource("6_em7fl")
 gold_min = 50
 gold_max = 50
+chance_gold_none = 0.0
 loot_table = Array[ExtResource("3_2vu3h")]([SubResource("Resource_t5dep")])
 metadata/_custom_type_script = "uid://lj0e532l0dyu"
 
@@ -162,13 +163,13 @@ size_flags_vertical = 0
 
 [node name="GoldLabel" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer/GoldBlock"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.949337, 0.698159, 0, 1)
+theme_override_colors/font_color = Color(1, 0.84, 0, 1)
 text = "Gold: "
 
 [node name="GoldValue" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer/GoldBlock"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.94902, 0.698039, 0, 1)
+theme_override_colors/font_color = Color(1, 0.84, 0, 1)
 text = "X"
 
 [node name="HSeparator2" type="HSeparator" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats"]

@@ -137,7 +137,8 @@ func take_item_instance(item: Item, item_data: ItemData) -> bool:
 func has_item(item: Item, amount: int = 1) -> bool:
     if item not in item_stacks:
         return false
-    return item_stacks[item].get_total_count() >= amount
+    var count := item_stacks[item].get_total_count()
+    return count >= amount
 
 # Get the total count of an item
 func get_item_count(item: Item) -> int:
@@ -203,15 +204,6 @@ func get_item_tiles() -> Array[ItemInstance]:
         tiles.append_array(stack.get_item_tiles())
 
     return tiles
-
-# Get total value of all items in inventory
-func get_total_value() -> int:
-    var total: int = 0
-    for item: Item in item_stacks.keys():
-        var count := get_item_count(item)
-        total += item.purchase_value * count
-    return total
-
 
 
 # === PRIVATE METHODS ===

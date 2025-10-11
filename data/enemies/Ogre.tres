@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bkhqo7pjlc7bi" path="res://src/abilities/Ability.gd" id="1_08opu"]
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="1_tsegy"]
-[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/item.gd" id="2_1k2fp"]
+[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="2_1k2fp"]
 [ext_resource type="Resource" uid="uid://dqsktrv7t6d4i" path="res://data/abilities/BasicAttack.tres" id="2_o8kiw"]
 [ext_resource type="Resource" uid="uid://d4cfekbrastfr" path="res://data/abilities/BasicDefend.tres" id="3_812jh"]
 [ext_resource type="Resource" uid="uid://meq6o4s58qqk" path="res://data/items/weapons/WarAxe.tres" id="3_k4t58"]
@@ -34,6 +34,7 @@ metadata/_custom_type_script = "uid://w4ie0s4l7syw"
 script = ExtResource("5_gwtnr")
 gold_min = 10
 gold_max = 25
+chance_gold_none = 0.1
 loot_table = Array[ExtResource("1_tsegy")]([SubResource("Resource_6o68g"), SubResource("Resource_4hsl1")])
 metadata/_custom_type_script = "uid://lj0e532l0dyu"
 

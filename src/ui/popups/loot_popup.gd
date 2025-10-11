@@ -44,7 +44,7 @@ func show_loot(loot_data: LootComponent.LootResult, open_message: String) -> voi
         if loot_data.gold_total > 0:
             gold_label.visible = true
             gold_label.text = "Gold: %d" % loot_data.gold_total
-            gold_label.modulate = Color.YELLOW
+            gold_label.modulate = Color.GOLD
         else:
             gold_label.visible = false
 

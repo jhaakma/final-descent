@@ -297,8 +297,7 @@ func reduce_weapon_condition() -> void:
 
     # Create ItemData if it doesn't exist yet (first damage)
     if not equipped_weapon.item_data:
-
-        equipped_weapon.item_data = ItemData.new()
+        equipped_weapon.item_data = ItemData.new(weapon.condition)
         equipped_weapon.item_data.current_condition = weapon.condition
 
     var current_condition := equipped_weapon.item_data.current_condition

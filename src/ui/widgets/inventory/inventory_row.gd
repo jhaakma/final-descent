@@ -94,7 +94,7 @@ func _update_display() -> void:
                 item_name_label.text = display_name
             else:
                 item_name_label.text = display_name
-            price_label.text = "%d gold" % item_instance.item.purchase_value
+            price_label.text = "%d gold" % item_instance.item.calculate_buy_value(item_instance.item_data)
             price_label.visible = true
         DisplayMode.SHOP_SELL:
             if item_instance.count > 1:
@@ -149,7 +149,7 @@ func _update_shop_buy_button() -> void:
     action_button.text = "Buy"
     action_button.custom_minimum_size.x = 60
     # Check if player can afford this item
-    action_button.disabled = GameState.player.gold < item_instance.item.purchase_value
+    action_button.disabled = GameState.player.gold < item_instance.item.calculate_buy_value(item_instance.item_data)
 
 func _update_shop_sell_button() -> void:
     action_button.text = "Sell"

@@ -36,6 +36,7 @@ metadata/_custom_type_script = "uid://w4ie0s4l7syw"
 script = ExtResource("8_kkrid")
 gold_min = 10
 gold_max = 20
+chance_gold_none = 0.1
 loot_table = Array[ExtResource("1_5dhhm")]([SubResource("Resource_tggm1"), SubResource("Resource_73r10")])
 metadata/_custom_type_script = "uid://lj0e532l0dyu"
 

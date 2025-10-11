@@ -18,15 +18,17 @@ func on_attack_hit(_target: CombatEntity) -> void:
     pass
 
 func calculate_sell_value(item_data: ItemData = null) -> int:
-    var base_sell_value := super.calculate_sell_value(item_data)
+    return calculate_buy_value(item_data) / 2
+
+func calculate_buy_value(item_data: ItemData = null) -> int:
     # If item has condition data and is damaged, reduce sell value
     if item_data and item_data.current_condition < get_max_condition():
         var max_condition := get_max_condition()
         var condition_ratio := float(item_data.current_condition) / float(max_condition)
         # Apply condition modifier: full condition = 100%, broken = 10% of base value
         var condition_modifier: float = lerp(0.1, 1.0, condition_ratio)
-        return int(base_sell_value * condition_modifier)
-    return base_sell_value
+        return int(purchase_value * condition_modifier)
+    return purchase_value
 
 func get_max_condition() -> int:
     return condition

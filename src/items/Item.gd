@@ -18,7 +18,10 @@ func get_consumable() -> bool:
 
 # Calculate sell value considering item condition
 func calculate_sell_value( _item_data: ItemData = null) -> int:
-    return purchase_value / 2
+    return calculate_buy_value() / 2
+
+func calculate_buy_value(_item_data: ItemData = null) -> int:
+    return purchase_value
 
 ## Do not override this method; use _on_use instead
 func use(item_data: ItemData) -> void:

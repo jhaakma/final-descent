@@ -109,51 +109,49 @@ func _update_inventory_display() -> void:
         player_items_list.add_child(item_container)
 
 func _on_buy_item(item_instance: ItemInstance) -> void:
-
-    if GameState.player.gold >= item_instance.item.purchase_value:
-        GameState.player.add_gold(-item_instance.item.purchase_value)
+    var purchase_value:= item_instance.item.calculate_buy_value(item_instance.item_data)
+    if GameState.player.gold >= purchase_value:
+        GameState.player.add_gold(-purchase_value)
         GameState.player.add_items(ItemInstance.new(item_instance.item, item_instance.item_data, 1))
-        shopkeeper_gold += item_instance.item.purchase_value
+        shopkeeper_gold += purchase_value
 
         # find item stack and decrease count
         for stack in items_for_sale:
             if stack.item == item_instance.item:
                 stack.remove_instance_by_reference(item_instance.item_data)
 
-        LogManager.log_success("Bought %s for %d gold" % [item_instance.item.name, item_instance.item.purchase_value])
+        LogManager.log_success("Bought %s for %d gold" % [item_instance.item.name, purchase_value])
         # Update displays and refresh the buy tab
         _update()
 
 func _on_sell_item(item_instance: ItemInstance) -> void:
-    if GameState.player.has_item(item_instance.item):
-        var sell_value: int = item_instance.item.calculate_sell_value(item_instance.item_data)
+    var sell_value: int = item_instance.item.calculate_sell_value(item_instance.item_data)
 
-        # Check if shopkeeper can afford this item
-        if shopkeeper_gold < sell_value:
-            LogManager.log_warning("Shopkeeper cannot afford %s (needs %d gold)" % [item_instance.item.name, sell_value])
-            return
+    # Check if shopkeeper can afford this item
+    if shopkeeper_gold < sell_value:
+        LogManager.log_warning("Shopkeeper cannot afford %s (needs %d gold)" % [item_instance.item.name, sell_value])
+        return
 
-        GameState.player.remove_item(item_instance)
+    GameState.player.remove_item(item_instance)
+    GameState.player.add_gold(sell_value)
+    shopkeeper_gold -= sell_value
+    # Add to shopkeeper's inventory
+    var found_stack := false
+    for stack in items_for_sale:
+        if stack.item == item_instance.item:
+            stack.add_instance(item_instance.item_data)
+            found_stack = true
+            break
+    if not found_stack:
+        print("Creating new stack for sold item: %s" % item_instance.item.name)
+        var new_stack := ItemStack.new(item_instance.item, 1)
+        if item_instance.item_data:
+            new_stack.add_instance(item_instance.item_data)
+        items_for_sale.append(new_stack)
+    LogManager.log_success("Sold %s for %d gold" % [item_instance.item.name, sell_value])
 
-        GameState.player.add_gold(sell_value)
-        shopkeeper_gold -= sell_value
-        # Add to shopkeeper's inventory
-        var found_stack := false
-        for stack in items_for_sale:
-            if stack.item == item_instance.item:
-                stack.add_instance(item_instance.item_data)
-                found_stack = true
-                break
-        if not found_stack:
-            print("Creating new stack for sold item: %s" % item_instance.item.name)
-            var new_stack := ItemStack.new(item_instance.item, 1)
-            if item_instance.item_data:
-                new_stack.add_instance(item_instance.item_data)
-            items_for_sale.append(new_stack)
-        LogManager.log_success("Sold %s for %d gold" % [item_instance.item.name, sell_value])
-
-        # Update displays
-        _update()
+    # Update displays
+    _update()
 
 func _on_close_shop() -> void:
     emit_signal("shop_closed")

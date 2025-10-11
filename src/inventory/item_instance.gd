@@ -106,3 +106,10 @@ func use_item() -> bool:
 
 func matches(other: ItemInstance) -> bool:
     return item == other.item and item_data == other.item_data
+
+## If item data was modified to be back to generic state, remove from instance
+func item_data_updated() -> bool:
+    if is_unique_instance() and not item_data.is_unique():
+        item_data = null
+        return true
+    return false

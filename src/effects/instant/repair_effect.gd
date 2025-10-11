@@ -36,6 +36,7 @@ func apply_effect(target: CombatEntity) -> bool:
             var current_condition := weapon_instance.item_data.current_condition
             var max_condition := (weapon_instance.item as ItemWeapon).get_max_condition()
             weapon_instance.item_data.current_condition = min(current_condition + repair_amount, max_condition)
+            weapon_instance.item_data_updated()
             LogManager.log_success("Repaired %s's %s by %d points" % [player.name, weapon_instance.item.name, repair_amount])
             return true
         else:

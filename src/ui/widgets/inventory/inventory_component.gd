@@ -89,13 +89,21 @@ func _on_item_selected(item: Item) -> void:
 func _on_item_used(item_instance: ItemInstance) -> void:
     if item_instance.item is ItemWeapon:
         # Check if this specific instance is equipped
-        var equipped_weapon: ItemInstance = GameState.player.get_equipped_weapon()
-        var is_this_equipped: bool = equipped_weapon and (equipped_weapon.item == item_instance.item and equipped_weapon.item_data == item_instance.item_data)
+        var is_this_equipped: bool = item_instance.is_equipped
 
         if is_this_equipped:
             # Unequip the current weapon
             GameState.player.unequip_weapon()
         else:
+            #If both equipped weapon and clicked weapon are the same generic item, ignore
+            var equipped_weapon:= GameState.player.get_equipped_weapon()
+            if equipped_weapon:
+                var same_item:= equipped_weapon.item == item_instance.item
+                var both_generic:= equipped_weapon.item_data == null and item_instance.item_data == null
+                if same_item and both_generic:
+                    print("Clicked weapon is already equipped (generic), ignoring.")
+                    return
+
             # Equip this weapon instance (either specific or from generic stack)
             GameState.player.equip_weapon(item_instance)
     else:

@@ -20,8 +20,9 @@ metadata/_custom_type_script = "uid://w4ie0s4l7syw"
 
 [sub_resource type="Resource" id="Resource_smyst"]
 script = ExtResource("4_7ig88")
-gold_min = 5
-gold_max = 10
+gold_min = 20
+gold_max = 30
+chance_gold_none = 0.75
 loot_table = Array[ExtResource("1_ru244")]([SubResource("Resource_vnjkq")])
 metadata/_custom_type_script = "uid://lj0e532l0dyu"
 

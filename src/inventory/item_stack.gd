@@ -186,7 +186,6 @@ func get_display_info() -> Dictionary:
         (info.unique_instances as Array).append({
             "index": i,
             "item_data": instance_data,
-            "description": instance_data.get_instance_description(),
             "is_unique": instance_data.is_unique()
         })
 

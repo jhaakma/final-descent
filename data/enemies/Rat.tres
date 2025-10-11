@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="1_hlv1s"]
 [ext_resource type="Script" uid="uid://bkhqo7pjlc7bi" path="res://src/abilities/Ability.gd" id="1_x1dm2"]
-[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/item.gd" id="2_a8s34"]
+[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="2_a8s34"]
 [ext_resource type="Resource" uid="uid://dqsktrv7t6d4i" path="res://data/abilities/BasicAttack.tres" id="2_bfj2h"]
 [ext_resource type="Resource" uid="uid://d4cfekbrastfr" path="res://data/abilities/BasicDefend.tres" id="3_58aur"]
 [ext_resource type="Resource" uid="uid://2s77tota5kam" path="res://data/items/potions/HealthPotionSmall.tres" id="3_ib25i"]
@@ -20,8 +20,9 @@ metadata/_custom_type_script = "uid://w4ie0s4l7syw"
 
 [sub_resource type="Resource" id="Resource_ukg5r"]
 script = ExtResource("4_x1dm2")
-gold_min = 0
-gold_max = 5
+gold_min = 5
+gold_max = 10
+chance_gold_none = 0.8
 loot_table = Array[ExtResource("1_hlv1s")]([SubResource("Resource_iftit")])
 metadata/_custom_type_script = "uid://lj0e532l0dyu"
 
