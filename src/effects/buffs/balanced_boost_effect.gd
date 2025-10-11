@@ -1,14 +1,15 @@
 class_name BalancedBoostEffect extends StatBoostEffect
 
-@export var effect_name: String = "Blessed Balance"
 @export var attack_bonus: int = 2
 @export var defense_bonus: int = 1
 
 func get_effect_id() -> String:
     return "balanced_boost"
 
+const CANONICAL_NAME := "+ATK/DEF"
+
 func get_effect_name() -> String:
-    return effect_name
+    return CANONICAL_NAME
 
 func get_effect_type() -> EffectType:
     return EffectType.POSITIVE

@@ -1,13 +1,15 @@
 class_name VitalityBoostEffect extends StatBoostEffect
 
-@export var effect_name: String = "Blessing of Vitality"
 @export var max_hp_bonus: int = 5
 
 func get_effect_id() -> String:
     return "vitality_boost"
 
+
+const CANONICAL_NAME := "+MAX HP"
+
 func get_effect_name() -> String:
-    return effect_name
+    return CANONICAL_NAME
 
 func get_effect_type() -> EffectType:
     return EffectType.POSITIVE

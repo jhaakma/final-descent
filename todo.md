@@ -6,6 +6,8 @@
 - Replace inventory function params with ItemStacks or ItemTiles
 - Have condition affect buy price in addition to sell price
 
+## Buff-Effect layer
+- Need a wrapper around status effects for buffs, so they can have unique names, while sti
 
 ## Theme
 Create and use a consistent theme

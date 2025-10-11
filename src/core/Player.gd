@@ -1,4 +1,3 @@
-# Player.gd
 class_name Player extends CombatEntity
 
 var name: String = "Player"
@@ -231,9 +230,9 @@ func get_total_attack_bonus() -> int:
     var total_bonus: int = 0
 
     # Add bonuses from status effects - generic approach
-    for effect in status_effect_component.get_all_effects():
-        if effect is StatBoostEffect:
-            total_bonus += (effect as StatBoostEffect).get_attack_bonus()
+    for condition in status_effect_component.get_all_conditions():
+        if condition.status_effect is StatBoostEffect:
+            total_bonus += (condition.status_effect as StatBoostEffect).get_attack_bonus()
 
     return total_bonus
 
@@ -242,9 +241,9 @@ func get_total_defense_bonus() -> int:
     var total_bonus: int = 0
 
     # Add bonuses from status effects - generic approach
-    for effect in status_effect_component.get_all_effects():
-        if effect is StatBoostEffect:
-            total_bonus += (effect as StatBoostEffect).get_defense_bonus()
+    for condition in status_effect_component.get_all_conditions():
+        if condition.status_effect is StatBoostEffect:
+            total_bonus += (condition.status_effect as StatBoostEffect).get_defense_bonus()
 
     return total_bonus
 
@@ -253,9 +252,9 @@ func get_total_max_hp_bonus() -> int:
     var total_bonus: int = 0
 
     # Add bonuses from status effects - generic approach
-    for effect in status_effect_component.get_all_effects():
-        if effect is StatBoostEffect:
-            total_bonus += (effect as StatBoostEffect).get_max_hp_bonus()
+    for condition in status_effect_component.get_all_conditions():
+        if condition.status_effect is StatBoostEffect:
+            total_bonus += (condition.status_effect as StatBoostEffect).get_max_hp_bonus()
 
     return total_bonus
 
@@ -267,19 +266,20 @@ func apply_status_effect(effect: StatusEffect) -> bool:
         emit_signal("stats_changed")
     return result
 
+func apply_status_condition(condition: StatusCondition) -> bool:
+    var result := super.apply_status_condition(condition)
+    if result:
+        emit_signal("stats_changed")
+    return result
+
 # Override the base method to emit stats_changed signal for UI updates
 func remove_status_effect(effect: StatusEffect) -> void:
     super.remove_status_effect(effect)
     emit_signal("stats_changed")
 
-func clear_all_negative_status_effects() -> Array[StatusEffect]:
-    var removed_effects: Array[StatusEffect] = []
-    for effect in status_effect_component.get_all_effects():
-        if effect.get_effect_type() == StatusEffect.EffectType.NEGATIVE:
-            status_effect_component.remove_effect(effect)
-            removed_effects.append(effect)
-    if removed_effects.size() > 0:
-        emit_signal("stats_changed")
+func clear_all_negative_status_effects() -> Array[StatusCondition]:
+    var removed_effects: Array[StatusCondition] = super.clear_all_negative_status_effects()
+    emit_signal("stats_changed")
     return removed_effects
 
 # === COMBAT CALCULATIONS ===
@@ -330,7 +330,7 @@ func get_status_summary() -> Dictionary:
         "weapon_name": get_weapon_name(),
         "has_weapon": has_weapon_equipped(),
         "active_status_effects_count": status_effect_component.get_effect_count(),
-        "active_status_effects": status_effect_component.get_all_effects()
+        "active_status_effects": status_effect_component.get_all_conditions()
     }
 
 func get_total_attack_display() -> String:

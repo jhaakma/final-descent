@@ -8,12 +8,10 @@ script = ExtResource("1_lryfk")
 healing_per_turn = 2
 remaining_turns = 10
 stacks = 1
-max_stacks = 5
-effect_name = ""
 
 [resource]
 script = ExtResource("2_lhenj")
 status_effect = SubResource("RegenerationEffect_1")
+log_potion_name = false
 name = "Regeneration Potion"
-description = "A potion that provides healing over time."
 purchase_value = 25

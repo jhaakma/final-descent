@@ -7,7 +7,6 @@
 script = ExtResource("2_g164y")
 remaining_turns = 1
 stacks = 1
-max_stacks = 1
 metadata/_custom_type_script = "uid://cfj1k6xrdhdm4"
 
 [resource]

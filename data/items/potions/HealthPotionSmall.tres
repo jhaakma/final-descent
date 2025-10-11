@@ -6,13 +6,12 @@
 [sub_resource type="Resource" id="Resource_43ay8"]
 script = ExtResource("1_pbcdq")
 heal_amount = 5
-effect_name = ""
 metadata/_custom_type_script = "uid://btj1mgjp6gjy1"
 
 [resource]
 script = ExtResource("2_w2lx6")
 status_effect = SubResource("Resource_43ay8")
+log_potion_name = false
 name = "Health Potion (Small)"
-description = ""
 purchase_value = 15
 metadata/_custom_type_script = "uid://dikmkr6vyadjj"

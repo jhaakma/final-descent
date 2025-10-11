@@ -1,13 +1,15 @@
 class_name DefenseBoostEffect extends StatBoostEffect
 
-@export var effect_name: String = "Divine Protection"
 @export var defense_bonus: int = 2
 
 func get_effect_id() -> String:
     return "defense_boost"
 
+
+const CANONICAL_NAME := "+DEF"
+
 func get_effect_name() -> String:
-    return effect_name
+    return CANONICAL_NAME
 
 func get_effect_type() -> EffectType:
     return EffectType.POSITIVE

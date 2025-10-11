@@ -3,7 +3,7 @@ class_name ShrineRoomResource extends RoomResource
 @export var blessing_cost: int = 10
 @export var cure_cost: int = 5  # Cost to pray for cure (same as blessing for now)
 @export var heal_cost: int = 8  # Cost to pray for healing
-@export var possible_status_effects: Array[StatusEffect] = []  # Status effects for blessings
+@export var blessings: Array[StatusCondition] = []  # Status effects for blessings
 @export var heal_amount: int = 10  # Amount healed when praying for healing
 @export var loot_component: LootComponent = LootComponent.new()
 @export var loot_curse_chance: float = 0.3  # Chance to receive a curse when looting
@@ -42,11 +42,10 @@ func _on_blessing(room_screen: RoomScreen) -> void:
     GameState.player.add_gold(-blessing_cost)
 
     # Grant a random status effect
-    if possible_status_effects.size() > 0:
+    if blessings.size() > 0:
         LogManager.log_success("You pray at the shrine and feel blessed!")
-        var random_effect: StatusEffect = possible_status_effects[GameState.rng.randi() % possible_status_effects.size()]
-        var effect_copy: StatusEffect = random_effect.duplicate()
-        GameState.player.apply_status_effect(effect_copy)
+        var chosen_blessing: StatusCondition = blessings[GameState.rng.randi() % blessings.size()]
+        GameState.player.apply_status_condition(chosen_blessing)
         room_screen.update()
     else:
         LogManager.log_message("You pray at the shrine, but nothing happens.")

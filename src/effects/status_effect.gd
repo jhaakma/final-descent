@@ -1,3 +1,5 @@
+
+
 class_name StatusEffect extends Resource
 
 enum EffectType {
@@ -18,6 +20,10 @@ func get_effect_id() -> String:
 func get_effect_name() -> String:
     print_debug("get_effect_name() not implemented in subclass")
     return "Effect Name"
+
+func create() -> StatusEffect:
+    var effect_copy: StatusEffect = duplicate()
+    return effect_copy
 
 func get_effect_type() -> EffectType:
     return EffectType.NEUTRAL

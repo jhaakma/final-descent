@@ -1,160 +1,167 @@
+
 class_name StatusEffectComponent extends RefCounted
 
-# Dictionary to store active status effects by name
-var active_effects: Dictionary[String, StatusEffect] = {}
+# Dictionary to store active status conditions by name
+var active_conditions: Dictionary[String, StatusCondition] = {}
 # The owning CombatEntity
 var parent_entity: CombatEntity = null
 
 # Signals for status effect events
-signal effect_applied(effect_id: String)
-signal effect_removed(effect_id: String)
-signal effect_processed(effect_id: String, result: bool)
-
+signal effect_applied(condition_id: String)
+signal effect_removed(condition_id: String)
+signal effect_processed(condition_id: String, result: bool)
 
 # Initialise with parent CombatEntity
 func _init(parent: CombatEntity) -> void:
     parent_entity = parent
 
-# Apply a status effect to the entity
-func apply_effect(effect: StatusEffect, effect_target: CombatEntity) -> bool:
+
+# Apply a StatusEffect by converting it to a generic StatusCondition, then applying the condition
+func apply_status_effect(effect: StatusEffect, effect_target: CombatEntity) -> bool:
     if not effect:
         push_error("Attempted to apply null status effect")
         return false
+    var condition := StatusCondition.from_status_effect(effect)
+    return apply_status_condition(condition, effect_target)
 
-    var effect_id := effect.get_effect_id()
+# Apply a StatusCondition resource to the entity
+func apply_status_condition(_condition: StatusCondition, effect_target: CombatEntity) -> bool:
+    if not _condition or not _condition.status_effect:
+        push_error("Attempted to apply null status condition or effect")
+        return false
+    var condition := _condition.make_unique()
+    var effect := condition.status_effect
+    var condition_id := condition.name
 
     # Handle instant effects immediately (non-TimedEffect subclasses)
     if not effect is TimedEffect:
-        # Apply the instant effect immediately
         if effect_target:
             var result := effect.apply_effect(effect_target)
-            effect_processed.emit(effect_id, result)
-            effect_applied.emit(effect_id)
+            effect_processed.emit(condition_id, result)
+            effect_applied.emit(condition_id)
             return result
         else:
             push_error("No target available for instant effect application")
             return false
-        # Don't store instant effects in active_effects since they're one-time use
+        # Don't store instant effects in active_conditions since they're one-time use
 
     # Handle timed effects (TimedEffect subclasses)
-    var was_existing := active_effects.has(effect_id)
-
-    # Check if we already have this effect
+    var conditon_already_applied := active_conditions.has(condition_id)
     var timed_effect := effect as TimedEffect
 
-    if was_existing:
-        var existing_effect := active_effects[effect_id] as TimedEffect
+    if conditon_already_applied:
+        var existing_condition := active_conditions[condition_id]
+        var existing_effect := existing_condition.status_effect as TimedEffect
         if existing_effect.can_stack_with(effect):
             existing_effect.stack_with(effect)
             # No additional logging for stacking, the effect description will show stack count
-
-        # If already at same duration, return false
         elif existing_effect.remaining_turns >= timed_effect.remaining_turns:
-            LogManager.log_warning("%s is already affected by %s." % [effect_target.get_name(), existing_effect.get_effect_name()])
+            LogManager.log({
+                text = "{You are} already affected by %s." % [existing_condition.name],
+                target = effect_target,
+                color = LogManager.LogColor.WARNING
+            })
             return false
         else:
             # For timed effects that can't stack (at max stacks), refresh duration but keep max stacks
             if existing_effect.get_effect_id() == timed_effect.get_effect_id():
                 existing_effect.remaining_turns = timed_effect.remaining_turns
                 var duration := existing_effect.remaining_turns
-                LogManager.log_status_effect_applied(effect_target, existing_effect, duration)
+                LogManager.log_status_condition_applied(effect_target, existing_condition, duration)
             else:
-                # Replace with new effect for other cases
-                active_effects[effect_id] = effect
+                # Replace with new condition for other cases
+                active_conditions[condition_id] = condition
                 var duration := timed_effect.remaining_turns if effect is TimedEffect else 0
-                LogManager.log_status_effect_applied(effect_target, effect, duration)
+                LogManager.log_status_condition_applied(effect_target, condition, duration)
     else:
-        # Add new effect
-        active_effects[effect_id] = effect
+        # Add new condition
+        active_conditions[condition_id] = condition
         var duration := timed_effect.remaining_turns if effect is TimedEffect else 0
-        LogManager.log_status_effect_applied(effect_target, effect, duration)
+        LogManager.log_status_condition_applied(effect_target, condition, duration)
 
-    effect_applied.emit(effect_id)
+    effect_applied.emit(condition_id)
     return true
 
 # Remove a specific status effect
 func remove_effect(effect: StatusEffect) -> void:
-    var effect_id := effect.get_effect_id()
-    if active_effects.has(effect_id):
-        if parent_entity:
-            LogManager.log_status_effect_removed(parent_entity, effect.get_effect_name(), "was removed")
-        active_effects.erase(effect_id)
-        effect_removed.emit(effect_id)
+    for condition_id: String in active_conditions.keys():
+        var condition := active_conditions[condition_id]
+        if condition.status_effect.get_effect_id() == effect.get_effect_id():
+            if parent_entity:
+                LogManager.log_status_effect_removed(parent_entity, condition.get_log_name(), "was removed")
+            active_conditions.erase(condition_id)
+            effect_removed.emit(condition_id)
+            return
 
 # Check if entity has a specific status effect
-func has_effect(effect_id: String) -> bool:
-    if not active_effects.has(effect_id):
-        return false
-    var effect := active_effects[effect_id]
-    # Only timed effects can expire, instant effects are removed immediately after application
-    if effect is TimedEffect:
-        return not (effect as TimedEffect).is_expired()
-    return true
+func has_effect(status_effect_id: String) -> bool:
+    for condition_id: String in active_conditions.keys():
+        var condition := active_conditions[condition_id]
+        if condition.status_effect.get_effect_id() == status_effect_id:
+            var effect := condition.status_effect
+            if effect is TimedEffect:
+                return not (effect as TimedEffect).is_expired()
+            return true
+    return false
 
-# Get a specific status effect
-func get_effect(effect_id: String) -> StatusEffect:
-    if has_effect(effect_id):
-        return active_effects[effect_id]
+# Get a specific status condition
+func get_effect(condition_id: String) -> StatusCondition:
+    if has_effect(condition_id):
+        return active_conditions[condition_id]
     return null
 
-# Process all status effects for one turn
+# Process all status conditions for one turn
 func process_turn(target: CombatEntity) -> void:
-    var effects_to_remove: Array[StatusEffect] = []
-    for effect_id: String in active_effects.keys():
-        var effect := active_effects[effect_id]
-        # Apply the effect
+    var conditions_to_remove: Array[StatusCondition] = []
+    for condition_id: String in active_conditions.keys():
+        var condition := active_conditions[condition_id]
+        var effect := condition.status_effect
         var result := effect.apply_effect(target)
 
-        # Tick the effect's turn counter if it's a timed effect
         if effect is TimedEffect:
             (effect as TimedEffect).tick_turn()
-        # Mark expired effects for removal (only timed effects can expire)
         if effect is TimedEffect and (effect as TimedEffect).is_expired():
-            effects_to_remove.append(effect)
+            conditions_to_remove.append(condition)
 
-        effect_processed.emit(effect_id, result)
+        effect_processed.emit(condition_id, result)
 
-    # Remove expired effects
-    for effect in effects_to_remove:
-        var effect_id := effect.get_effect_id()
-        if active_effects.has(effect_id):
-            LogManager.log_status_effect_removed(target, effect.get_effect_name(), "expired")
-            active_effects.erase(effect_id)
-            effect_removed.emit(effect_id)
+    # Remove expired conditions
+    for condition in conditions_to_remove:
+        var condition_id := condition.name
+        if active_conditions.has(condition_id):
+            LogManager.log_status_effect_removed(target, condition.get_log_name(), "expired")
+            active_conditions.erase(condition_id)
+            effect_removed.emit(condition_id)
 
-
-# Get all active status effects
-func get_all_effects() -> Array[StatusEffect]:
-    var effects: Array[StatusEffect] = []
-    for effect: StatusEffect in active_effects.values():
-        # Only include effects that haven't expired (for timed effects)
+# Get all active status conditions
+func get_all_conditions() -> Array[StatusCondition]:
+    var conditions: Array[StatusCondition] = []
+    for condition: StatusCondition in active_conditions.values():
+        var effect := condition.status_effect
         if effect is TimedEffect:
             if not (effect as TimedEffect).is_expired():
-                effects.append(effect)
+                conditions.append(condition)
         else:
-            # Non-timed effects are always active if they're in the dictionary
-            effects.append(effect)
-    return effects
+            conditions.append(condition)
+    return conditions
 
-# Get descriptions of all active effects for UI
+# Get descriptions of all active conditions for UI
 func get_effects_description() -> String:
     var descriptions: Array[String] = []
-
-    for effect in get_all_effects():
-        descriptions.append(effect.get_description())
-
+    for condition in get_all_conditions():
+        descriptions.append(condition.status_effect.get_description())
     return ", ".join(descriptions)
 
-# Clear all status effects
+# Clear all status conditions
 func clear_all_effects() -> void:
-    for effect_id: String in active_effects.keys():
-        effect_removed.emit(effect_id)
-    active_effects.clear()
+    for condition_id: String in active_conditions.keys():
+        effect_removed.emit(condition_id)
+    active_conditions.clear()
 
-# Get total count of active effects
+# Get total count of active conditions
 func get_effect_count() -> int:
-    return get_all_effects().size()
+    return get_all_conditions().size()
 
-# Check if entity has any status effects
+# Check if entity has any status conditions
 func has_any_effects() -> bool:
     return get_effect_count() > 0

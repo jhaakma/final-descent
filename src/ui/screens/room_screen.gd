@@ -140,15 +140,15 @@ func _refresh_stats() -> void:
     if attack_bonus > 0 or defense_bonus > 0:
         buff_info = " (ATK +%d, DEF +%d)" % [attack_bonus, defense_bonus]
 
-    # Add status effects count and tooltip
-    var active_effects := GameState.player.get_all_status_effects()
+    # Add status conditions count and tooltip
+    var active_conditions: Array[StatusCondition] = GameState.player.get_all_status_conditions()
     var hp_tooltip_text := "HP: %d/%d%s" % [GameState.player.get_hp(), GameState.player.get_max_hp(), buff_info]
 
-    if active_effects.size() > 0:
-        var effects_text := "\nActive Status Effects (%d):" % active_effects.size()
-        for effect in active_effects:
-            effects_text += "\n• %s" % effect.get_description()
-        hp_tooltip_text += effects_text
+    if active_conditions.size() > 0:
+        var cond_text := "\nActive Status Conditions (%d):" % active_conditions.size()
+        for condition: StatusCondition in active_conditions:
+            cond_text += "\n• %s" % condition.status_effect.get_description()
+        hp_tooltip_text += cond_text
 
     hp_bar.tooltip_text = hp_tooltip_text
 
@@ -165,27 +165,27 @@ func _refresh_buffs() -> void:
 
     var has_content := false
 
-    # Add status effects
-    var status_effects := GameState.player.get_all_status_effects()
-    if status_effects.size() > 0:
+    # Add status conditions
+    var status_conditions: Array[StatusCondition] = GameState.player.get_all_status_conditions()
+    if status_conditions.size() > 0:
         has_content = true
-        print("Adding %d status effects" % status_effects.size())
-        for effect in status_effects:
+        print("Adding %d status conditions" % status_conditions.size())
+        for condition: StatusCondition in status_conditions:
             var status_row := StatusRow.new()
             buffs_block.add_child(status_row)
-            status_row.initialize_with_status_effect(effect)
-            print("Added effect StatusRow, children count: %d" % buffs_block.get_child_count())
+            status_row.initialize_with_condition(condition)
+            print("Added condition StatusRow, children count: %d" % buffs_block.get_child_count())
 
     # Handle display logic
     if not has_content:
-        print("No buffs or effects, adding 'None' row")
-        # Show "None" message when no buffs/effects
+        print("No buffs or conditions, adding 'None' row")
+        # Show "None" message when no buffs/conditions
         var none_row := StatusRow.new()
         buffs_block.add_child(none_row)
         none_row.bbcode_enabled = true
         none_row.clear()
         none_row.append_text("[color=gray]None[/color]")
-        none_row.tooltip_text = "No active buffs or status effects"
+        none_row.tooltip_text = "No active buffs or status conditions"
         buffs_block.visible = true
         print("Added 'None' row, children count: %d" % buffs_block.get_child_count())
     else:

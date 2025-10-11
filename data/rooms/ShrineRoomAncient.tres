@@ -2,13 +2,13 @@
 
 [ext_resource type="Resource" uid="uid://cc0x7rr8ri1m0" path="res://data/enemies/Ghost.tres" id="1_6b3sh"]
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="1_eaur7"]
-[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/item.gd" id="2_g15dw"]
+[ext_resource type="Script" uid="uid://1rgx6dp1sjb2" path="res://src/effects/condition/status_condition.gd" id="1_x5ch4"]
+[ext_resource type="Resource" uid="uid://bjiwlic0dm1w3" path="res://data/effects/conditions/BlessingOfStrength.tres" id="2_0eywi"]
+[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="2_g15dw"]
+[ext_resource type="Resource" uid="uid://bylbnda5qq0re" path="res://data/effects/conditions/BlessingOfDefense.tres" id="3_v5lmx"]
 [ext_resource type="Resource" uid="uid://bjvu3fmob3t2k" path="res://data/items/weapons/Staff.tres" id="4_ewu44"]
 [ext_resource type="Resource" uid="uid://drc4rx6xim1bu" path="res://data/items/potions/HealthPotionMedium.tres" id="5_ppc15"]
 [ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="5_stdmh"]
-[ext_resource type="Script" uid="uid://rglym38nsnwg" path="res://src/effects/status_effect.gd" id="7_qtild"]
-[ext_resource type="Resource" uid="uid://b4bgygnw5ixi3" path="res://data/effects/buffs/BlessingAttack.tres" id="8_qtild"]
-[ext_resource type="Resource" uid="uid://d0wo221xl4jj0" path="res://data/effects/buffs/BlessingDefense.tres" id="9_x288u"]
 [ext_resource type="Script" uid="uid://bnlue0rcqdx6d" path="res://src/rooms/shrine_room_resource.gd" id="12_4okh8"]
 
 [sub_resource type="Resource" id="Resource_sybd7"]
@@ -41,7 +41,7 @@ script = ExtResource("12_4okh8")
 blessing_cost = 10
 cure_cost = 5
 heal_cost = 8
-possible_status_effects = Array[ExtResource("7_qtild")]([ExtResource("8_qtild"), ExtResource("9_x288u")])
+blessings = Array[ExtResource("1_x5ch4")]([ExtResource("2_0eywi"), ExtResource("3_v5lmx")])
 heal_amount = 10
 loot_component = SubResource("Resource_cwbmv")
 loot_curse_chance = 0.3

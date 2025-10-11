@@ -53,7 +53,10 @@ func calculate_incoming_damage(base_damage: int) -> int:
 
 # === STATUS EFFECT MANAGEMENT ===
 func apply_status_effect(effect: StatusEffect) -> bool:
-    return status_effect_component.apply_effect(effect, self)
+    return status_effect_component.apply_status_effect(effect, self)
+
+func apply_status_condition(condition: StatusCondition) -> bool:
+    return status_effect_component.apply_status_condition(condition, self)
 
 func has_status_effect(effect_id: String) -> bool:
     return status_effect_component.has_effect(effect_id)
@@ -61,11 +64,13 @@ func has_status_effect(effect_id: String) -> bool:
 func process_status_effects() -> void:
     status_effect_component.process_turn(self)
 
-func get_status_effect_description(effect_id: String) -> String:
-    var status_effect: StatusEffect = status_effect_component.get_effect(effect_id)
-    if status_effect:
-        return status_effect.get_description()
-    return ""
+func clear_all_negative_status_effects() -> Array[StatusCondition]:
+    var removed_effects: Array[StatusCondition] = []
+    for condition in status_effect_component.get_all_conditions():
+        if condition.status_effect.get_effect_type() == StatusEffect.EffectType.NEGATIVE:
+            status_effect_component.remove_effect(condition.status_effect)
+            removed_effects.append(condition)
+    return removed_effects
 
 func remove_status_effect(effect: StatusEffect) -> void:
     status_effect_component.remove_effect(effect)
@@ -77,9 +82,9 @@ func clear_all_status_effects() -> void:
 func get_status_effects_description() -> String:
     return status_effect_component.get_effects_description()
 
-# Get all active status effects
-func get_all_status_effects() -> Array[StatusEffect]:
-    return status_effect_component.get_all_effects()
+# Get all active status conditions
+func get_all_status_conditions() -> Array[StatusCondition]:
+    return status_effect_component.get_all_conditions()
 
 # === TURN MANAGEMENT ===
 # Check if this entity should skip their next turn
@@ -91,10 +96,10 @@ func should_skip_turn() -> bool:
 
 # Helper method to check for any StunEffect instance regardless of name
 func _is_stunned() -> bool:
-    var all_effects := status_effect_component.get_all_effects()
-    for effect in all_effects:
-        if effect is StunEffect:
-            print("DEBUG: Found StunEffect with name: ", effect.get_effect_name())
+    var all_conditions: Array[StatusCondition] = status_effect_component.get_all_conditions()
+    for condition: StatusCondition in all_conditions:
+        if condition.status_effect is StunEffect:
+            print("DEBUG: Found StunEffect with name: ", condition.status_effect.get_effect_name())
             return true
     return false
 

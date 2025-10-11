@@ -30,7 +30,7 @@ func execute(caster: CombatEntity, target: CombatEntity) -> void:
 
     # Apply status effect if present and chance succeeds
     if status_effect != null and randf() < effect_chance:
-        var effect_copy: StatusEffect = status_effect.duplicate()
+        var effect_copy: StatusEffect = status_effect.create()
         target.apply_status_effect(effect_copy)
 
 

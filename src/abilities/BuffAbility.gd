@@ -23,7 +23,7 @@ func execute(caster: CombatEntity, target: CombatEntity = null) -> void:
 
 func _apply_status_effect(actual_target: CombatEntity, caster: CombatEntity) -> void:
     # Create a copy of the status effect to avoid modifying the original resource
-    var effect_copy: StatusEffect = status_effect_to_apply.duplicate()
+    var effect_copy: StatusEffect = status_effect_to_apply.create()
 
     # Apply the status effect to the target
     if actual_target.has_method("apply_status_effect"):

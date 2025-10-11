@@ -1,15 +1,14 @@
 class_name AttackBoostEffect extends StatBoostEffect
 
-@export var effect_name: String = "Blessing of Strength"
 @export var attack_bonus: int = 3
 
 func get_effect_id() -> String:
     return "attack_boost"
 
+const CANONICAL_NAME := "+ATK"
 
 func get_effect_name() -> String:
-    return effect_name
-
+    return CANONICAL_NAME
 
 func get_effect_type() -> EffectType:
     return EffectType.POSITIVE

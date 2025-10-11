@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://c0cpy5xfdy2nb"]
+[gd_scene load_steps=26 format=3 uid="uid://c0cpy5xfdy2nb"]
 
 [ext_resource type="Theme" uid="uid://ch0ahyx502rlq" path="res://data/themes/theme.tres" id="1_fqbyh"]
 [ext_resource type="Script" uid="uid://bi2w4gopbk7mv" path="res://src/ui/screens/room_screen.gd" id="1_vxldv"]
@@ -17,14 +17,14 @@
 [ext_resource type="Script" uid="uid://b4y5n724vd0ph" path="res://src/enemies/enemy_resource.gd" id="9_thj5w"]
 [ext_resource type="Resource" uid="uid://cxkrul1kd2tmm" path="res://data/items/elixirs/ElixirOfStrength.tres" id="10_seokc"]
 [ext_resource type="Script" uid="uid://bqxhtkn1xkeqv" path="res://src/rooms/combat_room_resource.gd" id="11_am2x5"]
+[ext_resource type="Resource" uid="uid://c31wbx2iwa0s7" path="res://data/items/potions/RegenerationPotion.tres" id="11_kigx5"]
 [ext_resource type="Resource" uid="uid://dij2m52fyjwqp" path="res://data/enemies/Snake.tres" id="12_qopf2"]
-[ext_resource type="Script" uid="uid://rglym38nsnwg" path="res://src/effects/status_effect.gd" id="17_wfawr"]
-[ext_resource type="Resource" uid="uid://b4bgygnw5ixi3" path="res://data/effects/buffs/BlessingAttack.tres" id="18_hoodt"]
-[ext_resource type="Script" uid="uid://bnlue0rcqdx6d" path="res://src/rooms/shrine_room_resource.gd" id="19_kigx5"]
+[ext_resource type="Resource" uid="uid://ddgo03rs1qvck" path="res://data/rooms/ShrineRoomAncient.tres" id="18_wfawr"]
+[ext_resource type="Resource" uid="uid://deugb73fiqik0" path="res://data/rooms/ShrineRoomEvil.tres" id="19_hoodt"]
 
 [sub_resource type="Resource" id="Resource_t5dep"]
 script = ExtResource("3_2vu3h")
-loot_table = Array[ExtResource("4_p1ruj")]([ExtResource("6_p1ruj"), ExtResource("7_thj5w"), ExtResource("5_4gjwx"), ExtResource("9_t5d3n"), ExtResource("10_seokc")])
+loot_table = Array[ExtResource("4_p1ruj")]([ExtResource("6_p1ruj"), ExtResource("7_thj5w"), ExtResource("5_4gjwx"), ExtResource("9_t5d3n"), ExtResource("10_seokc"), ExtResource("11_kigx5")])
 count = 2
 chance_none = 0.0
 pick_method = 1
@@ -59,21 +59,6 @@ min_floor = 0
 max_floor = -1
 metadata/_custom_type_script = "uid://bqxhtkn1xkeqv"
 
-[sub_resource type="Resource" id="Resource_mm5rg"]
-script = ExtResource("19_kigx5")
-blessing_cost = 10
-cure_cost = 5
-heal_cost = 8
-possible_status_effects = Array[ExtResource("17_wfawr")]([ExtResource("18_hoodt")])
-heal_amount = 10
-loot_curse_chance = 0.3
-title = "Room"
-description = "Description"
-weight = 10
-min_floor = 0
-max_floor = -1
-metadata/_custom_type_script = "uid://bnlue0rcqdx6d"
-
 [node name="RoomScreen" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -83,7 +68,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_fqbyh")
 script = ExtResource("1_vxldv")
-starting_rooms = Array[ExtResource("3_soduk")]([SubResource("Resource_4t8ue"), SubResource("Resource_037r1"), ExtResource("4_31aom"), SubResource("Resource_mm5rg")])
+starting_rooms = Array[ExtResource("3_soduk")]([SubResource("Resource_4t8ue"), SubResource("Resource_037r1"), ExtResource("4_31aom"), ExtResource("18_wfawr"), ExtResource("19_hoodt")])
 metadata/_edit_vertical_guides_ = [-118.0]
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
