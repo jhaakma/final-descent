@@ -45,8 +45,6 @@ func get_full_display_name() -> String:
     var full_name := item.name
     if count > 1:
         full_name += " (%d)" % count
-    elif is_unique_instance():
-        full_name += " (1)"
 
     return full_name
 
@@ -77,7 +75,7 @@ func use_item() -> bool:
     if not is_available_in_inventory():
         return false
 
-    if item is ItemWeapon:
+    if item is Weapon:
         var equipped_weapon: = GameState.player.get_equipped_weapon()
         # Special handling for weapons
         var is_already_equipped: bool = (

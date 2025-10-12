@@ -23,8 +23,3 @@ func apply_effect(target: CombatEntity) -> bool:
 
     return true
 
-# Override get_description for regeneration-specific formatting
-func get_description() -> String:
-    var stack_text := " x%d" % stacks if stacks > 1 else ""
-    var total_healing := int(healing_per_turn * get_stack_multiplier())
-    return "%s (%d heal, %d turns)%s" % [get_effect_name(), total_healing, remaining_turns, stack_text]

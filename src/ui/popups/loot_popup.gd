@@ -54,10 +54,11 @@ func show_loot(loot_data: LootComponent.LootResult, open_message: String) -> voi
             items_label.modulate = Color.LIGHT_BLUE
 
             for stack in loot_data.items_gained:
-                var item_label := Label.new()
-                item_label.text = " • %s (x%d)" % [stack.item.name, stack.stack_count]
-                item_label.modulate = Color.WHITE
-                items_list.add_child(item_label)
+                if stack.stack_count > 0:
+                    var item_label := Label.new()
+                    item_label.text = " • %s (x%d)" % [stack.item.name, stack.stack_count]
+                    item_label.modulate = Color.WHITE
+                    items_list.add_child(item_label)
         else:
             items_label.visible = false
     else:

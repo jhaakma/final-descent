@@ -306,7 +306,7 @@ func _on_attack() -> void:
     LogManager.log_attack(GameState.player, current_enemy, final_damage, weapon_name)
     if weapon_instance:
         # Check if weapon has special attack effects
-        var weapon := weapon_instance.item as ItemWeapon
+        var weapon := weapon_instance.item as Weapon
         weapon.on_attack_hit(current_enemy)
 
     # Reduce weapon condition after logging the attack

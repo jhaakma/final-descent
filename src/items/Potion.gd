@@ -13,3 +13,12 @@ func _on_use(_item_data: ItemData) -> bool:
     condition.status_effect = status_effect.duplicate()
     condition.log_ability_name = log_potion_name
     return GameState.player.apply_status_condition(condition)
+
+func get_additional_tooltip_info() -> Array[AdditionalTooltipInfoData]:
+    if not status_effect:
+        return []
+    var info := AdditionalTooltipInfoData.new()
+    info.text = "✨ %s" % status_effect.get_base_description()
+
+    info.color = Color(0.6, 1.0, 0.8)
+    return [info]

@@ -87,7 +87,7 @@ func _on_item_selected(item: Item) -> void:
         row.set_selected(row.item_instance.item == selected_item)
 
 func _on_item_used(item_instance: ItemInstance) -> void:
-    if item_instance.item is ItemWeapon:
+    if item_instance.item is Weapon:
         # Check if this specific instance is equipped
         var is_this_equipped: bool = item_instance.is_equipped
 

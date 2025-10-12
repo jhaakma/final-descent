@@ -5,7 +5,5 @@
 [resource]
 script = ExtResource("1_p53nu")
 damage_per_turn = 1
-remaining_turns = 5
-stacks = 1
-max_stacks = 3
+duration = 5
 metadata/_custom_type_script = "uid://bnsjjjtwxudsp"

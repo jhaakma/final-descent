@@ -19,7 +19,7 @@ static func get_item_tooltip_text(item: Item, count: int = 1) -> String:
         tooltip_parts.append("%s" % item.name)
 
     # Add item type information
-    if item is ItemWeapon:
+    if item is Weapon:
         tooltip_parts.append("Type: Weapon")
     elif item is ItemPotion:
         tooltip_parts.append("Type: Potion")
@@ -32,8 +32,8 @@ static func get_item_tooltip_text(item: Item, count: int = 1) -> String:
         tooltip_parts.append("\n%s" % description)
 
     # Add weapon-specific stats
-    if item is ItemWeapon:
-        var weapon := item as ItemWeapon
+    if item is Weapon:
+        var weapon := item as Weapon
         tooltip_parts.append("\nDamage: %d" % weapon.damage)
 
         # Show if currently equipped
@@ -75,8 +75,8 @@ static func get_simple_item_tooltip_text(item: Item, count: int = 1) -> String:
         tooltip_parts.append(description)
 
     # Show damage for weapons
-    if item is ItemWeapon:
-        var weapon := item as ItemWeapon
+    if item is Weapon:
+        var weapon := item as Weapon
         tooltip_parts.append("Damage: %d" % weapon.damage)
 
     return "\n".join(tooltip_parts)

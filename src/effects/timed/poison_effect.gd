@@ -24,8 +24,5 @@ func apply_effect(target: CombatEntity) -> bool:
 
     return true
 
-# Override get_description for better poison-specific formatting
-func get_description() -> String:
-    var stack_text := " x%d" % stacks if stacks > 1 else ""
-    var total_dmg := int(damage_per_turn * get_stack_multiplier())
-    return "%s (%d dmg, %d turns)%s" % [get_effect_name(), total_dmg, remaining_turns, stack_text]
+func get_base_description() -> String:
+    return "%d %s damage for %d turns" % [damage_per_turn, get_effect_name(), duration]

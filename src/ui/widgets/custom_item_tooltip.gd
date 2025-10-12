@@ -101,7 +101,7 @@ func _update_item_type() -> void:
     if not item_type_label:
         return
     var type_text := ""
-    if current_item is ItemWeapon:
+    if current_item is Weapon:
         type_text = "(Weapon"
         if GameState.player.equipped_weapon == current_item:
             type_text += " - Equipped)"
@@ -132,25 +132,15 @@ func _update_stats() -> void:
     for child in stats_container.get_children():
         child.queue_free()
 
-    # Add weapon-specific stats
-    if current_item is ItemWeapon:
-        var weapon := current_item as ItemWeapon
-        var damage_label := Label.new()
-        damage_label.text = "⚔️ Damage: %d" % weapon.damage
-        damage_label.add_theme_font_size_override("font_size", 10)
-        damage_label.modulate = Color(1.0, 0.8, 0.6)
-        stats_container.add_child(damage_label)
-
-    # Add stats for items with status effects (e.g., potions, weapons)
-    if "status_effect" in current_item:
-        var status_effect := current_item.get("status_effect") as StatusEffect
-        if status_effect:
-            var effect_label := Label.new()
-            effect_label.text = "✨ Effect: %s" % status_effect.get_description()
-            effect_label.add_theme_font_size_override("font_size", 10)
-            effect_label.modulate = Color(0.6, 1.0, 0.8)
-            effect_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-            stats_container.add_child(effect_label)
+    var additional_tooltip_infos := current_item.get_additional_tooltip_info()
+    for additional_tooltip_info in additional_tooltip_infos:
+        var info_label := Label.new()
+        info_label.text = additional_tooltip_info.text
+        info_label.add_theme_font_size_override("font_size", 10)
+        info_label.modulate = additional_tooltip_info.color
+        info_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+        info_label.custom_minimum_size.x = 180
+        stats_container.add_child(info_label)
 
     # Show/hide stats container based on content
     stats_container.visible = stats_container.get_child_count() > 0
@@ -160,8 +150,8 @@ func _update_condition_label() -> void:
     if not condition_label:
         return
     if "condition" in current_item:
-        var current_condition := (current_item as ItemWeapon).condition
-        var max_condition := (current_item as ItemWeapon).get_max_condition()
+        var current_condition := (current_item as Weapon).condition
+        var max_condition := (current_item as Weapon).get_max_condition()
 
         # Override with item data if available
         if current_item_data and "current_condition" in current_item_data:
@@ -178,4 +168,4 @@ func _update_gold_value() -> void:
     if not sell_value_label:
         return
     var sell_value := current_item.calculate_sell_value(current_item_data)
-    sell_value_label.text = "🪙 Sell Value: %d gold" % sell_value
+    sell_value_label.text = "🪙 %d gold" % sell_value

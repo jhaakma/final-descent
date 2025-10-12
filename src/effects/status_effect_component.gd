@@ -45,6 +45,7 @@ func apply_status_condition(_condition: StatusCondition, effect_target: CombatEn
             return false
         # Don't store instant effects in active_conditions since they're one-time use
 
+
     # Handle timed effects (TimedEffect subclasses)
     var conditon_already_applied := active_conditions.has(condition_id)
     var timed_effect := effect as TimedEffect
@@ -53,31 +54,38 @@ func apply_status_condition(_condition: StatusCondition, effect_target: CombatEn
         var existing_condition := active_conditions[condition_id]
         var existing_effect := existing_condition.status_effect as TimedEffect
         if existing_effect.can_stack_with(effect):
+            # Add a new stack with its own duration
             existing_effect.stack_with(effect)
-            # No additional logging for stacking, the effect description will show stack count
-        elif existing_effect.remaining_turns >= timed_effect.remaining_turns:
             LogManager.log({
-                text = "{You are} already affected by %s." % [existing_condition.name],
+                text = "{You are} affected by %s. Stack added (%d stacks, %d-%d turns)." % [existing_condition.name, existing_effect.stack_durations.size(), existing_effect.stack_durations.min(), existing_effect.stack_durations.max()],
+                target = effect_target,
+                color = LogManager.LogColor.COMBAT
+            })
+        elif existing_effect.stack_durations.max() >= timed_effect.get_duration(): #number of turns remainin is equal/greater than new duration
+            LogManager.log({
+                text = "{You are} already affected by %s." % existing_condition.name,
                 target = effect_target,
                 color = LogManager.LogColor.WARNING
             })
             return false
         else:
-            # For timed effects that can't stack (at max stacks), refresh duration but keep max stacks
-            if existing_effect.get_effect_id() == timed_effect.get_effect_id():
-                existing_effect.remaining_turns = timed_effect.remaining_turns
-                var duration := existing_effect.remaining_turns
-                LogManager.log_status_condition_applied(effect_target, existing_condition, duration)
-            else:
-                # Replace with new condition for other cases
-                active_conditions[condition_id] = condition
-                var duration := timed_effect.remaining_turns if effect is TimedEffect else 0
-                LogManager.log_status_condition_applied(effect_target, condition, duration)
+            # At max stacks, refresh the shortest stack duration
+            var min_index := 0
+            var min_duration := existing_effect.stack_durations[0]
+            for i in range(existing_effect.stack_durations.size()):
+                if existing_effect.stack_durations[i] < min_duration:
+                    min_duration = existing_effect.stack_durations[i]
+                    min_index = i
+            existing_effect.stack_durations[min_index] = timed_effect.get_duration()
+        LogManager.log_status_condition_applied(effect_target, existing_condition, existing_effect.stack_durations.max())
     else:
-        # Add new condition
+        # Add new condition with initial stack
         active_conditions[condition_id] = condition
-        var duration := timed_effect.remaining_turns if effect is TimedEffect else 0
-        LogManager.log_status_condition_applied(effect_target, condition, duration)
+        if effect is TimedEffect:
+            timed_effect.stack_durations = [timed_effect.get_duration()]
+            LogManager.log_status_condition_applied(effect_target, condition, timed_effect.get_duration())
+        else:
+            LogManager.log_status_condition_applied(effect_target, condition, 0)
 
     effect_applied.emit(condition_id)
     return true
@@ -119,10 +127,10 @@ func process_turn(target: CombatEntity) -> void:
         var result := effect.apply_effect(target)
 
         if effect is TimedEffect:
-            (effect as TimedEffect).tick_turn()
-        if effect is TimedEffect and (effect as TimedEffect).is_expired():
-            conditions_to_remove.append(condition)
-
+            var timed_effect := effect as TimedEffect
+            timed_effect.tick_turn()
+            if timed_effect.is_expired():
+                conditions_to_remove.append(condition)
         effect_processed.emit(condition_id, result)
 
     # Remove expired conditions

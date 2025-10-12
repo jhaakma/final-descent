@@ -64,7 +64,7 @@ func _on_cure(room_screen: RoomScreen) -> void:
         room_screen.update()
         room_screen.mark_cleared()
     else:
-        LogManager.log_message("You have no status effects to cure.")
+        LogManager.log_warning("You have no status effects to cure.")
 
 
 func _on_heal(room_screen: RoomScreen) -> void:

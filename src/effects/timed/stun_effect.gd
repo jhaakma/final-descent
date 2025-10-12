@@ -18,8 +18,3 @@ func apply_effect(_target: CombatEntity) -> bool:
     # when the effect is first applied, so we don't need to log here
 
     return true
-
-# Override get_description for better stun-specific formatting
-func get_description() -> String:
-    var stack_text := " x%d" % stacks if stacks > 1 else ""
-    return "Stunned (%d turns)%s" % [remaining_turns, stack_text]

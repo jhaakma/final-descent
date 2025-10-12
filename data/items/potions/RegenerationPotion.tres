@@ -6,8 +6,7 @@
 [sub_resource type="Resource" id="RegenerationEffect_1"]
 script = ExtResource("1_lryfk")
 healing_per_turn = 2
-remaining_turns = 10
-stacks = 1
+duration = 5
 
 [resource]
 script = ExtResource("2_lhenj")

@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://c0cpy5xfdy2nb"]
+[gd_scene load_steps=37 format=3 uid="uid://c0cpy5xfdy2nb"]
 
 [ext_resource type="Theme" uid="uid://ch0ahyx502rlq" path="res://data/themes/theme.tres" id="1_fqbyh"]
 [ext_resource type="Script" uid="uid://bi2w4gopbk7mv" path="res://src/ui/screens/room_screen.gd" id="1_vxldv"]
@@ -17,14 +17,57 @@
 [ext_resource type="Script" uid="uid://b4y5n724vd0ph" path="res://src/enemies/enemy_resource.gd" id="9_thj5w"]
 [ext_resource type="Resource" uid="uid://cxkrul1kd2tmm" path="res://data/items/elixirs/ElixirOfStrength.tres" id="10_seokc"]
 [ext_resource type="Script" uid="uid://bqxhtkn1xkeqv" path="res://src/rooms/combat_room_resource.gd" id="11_am2x5"]
+[ext_resource type="Resource" uid="uid://fj0lhss0j1ad" path="res://data/items/weapons/PoisonedDagger.tres" id="11_hoodt"]
 [ext_resource type="Resource" uid="uid://c31wbx2iwa0s7" path="res://data/items/potions/RegenerationPotion.tres" id="11_kigx5"]
-[ext_resource type="Resource" uid="uid://dij2m52fyjwqp" path="res://data/enemies/Snake.tres" id="12_qopf2"]
+[ext_resource type="Resource" uid="uid://camlnwiaxo4xp" path="res://data/items/elixirs/ElixirOfVitality.tres" id="11_mm5rg"]
+[ext_resource type="Script" uid="uid://on0my3ge7dka" path="res://src/enchantments/status_on_strike_enchantment.gd" id="14_d56d7"]
+[ext_resource type="Script" uid="uid://bnsjjjtwxudsp" path="res://src/effects/timed/poison_effect.gd" id="15_og4wa"]
+[ext_resource type="Script" uid="uid://io27es0e6r6q" path="res://src/items/Rune.gd" id="16_30nnb"]
+[ext_resource type="Resource" uid="uid://cwdl328syumjx" path="res://data/enemies/Ogre.tres" id="17_kigx5"]
+[ext_resource type="Resource" uid="uid://clyabowguvivm" path="res://data/items/weapons/ShortSword.tres" id="17_og4wa"]
 [ext_resource type="Resource" uid="uid://ddgo03rs1qvck" path="res://data/rooms/ShrineRoomAncient.tres" id="18_wfawr"]
 [ext_resource type="Resource" uid="uid://deugb73fiqik0" path="res://data/rooms/ShrineRoomEvil.tres" id="19_hoodt"]
 
 [sub_resource type="Resource" id="Resource_t5dep"]
 script = ExtResource("3_2vu3h")
-loot_table = Array[ExtResource("4_p1ruj")]([ExtResource("6_p1ruj"), ExtResource("7_thj5w"), ExtResource("5_4gjwx"), ExtResource("9_t5d3n"), ExtResource("10_seokc"), ExtResource("11_kigx5")])
+loot_table = Array[ExtResource("4_p1ruj")]([ExtResource("6_p1ruj"), ExtResource("7_thj5w"), ExtResource("9_t5d3n"), ExtResource("10_seokc"), ExtResource("11_kigx5"), ExtResource("11_mm5rg")])
+count = 1
+chance_none = 0.0
+pick_method = 1
+floor_min = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"
+
+[sub_resource type="Resource" id="Resource_hoodt"]
+script = ExtResource("3_2vu3h")
+loot_table = Array[ExtResource("4_p1ruj")]([ExtResource("11_hoodt"), ExtResource("5_4gjwx")])
+count = 1
+chance_none = 0.0
+pick_method = 1
+floor_min = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"
+
+[sub_resource type="Resource" id="Resource_of8pp"]
+script = ExtResource("15_og4wa")
+damage_per_turn = 1
+duration = 6
+metadata/_custom_type_script = "uid://bnsjjjtwxudsp"
+
+[sub_resource type="Resource" id="Resource_7gp33"]
+script = ExtResource("14_d56d7")
+status_effect = SubResource("Resource_of8pp")
+effect_apply_chance = 1.0
+metadata/_custom_type_script = "uid://on0my3ge7dka"
+
+[sub_resource type="Resource" id="Resource_yjnrm"]
+script = ExtResource("16_30nnb")
+enchantment = SubResource("Resource_7gp33")
+name = "Rune of Poison"
+purchase_value = 60
+metadata/_custom_type_script = "uid://io27es0e6r6q"
+
+[sub_resource type="Resource" id="Resource_jjfgr"]
+script = ExtResource("3_2vu3h")
+loot_table = Array[ExtResource("4_p1ruj")]([SubResource("Resource_yjnrm"), ExtResource("17_og4wa")])
 count = 2
 chance_none = 0.0
 pick_method = 1
@@ -36,7 +79,7 @@ script = ExtResource("6_em7fl")
 gold_min = 50
 gold_max = 50
 chance_gold_none = 0.0
-loot_table = Array[ExtResource("3_2vu3h")]([SubResource("Resource_t5dep")])
+loot_table = Array[ExtResource("3_2vu3h")]([SubResource("Resource_t5dep"), SubResource("Resource_hoodt"), SubResource("Resource_jjfgr")])
 metadata/_custom_type_script = "uid://lj0e532l0dyu"
 
 [sub_resource type="Resource" id="Resource_4t8ue"]
@@ -52,7 +95,7 @@ metadata/_custom_type_script = "uid://cuib3tlx6u7dn"
 
 [sub_resource type="Resource" id="Resource_037r1"]
 script = ExtResource("11_am2x5")
-enemy_list = Array[ExtResource("9_thj5w")]([ExtResource("12_qopf2")])
+enemy_list = Array[ExtResource("9_thj5w")]([ExtResource("17_kigx5")])
 title = "Room"
 description = "Description"
 weight = 10
@@ -79,133 +122,137 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 50
-theme_override_constants/margin_top = 50
-theme_override_constants/margin_right = 50
-theme_override_constants/margin_bottom = 50
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 
-[node name="LeftPanel" type="PanelContainer" parent="MarginContainer/HBoxContainer"]
-custom_minimum_size = Vector2(320, 0)
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LeftPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(350, 0)
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/LeftPanel"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel"]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer"]
 layout_mode = 2
 
-[node name="VBoxStats" type="VBoxContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer"]
+[node name="VBoxStats" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 8
 
-[node name="FloorLabel" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats"]
+[node name="FloorLabel" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "FLOOR: X"
 horizontal_alignment = 1
 
-[node name="HPBlock" type="HBoxContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats"]
+[node name="HPBlock" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats"]
 layout_mode = 2
 size_flags_horizontal = 3
 alignment = 1
 
-[node name="HPLabel" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HPBlock"]
+[node name="HPLabel" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HPBlock"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(77.79, 0)
 layout_mode = 2
 text = "HP: 0/0"
 
-[node name="HPBar" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HPBlock" instance=ExtResource("2_71ary")]
+[node name="HPBar" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HPBlock" instance=ExtResource("2_71ary")]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="HSeparator" type="HSeparator" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats"]
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats"]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats"]
 layout_mode = 2
 
-[node name="StatsBlock" type="VBoxContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="AtkBonus" type="HBoxContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer/StatsBlock"]
+[node name="StatsBlock" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="AtkValue" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer/StatsBlock/AtkBonus"]
+[node name="AtkBonus" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer/StatsBlock"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AtkValue" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer/StatsBlock/AtkBonus"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "ATK: 0"
 
-[node name="DefBonus" type="HBoxContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer/StatsBlock"]
+[node name="DefBonus" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer/StatsBlock"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="DefValue" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer/StatsBlock/DefBonus"]
+[node name="DefValue" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer/StatsBlock/DefBonus"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "DEF: 0"
 
-[node name="GoldBlock" type="HBoxContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer"]
+[node name="GoldBlock" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 0
 
-[node name="GoldLabel" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer/GoldBlock"]
+[node name="GoldLabel" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer/GoldBlock"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.84, 0, 1)
 text = "Gold: "
 
-[node name="GoldValue" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer/GoldBlock"]
+[node name="GoldValue" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer/GoldBlock"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.84, 0, 1)
 text = "X"
 
-[node name="HSeparator2" type="HSeparator" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats"]
+[node name="HSeparator2" type="HSeparator" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats"]
 layout_mode = 2
 
-[node name="BuffsBlock" type="VBoxContainer" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats"]
+[node name="BuffsBlock" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 112.825)
 layout_mode = 2
 
-[node name="InventoryComponent" parent="MarginContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer" instance=ExtResource("3_vun85")]
+[node name="InventoryComponent" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer" instance=ExtResource("3_vun85")]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="CenterPanel" type="PanelContainer" parent="MarginContainer/HBoxContainer"]
+[node name="CenterPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/CenterPanel"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/CenterPanel"]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/CenterPanel/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/CenterPanel/MarginContainer"]
 layout_mode = 2
 
-[node name="RoomTitle" type="Label" parent="MarginContainer/HBoxContainer/CenterPanel/MarginContainer/VBoxContainer"]
+[node name="RoomTitle" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/CenterPanel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"HeaderLarge"
 text = "Room Name"
 horizontal_alignment = 1
 
-[node name="RoomDescription" type="Label" parent="MarginContainer/HBoxContainer/CenterPanel/MarginContainer/VBoxContainer"]
+[node name="RoomDescription" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/CenterPanel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
@@ -213,52 +260,52 @@ text = "Room Description goes here."
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="Actions" type="GridContainer" parent="MarginContainer/HBoxContainer/CenterPanel/MarginContainer/VBoxContainer"]
+[node name="Actions" type="GridContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/CenterPanel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="HBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/CenterPanel/MarginContainer/VBoxContainer"]
+[node name="HBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/CenterPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 alignment = 1
 
-[node name="NextFloorBtn" type="Button" parent="MarginContainer/HBoxContainer/CenterPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="NextFloorBtn" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/CenterPanel/MarginContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Next Floor"
 
-[node name="Padding" type="Control" parent="MarginContainer/HBoxContainer/CenterPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="Padding" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer/CenterPanel/MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="LeaveRunBtn" type="Button" parent="MarginContainer/HBoxContainer/CenterPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="LeaveRunBtn" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/CenterPanel/MarginContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Leave Run"
 
-[node name="RightPanel" type="PanelContainer" parent="MarginContainer/HBoxContainer"]
-custom_minimum_size = Vector2(320, 0)
+[node name="RightPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(350, 0)
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/RightPanel"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/RightPanel"]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="PanelLog" type="PanelContainer" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer"]
+[node name="PanelLog" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/RightPanel/MarginContainer"]
 layout_mode = 2
 
-[node name="VBoxLog" type="VBoxContainer" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer/PanelLog"]
+[node name="VBoxLog" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/RightPanel/MarginContainer/PanelLog"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer/PanelLog/VBoxLog"]
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/RightPanel/MarginContainer/PanelLog/VBoxLog"]
 layout_mode = 2
 text = "Log"
 horizontal_alignment = 1
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer/PanelLog/VBoxLog"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/RightPanel/MarginContainer/PanelLog/VBoxLog"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/margin_left = 10
@@ -266,7 +313,7 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="Log" type="RichTextLabel" parent="MarginContainer/HBoxContainer/RightPanel/MarginContainer/PanelLog/VBoxLog/MarginContainer"]
+[node name="Log" type="RichTextLabel" parent="MarginContainer/VBoxContainer/HBoxContainer/RightPanel/MarginContainer/PanelLog/VBoxLog/MarginContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 136.51)
 layout_mode = 2
@@ -278,3 +325,11 @@ theme_override_font_sizes/bold_font_size = 14
 bbcode_enabled = true
 deselect_on_focus_loss_enabled = false
 drag_and_drop_selection_enabled = false
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.2
+
+[node name="Panel" type="Panel" parent="MarginContainer/VBoxContainer/PanelContainer"]
+layout_mode = 2

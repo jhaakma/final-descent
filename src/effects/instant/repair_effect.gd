@@ -19,7 +19,7 @@ func can_apply(target: CombatEntity) -> bool:
     if weapon_instance:
         if weapon_instance.item_data:
             var current_condition := weapon_instance.item_data.current_condition
-            var max_condition := (weapon_instance.item as ItemWeapon).get_max_condition()
+            var max_condition := (weapon_instance.item as Weapon).get_max_condition()
             return current_condition < max_condition  # Can apply if weapon is damaged
         else:
             return false  # No item data means nothing to repair
@@ -34,10 +34,10 @@ func apply_effect(target: CombatEntity) -> bool:
     if weapon_instance:
         if weapon_instance.item_data:
             var current_condition := weapon_instance.item_data.current_condition
-            var max_condition := (weapon_instance.item as ItemWeapon).get_max_condition()
+            var max_condition := (weapon_instance.item as Weapon).get_max_condition()
             weapon_instance.item_data.current_condition = min(current_condition + repair_amount, max_condition)
             weapon_instance.item_data_updated()
-            LogManager.log_success("Repaired %s's %s by %d points" % [player.name, weapon_instance.item.name, repair_amount])
+            LogManager.log_success("Repaired %s by %d points" % [weapon_instance.item.name, repair_amount])
             return true
         else:
             LogManager.log_warning("Your equipped weapon is not damaged.")

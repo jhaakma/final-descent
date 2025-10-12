@@ -43,6 +43,14 @@ gdscript/warnings/unsafe_property_access=1
 gdscript/warnings/unsafe_method_access=1
 gdscript/warnings/integer_division=0
 
+[display]
+
+window/size/viewport_width=1600
+window/size/viewport_height=900
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/stretch/scale_mode="integer"
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/resources_spreadsheet_view/plugin.cfg")
@@ -51,8 +59,8 @@ enabled=PackedStringArray("res://addons/resources_spreadsheet_view/plugin.cfg")
 
 folder_colors={
 "res://addons/": "gray",
-"res://data/": "blue",
-"res://src/": "green"
+"res://data/": "yellow",
+"res://src/": "blue"
 }
 
 [gui]

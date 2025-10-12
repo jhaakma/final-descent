@@ -42,3 +42,6 @@ func get_effect_color() -> String:
 func get_description() -> String:
     print_debug("get_description() not implemented in subclass")
     return "Generic Status Effect"
+
+func get_base_description() -> String:
+    return get_description()

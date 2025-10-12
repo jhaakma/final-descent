@@ -1,13 +1,25 @@
-[gd_resource type="Resource" script_class="InflictingWeapon" load_steps=3 format=3 uid="uid://fj0lhss0j1ad"]
+[gd_resource type="Resource" script_class="Weapon" load_steps=6 format=3 uid="uid://fj0lhss0j1ad"]
 
-[ext_resource type="Script" uid="uid://de14peynwsgrq" path="res://src/items/weapons/InflictingWeapon.gd" id="1_7oiy8"]
-[ext_resource type="Resource" uid="uid://dvaxva0shp6yy" path="res://data/effects/PoisonSimple.tres" id="2_tihms"]
+[ext_resource type="Script" uid="uid://on0my3ge7dka" path="res://src/enchantments/status_on_strike_enchantment.gd" id="1_h8ec8"]
+[ext_resource type="Script" uid="uid://bnsjjjtwxudsp" path="res://src/effects/timed/poison_effect.gd" id="2_ldjhj"]
+[ext_resource type="Script" uid="uid://cp8w78pilenje" path="res://src/items/Weapon.gd" id="3_wcgm2"]
+
+[sub_resource type="Resource" id="Resource_dn8jn"]
+script = ExtResource("2_ldjhj")
+damage_per_turn = 2
+duration = 5
+metadata/_custom_type_script = "uid://bnsjjjtwxudsp"
+
+[sub_resource type="Resource" id="Resource_21c22"]
+script = ExtResource("1_h8ec8")
+status_effect = SubResource("Resource_dn8jn")
+effect_apply_chance = 0.5
+metadata/_custom_type_script = "uid://on0my3ge7dka"
 
 [resource]
-script = ExtResource("1_7oiy8")
-status_effect = ExtResource("2_tihms")
-effect_apply_chance = 0.5
-damage = 1
+script = ExtResource("3_wcgm2")
+damage = 3
 condition = 10
+enchantment = SubResource("Resource_21c22")
 name = "Poisoned Dagger"
 purchase_value = 20

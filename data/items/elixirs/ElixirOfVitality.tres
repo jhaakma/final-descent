@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemPotion" load_steps=4 format=3 uid="uid://camlnwiaxo4xp"]
+
+[ext_resource type="Script" uid="uid://dikmkr6vyadjj" path="res://src/items/Potion.gd" id="1_8tv7w"]
+[ext_resource type="Script" uid="uid://bprhm4eacabtk" path="res://src/effects/buffs/vitality_boost_effect.gd" id="2_8tv7w"]
+
+[sub_resource type="Resource" id="Resource_3khuo"]
+script = ExtResource("2_8tv7w")
+max_hp_bonus = 20
+duration = 5
+metadata/_custom_type_script = "uid://bprhm4eacabtk"
+
+[resource]
+script = ExtResource("1_8tv7w")
+status_effect = SubResource("Resource_3khuo")
+log_potion_name = true
+name = "Elixir of Vitality"
+purchase_value = 60
+metadata/_custom_type_script = "uid://dikmkr6vyadjj"

@@ -126,7 +126,7 @@ func get_item_count(item: Item) -> int:
 
 # === WEAPON MANAGEMENT ===
 func equip_weapon(item_instance: ItemInstance) -> bool:
-    var weapon: ItemWeapon = item_instance.item as ItemWeapon
+    var weapon: Weapon = item_instance.item as Weapon
     # Unequip current weapon first if there is one
     if equipped_weapon:
         unequip_weapon()
@@ -176,7 +176,7 @@ func get_equipped_weapon() -> ItemInstance:
 
 func get_weapon_damage() -> int:
     if equipped_weapon:
-        var weapon := equipped_weapon.item as ItemWeapon
+        var weapon := equipped_weapon.item as Weapon
         var base_damage := weapon.damage
         if equipped_weapon.item_data:
             # Weapon has taken damage, scale by condition
@@ -202,7 +202,7 @@ func get_equipped_weapon_instance() -> ItemInstance:
 # Get current weapon condition information
 func get_weapon_condition() -> Dictionary:
     if equipped_weapon:
-        var weapon := equipped_weapon.item as ItemWeapon
+        var weapon := equipped_weapon.item as Weapon
         if equipped_weapon.item_data:
             # Weapon has condition data
             var current_condition := equipped_weapon.item_data.current_condition
@@ -293,7 +293,7 @@ func calculate_attack_damage() -> int:
 func reduce_weapon_condition() -> void:
     if not equipped_weapon:
         return
-    var weapon := equipped_weapon.item as ItemWeapon
+    var weapon := equipped_weapon.item as Weapon
 
     # Create ItemData if it doesn't exist yet (first damage)
     if not equipped_weapon.item_data:

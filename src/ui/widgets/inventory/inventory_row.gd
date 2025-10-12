@@ -82,6 +82,7 @@ func _update_display() -> void:
         tooltip_text = ""
         return
 
+    item_name_label.modulate = item_instance.item.get_inventory_color()
     var display_name := item_instance.get_full_display_name() if item_instance.get_full_display_name() else item_instance.item.name
 
     # Handle display based on mode
@@ -130,7 +131,7 @@ func _update_action_button() -> void:
 func _update_inventory_action_button() -> void:
     action_button.disabled = is_combat_disabled
 
-    if item_instance.item is ItemWeapon:
+    if item_instance.item is Weapon:
         # Weapons can always be equipped/unequipped
         action_button.disabled = false
         # Set a fixed width to prevent layout changes
@@ -163,7 +164,7 @@ func _update_background() -> void:
     var style_box := StyleBoxFlat.new()
 
     # Check if this entry represents equipped item
-    var is_this_equipped := (item_instance.item is ItemWeapon and item_instance.is_equipped)
+    var is_this_equipped := (item_instance.item is Weapon and item_instance.is_equipped)
 
     if is_this_equipped:
         # Use a proper bright green
@@ -182,13 +183,13 @@ func _update_background() -> void:
 
 func _update_condition_bar() -> void:
     # Show condition bar for weapons with damage (in any display mode)
-    var should_show: bool = (item_instance.item is ItemWeapon and
+    var should_show: bool = (item_instance.item is Weapon and
                       item_instance.item_data and
-                      item_instance.item_data.current_condition < (item_instance.item as ItemWeapon).condition)
+                      item_instance.item_data.current_condition < (item_instance.item as Weapon).condition)
 
     if should_show:
         # Update the progress bar value
-        var max_condition := (item_instance.item as ItemWeapon).condition
+        var max_condition := (item_instance.item as Weapon).condition
         var current_condition := item_instance.item_data.current_condition
         condition_bar.max_value = max_condition
         condition_bar.value = current_condition

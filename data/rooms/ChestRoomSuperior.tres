@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="1_tqubp"]
 [ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="2_02hfb"]
 [ext_resource type="Resource" uid="uid://bjvu3fmob3t2k" path="res://data/items/weapons/Staff.tres" id="3_m7738"]
-[ext_resource type="Resource" uid="uid://meq6o4s58qqk" path="res://data/items/weapons/WarAxe.tres" id="4_4vwlp"]
+[ext_resource type="Resource" uid="uid://meq6o4s58qqk" path="res://data/items/weapons/Waraxe.tres" id="4_4vwlp"]
 [ext_resource type="Resource" uid="uid://fj0lhss0j1ad" path="res://data/items/weapons/PoisonedDagger.tres" id="5_ytmfo"]
 [ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="6_h7wi8"]
 [ext_resource type="Resource" uid="uid://drc4rx6xim1bu" path="res://data/items/potions/HealthPotionMedium.tres" id="6_xc5k6"]

@@ -10,7 +10,7 @@
 [ext_resource type="Resource" uid="uid://clyabowguvivm" path="res://data/items/weapons/ShortSword.tres" id="7_dootk"]
 [ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="8_16j6s"]
 [ext_resource type="Resource" uid="uid://bjvu3fmob3t2k" path="res://data/items/weapons/Staff.tres" id="8_tqxsn"]
-[ext_resource type="Resource" uid="uid://meq6o4s58qqk" path="res://data/items/weapons/WarAxe.tres" id="9_4aml0"]
+[ext_resource type="Resource" uid="uid://meq6o4s58qqk" path="res://data/items/weapons/Waraxe.tres" id="9_4aml0"]
 [ext_resource type="Resource" uid="uid://dwqgodsd7t16e" path="res://data/items/repair_tools/RepairToolBasic.tres" id="11_ksf5w"]
 [ext_resource type="Script" uid="uid://dunspfeq3g380" path="res://src/rooms/shopkeeper_room_resource.gd" id="11_mjfg3"]
 

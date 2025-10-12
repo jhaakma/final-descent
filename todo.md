@@ -1,9 +1,40 @@
 # To do
 
-## Create AI component to override enemy AIs
+## Refactor CombatEntity/ATK and DEF bonuses
+- Move get_total_defense_bonus etc to CombatEntity
+- Allow potions etc to register an attack bonus
+- Potions register bonus on use, then unregister on expiry
+- get_total_defense_bonus etc directly sum from array of bonuses
+- Merge CombatActor into CombatEntity
 
-## Fixes:
-- chance_gold_none on ItemPick
+## Tidy ItemInstance
+- Remove count, use only for item+data combo
+
+## Permanent Conditions
+- Like timed Status but with no time limit
+- Used for permanent buffs and constant effect items
+
+## Damage Types/Resistances
+- Resistance = half damage from that type
+- Update UI to show more info on enemies
+
+## Player Abilities
+- Make sure ability logs work with player
+- Refactor CombatEneity/Enemy/EnemyResource to pull abilities list into CombatEntity
+- Update combat UI to allow using new abilities
+- Combat Manuals teach new abilities
+
+## Enchantments
+- Weapon has Enchantment slot
+- Base Enchantment is blank
+- OnStrike enchantment has on_attack_hit method
+    - StatusOnStrikeEnchantment extends OnStrikeEnchantment
+    - When attacking, check for OnStrike enchantments
+    - Poison Dagger:
+        - Weapon: Dagger
+        - Enchantment: StatusOnStrikeEnchantment
+            - Status: Poison
+- ConstantEffect enchantment
 
 ## Theme
 Create and use a consistent theme
@@ -29,6 +60,7 @@ Remove all unnecessary theme overrides
     - Stores the list of room types
     - Holds logic for determining next room
     - Room difficulty increases as player descends
+    - "Stages" - set of 10? rooms, with a boss at the end
 
 ## More Rooms
 - Unsafe rest rooms
@@ -49,7 +81,4 @@ Remove all unnecessary theme overrides
     - Reward: magic item
 
 ## Overarching Story
-- Rooms with options to explore, find clues, unravel some sort of plote
-
-## Difficulty Scaling
-- Higher difficulty enemies, better items as you descend floors
+- Rooms with options to explore, find clues, unravel some sort of plot
