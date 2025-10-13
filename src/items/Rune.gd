@@ -3,6 +3,9 @@ class_name Rune extends Item
 
 @export var enchantment: Enchantment
 
+func get_category() -> Item.ItemCategory:
+    return Item.ItemCategory.MISC
+
 func get_consumable() -> bool:
     return true  # Runes are consumable
 

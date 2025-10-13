@@ -2,6 +2,9 @@ class_name RepairTool extends Item
 
 @export var repair_amount: int = 5  # Amount to repair item condition
 
+func get_category() -> Item.ItemCategory:
+    return Item.ItemCategory.MISC
+
 func _on_use(_item_data: ItemData) -> bool:
     var repair_effect := RepairEffect.new().create() as RepairEffect
     repair_effect.repair_amount = repair_amount

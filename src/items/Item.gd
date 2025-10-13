@@ -1,11 +1,21 @@
 class_name Item extends Resource
 
+enum ItemCategory {
+    WEAPON,
+    POTION,
+    MISC
+}
+
 @export var name: String = "Item"
 @export var purchase_value: int = 10
 
 class AdditionalTooltipInfoData:
     var text: String
     var color: Color = Color(1, 1, 1)
+
+## Virtual method to be overridden by subclasses
+func get_category() -> ItemCategory:
+    return ItemCategory.MISC
 
 func get_description() -> String:
     return ""
@@ -36,3 +46,15 @@ func use(item_data: ItemData) -> void:
 
 func get_inventory_color() -> Color:
     return Color(1, 1, 1)
+
+## Get the category name as a string for UI display
+func get_category_name() -> String:
+    match get_category():
+        ItemCategory.WEAPON:
+            return "Weapons"
+        ItemCategory.POTION:
+            return "Potions"
+        ItemCategory.MISC:
+            return "Misc"
+        _:
+            return "Misc"

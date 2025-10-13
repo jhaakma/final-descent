@@ -3,6 +3,9 @@ class_name ItemPotion extends Item
 @export var status_effect: StatusEffect
 @export var log_potion_name: bool = false
 
+func get_category() -> Item.ItemCategory:
+    return Item.ItemCategory.POTION
+
 func get_consumable() -> bool:
     return true
 

@@ -13,6 +13,9 @@ signal unequip(weapon: Weapon)
 func _init() -> void:
     name = "Weapon"
 
+func get_category() -> Item.ItemCategory:
+    return Item.ItemCategory.WEAPON
+
 func set_enchantment(_enchantment: Enchantment) -> void:
     if not _enchantment:
         enchantment = null
