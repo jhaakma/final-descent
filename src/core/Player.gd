@@ -20,21 +20,20 @@ const BASE_ATTACK_MAX: int = 5  # This gives 2-5 damage (2 + randi() % 4 gives 2
 
 func _init() -> void:
     # Initialize base combat entity with starting health
-    _init_combat_entity(20)
+    _init_combat_entity(20, 5, 0)
 
     inventory = ItemInventoryComponent.new()
 
     # Connect health component signals to player signals
-    health_component.health_changed.connect(_on_health_changed)
-    health_component.died.connect(_on_health_component_died)
+    stats_component.health_changed.connect(_on_health_changed)
+    stats_component.died.connect(_on_stats_component_died)
     # Connect inventory signals
     inventory.inventory_changed.connect(_on_inventory_changed)
     reset()
 
 # Reset player to starting state
 func reset() -> void:
-    if health_component:
-        health_component.reset(20)
+    stats_component.reset()
     gold = 0
     if inventory:
         inventory.clear()
@@ -66,33 +65,30 @@ func spend_gold(amount: int) -> bool:
 
 # === HEALTH MANAGEMENT ===
 func heal(amount: int) -> int:
-    return health_component.heal(amount)
+    return stats_component.heal(amount)
 
 func take_damage(amount: int) -> int:
     var defense_bonus := get_total_defense_bonus()
     # Use unified damage calculation through combat actor
     var final_damage: int = calculate_incoming_damage(max(1, amount - defense_bonus))
-    return health_component.take_damage(final_damage)
+    return stats_component.take_damage(final_damage)
 
 # Health component getters for compatibility
 func get_hp() -> int:
     return get_current_hp()
 
 func get_current_hp() -> int:
-    return health_component.get_current_hp()
-
-func set_max_hp(new_max_hp: int) -> void:
-    health_component.set_max_hp(new_max_hp)
+    return stats_component.current_health
 
 func get_max_hp() -> int:
     # Base max HP plus bonuses from status effects
-    return health_component.get_max_hp() + get_total_max_hp_bonus()
+    return stats_component.get_total_max_health()
 
 # Signal handlers for health component
 func _on_health_changed(_current_hp: int, _max_hp: int) -> void:
     emit_signal("stats_changed")
 
-func _on_health_component_died() -> void:
+func _on_stats_component_died() -> void:
     # Start fade effect immediately
     emit_signal("death_fade_start")
     # Use a timer to delay the death signal so UI can show 0 HP and fade
@@ -227,36 +223,15 @@ func get_weapon_condition() -> Dictionary:
     return {"current": 0, "max": 0, "percentage": 0.0, "is_damaged": false, "is_broken": true}
 
 func get_total_attack_bonus() -> int:
-    var total_bonus: int = 0
-
-    # Add bonuses from status effects - generic approach
-    for condition in status_effect_component.get_all_conditions():
-        if condition.status_effect is StatBoostEffect:
-            total_bonus += (condition.status_effect as StatBoostEffect).get_attack_bonus()
-
-    return total_bonus
+    return stats_component.get_total_attack_power() - stats_component.attack_power
 
 # Now uses status effects only
 func get_total_defense_bonus() -> int:
-    var total_bonus: int = 0
-
-    # Add bonuses from status effects - generic approach
-    for condition in status_effect_component.get_all_conditions():
-        if condition.status_effect is StatBoostEffect:
-            total_bonus += (condition.status_effect as StatBoostEffect).get_defense_bonus()
-
-    return total_bonus
+    return stats_component.get_total_defense() - stats_component.defense
 
 # Get total max HP bonus from status effects
 func get_total_max_hp_bonus() -> int:
-    var total_bonus: int = 0
-
-    # Add bonuses from status effects - generic approach
-    for condition in status_effect_component.get_all_conditions():
-        if condition.status_effect is StatBoostEffect:
-            total_bonus += (condition.status_effect as StatBoostEffect).get_max_hp_bonus()
-
-    return total_bonus
+    return stats_component.get_total_max_health() - stats_component.max_health
 
 # === STATUS EFFECT MANAGEMENT ===
 # Override the base method to emit stats_changed signal for UI updates
@@ -316,21 +291,7 @@ func reduce_weapon_condition() -> void:
         # Emit signal again to update UI when weapon is destroyed
         emit_signal("inventory_changed")
 
-# === STATUS INFORMATION ===
-func get_status_summary() -> Dictionary:
-    return {
-        "hp": health_component.get_current_hp(),
-        "max_hp": health_component.get_max_hp(),
-        "gold": gold,
-        "attack_bonus": get_total_attack_bonus(),
-        "defense_bonus": get_total_defense_bonus(),
-        "is_defending": get_is_defending(),
-        "weapon_damage": get_weapon_damage(),
-        "weapon_name": get_weapon_name(),
-        "has_weapon": has_weapon_equipped(),
-        "active_status_effects_count": status_effect_component.get_effect_count(),
-        "active_status_effects": status_effect_component.get_all_conditions()
-    }
+
 
 func get_total_attack_display() -> String:
     # This shows the total attack power for UI display purposes

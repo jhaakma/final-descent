@@ -1,11 +1,11 @@
-[gd_scene load_steps=37 format=3 uid="uid://c0cpy5xfdy2nb"]
+[gd_scene load_steps=38 format=3 uid="uid://c0cpy5xfdy2nb"]
 
 [ext_resource type="Theme" uid="uid://ch0ahyx502rlq" path="res://data/themes/theme.tres" id="1_fqbyh"]
 [ext_resource type="Script" uid="uid://bi2w4gopbk7mv" path="res://src/ui/screens/room_screen.gd" id="1_vxldv"]
 [ext_resource type="PackedScene" uid="uid://d4kfoqy7h5f0d" path="res://src/ui/widgets/hp_bar.tscn" id="2_71ary"]
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="3_2vu3h"]
 [ext_resource type="Script" uid="uid://bdbhlyvac2es6" path="res://src/rooms/room_resource.gd" id="3_soduk"]
-[ext_resource type="PackedScene" uid="uid://cp3266w0ukw23" path="res://src/ui/widgets/inventory/InventoryComponent.tscn" id="3_vun85"]
+[ext_resource type="PackedScene" uid="uid://cp3266w0ukw23" path="res://src/ui/widgets/inventory/InventoryContainer.tscn" id="3_vun85"]
 [ext_resource type="Resource" uid="uid://i5l4a63bwaev" path="res://data/rooms/ShopkeeperRoomBasic.tres" id="4_31aom"]
 [ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="4_p1ruj"]
 [ext_resource type="Resource" uid="uid://duwirm5y8y3ir" path="res://data/items/weapons/Warhammer.tres" id="5_4gjwx"]
@@ -20,6 +20,7 @@
 [ext_resource type="Resource" uid="uid://fj0lhss0j1ad" path="res://data/items/weapons/PoisonedDagger.tres" id="11_hoodt"]
 [ext_resource type="Resource" uid="uid://c31wbx2iwa0s7" path="res://data/items/potions/RegenerationPotion.tres" id="11_kigx5"]
 [ext_resource type="Resource" uid="uid://camlnwiaxo4xp" path="res://data/items/elixirs/ElixirOfVitality.tres" id="11_mm5rg"]
+[ext_resource type="Resource" uid="uid://d3gxakqdygrra" path="res://data/items/elixirs/ElixirOfDefense.tres" id="12_30nnb"]
 [ext_resource type="Script" uid="uid://on0my3ge7dka" path="res://src/enchantments/status_on_strike_enchantment.gd" id="14_d56d7"]
 [ext_resource type="Script" uid="uid://bnsjjjtwxudsp" path="res://src/effects/timed/poison_effect.gd" id="15_og4wa"]
 [ext_resource type="Script" uid="uid://io27es0e6r6q" path="res://src/items/Rune.gd" id="16_30nnb"]
@@ -30,7 +31,7 @@
 
 [sub_resource type="Resource" id="Resource_t5dep"]
 script = ExtResource("3_2vu3h")
-loot_table = Array[ExtResource("4_p1ruj")]([ExtResource("6_p1ruj"), ExtResource("7_thj5w"), ExtResource("9_t5d3n"), ExtResource("10_seokc"), ExtResource("11_kigx5"), ExtResource("11_mm5rg")])
+loot_table = Array[ExtResource("4_p1ruj")]([ExtResource("6_p1ruj"), ExtResource("7_thj5w"), ExtResource("9_t5d3n"), ExtResource("10_seokc"), ExtResource("11_kigx5"), ExtResource("11_mm5rg"), ExtResource("12_30nnb")])
 count = 1
 chance_none = 0.0
 pick_method = 1
@@ -227,7 +228,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 112.825)
 layout_mode = 2
 
-[node name="InventoryComponent" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer" instance=ExtResource("3_vun85")]
+[node name="InventoryContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer" instance=ExtResource("3_vun85")]
 unique_name_in_owner = true
 layout_mode = 2
 

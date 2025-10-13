@@ -1,4 +1,4 @@
-class_name InventoryComponent extends Node
+class_name InventoryContainer extends Node
 
 ## Component for handling inventory UI and interactions
 ##

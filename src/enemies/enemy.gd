@@ -17,7 +17,7 @@ func _init(enemy_resource: EnemyResource) -> void:
     resource = enemy_resource
 
     # Initialize base combat entity with enemy health
-    _init_combat_entity(resource.max_hp)
+    _init_combat_entity(resource.max_hp, resource.attack, 0)
 
     # Initialize inventory if this enemy should carry items
     # This can be extended based on enemy type or resource configuration
@@ -48,7 +48,7 @@ func plan_action() -> void:
         return
 
     # Delegate decision making to the AI component
-    planned_ability = resource.ai_component.plan_action(self, available_abilities, health_component.get_hp_percentage())
+    planned_ability = resource.ai_component.plan_action(self, available_abilities, stats_component.get_health_percentage())
 
 # Execute the ability that was planned at the start of the turn
 func perform_planned_action() -> void:

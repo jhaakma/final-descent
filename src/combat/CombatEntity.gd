@@ -8,7 +8,7 @@ func get_name() -> String:
     return ""
 
 # Core combat components - shared by all combat entities
-var health_component: HealthComponent
+var stats_component: StatsComponent
 var combat_actor: CombatActor
 var status_effect_component: StatusEffectComponent
 
@@ -16,26 +16,27 @@ var status_effect_component: StatusEffectComponent
 var skip_next_turn: bool = false
 
 # Base constructor for combat entities - must be called by subclasses
-func _init_combat_entity(max_health: int) -> void:
-    health_component = HealthComponent.new(max_health)
+func _init_combat_entity(max_health: int, attack_power: int, defense: int) -> void:
+    stats_component = StatsComponent.new(max_health, attack_power, defense)
     combat_actor = CombatActor.new(self)
     status_effect_component = StatusEffectComponent.new(self)
 
 # === HEALTH MANAGEMENT ===
 func get_max_hp() -> int:
-    return health_component.get_max_hp()
+    return stats_component.get_total_max_health()
 
 func get_current_hp() -> int:
-    return health_component.get_current_hp()
+    return stats_component.current_health
 
 func is_alive() -> bool:
-    return health_component.is_alive()
+    return stats_component.current_health > 0
 
+## Take damage, returns actual damage taken after reductions
 func take_damage(damage: int) -> int:
-    return health_component.take_damage(damage)
+    return stats_component.take_damage(damage)
 
 func heal(amount: int) -> int:
-    return health_component.heal(amount)
+    return stats_component.heal(amount)
 
 # === COMBAT STATE MANAGEMENT ===
 func set_defending(value: bool) -> void:
@@ -65,12 +66,7 @@ func process_status_effects() -> void:
     status_effect_component.process_turn(self)
 
 func clear_all_negative_status_effects() -> Array[StatusCondition]:
-    var removed_effects: Array[StatusCondition] = []
-    for condition in status_effect_component.get_all_conditions():
-        if condition.status_effect.get_effect_type() == StatusEffect.EffectType.NEGATIVE:
-            status_effect_component.remove_effect(condition.status_effect)
-            removed_effects.append(condition)
-    return removed_effects
+    return status_effect_component.clear_all_negative_status_effects()
 
 func remove_status_effect(effect: StatusEffect) -> void:
     status_effect_component.remove_effect(effect)

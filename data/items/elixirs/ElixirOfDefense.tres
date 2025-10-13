@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemPotion" load_steps=4 format=3 uid="uid://d3gxakqdygrra"]
+
+[ext_resource type="Script" uid="uid://dikmkr6vyadjj" path="res://src/items/Potion.gd" id="1_1fpce"]
+[ext_resource type="Script" uid="uid://dpbgwh1xlvk6c" path="res://src/effects/buffs/defense_boost_effect.gd" id="2_1fpce"]
+
+[sub_resource type="Resource" id="Resource_aoo3p"]
+script = ExtResource("2_1fpce")
+defense_bonus = 5
+duration = 5
+metadata/_custom_type_script = "uid://dpbgwh1xlvk6c"
+
+[resource]
+script = ExtResource("1_1fpce")
+status_effect = SubResource("Resource_aoo3p")
+log_potion_name = true
+name = "Elixir of Defense"
+purchase_value = 60
+metadata/_custom_type_script = "uid://dikmkr6vyadjj"

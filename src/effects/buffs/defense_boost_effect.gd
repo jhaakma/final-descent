@@ -16,10 +16,10 @@ func get_effect_type() -> EffectType:
 
 # Override to provide the actual defense bonus
 func get_defense_bonus() -> int:
-    return int(defense_bonus * get_stack_multiplier())
+    return defense_bonus
 
 func get_description() -> String:
-    return "+%d DEF for %d turns" % [defense_bonus * get_stack_multiplier(), get_remaining_turns()]
+    return "+%d DEF for %d turns" % [defense_bonus, get_remaining_turns()]
 
 func get_base_description() -> String:
     return "+%d DEF for %d turns" % [defense_bonus, duration]

@@ -8,19 +8,13 @@ func get_effect_name() -> String:
 func get_effect_type() -> EffectType:
     return EffectType.NEGATIVE
 
-# Allow up to 5 stacks of poison
-func get_max_stacks() -> int:
-    return 5
-
 # Override apply_effect to implement poison damage logic
 func apply_effect(target: CombatEntity) -> bool:
-    var total_damage := int(damage_per_turn * get_stack_multiplier())
-
     # Apply damage to target
-    target.take_damage(total_damage)
+    target.take_damage(damage_per_turn)
 
     # Use enhanced logging with target context
-    LogManager.log_status_effect_damage(target, get_effect_name(), total_damage)
+    LogManager.log_status_effect_damage(target, get_effect_name(), damage_per_turn)
 
     return true
 

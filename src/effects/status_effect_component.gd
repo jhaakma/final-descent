@@ -47,45 +47,33 @@ func apply_status_condition(_condition: StatusCondition, effect_target: CombatEn
 
 
     # Handle timed effects (TimedEffect subclasses)
-    var conditon_already_applied := active_conditions.has(condition_id)
+    var condition_already_applied := active_conditions.has(condition_id)
     var timed_effect := effect as TimedEffect
 
-    if conditon_already_applied:
+    if condition_already_applied:
         var existing_condition := active_conditions[condition_id]
         var existing_effect := existing_condition.status_effect as TimedEffect
-        if existing_effect.can_stack_with(effect):
-            # Add a new stack with its own duration
-            existing_effect.stack_with(effect)
-            LogManager.log({
-                text = "{You are} affected by %s. Stack added (%d stacks, %d-%d turns)." % [existing_condition.name, existing_effect.stack_durations.size(), existing_effect.stack_durations.min(), existing_effect.stack_durations.max()],
-                target = effect_target,
-                color = LogManager.LogColor.COMBAT
-            })
-        elif existing_effect.stack_durations.max() >= timed_effect.get_duration(): #number of turns remainin is equal/greater than new duration
+
+        # If the same condition is applied again, refresh the duration
+        if existing_effect.get_remaining_turns() < timed_effect.get_duration():
+            existing_effect.remaining_turns = timed_effect.get_duration()
+            LogManager.log_status_condition_applied(effect_target, existing_condition, timed_effect.get_duration())
+        else:
             LogManager.log({
                 text = "{You are} already affected by %s." % existing_condition.name,
                 target = effect_target,
                 color = LogManager.LogColor.WARNING
             })
             return false
-        else:
-            # At max stacks, refresh the shortest stack duration
-            var min_index := 0
-            var min_duration := existing_effect.stack_durations[0]
-            for i in range(existing_effect.stack_durations.size()):
-                if existing_effect.stack_durations[i] < min_duration:
-                    min_duration = existing_effect.stack_durations[i]
-                    min_index = i
-            existing_effect.stack_durations[min_index] = timed_effect.get_duration()
-        LogManager.log_status_condition_applied(effect_target, existing_condition, existing_effect.stack_durations.max())
     else:
-        # Add new condition with initial stack
+        # Add new condition
         active_conditions[condition_id] = condition
-        if effect is TimedEffect:
-            timed_effect.stack_durations = [timed_effect.get_duration()]
-            LogManager.log_status_condition_applied(effect_target, condition, timed_effect.get_duration())
-        else:
-            LogManager.log_status_condition_applied(effect_target, condition, 0)
+        timed_effect.initialize()
+
+        # Call lifecycle method for timed effects
+        timed_effect.on_applied(effect_target)
+
+        LogManager.log_status_condition_applied(effect_target, condition, timed_effect.get_duration())
 
     effect_applied.emit(condition_id)
     return true
@@ -95,6 +83,12 @@ func remove_effect(effect: StatusEffect) -> void:
     for condition_id: String in active_conditions.keys():
         var condition := active_conditions[condition_id]
         if condition.status_effect.get_effect_id() == effect.get_effect_id():
+            # Call lifecycle method for timed effects before removal
+            var status_effect := condition.status_effect
+            if status_effect is TimedEffect:
+                var timed_effect := status_effect as TimedEffect
+                timed_effect.on_removed(parent_entity)
+
             if parent_entity:
                 LogManager.log_status_effect_removed(parent_entity, condition.get_log_name(), "was removed")
             active_conditions.erase(condition_id)
@@ -137,6 +131,12 @@ func process_turn(target: CombatEntity) -> void:
     for condition in conditions_to_remove:
         var condition_id := condition.name
         if active_conditions.has(condition_id):
+            # Call lifecycle method for timed effects before removal
+            var status_effect := condition.status_effect
+            if status_effect is TimedEffect:
+                var timed_effect := status_effect as TimedEffect
+                timed_effect.on_removed(target)
+
             LogManager.log_status_effect_removed(target, condition.get_log_name(), "expired")
             active_conditions.erase(condition_id)
             effect_removed.emit(condition_id)
@@ -163,6 +163,13 @@ func get_effects_description() -> String:
 # Clear all status conditions
 func clear_all_effects() -> void:
     for condition_id: String in active_conditions.keys():
+        var condition := active_conditions[condition_id]
+        # Call lifecycle method for timed effects before removal
+        var status_effect := condition.status_effect
+        if status_effect is TimedEffect:
+            var timed_effect := status_effect as TimedEffect
+            timed_effect.on_removed(parent_entity)
+
         effect_removed.emit(condition_id)
     active_conditions.clear()
 
@@ -173,3 +180,12 @@ func get_effect_count() -> int:
 # Check if entity has any status conditions
 func has_any_effects() -> bool:
     return get_effect_count() > 0
+
+# Remove all negative status effects and return them
+func clear_all_negative_status_effects() -> Array[StatusCondition]:
+    var removed_effects: Array[StatusCondition] = []
+    for condition in get_all_conditions():
+        if condition.status_effect.get_effect_type() == StatusEffect.EffectType.NEGATIVE:
+            remove_effect(condition.status_effect)
+            removed_effects.append(condition)
+    return removed_effects

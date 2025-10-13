@@ -17,10 +17,7 @@ func initialize_with_condition(condition: StatusCondition) -> void:
 
     if effect is TimedEffect:
         var timed_effect := effect as TimedEffect
-        var stacks_text := ""
-        if timed_effect.get_max_stacks() > 1:
-            stacks_text = "x%d " % timed_effect.stack_durations.size()
-        display_text = "[color=%s]%s %s(%d turns)[/color]" % [color, condition.name, stacks_text, timed_effect.get_remaining_turns()]
+        display_text = "[color=%s]%s (%d turns)[/color]" % [color, condition.name, timed_effect.get_remaining_turns()]
     else:
         display_text = "[color=%s]%s[/color]" % [color, condition.name]
 

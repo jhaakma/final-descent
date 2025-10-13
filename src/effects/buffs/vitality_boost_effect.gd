@@ -15,10 +15,10 @@ func get_effect_type() -> EffectType:
 
 # Override to provide the actual max HP bonus
 func get_max_hp_bonus() -> int:
-    return int(max_hp_bonus * get_stack_multiplier())
+    return max_hp_bonus
 
 func get_description() -> String:
-    return "+%d Max HP for %d turns" % [max_hp_bonus * get_stack_multiplier(), get_remaining_turns()]
+    return "+%d Max HP for %d turns" % [max_hp_bonus, get_remaining_turns()]
 
 func get_base_description() -> String:
     return "+%d Max HP for %d turns" % [max_hp_bonus, duration]

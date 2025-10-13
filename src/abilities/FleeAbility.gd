@@ -5,8 +5,8 @@ func _init() -> void:
     description = "Attempt to flee from combat."
     priority = 20  # High priority when chosen
 
-func execute(caster, _target = null) -> void:
-    var success = randf() < caster.flee_chance
+func execute(caster: CombatEntity, _target: CombatEntity = null) -> void:
+    var success: bool = randf() < caster.flee_chance
     LogManager.log_flee_attempt(caster, success)
 
     if success:

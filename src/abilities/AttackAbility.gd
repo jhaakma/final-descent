@@ -20,7 +20,7 @@ func execute(caster: CombatEntity, target: CombatEntity) -> void:
 
     # Apply damage reduction if target is defending
     var final_damage := target.calculate_incoming_damage(damage)
-    target.take_damage(final_damage)
+    final_damage = target.take_damage(final_damage)
 
     # Log the attack with proper context
     if status_effect != null:
