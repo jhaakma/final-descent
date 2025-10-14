@@ -158,8 +158,8 @@ func equip_weapon(item_instance: ItemInstance) -> bool:
     if weapon.enchantment:
         weapon.enchantment.initialise(weapon)
         # Check if it's a constant effect enchantment
-        if weapon.enchantment.has_method("_on_weapon_equipped"):
-            weapon.enchantment._on_weapon_equipped(weapon)
+        if weapon.enchantment is ConstantEffectEnchantment:
+            (weapon.enchantment as ConstantEffectEnchantment)._on_weapon_equipped(weapon)
 
     LogManager.log_message("Equipped %s" % weapon.name)
     return true
@@ -180,8 +180,8 @@ func unequip_weapon() -> bool:
     var weapon: Weapon = equipped_weapon.item as Weapon
     if weapon.enchantment:
         # Check if it's a constant effect enchantment
-        if weapon.enchantment.has_method("_on_weapon_unequipped"):
-            weapon.enchantment._on_weapon_unequipped(weapon)
+        if weapon.enchantment is ConstantEffectEnchantment:
+            (weapon.enchantment as ConstantEffectEnchantment)._on_weapon_unequipped(weapon)
 
     LogManager.log_message("Unequipped %s" % equipped_weapon.item.name)
 

@@ -61,7 +61,7 @@ func apply_status_condition(_condition: StatusCondition, effect_target: CombatEn
             # Add new constant condition
             active_conditions[condition_id] = condition
             if effect.has_method("on_applied"):
-                effect.on_applied(effect_target)
+                effect.call("on_applied", effect_target)
             # Apply the constant effect once
             effect.apply_effect(effect_target)
             LogManager.log_status_condition_applied(effect_target, condition, 0) # 0 duration for constant
@@ -116,7 +116,7 @@ func remove_effect(effect: StatusEffect) -> void:
                 var timed_effect := status_effect as TimedEffect
                 timed_effect.on_removed(parent_entity)
             elif status_effect.has_method("on_removed"):
-                status_effect.on_removed(parent_entity)
+                status_effect.call("on_removed", parent_entity)
 
             if parent_entity:
                 LogManager.log_status_effect_removed(parent_entity, condition.get_log_name(), "was removed")
@@ -158,7 +158,7 @@ func remove_condition(condition_name: String) -> bool:
         var timed_effect := status_effect as TimedEffect
         timed_effect.on_removed(parent_entity)
     elif status_effect.has_method("on_removed"):
-        status_effect.on_removed(parent_entity)
+        status_effect.call("on_removed", parent_entity)
 
     if parent_entity:
         LogManager.log_status_effect_removed(parent_entity, condition.get_log_name(), "was cured")
@@ -194,7 +194,7 @@ func process_turn(target: CombatEntity) -> void:
                 var timed_effect := status_effect as TimedEffect
                 timed_effect.on_removed(target)
             elif status_effect.has_method("on_removed"):
-                status_effect.on_removed(target)
+                status_effect.call("on_removed", target)
 
             LogManager.log_status_effect_removed(target, condition.get_log_name(), "expired")
             active_conditions.erase(condition_id)
@@ -229,7 +229,7 @@ func clear_all_effects() -> void:
             var timed_effect := status_effect as TimedEffect
             timed_effect.on_removed(parent_entity)
         elif status_effect.has_method("on_removed"):
-            status_effect.on_removed(parent_entity)
+            status_effect.call("on_removed", parent_entity)
 
         effect_removed.emit(condition_id)
     active_conditions.clear()

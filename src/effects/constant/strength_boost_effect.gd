@@ -14,13 +14,13 @@ func get_effect_type() -> EffectType:
 # Called when the effect is first applied to an entity
 func on_applied(target: CombatEntity) -> void:
     if target.has_method("add_stat_modifier"):
-        target.add_stat_modifier("strength", strength_bonus)
+        target.call("add_stat_modifier", "strength", strength_bonus)
     LogManager.log_status_effect_healing(target, get_effect_name(), strength_bonus)
 
 # Called when the effect is removed from an entity
 func on_removed(target: CombatEntity) -> void:
     if target.has_method("remove_stat_modifier"):
-        target.remove_stat_modifier("strength", strength_bonus)
+        target.call("remove_stat_modifier", "strength", strength_bonus)
 
 # Override get_description for strength boost formatting
 func get_description() -> String:

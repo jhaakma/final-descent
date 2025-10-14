@@ -1,30 +1,11 @@
 # To do
 
-## Refactor CombatEntity
+## Simplify CombatEntity and subclasses
 - Merge CombatActor into CombatEntity
 
-## Permanent Conditions
-- Like timed Status but with no time limit
-- Used for permanent buffs and constant effect items
-
-
-## Player Abilities
-- Make sure ability logs work with player
-- Refactor CombatEneity/Enemy/EnemyResource to pull abilities list into CombatEntity
-- Update combat UI to allow using new abilities
-- Combat Manuals teach new abilities
-
-## Enchantments
-- Weapon has Enchantment slot
-- Base Enchantment is blank
-- OnStrike enchantment has on_attack_hit method
-    - StatusOnStrikeEnchantment extends OnStrikeEnchantment
-    - When attacking, check for OnStrike enchantments
-    - Poison Dagger:
-        - Weapon: Dagger
-        - Enchantment: StatusOnStrikeEnchantment
-            - Status: Poison
-- ConstantEffect enchantment
+## Reduce .calls by using is Class
+- Create subclass of StatusEffect that implements on_removed etc
+- Enemy get_attack -> replace with stats_component
 
 ## Theme
 Create and use a consistent theme
