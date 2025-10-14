@@ -19,12 +19,27 @@ func _init(enemy_resource: EnemyResource) -> void:
     # Initialize base combat entity with enemy health
     _init_combat_entity(resource.max_hp, resource.attack, 0)
 
+    # Apply resistances and weaknesses from resource
+    _apply_resistances_and_weaknesses()
+
     # Initialize inventory if this enemy should carry items
     # This can be extended based on enemy type or resource configuration
     inventory_component = ItemInventoryComponent.new()
 
+# Apply resistances and weaknesses defined in the enemy resource
+func _apply_resistances_and_weaknesses() -> void:
+    for resistance_type: DamageType.Type in resource.resistances:
+        set_resistant_to(resistance_type)
+
+    for weakness_type: DamageType.Type in resource.weaknesses:
+        set_weak_to(weakness_type)
+
 func get_name() -> String:
     return resource.name
+
+func get_attack_damage_type() -> DamageType.Type:
+    # Enemies default to physical damage unless overridden by abilities
+    return DamageType.Type.PHYSICAL
 
 # Set the AI component for this enemy
 func set_ai_component(new_ai_component: EnemyAIComponent) -> void:
@@ -102,11 +117,6 @@ func get_available_abilities() -> Array[Ability]:
 
     return abilities
 
-
-# === ABILITY COMPATIBILITY HELPERS ===
-# Calculate damage taken considering defense state
-func calculate_incoming_damage(base_damage: int) -> int:
-    return combat_actor.calculate_incoming_damage(base_damage)
 
 # === INVENTORY MANAGEMENT ===
 # Methods for managing enemy inventory and loot

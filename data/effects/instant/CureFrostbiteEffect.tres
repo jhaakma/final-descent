@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="CureStatusEffect" load_steps=3 format=3 uid="uid://cl1234568aa3"]
+
+[ext_resource type="Script" path="res://src/effects/instant/cure_status_effect.gd" id="1_cureEffect"]
+[ext_resource type="Resource" path="res://data/effects/conditions/FrostbiteCondition.tres" id="2_frostbiteCondition"]
+
+[resource]
+script = ExtResource("1_cureEffect")
+condition_to_cure = ExtResource("2_frostbiteCondition")

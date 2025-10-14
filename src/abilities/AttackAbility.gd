@@ -2,6 +2,8 @@ class_name AttackAbility extends Ability
 
 @export var base_damage: int = 0
 @export var damage_variance: int = 3  # Random variance in damage
+@export var override_damage_type: bool = true  # Whether to override caster's damage type
+@export var damage_type: DamageType.Type = DamageType.Type.PHYSICAL  # Damage type override
 @export var status_effect: StatusEffect = null  # Optional status effect to apply
 @export var effect_chance: float = 1.0  # Chance to apply status effect if present
 
@@ -18,15 +20,22 @@ func execute(caster: CombatEntity, target: CombatEntity) -> void:
 
     var damage := calculate_damage(caster)
 
-    # Apply damage reduction if target is defending
-    var final_damage := target.calculate_incoming_damage(damage)
+    # Determine damage type - use override if set, otherwise caster's default
+    var attack_damage_type: DamageType.Type
+    if override_damage_type:
+        attack_damage_type = damage_type
+    else:
+        attack_damage_type = caster.get_attack_damage_type()
+
+    # Apply damage reduction considering defense and damage type resistance
+    var final_damage := target.calculate_incoming_damage(damage, attack_damage_type)
     final_damage = target.take_damage(final_damage)
 
     # Log the attack with proper context
     if status_effect != null:
-        LogManager.log_special_attack(caster, target, ability_name, final_damage)
+        LogManager.log_special_attack(caster, target, ability_name, final_damage, "", attack_damage_type)
     else:
-        LogManager.log_attack(caster, target, final_damage)
+        LogManager.log_attack(caster, target, final_damage, "", attack_damage_type)
 
     # Apply status effect if present and chance succeeds
     if status_effect != null and randf() < effect_chance:

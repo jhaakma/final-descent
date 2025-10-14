@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="Rune" load_steps=3 format=3 uid="uid://8l6joadu85p3"]
+
+[ext_resource type="Script" uid="uid://io27es0e6r6q" path="res://src/items/Rune.gd" id="1_647kx"]
+[ext_resource type="Resource" uid="uid://ciff15gkdv8o6" path="res://data/enchantments/FireDamageEnchantment.tres" id="1_rm5gm"]
+
+[resource]
+script = ExtResource("1_647kx")
+enchantment = ExtResource("1_rm5gm")
+name = "Rune of Poison Resistance"
+purchase_value = 80
+metadata/_custom_type_script = "uid://io27es0e6r6q"

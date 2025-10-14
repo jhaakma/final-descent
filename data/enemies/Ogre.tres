@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="EnemyResource" load_steps=15 format=3 uid="uid://cwdl328syumjx"]
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=17 format=3 uid="uid://cwdl328syumjx"]
 
 [ext_resource type="Script" uid="uid://bkhqo7pjlc7bi" path="res://src/abilities/Ability.gd" id="1_08opu"]
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="1_tsegy"]
@@ -11,6 +11,11 @@
 [ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="5_gwtnr"]
 [ext_resource type="Resource" uid="uid://d0goc2masln3h" path="res://data/abilities/BattleRage.tres" id="5_wnsvj"]
 [ext_resource type="Script" uid="uid://b4y5n724vd0ph" path="res://src/enemies/enemy_resource.gd" id="6_08opu"]
+[ext_resource type="Script" uid="uid://dnxh4c7w2xm3k" path="res://src/ai/random_ai_component.gd" id="6_amnif"]
+
+[sub_resource type="Resource" id="Resource_ubndr"]
+script = ExtResource("6_amnif")
+metadata/_custom_type_script = "uid://dnxh4c7w2xm3k"
 
 [sub_resource type="Resource" id="Resource_6o68g"]
 script = ExtResource("1_tsegy")
@@ -42,8 +47,11 @@ metadata/_custom_type_script = "uid://lj0e532l0dyu"
 script = ExtResource("6_08opu")
 abilities = Array[ExtResource("1_08opu")]([ExtResource("2_o8kiw"), ExtResource("3_812jh"), ExtResource("4_fmvcd"), ExtResource("5_wnsvj")])
 name = "Ogre"
-max_hp = 20
+max_hp = 30
 attack = 4
 loot_component = SubResource("Resource_ukg5r")
 avoid_chance = 0.8
+ai_component = SubResource("Resource_ubndr")
+resistances = Array[int]([4])
+weaknesses = Array[int]([2])
 metadata/_custom_type_script = "uid://b4y5n724vd0ph"

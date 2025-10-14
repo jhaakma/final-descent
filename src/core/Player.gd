@@ -15,8 +15,6 @@ var inventory: ItemInventoryComponent
 var equipped_weapon: ItemInstance = null
 
 # Constants for combat calculations
-const BASE_ATTACK_MIN: int = 2
-const BASE_ATTACK_MAX: int = 5  # This gives 2-5 damage (2 + randi() % 4 gives 2-5)
 
 func _init() -> void:
     # Initialize base combat entity with starting health
@@ -47,6 +45,12 @@ func reset() -> void:
 
 func get_name() -> String:
     return name
+
+func get_attack_damage_type() -> DamageType.Type:
+    if equipped_weapon:
+        var weapon := equipped_weapon.item as Weapon
+        return weapon.damage_type
+    return DamageType.Type.PHYSICAL
 
 # === GOLD MANAGEMENT ===
 func has_gold(amount: int) -> bool:
@@ -109,8 +113,13 @@ func add_items(item_instance: ItemInstance) -> void:
 
 
 func remove_item(item_instance: ItemInstance) -> bool:
+    # If removing an equipped weapon, just clear the equipped reference
+    # (equipped items are not in inventory, so we don't need to remove from inventory)
     if equipped_weapon and item_instance.matches(equipped_weapon):
-        unequip_weapon()
+        equipped_weapon.is_equipped = false
+        equipped_weapon = null
+        emit_signal("inventory_changed")
+        return true
     return inventory.remove_item(item_instance)
 
 
@@ -144,6 +153,14 @@ func equip_weapon(item_instance: ItemInstance) -> bool:
             equipped_weapon = taken
             emit_signal("inventory_changed")
     equipped_weapon.is_equipped = true
+
+    # Apply enchantment effects if the weapon has any
+    if weapon.enchantment:
+        weapon.enchantment.initialise(weapon)
+        # Check if it's a constant effect enchantment
+        if weapon.enchantment.has_method("_on_weapon_equipped"):
+            weapon.enchantment._on_weapon_equipped(weapon)
+
     LogManager.log_message("Equipped %s" % weapon.name)
     return true
 
@@ -158,6 +175,13 @@ func unequip_weapon() -> bool:
     else:
         # Undamaged - add as generic item
         inventory.add_item(equipped_weapon)
+
+    # Remove enchantment effects if the weapon has any
+    var weapon: Weapon = equipped_weapon.item as Weapon
+    if weapon.enchantment:
+        # Check if it's a constant effect enchantment
+        if weapon.enchantment.has_method("_on_weapon_unequipped"):
+            weapon.enchantment._on_weapon_unequipped(weapon)
 
     LogManager.log_message("Unequipped %s" % equipped_weapon.item.name)
 
@@ -252,6 +276,12 @@ func remove_status_effect(effect: StatusEffect) -> void:
     super.remove_status_effect(effect)
     emit_signal("stats_changed")
 
+func remove_status_condition(condition_name: String) -> bool:
+    var result := super.remove_status_condition(condition_name)
+    if result:
+        emit_signal("stats_changed")
+    return result
+
 func clear_all_negative_status_effects() -> Array[StatusCondition]:
     var removed_effects: Array[StatusCondition] = super.clear_all_negative_status_effects()
     emit_signal("stats_changed")
@@ -259,10 +289,9 @@ func clear_all_negative_status_effects() -> Array[StatusCondition]:
 
 # === COMBAT CALCULATIONS ===
 func calculate_attack_damage() -> int:
-    var base_dmg := BASE_ATTACK_MIN + randi() % (BASE_ATTACK_MAX - BASE_ATTACK_MIN + 1)
     var weapon_dmg := get_weapon_damage()
     var buff_dmg := get_total_attack_bonus()
-    return base_dmg + weapon_dmg + buff_dmg
+    return weapon_dmg + buff_dmg
 
 # Reduce weapon condition after attack - call this after damage logging
 func reduce_weapon_condition() -> void:
@@ -296,10 +325,7 @@ func reduce_weapon_condition() -> void:
 func get_total_attack_display() -> String:
     # This shows the total attack power for UI display purposes
     # Base damage average + weapon + buffs
-    var bonus := get_total_attack_bonus() + get_weapon_damage()
-    var min_damage := BASE_ATTACK_MIN + bonus
-    var max_damage := BASE_ATTACK_MAX + bonus
-    return "%d-%d" % [min_damage, max_damage]
+    return "%d" % calculate_attack_damage()
 
 # === INVENTORY COMPATIBILITY METHODS ===
 # These provide modern inventory access methods

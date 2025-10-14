@@ -7,10 +7,15 @@ func get_name() -> String:
     assert(false, "get_name() must be implemented by subclass")
     return ""
 
+# Abstract method to be implemented by subclasses to provide attack damage type
+func get_attack_damage_type() -> DamageType.Type:
+    return DamageType.Type.PHYSICAL  # Default to physical damage
+
 # Core combat components - shared by all combat entities
 var stats_component: StatsComponent
 var combat_actor: CombatActor
 var status_effect_component: StatusEffectComponent
+var resistance_component: ResistanceComponent
 
 # Turn control - for effects like stun
 var skip_next_turn: bool = false
@@ -20,6 +25,7 @@ func _init_combat_entity(max_health: int, attack_power: int, defense: int) -> vo
     stats_component = StatsComponent.new(max_health, attack_power, defense)
     combat_actor = CombatActor.new(self)
     status_effect_component = StatusEffectComponent.new(self)
+    resistance_component = ResistanceComponent.new()
 
 # === HEALTH MANAGEMENT ===
 func get_max_hp() -> int:
@@ -48,9 +54,12 @@ func set_defending(value: bool) -> void:
 func get_is_defending() -> bool:
     return combat_actor.get_is_defending()
 
-# Calculate damage taken considering defense state
-func calculate_incoming_damage(base_damage: int) -> int:
-    return combat_actor.calculate_incoming_damage(base_damage)
+# Calculate damage taken considering defense state and damage type resistance
+func calculate_incoming_damage(base_damage: int, damage_type: DamageType.Type = DamageType.Type.PHYSICAL) -> int:
+    # First apply standard defense calculation
+    var damage_after_defense := combat_actor.calculate_incoming_damage(base_damage)
+    # Then apply damage type resistance
+    return resistance_component.apply_resistance(damage_after_defense, damage_type)
 
 # === STATUS EFFECT MANAGEMENT ===
 func apply_status_effect(effect: StatusEffect) -> bool:
@@ -62,6 +71,9 @@ func apply_status_condition(condition: StatusCondition) -> bool:
 func has_status_effect(effect_id: String) -> bool:
     return status_effect_component.has_effect(effect_id)
 
+func has_status_condition(condition_name: String) -> bool:
+    return status_effect_component.has_condition(condition_name)
+
 func process_status_effects() -> void:
     status_effect_component.process_turn(self)
 
@@ -71,12 +83,44 @@ func clear_all_negative_status_effects() -> Array[StatusCondition]:
 func remove_status_effect(effect: StatusEffect) -> void:
     status_effect_component.remove_effect(effect)
 
+func remove_status_condition(condition_name: String) -> bool:
+    return status_effect_component.remove_condition(condition_name)
+
 func clear_all_status_effects() -> void:
     status_effect_component.clear_all_effects()
 
 # Get descriptions of all active status effects
 func get_status_effects_description() -> String:
     return status_effect_component.get_effects_description()
+
+# === RESISTANCE MANAGEMENT ===
+
+func set_resistant_to(damage_type: DamageType.Type) -> void:
+    resistance_component.set_resistant_to(damage_type)
+
+func set_weak_to(damage_type: DamageType.Type) -> void:
+    resistance_component.set_weak_to(damage_type)
+
+func add_damage_resistance(damage_type: DamageType.Type) -> void:
+    resistance_component.set_resistant_to(damage_type)
+
+func remove_damage_resistance(damage_type: DamageType.Type) -> void:
+    resistance_component.set_neutral_to(damage_type)
+
+func is_resistant_to(damage_type: DamageType.Type) -> bool:
+    return resistance_component.is_resistant_to(damage_type)
+
+func is_weak_to(damage_type: DamageType.Type) -> bool:
+    return resistance_component.is_weak_to(damage_type)
+
+func get_resistance_multiplier(damage_type: DamageType.Type) -> float:
+    return resistance_component.get_resistance_multiplier(damage_type)
+
+func get_resistances() -> Array[DamageType.Type]:
+    return resistance_component.get_resistances()
+
+func get_weaknesses() -> Array[DamageType.Type]:
+    return resistance_component.get_weaknesses()
 
 # Get all active status conditions
 func get_all_status_conditions() -> Array[StatusCondition]:

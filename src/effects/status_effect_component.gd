@@ -33,8 +33,8 @@ func apply_status_condition(_condition: StatusCondition, effect_target: CombatEn
     var effect := condition.status_effect
     var condition_id := condition.name
 
-    # Handle instant effects immediately (non-TimedEffect subclasses)
-    if not effect is TimedEffect:
+    # Handle instant effects immediately (non-TimedEffect, non-ConstantEffect subclasses)
+    if not effect is TimedEffect and not (effect.get_class() == "ConstantEffect" or effect.has_method("is_permanent")):
         if effect_target:
             var result := effect.apply_effect(effect_target)
             effect_processed.emit(condition_id, result)
@@ -45,49 +45,78 @@ func apply_status_condition(_condition: StatusCondition, effect_target: CombatEn
             return false
         # Don't store instant effects in active_conditions since they're one-time use
 
+    # Handle constant effects (ConstantEffect subclasses)
+    if effect.get_class() == "ConstantEffect" or effect.has_method("is_permanent"):
+        var condition_already_applied := active_conditions.has(condition_id)
 
-    # Handle timed effects (TimedEffect subclasses)
-    var condition_already_applied := active_conditions.has(condition_id)
-    var timed_effect := effect as TimedEffect
-
-    if condition_already_applied:
-        var existing_condition := active_conditions[condition_id]
-        var existing_effect := existing_condition.status_effect as TimedEffect
-
-        # If the same condition is applied again, refresh the duration
-        if existing_effect.get_remaining_turns() < timed_effect.get_duration():
-            existing_effect.remaining_turns = timed_effect.get_duration()
-            LogManager.log_status_condition_applied(effect_target, existing_condition, timed_effect.get_duration())
-        else:
+        if condition_already_applied:
+            var existing_condition := active_conditions[condition_id]
             LogManager.log({
                 text = "{You are} already affected by %s." % existing_condition.name,
                 target = effect_target,
                 color = LogManager.LogColor.WARNING
             })
             return false
-    else:
-        # Add new condition
-        active_conditions[condition_id] = condition
-        timed_effect.initialize()
+        else:
+            # Add new constant condition
+            active_conditions[condition_id] = condition
+            if effect.has_method("on_applied"):
+                effect.on_applied(effect_target)
+            # Apply the constant effect once
+            effect.apply_effect(effect_target)
+            LogManager.log_status_condition_applied(effect_target, condition, 0) # 0 duration for constant
+            effect_applied.emit(condition_id)
+            return true
 
-        # Call lifecycle method for timed effects
-        timed_effect.on_applied(effect_target)
+    # Handle timed effects (TimedEffect subclasses)
+    if effect is TimedEffect:
+        var condition_already_applied := active_conditions.has(condition_id)
+        var timed_effect := effect as TimedEffect
 
-        LogManager.log_status_condition_applied(effect_target, condition, timed_effect.get_duration())
+        if condition_already_applied:
+            var existing_condition := active_conditions[condition_id]
+            var existing_effect := existing_condition.status_effect as TimedEffect
 
-    effect_applied.emit(condition_id)
-    return true
+            # If the same condition is applied again, refresh the duration
+            if existing_effect.get_remaining_turns() < timed_effect.get_duration():
+                existing_effect.remaining_turns = timed_effect.get_duration()
+                LogManager.log_status_condition_applied(effect_target, existing_condition, timed_effect.get_duration())
+            else:
+                LogManager.log({
+                    text = "{You are} already affected by %s." % existing_condition.name,
+                    target = effect_target,
+                    color = LogManager.LogColor.WARNING
+                })
+                return false
+        else:
+            # Add new condition
+            active_conditions[condition_id] = condition
+            timed_effect.initialize()
+
+            # Call lifecycle method for timed effects
+            timed_effect.on_applied(effect_target)
+
+            LogManager.log_status_condition_applied(effect_target, condition, timed_effect.get_duration())
+
+        effect_applied.emit(condition_id)
+        return true
+
+    # Fallback - should not reach here
+    push_error("Unknown status effect type: " + effect.get_class())
+    return false
 
 # Remove a specific status effect
 func remove_effect(effect: StatusEffect) -> void:
     for condition_id: String in active_conditions.keys():
         var condition := active_conditions[condition_id]
         if condition.status_effect.get_effect_id() == effect.get_effect_id():
-            # Call lifecycle method for timed effects before removal
+            # Call lifecycle method before removal
             var status_effect := condition.status_effect
             if status_effect is TimedEffect:
                 var timed_effect := status_effect as TimedEffect
                 timed_effect.on_removed(parent_entity)
+            elif status_effect.has_method("on_removed"):
+                status_effect.on_removed(parent_entity)
 
             if parent_entity:
                 LogManager.log_status_effect_removed(parent_entity, condition.get_log_name(), "was removed")
@@ -112,6 +141,32 @@ func get_effect(condition_id: String) -> StatusCondition:
         return active_conditions[condition_id]
     return null
 
+# Check if entity has a specific condition by name
+func has_condition(condition_name: String) -> bool:
+    return active_conditions.has(condition_name)
+
+# Remove a specific condition by name
+func remove_condition(condition_name: String) -> bool:
+    if not active_conditions.has(condition_name):
+        return false
+
+    var condition := active_conditions[condition_name]
+    var status_effect := condition.status_effect
+
+    # Call lifecycle method for timed effects before removal
+    if status_effect is TimedEffect:
+        var timed_effect := status_effect as TimedEffect
+        timed_effect.on_removed(parent_entity)
+    elif status_effect.has_method("on_removed"):
+        status_effect.on_removed(parent_entity)
+
+    if parent_entity:
+        LogManager.log_status_effect_removed(parent_entity, condition.get_log_name(), "was cured")
+
+    active_conditions.erase(condition_name)
+    effect_removed.emit(condition_name)
+    return true
+
 # Process all status conditions for one turn
 func process_turn(target: CombatEntity) -> void:
     var conditions_to_remove: Array[StatusCondition] = []
@@ -125,6 +180,8 @@ func process_turn(target: CombatEntity) -> void:
             timed_effect.tick_turn()
             if timed_effect.is_expired():
                 conditions_to_remove.append(condition)
+        # Constant effects don't tick or expire, they just persist
+
         effect_processed.emit(condition_id, result)
 
     # Remove expired conditions
@@ -136,6 +193,8 @@ func process_turn(target: CombatEntity) -> void:
             if status_effect is TimedEffect:
                 var timed_effect := status_effect as TimedEffect
                 timed_effect.on_removed(target)
+            elif status_effect.has_method("on_removed"):
+                status_effect.on_removed(target)
 
             LogManager.log_status_effect_removed(target, condition.get_log_name(), "expired")
             active_conditions.erase(condition_id)
@@ -169,6 +228,8 @@ func clear_all_effects() -> void:
         if status_effect is TimedEffect:
             var timed_effect := status_effect as TimedEffect
             timed_effect.on_removed(parent_entity)
+        elif status_effect.has_method("on_removed"):
+            status_effect.on_removed(parent_entity)
 
         effect_removed.emit(condition_id)
     active_conditions.clear()

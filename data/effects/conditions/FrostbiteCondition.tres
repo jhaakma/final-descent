@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="StatusCondition" load_steps=3 format=3 uid="uid://cl1234568aa2"]
+
+[ext_resource type="Script" path="res://src/effects/condition/status_condition.gd" id="1_statusCondition"]
+[ext_resource type="Resource" path="res://data/effects/FrostbiteEffect.tres" id="2_frostbiteEffect"]
+
+[resource]
+script = ExtResource("1_statusCondition")
+name = "Frostbite"
+status_effect = ExtResource("2_frostbiteEffect")
+log_ability_name = false

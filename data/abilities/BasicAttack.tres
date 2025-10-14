@@ -6,6 +6,8 @@
 script = ExtResource("1_basic_attack")
 base_damage = 2
 damage_variance = 3
+override_damage_type = false
+damage_type = 0
 effect_chance = 1.0
 ability_name = "Basic Attack"
 description = "A simple attack dealing basic damage."

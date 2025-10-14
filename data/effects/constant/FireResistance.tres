@@ -1,0 +1,8 @@
+[gd_resource type="ElementalResistanceEffect" format=3 uid="uid://dud52rjh03csy"]
+
+[resource]
+resource_local_to_scene = false
+resource_name = ""
+resistance_percent = 0.5
+elemental_type = 2
+is_removable = true

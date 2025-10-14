@@ -1,12 +1,16 @@
 class_name CureStatusEffect extends StatusEffect
 
-@export var status_to_cure: StatusEffect = null
+@export var condition_to_cure: StatusCondition = null
 
 func get_effect_id() -> String:
-    return "cure_%s" % status_to_cure.get_effect_id()
+    if condition_to_cure:
+        return "cure_%s" % condition_to_cure.name.to_lower().replace(" ", "_")
+    return "cure_unknown"
 
 func get_effect_name() -> String:
-    return "Cure %s" % status_to_cure.get_effect_name()
+    if condition_to_cure:
+        return "Cure %s" % condition_to_cure.name
+    return "Cure Unknown"
 
 func get_effect_type() -> EffectType:
     return EffectType.POSITIVE
@@ -14,17 +18,19 @@ func get_effect_type() -> EffectType:
 # Override apply_effect to implement cure logic
 func apply_effect(target: CombatEntity) -> bool:
     var target_entity := target as CombatEntity
-    if target_entity:
-        if target_entity.has_status_effect(status_to_cure.get_effect_id()):
-            target_entity.remove_status_effect(status_to_cure)
-            return true
-        else:
-            var target_name: String = "You are" if target_entity == GameState.player else "%s is" % target_entity.get_name()
-            LogManager.log_warning("%s not affected by %s" % [target_name, status_to_cure.get_effect_name()])
-            return false
-    else:
+    if not target_entity or not condition_to_cure:
         return false
 
-# Override get_description for better poison-specific formatting
+    # Check if the target has the specific condition by name
+    if target_entity.has_status_condition(condition_to_cure.name):
+        return target_entity.remove_status_condition(condition_to_cure.name)
+    else:
+        var target_name: String = "You are" if target_entity == GameState.player else "%s is" % target_entity.get_name()
+        LogManager.log_warning("%s not affected by %s" % [target_name, condition_to_cure.name])
+        return false
+
+# Override get_description for better condition-specific formatting
 func get_description() -> String:
-    return "Cures the %s status effect." % status_to_cure.get_effect_name()
+    if condition_to_cure:
+        return "Cures the %s condition." % condition_to_cure.name
+    return "Cures an unknown condition."

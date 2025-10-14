@@ -7,6 +7,8 @@
 script = ExtResource("1_attack_ability")
 base_damage = 1
 damage_variance = 2
+override_damage_type = true
+damage_type = 1
 status_effect = ExtResource("2_poison_effect")
 effect_chance = 1.0
 ability_name = "Poison Attack"

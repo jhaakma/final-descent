@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="Weapon" load_steps=2 format=3 uid="uid://cs7v7n6d1rflj"]
+
+[ext_resource type="Script" uid="uid://cp8w78pilenje" path="res://src/items/Weapon.gd" id="1_0"]
+
+[resource]
+script = ExtResource("1_0")
+damage = 5
+damage_type = 2
+condition = 12
+name = "Fire Sword"
+purchase_value = 35

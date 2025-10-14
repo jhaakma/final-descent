@@ -6,28 +6,28 @@
 [ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="2_0bara"]
 [ext_resource type="Script" uid="uid://b3hu85dtjat08" path="res://src/abilities/AttackAbility.gd" id="2_fsbsf"]
 [ext_resource type="Resource" uid="uid://bpscdhoshmjls" path="res://data/items/potions/Antidote.tres" id="3_pbona"]
-[ext_resource type="Resource" uid="uid://dvaxva0shp6yy" path="res://data/effects/PoisonSimple.tres" id="3_tqj67"]
 [ext_resource type="Resource" uid="uid://2s77tota5kam" path="res://data/items/potions/HealthPotionSmall.tres" id="4_11xwu"]
 [ext_resource type="Resource" uid="uid://d4cfekbrastfr" path="res://data/abilities/BasicDefend.tres" id="4_cx28q"]
+[ext_resource type="Script" uid="uid://b5iu05fqomptj" path="res://src/effects/timed/elemental_timed_effect.gd" id="4_pjqev"]
 [ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="5_qi64t"]
 
-[sub_resource type="Resource" id="Resource_8hleb"]
+[sub_resource type="Resource" id="Resource_uc0e4"]
+script = ExtResource("4_pjqev")
+damage_per_turn = 2
+elemental_type = 1
+duration = 5
+metadata/_custom_type_script = "uid://b5iu05fqomptj"
+
+[sub_resource type="Resource" id="Resource_gj4oy"]
 script = ExtResource("2_fsbsf")
 base_damage = 1
 damage_variance = 2
-status_effect = ExtResource("3_tqj67")
-effect_chance = 1.0
-ability_name = "Poison Attack"
-description = "An attack that poisons the target."
-priority = 10
-
-[sub_resource type="Resource" id="Resource_pbona"]
-script = ExtResource("2_fsbsf")
-base_damage = 0
-damage_variance = 3
-effect_chance = 1.0
-ability_name = "Ability"
-description = "A basic ability."
+override_damage_type = true
+damage_type = 1
+status_effect = SubResource("Resource_uc0e4")
+effect_chance = 0.5
+ability_name = "Venomous Bite"
+description = "Bites with venomous fangs."
 priority = 20
 metadata/_custom_type_script = "uid://b3hu85dtjat08"
 
@@ -50,10 +50,12 @@ metadata/_custom_type_script = "uid://lj0e532l0dyu"
 
 [resource]
 script = ExtResource("1_vrxfw")
-abilities = Array[ExtResource("1_qi64t")]([SubResource("Resource_8hleb"), ExtResource("4_cx28q"), SubResource("Resource_pbona")])
+abilities = Array[ExtResource("1_qi64t")]([ExtResource("4_cx28q"), SubResource("Resource_gj4oy")])
 name = "Snake"
-max_hp = 10
+max_hp = 15
 attack = 2
 loot_component = SubResource("Resource_tqj67")
 avoid_chance = 0.5
+resistances = Array[int]([1])
+weaknesses = Array[int]([])
 metadata/_custom_type_script = "uid://b4y5n724vd0ph"

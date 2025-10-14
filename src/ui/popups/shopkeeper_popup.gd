@@ -90,11 +90,11 @@ func _update_inventory_display() -> void:
         player_items_list.add_child(no_items_label)
         return
 
-    # Get ItemTiles from player (excludes equipped items for selling)
+    # Get ItemTiles from player (includes equipped items for selling)
     var all_tiles: Array[ItemInstance] = GameState.player.get_item_tiles()
     var inventory_tiles: Array[ItemInstance] = []
 
-    # Filter to only include inventory items (exclude equipped items)
+    # Include all items (both inventory and equipped items can be sold)
     for tile: ItemInstance in all_tiles:
         inventory_tiles.append(tile)
 
@@ -144,10 +144,15 @@ func _on_sell_item(item_instance: ItemInstance) -> void:
             break
     if not found_stack:
         print("Creating new stack for sold item: %s" % item_instance.item.name)
-        var new_stack := ItemStack.new(item_instance.item, 1)
         if item_instance.item_data:
+            # Item has unique data - create stack with count 0, add_instance will increment it
+            var new_stack := ItemStack.new(item_instance.item, 0)
             new_stack.add_instance(item_instance.item_data)
-        items_for_sale.append(new_stack)
+            items_for_sale.append(new_stack)
+        else:
+            # Generic item - create stack with count 1
+            var new_stack := ItemStack.new(item_instance.item, 1)
+            items_for_sale.append(new_stack)
     LogManager.log_success("Sold %s for %d gold" % [item_instance.item.name, sell_value])
 
     # Update displays

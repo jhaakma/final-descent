@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="StatusCondition" load_steps=3 format=3 uid="uid://cl1234568aa0"]
+
+[ext_resource type="Script" path="res://src/effects/condition/status_condition.gd" id="1_statusCondition"]
+[ext_resource type="Resource" path="res://data/effects/PoisonEffect.tres" id="2_poisonEffect"]
+
+[resource]
+script = ExtResource("1_statusCondition")
+name = "Poison"
+status_effect = ExtResource("2_poisonEffect")
+log_ability_name = false

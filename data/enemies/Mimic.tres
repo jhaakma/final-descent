@@ -8,9 +8,9 @@
 [ext_resource type="Resource" uid="uid://bxhc5gwyvpwrd" path="res://data/abilities/PowerStrike.tres" id="4_1hkbx"]
 [ext_resource type="Resource" uid="uid://clyabowguvivm" path="res://data/items/weapons/ShortSword.tres" id="4_fntsa"]
 [ext_resource type="Resource" uid="uid://bjvu3fmob3t2k" path="res://data/items/weapons/Staff.tres" id="5_wym4u"]
-[ext_resource type="Resource" uid="uid://meq6o4s58qqk" path="res://data/items/weapons/Waraxe.tres" id="6_fcj01"]
 [ext_resource type="Resource" uid="uid://drc4rx6xim1bu" path="res://data/items/potions/HealthPotionMedium.tres" id="7_aom7d"]
 [ext_resource type="Resource" uid="uid://2s77tota5kam" path="res://data/items/potions/HealthPotionSmall.tres" id="8_1hkbx"]
+[ext_resource type="Resource" uid="uid://meq6o4s58qqk" path="res://data/items/weapons/Waraxe.tres" id="9_cpjox"]
 [ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="9_kyv3g"]
 [ext_resource type="Script" uid="uid://b4y5n724vd0ph" path="res://src/enemies/enemy_resource.gd" id="10_isltm"]
 [ext_resource type="Resource" uid="uid://c31wbx2iwa0s7" path="res://data/items/potions/RegenerationPotion.tres" id="11_wym4u"]
@@ -18,7 +18,7 @@
 
 [sub_resource type="Resource" id="Resource_j5rkl"]
 script = ExtResource("1_2e6c4")
-loot_table = Array[ExtResource("2_awbqc")]([ExtResource("3_ctcoa"), ExtResource("4_fntsa"), ExtResource("5_wym4u"), ExtResource("6_fcj01")])
+loot_table = Array[ExtResource("2_awbqc")]([ExtResource("3_ctcoa"), ExtResource("4_fntsa"), ExtResource("5_wym4u"), ExtResource("9_cpjox")])
 count = 1
 chance_none = 0.0
 pick_method = 0
@@ -46,8 +46,10 @@ metadata/_custom_type_script = "uid://lj0e532l0dyu"
 script = ExtResource("10_isltm")
 abilities = Array[ExtResource("1_wym4u")]([ExtResource("4_1hkbx"), ExtResource("2_fcj01")])
 name = "Mimic"
-max_hp = 20
+max_hp = 35
 attack = 2
 loot_component = SubResource("Resource_xahgk")
 avoid_chance = 0.5
+resistances = Array[int]([0])
+weaknesses = Array[int]([])
 metadata/_custom_type_script = "uid://b4y5n724vd0ph"

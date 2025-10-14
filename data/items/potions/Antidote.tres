@@ -1,19 +1,12 @@
-[gd_resource type="Resource" script_class="ItemPotion" load_steps=6 format=3 uid="uid://bpscdhoshmjls"]
+[gd_resource type="Resource" script_class="ItemPotion" load_steps=5 format=3 uid="uid://bpscdhoshmjls"]
 
 [ext_resource type="Script" uid="uid://dikmkr6vyadjj" path="res://src/items/Potion.gd" id="1_m18rj"]
+[ext_resource type="Resource" path="res://data/effects/conditions/PoisonCondition.tres" id="2_djo22"]
 [ext_resource type="Script" uid="uid://g8fqfpwlfdk3" path="res://src/effects/instant/cure_status_effect.gd" id="2_i6nc3"]
-[ext_resource type="Script" uid="uid://bnsjjjtwxudsp" path="res://src/effects/timed/poison_effect.gd" id="3_djo22"]
-
-[sub_resource type="Resource" id="Resource_w27w1"]
-script = ExtResource("3_djo22")
-damage_per_turn = 2
-remaining_turns = 1
-stacks = 1
-metadata/_custom_type_script = "uid://bnsjjjtwxudsp"
 
 [sub_resource type="Resource" id="Resource_ffo3h"]
 script = ExtResource("2_i6nc3")
-status_to_cure = SubResource("Resource_w27w1")
+condition_to_cure = ExtResource("2_djo22")
 metadata/_custom_type_script = "uid://g8fqfpwlfdk3"
 
 [resource]

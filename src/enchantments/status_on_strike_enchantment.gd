@@ -5,7 +5,8 @@ class_name StatusOnStrikeEnchantment extends OnStrikeEnchantment
 
 func on_strike(target: CombatEntity) -> void:
     if randf() < effect_apply_chance:
-        LogManager.log_damage("You inflict %s on %s!" % [status_effect.get_effect_name(), target.get_name()], false)
+
+        LogManager.log_damage("You inflict %s on %s!" % [status_effect.get_effect_name(), target.get_name()], target)
         target.apply_status_effect(status_effect)
 
 func get_enchantment_name() -> String:

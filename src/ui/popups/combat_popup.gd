@@ -5,9 +5,11 @@ signal combat_fled()
 signal loot_collected()
 signal turn_ended()
 
+@onready var label: Label = %EnemyLabel
+@onready var resistance_label: RichTextLabel = %EnemyResistances
+@onready var weakness_label: RichTextLabel = %EnemyWeaknesses
 @onready var you_bar: ProgressBar = %PlayerHP
 @onready var foe_bar: ProgressBar = %EnemyHP
-@onready var label: Label = %EnemyLabel
 @onready var attack_btn: Button = %AttackBtn
 @onready var defend_btn: Button = %DefendBtn
 @onready var flee_btn: Button = %FleeBtn
@@ -49,6 +51,27 @@ func _ready() -> void:
     var enemy_name := current_enemy.get_name()
     current_enemy.action_performed.connect(_on_enemy_action)
     label.text = "%s appears!" % [get_a_an(enemy_name).capitalize()]
+
+    # Update resistance labels
+    resistance_label.text = ""
+    var resistances := current_enemy.get_resistances()
+    if resistances.size() > 0:
+        resistance_label.text = "Resistances: "
+        for i in range(resistances.size()):
+            var damage_type := resistances[i]
+            var color := DamageType.get_type_color(damage_type).to_html()
+            resistance_label.text += "[color=%s]%s[/color]" % [color, DamageType.get_type_name((damage_type))]
+
+
+    weakness_label.text = ""
+    var weaknesses := current_enemy.get_weaknesses()
+    if weaknesses.size() > 0:
+        weakness_label.text = "Weaknesses: "
+        for i in range(weaknesses.size()):
+            var damage_type := weaknesses[i]
+            var color := DamageType.get_type_color(damage_type).to_html()
+            weakness_label.text += "[color=%s]%s[/color]" % [color, DamageType.get_type_name((damage_type))]
+
 
     LogManager.log_combat("Encounter: %s (HP %d)" % [current_enemy.get_name(), current_enemy.get_max_hp()])
     _refresh_bars()
@@ -298,12 +321,13 @@ func resolve_turn() -> void:
 
 func _on_attack() -> void:
     var total_dmg := GameState.player.calculate_attack_damage()
-    var final_damage := current_enemy.calculate_incoming_damage(total_dmg)
+    var player_damage_type := GameState.player.get_attack_damage_type()
+    var final_damage := current_enemy.calculate_incoming_damage(total_dmg, player_damage_type)
     current_enemy.take_damage(final_damage)
     var weapon_instance := GameState.player.get_equipped_weapon_instance()
     var weapon_name := weapon_instance.item.name if weapon_instance else ""
 
-    LogManager.log_attack(GameState.player, current_enemy, final_damage, weapon_name)
+    LogManager.log_attack(GameState.player, current_enemy, final_damage, weapon_name, player_damage_type)
     if weapon_instance:
         # Check if weapon has special attack effects
         var weapon := weapon_instance.item as Weapon

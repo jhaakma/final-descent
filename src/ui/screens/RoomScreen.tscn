@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=3 uid="uid://c0cpy5xfdy2nb"]
+[gd_scene load_steps=25 format=3 uid="uid://c0cpy5xfdy2nb"]
 
 [ext_resource type="Theme" uid="uid://ch0ahyx502rlq" path="res://data/themes/theme.tres" id="1_fqbyh"]
 [ext_resource type="Script" uid="uid://bi2w4gopbk7mv" path="res://src/ui/screens/room_screen.gd" id="1_vxldv"]
@@ -8,67 +8,22 @@
 [ext_resource type="PackedScene" uid="uid://cp3266w0ukw23" path="res://src/ui/widgets/inventory/InventoryContainer.tscn" id="3_vun85"]
 [ext_resource type="Resource" uid="uid://i5l4a63bwaev" path="res://data/rooms/ShopkeeperRoomBasic.tres" id="4_31aom"]
 [ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="4_p1ruj"]
-[ext_resource type="Resource" uid="uid://duwirm5y8y3ir" path="res://data/items/weapons/Warhammer.tres" id="5_4gjwx"]
+[ext_resource type="Resource" uid="uid://i3cxeo8eo70w" path="res://data/items/runes/RuneOfPoison.tres" id="6_31aom"]
 [ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="6_em7fl"]
 [ext_resource type="Resource" uid="uid://bpscdhoshmjls" path="res://data/items/potions/Antidote.tres" id="6_p1ruj"]
 [ext_resource type="Script" uid="uid://cuib3tlx6u7dn" path="res://src/rooms/chest_room_resource.gd" id="7_soduk"]
-[ext_resource type="Resource" uid="uid://humesd68wuei" path="res://data/items/potions/HealthPotionLarge.tres" id="7_thj5w"]
+[ext_resource type="Resource" uid="uid://jh6urisffe2v" path="res://data/items/runes/RuneOfResistPoison.tres" id="9_0w4ck"]
 [ext_resource type="Resource" uid="uid://dwqgodsd7t16e" path="res://data/items/repair_tools/RepairToolBasic.tres" id="9_t5d3n"]
 [ext_resource type="Script" uid="uid://b4y5n724vd0ph" path="res://src/enemies/enemy_resource.gd" id="9_thj5w"]
-[ext_resource type="Resource" uid="uid://cxkrul1kd2tmm" path="res://data/items/elixirs/ElixirOfStrength.tres" id="10_seokc"]
 [ext_resource type="Script" uid="uid://bqxhtkn1xkeqv" path="res://src/rooms/combat_room_resource.gd" id="11_am2x5"]
-[ext_resource type="Resource" uid="uid://fj0lhss0j1ad" path="res://data/items/weapons/PoisonedDagger.tres" id="11_hoodt"]
-[ext_resource type="Resource" uid="uid://c31wbx2iwa0s7" path="res://data/items/potions/RegenerationPotion.tres" id="11_kigx5"]
-[ext_resource type="Resource" uid="uid://camlnwiaxo4xp" path="res://data/items/elixirs/ElixirOfVitality.tres" id="11_mm5rg"]
-[ext_resource type="Resource" uid="uid://d3gxakqdygrra" path="res://data/items/elixirs/ElixirOfDefense.tres" id="12_30nnb"]
-[ext_resource type="Script" uid="uid://on0my3ge7dka" path="res://src/enchantments/status_on_strike_enchantment.gd" id="14_d56d7"]
-[ext_resource type="Script" uid="uid://bnsjjjtwxudsp" path="res://src/effects/timed/poison_effect.gd" id="15_og4wa"]
-[ext_resource type="Script" uid="uid://io27es0e6r6q" path="res://src/items/Rune.gd" id="16_30nnb"]
-[ext_resource type="Resource" uid="uid://cwdl328syumjx" path="res://data/enemies/Ogre.tres" id="17_kigx5"]
+[ext_resource type="Resource" uid="uid://dij2m52fyjwqp" path="res://data/enemies/Snake.tres" id="12_qopf2"]
 [ext_resource type="Resource" uid="uid://clyabowguvivm" path="res://data/items/weapons/ShortSword.tres" id="17_og4wa"]
 [ext_resource type="Resource" uid="uid://ddgo03rs1qvck" path="res://data/rooms/ShrineRoomAncient.tres" id="18_wfawr"]
 [ext_resource type="Resource" uid="uid://deugb73fiqik0" path="res://data/rooms/ShrineRoomEvil.tres" id="19_hoodt"]
 
-[sub_resource type="Resource" id="Resource_t5dep"]
-script = ExtResource("3_2vu3h")
-loot_table = Array[ExtResource("4_p1ruj")]([ExtResource("6_p1ruj"), ExtResource("7_thj5w"), ExtResource("9_t5d3n"), ExtResource("10_seokc"), ExtResource("11_kigx5"), ExtResource("11_mm5rg"), ExtResource("12_30nnb")])
-count = 1
-chance_none = 0.0
-pick_method = 1
-floor_min = 0
-metadata/_custom_type_script = "uid://w4ie0s4l7syw"
-
-[sub_resource type="Resource" id="Resource_hoodt"]
-script = ExtResource("3_2vu3h")
-loot_table = Array[ExtResource("4_p1ruj")]([ExtResource("11_hoodt"), ExtResource("5_4gjwx")])
-count = 1
-chance_none = 0.0
-pick_method = 1
-floor_min = 0
-metadata/_custom_type_script = "uid://w4ie0s4l7syw"
-
-[sub_resource type="Resource" id="Resource_of8pp"]
-script = ExtResource("15_og4wa")
-damage_per_turn = 1
-duration = 6
-metadata/_custom_type_script = "uid://bnsjjjtwxudsp"
-
-[sub_resource type="Resource" id="Resource_7gp33"]
-script = ExtResource("14_d56d7")
-status_effect = SubResource("Resource_of8pp")
-effect_apply_chance = 1.0
-metadata/_custom_type_script = "uid://on0my3ge7dka"
-
-[sub_resource type="Resource" id="Resource_yjnrm"]
-script = ExtResource("16_30nnb")
-enchantment = SubResource("Resource_7gp33")
-name = "Rune of Poison"
-purchase_value = 60
-metadata/_custom_type_script = "uid://io27es0e6r6q"
-
 [sub_resource type="Resource" id="Resource_jjfgr"]
 script = ExtResource("3_2vu3h")
-loot_table = Array[ExtResource("4_p1ruj")]([SubResource("Resource_yjnrm"), ExtResource("17_og4wa")])
+loot_table = Array[ExtResource("4_p1ruj")]([ExtResource("6_31aom"), ExtResource("17_og4wa"), ExtResource("6_p1ruj"), ExtResource("9_0w4ck"), ExtResource("9_t5d3n")])
 count = 2
 chance_none = 0.0
 pick_method = 1
@@ -80,7 +35,7 @@ script = ExtResource("6_em7fl")
 gold_min = 50
 gold_max = 50
 chance_gold_none = 0.0
-loot_table = Array[ExtResource("3_2vu3h")]([SubResource("Resource_t5dep"), SubResource("Resource_hoodt"), SubResource("Resource_jjfgr")])
+loot_table = Array[ExtResource("3_2vu3h")]([SubResource("Resource_jjfgr")])
 metadata/_custom_type_script = "uid://lj0e532l0dyu"
 
 [sub_resource type="Resource" id="Resource_4t8ue"]
@@ -96,7 +51,7 @@ metadata/_custom_type_script = "uid://cuib3tlx6u7dn"
 
 [sub_resource type="Resource" id="Resource_037r1"]
 script = ExtResource("11_am2x5")
-enemy_list = Array[ExtResource("9_thj5w")]([ExtResource("17_kigx5")])
+enemy_list = Array[ExtResource("9_thj5w")]([ExtResource("12_qopf2")])
 title = "Room"
 description = "Description"
 weight = 10

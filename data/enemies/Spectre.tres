@@ -35,4 +35,6 @@ max_hp = 30
 attack = 1
 loot_component = SubResource("Resource_smyst")
 avoid_chance = 0.5
+resistances = Array[int]([0, 5])
+weaknesses = Array[int]([6])
 metadata/_custom_type_script = "uid://b4y5n724vd0ph"

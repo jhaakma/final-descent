@@ -6,6 +6,7 @@ signal equip(weapon: Weapon)
 signal unequip(weapon: Weapon)
 
 @export var damage: int = 3
+@export var damage_type: DamageType.Type = DamageType.Type.PHYSICAL
 @export var condition: int = 10  # Base condition when new
 @export var enchantment: Enchantment:
     set = set_enchantment
@@ -61,8 +62,10 @@ func get_additional_tooltip_info() -> Array[AdditionalTooltipInfoData]:
     var info :Array[AdditionalTooltipInfoData]= []
 
     var damage_info := AdditionalTooltipInfoData.new()
-    damage_info.text = "⚔️ Damage: %d" % damage
-    damage_info.color = Color(1.0, 0.8, 0.6)
+    var damage_type_name := DamageType.get_type_name(damage_type)
+    var damage_type_color := DamageType.get_type_color(damage_type)
+    damage_info.text = "⚔️ Damage: %d (%s)" % [damage, damage_type_name]
+    damage_info.color = damage_type_color
     info.append(damage_info)
 
     if enchantment:

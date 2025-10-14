@@ -119,11 +119,18 @@ func log_message(text: String, color_str: String = _get_color_str(LogColor.DEFAU
     _update_all_displays()
 
 
-func log_damage(text: String, you: bool = true) -> void:
+func log_damage(text: String, target: CombatEntity, damage_type: DamageType.Type = DamageType.Type.PHYSICAL) -> void:
+    var message: String = text
+    # Add resistance feedback
+    var resistance_message := _get_resistance_message(target, damage_type)
+    if resistance_message != "":
+        message += " " + resistance_message
+
+    var you := target == GameState.player
     if you:
-        _add_to_history(text, _get_color_str(LogColor.DAMAGE_YOU))
+        _add_to_history(message, _get_color_str(LogColor.DAMAGE_YOU))
     else:
-        _add_to_history(text, _get_color_str(LogColor.DAMAGE_THEM))
+        _add_to_history(message, _get_color_str(LogColor.DAMAGE_THEM))
     _update_all_displays()
 
 func log_status(text: String, target: CombatEntity, positive: bool) -> void:
@@ -198,33 +205,60 @@ func _get_target_name(target: Object) -> String:
         return "Unknown"
 
 # Enhanced combat logging methods with target context
-func log_attack(attacker: CombatEntity, target: CombatEntity, damage: int, weapon_name: String = "") -> void:
+func log_attack(attacker: CombatEntity, target: CombatEntity, damage: int, weapon_name: String = "", damage_type: DamageType.Type = DamageType.Type.PHYSICAL) -> void:
     var attacker_name := _get_target_name(attacker)
     var target_name := _get_target_name(target)
+
+    # Add damage type to the message if it's not physical
+    var damage_type_text := ""
+    if damage_type != DamageType.Type.PHYSICAL:
+        damage_type_text = " %s" % DamageType.get_type_name(damage_type).to_lower()
 
     var message: String
     if weapon_name != "":
         if attacker == GameState.player:
-            message = "%s strike %s with %s for %d damage!" % [attacker_name.capitalize(), target_name, weapon_name, damage]
+            message = "%s strike %s with %s for %d%s damage!" % [attacker_name.capitalize(), target_name, weapon_name, damage, damage_type_text]
         else:
-            message = "%s strikes %s with %s for %d damage!" % [attacker_name.capitalize(), target_name, weapon_name, damage]
+            message = "%s strikes %s with %s for %d%s damage!" % [attacker_name.capitalize(), target_name, weapon_name, damage, damage_type_text]
     else:
         if attacker == GameState.player:
-            message = "%s strike %s for %d damage!" % [attacker_name.capitalize(), target_name, damage]
+            message = "%s strike %s for %d%s damage!" % [attacker_name.capitalize(), target_name, damage, damage_type_text]
         else:
-            message = "%s attacks %s for %d damage!" % [attacker_name.capitalize(), target_name, damage]
+            message = "%s attacks %s for %d%s damage!" % [attacker_name.capitalize(), target_name, damage, damage_type_text]
 
-    log_damage(message, target == GameState.player)
 
-func log_special_attack(attacker: CombatEntity, target: CombatEntity, attack_name: String, damage: int, additional_effects: String = "") -> void:
+    log_damage(message, target, damage_type)
+
+func log_special_attack(attacker: CombatEntity, target: CombatEntity, attack_name: String, damage: int, additional_effects: String = "", damage_type: DamageType.Type = DamageType.Type.PHYSICAL) -> void:
     var attacker_name := _get_target_name(attacker)
     var target_name := _get_target_name(target)
 
-    var message := "%s uses %s on %s for %d damage!" % [attacker_name.capitalize(), attack_name, target_name, damage]
+    # Add damage type to the message if it's not physical
+    var damage_type_text := ""
+    if damage_type != DamageType.Type.PHYSICAL:
+        damage_type_text = " (%s)" % DamageType.get_type_name(damage_type).to_lower()
+
+    var message := "%s uses %s on %s for %d%s damage!" % [attacker_name.capitalize(), attack_name, target_name, damage, damage_type_text]
     if additional_effects != "":
         message += " " + additional_effects
 
-    log_damage(message, target == GameState.player)
+    log_damage(message, target, damage_type)
+
+# Helper method to generate resistance feedback messages
+func _get_resistance_message(target: CombatEntity, damage_type: DamageType.Type) -> String:
+    if target.is_resistant_to(damage_type):
+        var target_name := _get_target_name(target)
+        if target == GameState.player:
+            return "You resist the damage!"
+        else:
+            return "%s resists the damage!" % [target_name.capitalize()]
+    elif target.is_weak_to(damage_type):
+        var target_name := _get_target_name(target)
+        if target == GameState.player:
+            return "You are vulnerable to the damage!"
+        else:
+            return "%s is vulnerable to the damage!" % [target_name.capitalize()]
+    return ""
 
 func log_defend(defender: CombatEntity) -> void:
     var defender_name := _get_target_name(defender)
@@ -261,7 +295,7 @@ func log_status_condition_applied(target: CombatEntity, condition: StatusConditi
         log_warning(message)
 
 
-func log_status_effect_damage(target: CombatEntity, effect_name: String, damage: int) -> void:
+func log_status_effect_damage(target: CombatEntity, effect_name: String, damage: int, damage_type: DamageType.Type) -> void:
     var message: String
 
     if target == GameState.player:
@@ -270,7 +304,7 @@ func log_status_effect_damage(target: CombatEntity, effect_name: String, damage:
         var target_name := _get_target_name(target)
         message = "%s takes %d damage from %s!" % [target_name.capitalize(), damage, effect_name]
 
-    log_damage(message, target == GameState.player)
+    log_damage(message, target, damage_type)
 
 func log_status_effect_healing(target: CombatEntity, effect_name: String, healing: int) -> void:
     var message: String

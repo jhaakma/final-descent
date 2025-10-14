@@ -1,0 +1,68 @@
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=17 format=3 uid="uid://br1d7l4wph3un"]
+
+[ext_resource type="Script" uid="uid://bkhqo7pjlc7bi" path="res://src/abilities/Ability.gd" id="1_bm85k"]
+[ext_resource type="Script" uid="uid://b4y5n724vd0ph" path="res://src/enemies/enemy_resource.gd" id="2_4agyd"]
+[ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="2_6jgvs"]
+[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="3_tv5va"]
+[ext_resource type="Resource" path="res://data/items/runes/RuneOfShock.tres" id="4_rvhrj"]
+[ext_resource type="Resource" uid="uid://i3cxeo8eo70w" path="res://data/items/runes/RuneOfPoison.tres" id="5_myyve"]
+[ext_resource type="Resource" path="res://data/items/runes/RuneOfIce.tres" id="6_nawgq"]
+[ext_resource type="Resource" uid="uid://bnv00r86s3yqw" path="res://data/items/runes/RuneOfFire.tres" id="7_ane6q"]
+[ext_resource type="Script" uid="uid://kfpqhwn4ci4m" path="res://src/enchantments/elemental_damage_enchantment.gd" id="8_v81vu"]
+[ext_resource type="Script" uid="uid://cp8w78pilenje" path="res://src/items/Weapon.gd" id="9_nfwnn"]
+[ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="10_awjij"]
+
+[sub_resource type="Resource" id="Resource_e7xa0"]
+script = ExtResource("2_6jgvs")
+loot_table = Array[ExtResource("3_tv5va")]([ExtResource("4_rvhrj"), ExtResource("5_myyve"), ExtResource("6_nawgq"), ExtResource("7_ane6q")])
+count = 1
+chance_none = 0.0
+pick_method = 0
+floor_min = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"
+
+[sub_resource type="Resource" id="Resource_dh4sa"]
+script = ExtResource("8_v81vu")
+elemental_damage_type = 2
+elemental_damage = 5
+elemental_damage_chance = 1.0
+metadata/_custom_type_script = "uid://kfpqhwn4ci4m"
+
+[sub_resource type="Resource" id="Resource_ojqm8"]
+script = ExtResource("9_nfwnn")
+damage = 5
+damage_type = 5
+condition = 100
+enchantment = SubResource("Resource_dh4sa")
+name = "Dragonblade"
+purchase_value = 10
+metadata/_custom_type_script = "uid://cp8w78pilenje"
+
+[sub_resource type="Resource" id="Resource_1c4lc"]
+script = ExtResource("2_6jgvs")
+loot_table = Array[ExtResource("3_tv5va")]([SubResource("Resource_ojqm8")])
+count = 1
+chance_none = 0.0
+pick_method = 0
+floor_min = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"
+
+[sub_resource type="Resource" id="Resource_bq0r2"]
+script = ExtResource("10_awjij")
+gold_min = 50
+gold_max = 100
+chance_gold_none = 0.0
+loot_table = Array[ExtResource("2_6jgvs")]([SubResource("Resource_e7xa0"), SubResource("Resource_1c4lc")])
+metadata/_custom_type_script = "uid://lj0e532l0dyu"
+
+[resource]
+script = ExtResource("2_4agyd")
+abilities = Array[ExtResource("1_bm85k")]([])
+name = "Dragon"
+max_hp = 100
+attack = 5
+loot_component = SubResource("Resource_bq0r2")
+avoid_chance = 0.0
+resistances = Array[int]([5, 2])
+weaknesses = Array[int]([4])
+metadata/_custom_type_script = "uid://b4y5n724vd0ph"

@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="ElementalDamageEnchantment" load_steps=2 format=3 uid="uid://ciff15gkdv8o6"]
+
+[ext_resource type="Script" uid="uid://kfpqhwn4ci4m" path="res://src/enchantments/elemental_damage_enchantment.gd" id="1_0"]
+
+[resource]
+script = ExtResource("1_0")
+elemental_damage_type = 2
+elemental_damage = 3
+elemental_damage_chance = 0.8

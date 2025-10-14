@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Rune" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/items/Rune.gd" id="1_0"]
+[ext_resource type="Resource" path="res://data/enchantments/ShockDamageEnchantment.tres" id="2_0"]
+
+[resource]
+script = ExtResource("1_0")
+enchantment = ExtResource("2_0")
+name = "Rune of Shock"
+purchase_value = 30

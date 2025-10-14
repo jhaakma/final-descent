@@ -1,22 +1,12 @@
 # To do
 
-## Refactor CombatEntity/ATK and DEF bonuses
-- Move get_total_defense_bonus etc to CombatEntity
-- Allow potions etc to register an attack bonus
-- Potions register bonus on use, then unregister on expiry
-- get_total_defense_bonus etc directly sum from array of bonuses
+## Refactor CombatEntity
 - Merge CombatActor into CombatEntity
-
-## Tidy ItemInstance
-- Remove count, use only for item+data combo
 
 ## Permanent Conditions
 - Like timed Status but with no time limit
 - Used for permanent buffs and constant effect items
 
-## Damage Types/Resistances
-- Resistance = half damage from that type
-- Update UI to show more info on enemies
 
 ## Player Abilities
 - Make sure ability logs work with player

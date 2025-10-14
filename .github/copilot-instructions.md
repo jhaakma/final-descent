@@ -7,3 +7,4 @@
 - Don't do "Legacy" methods, just update everythiung to use new systems
 - Don't write readme files for every change
 - Avoid using match statements, use dictionaries
+- Add methods as needed, don't add methods "just in case"
