@@ -1,4 +1,4 @@
-class_name ConstantEffect extends StatusEffect
+class_name ConstantEffect extends RemovableStatusEffect
 
 # Constant effects are permanent status effects that don't expire naturally
 # They are typically used for:
@@ -42,4 +42,31 @@ func apply_effect(_target: CombatEntity) -> bool:
     # Most constant effects don't need to "do" anything each turn
     # They are passive modifications to stats, resistances, etc.
     # Subclasses can override this if they need active behavior
+    return true
+
+# Override: Constant effects should be stored for tracking
+func should_store_in_active_conditions() -> bool:
+    return true
+
+# Override: Constant effects don't stack by default
+func handle_existing_condition(_component: StatusEffectComponent, _new_condition: StatusCondition, existing_condition: StatusCondition, target: CombatEntity) -> bool:
+    LogManager.log({
+        text = "{You are} already affected by %s." % existing_condition.name,
+        target = target,
+        color = LogManager.LogColor.WARNING
+    })
+    return false
+
+# Override: Handle applying new constant effect
+func handle_new_condition(component: StatusEffectComponent, condition: StatusCondition, target: CombatEntity) -> bool:
+    component.active_conditions[condition.name] = condition
+
+    # Call lifecycle method if available
+    if self is RemovableStatusEffect:
+        (self as RemovableStatusEffect).on_applied(target)
+
+    # Apply the constant effect once
+    apply_effect(target)
+    LogManager.log_status_condition_applied(target, condition, 0) # 0 duration for constant
+    component.effect_applied.emit(condition.name)
     return true

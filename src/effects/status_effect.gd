@@ -45,3 +45,60 @@ func get_description() -> String:
 
 func get_base_description() -> String:
     return get_description()
+
+# Template method for handling effect application to status component
+# Subclasses should override the specific methods they need to customize
+func handle_application(component: StatusEffectComponent, condition: StatusCondition, target: CombatEntity) -> bool:
+    var condition_id := condition.name
+
+    # Check if effect should be stored in active conditions
+    if not should_store_in_active_conditions():
+        # Handle instant effects immediately
+        if target:
+            var result := apply_effect(target)
+            component.effect_processed.emit(condition_id, result)
+            component.effect_applied.emit(condition_id)
+            return result
+        else:
+            push_error("No target available for instant effect application")
+            return false
+
+    # Check for existing condition
+    var existing_condition: StatusCondition = component.active_conditions.get(condition_id)
+    if existing_condition:
+        return handle_existing_condition(component, condition, existing_condition, target)
+    else:
+        return handle_new_condition(component, condition, target)
+
+# Override in subclasses - determines if effect should be stored for tracking
+func should_store_in_active_conditions() -> bool:
+    return false  # Default: instant effects
+
+# Override in subclasses - handles when the same condition already exists
+func handle_existing_condition(_component: StatusEffectComponent, _new_condition: StatusCondition, existing_condition: StatusCondition, target: CombatEntity) -> bool:
+    # Default: reject duplicate
+    LogManager.log({
+        text = "{You are} already affected by %s." % existing_condition.name,
+        target = target,
+        color = LogManager.LogColor.WARNING
+    })
+    return false
+
+# Override in subclasses - handles applying a new condition
+func handle_new_condition(component: StatusEffectComponent, condition: StatusCondition, target: CombatEntity) -> bool:
+    # Default implementation for persistent effects
+    component.active_conditions[condition.name] = condition
+
+    # Call lifecycle method if available
+    if self is RemovableStatusEffect:
+        (self as RemovableStatusEffect).on_applied(target)
+
+    # Apply the effect
+    apply_effect(target)
+    LogManager.log_status_condition_applied(target, condition, get_log_duration())
+    component.effect_applied.emit(condition.name)
+    return true
+
+# Override in subclasses - provides duration for logging (0 for permanent/instant)
+func get_log_duration() -> int:
+    return 0

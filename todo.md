@@ -14,13 +14,9 @@
     - CombayEntity refactor
 
 
-## Simplify CombatEntity and subclasses
-- Merge CombatActor into CombatEntity
-
 ## Reduce .calls by using is Class
 - Create subclass of StatusEffect that implements on_removed etc
 - Enemy get_attack -> replace with stats_component
-
 
 ## Theme
 Create and use a consistent theme
