@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="Scroll" load_steps=3 format=3 uid="uid://cmn13awgg0add"]
+
+[ext_resource type="Script" uid="uid://ctq6u1ndsne3p" path="res://src/items/Scroll.gd" id="1_brl78"]
+[ext_resource type="Resource" uid="uid://c3ukg8abns6f5" path="res://data/spells/Frostbolt.tres" id="2_brl78"]
+
+[resource]
+script = ExtResource("1_brl78")
+spell = ExtResource("2_brl78")
+requires_target = true
+name = "Item"
+purchase_value = 50
+metadata/_custom_type_script = "uid://ctq6u1ndsne3p"

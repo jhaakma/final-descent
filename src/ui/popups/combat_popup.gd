@@ -53,6 +53,9 @@ func _ready() -> void:
     current_enemy.action_performed.connect(_on_enemy_action)
     label.text = "%s appears!" % [get_a_an(enemy_name).capitalize()]
 
+    # Register combat state with GameState
+    GameState.start_combat(current_enemy)
+
     # Update resistance labels
     resistance_label.text = ""
     var resistances := current_enemy.get_resistances()
@@ -110,6 +113,10 @@ func _ready() -> void:
     # Check if player should skip their first turn due to existing stun
     if not enemy_first:
         _enable_action_buttons()  # This will check for stun and handle it
+
+func _exit_tree() -> void:
+    # Clean up combat state when combat popup is destroyed
+    GameState.end_combat()
 
 func _disable_action_buttons() -> void:
     attack_btn.disabled = true

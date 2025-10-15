@@ -1,5 +1,13 @@
 # To do
 
+## Resolve logging issues
+- "Player casts" - should be "you cast" - move to LogManager
+- Consider using the LogManager.log with metadata option for other logging (big refactor)
+
+## Integrate Combat Popup into RoomScene
+- Replace the action buttons section, which solves the need to disable anything
+- Remove "Use Item" button, make Inventory actions consume player turn if in combat
+
 ## Managers
 - Room Manager
     - Stores the list of room types
@@ -12,11 +20,6 @@
 - Prerequisites:
     - Room Manager
     - CombayEntity refactor
-
-
-## Reduce .calls by using is Class
-- Create subclass of StatusEffect that implements on_removed etc
-- Enemy get_attack -> replace with stats_component
 
 ## Theme
 Create and use a consistent theme

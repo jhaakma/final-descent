@@ -16,8 +16,13 @@ func apply_effect(target: CombatEntity) -> bool:
     # Apply healing to target
     var amount_healed := target.heal(heal_amount)
     if amount_healed > 0:
-        # Log the healing effect
-        LogManager.log_healing("Healed %d HP!" % amount_healed)
+        # Use application context for better logging if available
+        var source_name: String
+        if application_context and application_context.log_ability_name:
+            source_name = application_context.name
+            LogManager.log_healing("%s heals %d HP!" % [source_name, amount_healed])
+        else:
+            LogManager.log_healing("Healed %d HP!" % amount_healed)
         return true
     else:
         LogManager.log_warning("You are already at full health.")

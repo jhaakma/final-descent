@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="Spell" load_steps=7 format=3 uid="uid://cv4lt8wfqpplu"]
+
+[ext_resource type="Script" uid="uid://bwj0xovfmtks4" path="res://src/abilities/Spell.gd" id="1_3hxn5"]
+[ext_resource type="Script" uid="uid://rglym38nsnwg" path="res://src/effects/status_effect.gd" id="2_oba20"]
+[ext_resource type="Script" uid="uid://b2retcdwypmv8" path="res://src/effects/instant/instant_damage_effect.gd" id="3_gffdj"]
+[ext_resource type="Script" uid="uid://b5iu05fqomptj" path="res://src/effects/timed/elemental_timed_effect.gd" id="4_oba20"]
+
+[sub_resource type="Resource" id="Resource_nhji5"]
+script = ExtResource("3_gffdj")
+damage_amount = 10
+damage_type = 1
+metadata/_custom_type_script = "uid://b2retcdwypmv8"
+
+[sub_resource type="Resource" id="Resource_gffdj"]
+script = ExtResource("4_oba20")
+damage_per_turn = 2
+elemental_type = 1
+duration = 4
+metadata/_custom_type_script = "uid://b5iu05fqomptj"
+
+[resource]
+script = ExtResource("1_3hxn5")
+spell_name = "Poisonbolt"
+description = "Summon a venomous bolt. "
+spell_effects = Array[ExtResource("2_oba20")]([SubResource("Resource_nhji5"), SubResource("Resource_gffdj")])
+target_type = 1
+mana_cost = 0
+metadata/_custom_type_script = "uid://bwj0xovfmtks4"

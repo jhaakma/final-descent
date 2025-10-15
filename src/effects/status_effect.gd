@@ -14,6 +14,9 @@ static var EffectTypeMap := {
     EffectType.NEGATIVE: "red"  # Red
 }
 
+# Context for logging and effect application
+var application_context: StatusCondition = null
+
 func get_effect_id() -> String:
     return get_class()
 
@@ -55,7 +58,10 @@ func handle_application(component: StatusEffectComponent, condition: StatusCondi
     if not should_store_in_active_conditions():
         # Handle instant effects immediately
         if target:
+            # Set application context for logging
+            application_context = condition
             var result := apply_effect(target)
+            application_context = null  # Clear context after use
             component.effect_processed.emit(condition_id, result)
             component.effect_applied.emit(condition_id)
             return result

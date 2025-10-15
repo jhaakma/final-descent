@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="Scroll" load_steps=7 format=3 uid="uid://bhbvnwynmqbs"]
+
+[ext_resource type="Script" uid="uid://ctq6u1ndsne3p" path="res://src/items/Scroll.gd" id="1_ay7cg"]
+[ext_resource type="Script" uid="uid://bwj0xovfmtks4" path="res://src/abilities/Spell.gd" id="2_dqlv1"]
+[ext_resource type="Script" uid="uid://rglym38nsnwg" path="res://src/effects/status_effect.gd" id="3_04hud"]
+[ext_resource type="Script" uid="uid://btj1mgjp6gjy1" path="res://src/effects/instant/instant_heal_effect.gd" id="4_edjmx"]
+
+[sub_resource type="Resource" id="Resource_h475l"]
+script = ExtResource("4_edjmx")
+heal_amount = 10
+metadata/_custom_type_script = "uid://btj1mgjp6gjy1"
+
+[sub_resource type="Resource" id="Resource_avh1x"]
+script = ExtResource("2_dqlv1")
+spell_name = "Healing"
+description = "A magical spell."
+spell_effects = Array[ExtResource("3_04hud")]([SubResource("Resource_h475l")])
+target_type = 0
+mana_cost = 0
+metadata/_custom_type_script = "uid://bwj0xovfmtks4"
+
+[resource]
+script = ExtResource("1_ay7cg")
+spell = SubResource("Resource_avh1x")
+requires_target = false
+name = "Item"
+purchase_value = 10
+metadata/_custom_type_script = "uid://ctq6u1ndsne3p"

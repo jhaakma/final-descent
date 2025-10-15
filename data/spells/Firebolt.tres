@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="Spell" load_steps=5 format=3 uid="uid://vfdnmpc88yei"]
+
+[ext_resource type="Script" uid="uid://bwj0xovfmtks4" path="res://src/abilities/Spell.gd" id="1_lxuhp"]
+[ext_resource type="Script" uid="uid://rglym38nsnwg" path="res://src/effects/status_effect.gd" id="2_7ugya"]
+[ext_resource type="Script" uid="uid://b2retcdwypmv8" path="res://src/effects/instant/instant_damage_effect.gd" id="3_7ugya"]
+
+[sub_resource type="Resource" id="Resource_nhji5"]
+script = ExtResource("3_7ugya")
+damage_amount = 15
+damage_type = 2
+metadata/_custom_type_script = "uid://b2retcdwypmv8"
+
+[resource]
+script = ExtResource("1_lxuhp")
+spell_name = "Firebolt"
+description = "Summon a flaming bolt. "
+spell_effects = Array[ExtResource("2_7ugya")]([SubResource("Resource_nhji5")])
+target_type = 1
+mana_cost = 0
+metadata/_custom_type_script = "uid://bwj0xovfmtks4"

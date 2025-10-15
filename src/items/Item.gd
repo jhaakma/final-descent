@@ -3,15 +3,20 @@ class_name Item extends Resource
 enum ItemCategory {
     WEAPON,
     POTION,
+    SCROLL,
     MISC
 }
 
-@export var name: String = "Item"
+@export var name: String = "Item":
+    get = _get_name
 @export var purchase_value: int = 10
 
 class AdditionalTooltipInfoData:
     var text: String
     var color: Color = Color(1, 1, 1)
+
+func _get_name() -> String:
+    return name
 
 ## Virtual method to be overridden by subclasses
 func get_category() -> ItemCategory:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://c0cpy5xfdy2nb"]
+[gd_scene load_steps=19 format=3 uid="uid://c0cpy5xfdy2nb"]
 
 [ext_resource type="Theme" uid="uid://ch0ahyx502rlq" path="res://data/themes/theme.tres" id="1_fqbyh"]
 [ext_resource type="Script" uid="uid://bi2w4gopbk7mv" path="res://src/ui/screens/room_screen.gd" id="1_vxldv"]
@@ -7,35 +7,21 @@
 [ext_resource type="Script" uid="uid://bdbhlyvac2es6" path="res://src/rooms/room_resource.gd" id="3_soduk"]
 [ext_resource type="PackedScene" uid="uid://cp3266w0ukw23" path="res://src/ui/widgets/inventory/InventoryContainer.tscn" id="3_vun85"]
 [ext_resource type="Resource" uid="uid://i5l4a63bwaev" path="res://data/rooms/ShopkeeperRoomBasic.tres" id="4_31aom"]
-[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="4_p1ruj"]
-[ext_resource type="Resource" uid="uid://i3cxeo8eo70w" path="res://data/items/runes/RuneOfPoison.tres" id="6_31aom"]
+[ext_resource type="Resource" uid="uid://bhke1ujhajsrw" path="res://data/ItemPicks/StartingGear.tres" id="5_qopf2"]
 [ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="6_em7fl"]
-[ext_resource type="Resource" uid="uid://bpscdhoshmjls" path="res://data/items/potions/Antidote.tres" id="6_p1ruj"]
 [ext_resource type="Script" uid="uid://cuib3tlx6u7dn" path="res://src/rooms/chest_room_resource.gd" id="7_soduk"]
-[ext_resource type="Resource" uid="uid://jh6urisffe2v" path="res://data/items/runes/RuneOfResistPoison.tres" id="9_0w4ck"]
-[ext_resource type="Resource" uid="uid://dwqgodsd7t16e" path="res://data/items/repair_tools/RepairToolBasic.tres" id="9_t5d3n"]
 [ext_resource type="Script" uid="uid://b4y5n724vd0ph" path="res://src/enemies/enemy_resource.gd" id="9_thj5w"]
 [ext_resource type="Script" uid="uid://bqxhtkn1xkeqv" path="res://src/rooms/combat_room_resource.gd" id="11_am2x5"]
 [ext_resource type="Resource" uid="uid://dij2m52fyjwqp" path="res://data/enemies/Snake.tres" id="12_qopf2"]
-[ext_resource type="Resource" uid="uid://clyabowguvivm" path="res://data/items/weapons/ShortSword.tres" id="17_og4wa"]
 [ext_resource type="Resource" uid="uid://ddgo03rs1qvck" path="res://data/rooms/ShrineRoomAncient.tres" id="18_wfawr"]
 [ext_resource type="Resource" uid="uid://deugb73fiqik0" path="res://data/rooms/ShrineRoomEvil.tres" id="19_hoodt"]
-
-[sub_resource type="Resource" id="Resource_jjfgr"]
-script = ExtResource("3_2vu3h")
-loot_table = Array[ExtResource("4_p1ruj")]([ExtResource("6_31aom"), ExtResource("17_og4wa"), ExtResource("6_p1ruj"), ExtResource("9_0w4ck"), ExtResource("9_t5d3n")])
-count = 2
-chance_none = 0.0
-pick_method = 1
-floor_min = 0
-metadata/_custom_type_script = "uid://w4ie0s4l7syw"
 
 [sub_resource type="Resource" id="Resource_bu8q4"]
 script = ExtResource("6_em7fl")
 gold_min = 50
 gold_max = 50
 chance_gold_none = 0.0
-loot_table = Array[ExtResource("3_2vu3h")]([SubResource("Resource_jjfgr")])
+loot_table = Array[ExtResource("3_2vu3h")]([ExtResource("5_qopf2")])
 metadata/_custom_type_script = "uid://lj0e532l0dyu"
 
 [sub_resource type="Resource" id="Resource_4t8ue"]

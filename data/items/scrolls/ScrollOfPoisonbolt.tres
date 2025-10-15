@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="Scroll" load_steps=3 format=3 uid="uid://c2fcxyd8jatqi"]
+
+[ext_resource type="Script" uid="uid://ctq6u1ndsne3p" path="res://src/items/Scroll.gd" id="1_xro76"]
+[ext_resource type="Resource" uid="uid://cv4lt8wfqpplu" path="res://data/spells/Poisonbolt.tres" id="2_xro76"]
+
+[resource]
+script = ExtResource("1_xro76")
+spell = ExtResource("2_xro76")
+requires_target = true
+name = "Item"
+purchase_value = 50
+metadata/_custom_type_script = "uid://ctq6u1ndsne3p"

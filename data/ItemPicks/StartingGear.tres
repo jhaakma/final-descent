@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="LootPick" load_steps=18 format=3 uid="uid://bhke1ujhajsrw"]
+
+[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="1_0agda"]
+[ext_resource type="Resource" uid="uid://i3cxeo8eo70w" path="res://data/items/runes/RuneOfPoison.tres" id="2_gl8j3"]
+[ext_resource type="Resource" uid="uid://clyabowguvivm" path="res://data/items/weapons/ShortSword.tres" id="3_hiswv"]
+[ext_resource type="Resource" uid="uid://bpscdhoshmjls" path="res://data/items/potions/Antidote.tres" id="4_ymuan"]
+[ext_resource type="Resource" uid="uid://jh6urisffe2v" path="res://data/items/runes/RuneOfResistPoison.tres" id="5_4mrkg"]
+[ext_resource type="Resource" uid="uid://dwqgodsd7t16e" path="res://data/items/repair_tools/RepairToolBasic.tres" id="6_jwqcv"]
+[ext_resource type="Resource" uid="uid://bxeunqejsykb7" path="res://data/items/scrolls/ScrollOfFirebolt.tres" id="7_tsqjj"]
+[ext_resource type="Resource" uid="uid://c2fcxyd8jatqi" path="res://data/items/scrolls/ScrollOfPoisonbolt.tres" id="8_252a0"]
+[ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="9_87537"]
+[ext_resource type="Resource" uid="uid://bhbvnwynmqbs" path="res://data/items/scrolls/ScrollOfHealing.tres" id="9_gl8j3"]
+[ext_resource type="Script" uid="uid://ctq6u1ndsne3p" path="res://src/items/Scroll.gd" id="10_252a0"]
+[ext_resource type="Script" uid="uid://bwj0xovfmtks4" path="res://src/abilities/Spell.gd" id="11_87537"]
+[ext_resource type="Script" uid="uid://rglym38nsnwg" path="res://src/effects/status_effect.gd" id="12_anin4"]
+[ext_resource type="Script" uid="uid://g8fqfpwlfdk3" path="res://src/effects/instant/cure_status_effect.gd" id="15_byfk2"]
+
+[sub_resource type="Resource" id="Resource_l152d"]
+script = ExtResource("15_byfk2")
+condition_to_cure = "Poison"
+metadata/_custom_type_script = "uid://g8fqfpwlfdk3"
+
+[sub_resource type="Resource" id="Resource_5cxqt"]
+script = ExtResource("11_87537")
+spell_name = "Cure Poison"
+description = "A magical spell."
+spell_effects = Array[ExtResource("12_anin4")]([SubResource("Resource_l152d")])
+target_type = 1
+mana_cost = 0
+metadata/_custom_type_script = "uid://bwj0xovfmtks4"
+
+[sub_resource type="Resource" id="Resource_tt7yc"]
+script = ExtResource("10_252a0")
+spell = SubResource("Resource_5cxqt")
+requires_target = false
+name = "Item"
+purchase_value = 10
+metadata/_custom_type_script = "uid://ctq6u1ndsne3p"
+
+[resource]
+script = ExtResource("9_87537")
+loot_table = Array[ExtResource("1_0agda")]([ExtResource("2_gl8j3"), ExtResource("3_hiswv"), ExtResource("4_ymuan"), ExtResource("5_4mrkg"), ExtResource("6_jwqcv"), ExtResource("7_tsqjj"), ExtResource("8_252a0"), ExtResource("9_gl8j3"), SubResource("Resource_tt7yc")])
+count = 2
+chance_none = 0.0
+pick_method = 1
+floor_min = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"
