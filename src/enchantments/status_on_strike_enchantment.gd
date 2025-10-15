@@ -5,8 +5,10 @@ class_name StatusOnStrikeEnchantment extends OnStrikeEnchantment
 
 func on_strike(target: CombatEntity) -> void:
     if randf() < effect_apply_chance:
-
-        LogManager.log_damage("You inflict %s on %s!" % [status_effect.get_effect_name(), target.get_name()], target)
+        var damage_type : DamageType.Type = status_effect.get("elemental_type")
+        if damage_type == null:
+            damage_type = DamageType.Type.PHYSICAL  # Default to physical if not specified
+        LogManager.log_damage("You inflict %s on %s!" % [status_effect.get_effect_name(), target.get_name()], target, damage_type)
         target.apply_status_effect(status_effect)
 
 func get_enchantment_name() -> String:
