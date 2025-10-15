@@ -4,7 +4,7 @@
 
 [resource]
 script = ExtResource("1_defend")
-defense_multiplier = 0.5
+defense_percentage = 50.0
 ability_name = "Defend"
 description = "Prepare to defend against incoming attacks, reducing damage by 50%."
 priority = 10

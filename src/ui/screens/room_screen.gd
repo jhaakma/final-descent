@@ -135,10 +135,10 @@ func _refresh_stats() -> void:
     # Update HP bar tooltip to show buff information
     var buff_info := ""
     var attack_bonus := GameState.player.get_attack_bonus()
-    var defense_bonus := GameState.player.get_defense_bonus()
+    var current_def_tooltip := GameState.player.get_current_defense_percentage()
 
-    if attack_bonus > 0 or defense_bonus > 0:
-        buff_info = " (ATK +%d, DEF +%d)" % [attack_bonus, defense_bonus]
+    if attack_bonus > 0 or current_def_tooltip > 0:
+        buff_info = " (ATK +%d, DEF %d%%)" % [attack_bonus, current_def_tooltip]
 
     # Add status conditions count and tooltip
     var active_conditions: Array[StatusCondition] = GameState.player.get_all_status_conditions()
@@ -153,7 +153,15 @@ func _refresh_stats() -> void:
     hp_bar.tooltip_text = hp_tooltip_text
 
     atk_value.text = "ATK: %s" % GameState.player.get_total_attack_display()
-    def_value.text = "DEF: %s" % GameState.player.get_defense_bonus()
+
+    # Show current effective defense (including defend bonus if defending)
+    var current_def := GameState.player.get_current_defense_percentage()
+    var defend_bonus := GameState.player.get_defend_bonus_percentage()
+
+    if defend_bonus > 0:
+        def_value.text = "DEF: %d%% (+%d%% defending)" % [current_def, defend_bonus]
+    else:
+        def_value.text = "DEF: %d%%" % current_def
 
 
 func _refresh_buffs() -> void:

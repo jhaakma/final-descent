@@ -160,7 +160,8 @@ func _update_enemy_stats_display() -> void:
     # Display enemy attack and defense stats in a concise format
     if stats_label:  # Check if the label exists in the scene
         var attack_power := current_enemy.get_total_attack_power()
-        var defense := current_enemy.get_total_defense()
+        var current_defense := current_enemy.get_current_defense_percentage()
+        var defend_bonus := current_enemy.get_defend_bonus_percentage()
         var attack_bonus := current_enemy.get_attack_bonus()
         var defense_bonus := current_enemy.get_defense_bonus()
 
@@ -171,11 +172,15 @@ func _update_enemy_stats_display() -> void:
         elif attack_bonus < 0:
             stats_text += " [color=red](%d)[/color]" % attack_bonus
 
-        stats_text += " | DEF: %d" % defense
-        if defense_bonus > 0:
-            stats_text += " [color=green](+%d)[/color]" % defense_bonus
-        elif defense_bonus < 0:
-            stats_text += " [color=red](%d)[/color]" % defense_bonus
+        # Show defense with defend bonus if defending
+        if defend_bonus > 0:
+            stats_text += " | DEF: %d%% [color=cyan](+%d%% defending)[/color]" % [current_defense, defend_bonus]
+        else:
+            stats_text += " | DEF: %d%%" % current_defense
+            if defense_bonus > 0:
+                stats_text += " [color=green](+%d%%)[/color]" % defense_bonus
+            elif defense_bonus < 0:
+                stats_text += " [color=red](-%d%%)[/color]" % abs(defense_bonus)
 
         stats_label.text = stats_text
 
@@ -287,16 +292,14 @@ func _enemy_turn() -> void:
     # Check if enemy should skip their turn BEFORE processing status effects
     if current_enemy.should_skip_turn():
         LogManager.log_combat("%s is stunned and skips their turn!" % current_enemy.get_name())
-        # Process status effects after skipping turn (this will tick down the stun)
-        _process_status_effects()
         # Refresh bars to show updated status effects
         _refresh_bars()
         # Check if player should skip their turn after enemy turn ended
         _check_player_turn_skip()
         return
 
-    # Process status effects at start of turn (for non-stunned enemies)
-    _process_status_effects()
+    # Process enemy status effects at start of their turn
+    current_enemy.process_status_effects()
 
     if current_enemy.is_alive():
         # Execute enemy action (handles both continuing multi-turn abilities and new actions)
@@ -312,6 +315,8 @@ func _check_player_turn_skip() -> void:
     # Check if player should skip their turn (e.g., due to stun)
     if GameState.player.should_skip_turn():
         LogManager.log_combat("You are stunned and skip your turn!")
+        # Process player effects when their turn is skipped
+        GameState.player.process_status_effects()
         # Disable buttons temporarily to show turn was skipped
         _disable_action_buttons()
         # After a brief delay, continue to enemy turn (buttons will be updated based on stun status)
@@ -321,16 +326,6 @@ func _check_player_turn_skip() -> void:
             # Emit turn_ended signal for stunned player turn
             emit_signal("turn_ended")
         )
-
-func _process_status_effects() -> void:
-    # Process player status effects
-    GameState.player.process_status_effects()
-
-    # Process enemy status effects
-    current_enemy.process_status_effects()
-
-    # Update button states after processing status effects
-    _update_button_states()
 
 func resolve_turn() -> void:
     """Unified method to handle all end-of-turn logic and emit turn_ended signal"""
@@ -348,8 +343,19 @@ func resolve_turn() -> void:
     # Emit turn_ended signal to notify room screen to update
     emit_signal("turn_ended")
 
+func _process_start_of_player_turn_effects() -> void:
+    # Process player status effects at the START of their turn
+    # This ensures effects remain visible throughout the enemy turn
+    GameState.player.process_status_effects()
+
+    # Update button states and UI after processing player status effects
+    _update_button_states()
+    _refresh_bars()
 
 func _on_attack() -> void:
+    # Process player status effects at start of turn
+    _process_start_of_player_turn_effects()
+
     var total_dmg := GameState.player.get_total_attack_power()
     var player_damage_type := GameState.player.get_attack_damage_type()
     var final_damage := current_enemy.calculate_incoming_damage(total_dmg, player_damage_type)
@@ -370,6 +376,9 @@ func _on_attack() -> void:
     resolve_turn()
 
 func _on_defend() -> void:
+    # Process player status effects at start of turn
+    _process_start_of_player_turn_effects()
+
     # Use the shared defend ability for consistency
     var defend_ability := DefendAbility.new()
     defend_ability.execute(GameState.player)
@@ -378,6 +387,9 @@ func _on_defend() -> void:
     resolve_turn()
 
 func _on_flee() -> void:
+    # Process player status effects at start of turn
+    _process_start_of_player_turn_effects()
+
     var success := randf() < current_enemy.resource.avoid_chance
     LogManager.log_flee_attempt(GameState.player, success)
 
@@ -390,6 +402,9 @@ func _on_flee() -> void:
 
 func _on_use_item_index(idx: int) -> void:
     print("DEBUG: _on_use_item_index called with index: ", idx)
+
+    # Process player status effects at start of turn
+    _process_start_of_player_turn_effects()
 
     # Check if the index is valid in our mapping
     if idx < 0 or idx >= use_item_menu_mapping.size():

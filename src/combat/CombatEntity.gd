@@ -16,10 +16,6 @@ var stats_component: StatsComponent
 var status_effect_component: StatusEffectComponent
 var resistance_component: ResistanceComponent
 
-# Combat state (merged from CombatActor)
-var is_defending: bool = false
-var defense_multiplier: float = 0.5  # Configurable defense multiplier
-
 # Turn control - for effects like stun
 var skip_next_turn: bool = false
 
@@ -65,50 +61,44 @@ func get_attack_bonus() -> int:
 func get_defense_bonus() -> int:
     return get_total_defense() - get_base_defense()
 
-# === COMBAT STATE MANAGEMENT ===
-func set_defending(value: bool) -> void:
-    if value:
-        start_defending()
-    else:
-        stop_defending()
+# Get the current effective defense percentage including defend bonus (for UI display)
+func get_current_defense_percentage() -> int:
+    # This is now just the total defense from the stats component
+    # (which includes any status effect bonuses like defend effect)
+    return get_total_defense()
 
-func get_is_defending() -> bool:
-    return is_defending
-
-# === DEFENDING SYSTEM ===
-func can_defend() -> bool:
-    return not is_defending
-
-func start_defending() -> void:
-    is_defending = true
-
-func stop_defending() -> void:
-    is_defending = false
-
-func set_defense_multiplier(multiplier: float) -> void:
-    defense_multiplier = multiplier
-
-func apply_defend_action() -> void:
-    # Unified defend action for all actors
-    start_defending()
-
-func reset_combat_state() -> void:
-    is_defending = false
-    defense_multiplier = 0.5  # Reset to default
+# Get just the defend bonus percentage (for UI display)
+func get_defend_bonus_percentage() -> int:
+    # Check if we have an active defend effect
+    if has_status_effect("defend"):
+        var condition := status_effect_component.get_effect("defend")
+        if condition and condition.status_effect is DefendEffect:
+            var defend_effect := condition.status_effect as DefendEffect
+            return defend_effect.get_defense_bonus()
+    return 0
 
 # Calculate damage taken considering defense state and damage type resistance
 func calculate_incoming_damage(base_damage: int, damage_type: DamageType.Type = DamageType.Type.PHYSICAL) -> int:
-    # First apply standard defense calculation (merged from CombatActor)
+    # Start with base damage
     var final_damage := base_damage
 
-    # Apply defending reduction using configurable multiplier
-    if is_defending:
-        final_damage = int(base_damage * defense_multiplier)
-        is_defending = false  # Defense is consumed
-        defense_multiplier = 0.5  # Reset to default for next use
+    # Apply defense as percentage reduction (includes any status effect bonuses)
+    var total_defense_percentage := float(get_total_defense())
+
+    # Cap defense at 95% to prevent complete immunity
+    total_defense_percentage = min(total_defense_percentage, 95.0)
+
+    # Apply percentage reduction
+    if total_defense_percentage > 0:
+        var reduction_factor := total_defense_percentage / 100.0
+        final_damage = int(float(base_damage) * (1.0 - reduction_factor))
+
+    # Ensure minimum 1 damage unless defense is very high
+    final_damage = max(1, final_damage)
 
     # Then apply damage type resistance
     return resistance_component.apply_resistance(final_damage, damage_type)
+
 
 # === STATUS EFFECT MANAGEMENT ===
 func apply_status_effect(effect: StatusEffect) -> bool:

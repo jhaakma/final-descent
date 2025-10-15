@@ -1,21 +1,16 @@
 class_name DefendAbility extends Ability
 
-@export var defense_multiplier: float = 0.5  # How much damage reduction when defending
+@export var defense_percentage: float = 50.0  # Percentage defense bonus when defending
 
 func _init() -> void:
     ability_name = "Defend"
-    description = "Prepare to defend against incoming attacks."
+    description = "Reduce incoming damage by %.0f%% for the next attack." % defense_percentage
     priority = 5
 
 func execute(caster: CombatEntity, _target: CombatEntity = null) -> void:
-    # Apply unified defend action for both players and enemies
-    if caster.has_method("set_defending"):
-        # Use the unified defending system with configurable multiplier
-        caster.set_defending(true)
-        # Store the defense multiplier in the combat actor for use in damage calculation
-        caster.set_defense_multiplier(defense_multiplier)
-    else:
-        push_error("DefendAbility: Caster does not support defending system")
+    # Apply defense boost status effect
+    var defend_effect := DefendEffect.new(int(defense_percentage))
+    caster.apply_status_effect(defend_effect)
 
     # Log the defend action
     LogManager.log_defend(caster)
@@ -28,8 +23,5 @@ func can_use(caster: CombatEntity) -> bool:
     if not caster or not caster.has_method("is_alive") or not caster.is_alive():
         return false
 
-    # Check via the unified defending interface
-    if caster.has_method("get_is_defending"):
-        return not caster.get_is_defending()
-
-    return false
+    # Check if already has defend effect active
+    return not caster.has_status_effect("defend")

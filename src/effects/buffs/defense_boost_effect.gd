@@ -19,7 +19,7 @@ func get_defense_bonus() -> int:
     return defense_bonus
 
 func get_description() -> String:
-    return "+%d DEF for %d turns" % [defense_bonus, get_remaining_turns()]
+    return "+%d%% damage reduction for %d turns" % [defense_bonus, get_remaining_turns()]
 
 func get_base_description() -> String:
-    return "+%d DEF for %d turns" % [defense_bonus, duration]
+    return "+%d%% damage reduction for %d turns" % [defense_bonus, duration]

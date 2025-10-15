@@ -135,10 +135,17 @@ func has_effect(status_effect_id: String) -> bool:
             return true
     return false
 
-# Get a specific status condition
-func get_effect(condition_id: String) -> StatusCondition:
-    if has_effect(condition_id):
-        return active_conditions[condition_id]
+# Get a specific status condition by effect ID
+func get_effect(status_effect_id: String) -> StatusCondition:
+    for condition_id: String in active_conditions.keys():
+        var condition := active_conditions[condition_id]
+        if condition.status_effect.get_effect_id() == status_effect_id:
+            var effect := condition.status_effect
+            if effect is TimedEffect:
+                if not (effect as TimedEffect).is_expired():
+                    return condition
+            else:
+                return condition
     return null
 
 # Check if entity has a specific condition by name

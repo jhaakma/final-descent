@@ -72,9 +72,8 @@ func heal(amount: int) -> int:
     return stats_component.heal(amount)
 
 func take_damage(amount: int) -> int:
-    var defense_bonus := get_defense_bonus()
-    # Use unified damage calculation through combat actor
-    var final_damage: int = calculate_incoming_damage(max(1, amount - defense_bonus))
+    # Use unified damage calculation (now includes percentage-based defense)
+    var final_damage: int = calculate_incoming_damage(amount)
     return stats_component.take_damage(final_damage)
 
 # Health component getters for compatibility

@@ -87,14 +87,13 @@ func heal(amount: int) -> int:
     health_changed.emit(current_health, get_total_max_health())
     return amount
 
-## Take damage, reduced by defense. Returns actual damage taken.
-func take_damage(damage: int, defense_bonus_override: int = -1) -> int:
+## Take damage directly. Returns actual damage taken.
+func take_damage(damage: int) -> int:
     if damage <= 0:
         return 0
 
-    # Use provided defense bonus or the component's default
-    var effective_defense := defense_bonus_override if defense_bonus_override >= 0 else get_total_defense()
-    var reduced_damage: int = max(1, damage - effective_defense)  # Minimum 1 damage
+    # Apply damage directly (defense is now handled in CombatEntity.calculate_incoming_damage)
+    var reduced_damage: int = max(0, damage)
 
     current_health = max(0, current_health - reduced_damage)
     health_changed.emit(current_health, get_total_max_health())
