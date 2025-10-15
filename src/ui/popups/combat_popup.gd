@@ -8,6 +8,7 @@ signal turn_ended()
 @onready var label: Label = %EnemyLabel
 @onready var resistance_label: RichTextLabel = %EnemyResistances
 @onready var weakness_label: RichTextLabel = %EnemyWeaknesses
+@onready var stats_label: RichTextLabel = %EnemyStats  # TODO: Add EnemyStats RichTextLabel to scene
 @onready var you_bar: ProgressBar = %PlayerHP
 @onready var foe_bar: ProgressBar = %EnemyHP
 @onready var attack_btn: Button = %AttackBtn
@@ -71,6 +72,9 @@ func _ready() -> void:
             var damage_type := weaknesses[i]
             var color := DamageType.get_type_color(damage_type).to_html()
             weakness_label.text += "[color=%s]%s[/color]" % [color, DamageType.get_type_name((damage_type))]
+
+    # Update stats display (attack and defense)
+    _update_enemy_stats_display()
 
 
     LogManager.log_combat("Encounter: %s (HP %d)" % [current_enemy.get_name(), current_enemy.get_max_hp()])
@@ -148,6 +152,32 @@ func _refresh_bars() -> void:
 
     # Update button states based on player stun status
     _update_button_states()
+
+    # Update enemy stats display in case they changed due to status effects
+    _update_enemy_stats_display()
+
+func _update_enemy_stats_display() -> void:
+    # Display enemy attack and defense stats in a concise format
+    if stats_label:  # Check if the label exists in the scene
+        var attack_power := current_enemy.get_total_attack_power()
+        var defense := current_enemy.get_total_defense()
+        var attack_bonus := current_enemy.get_attack_bonus()
+        var defense_bonus := current_enemy.get_defense_bonus()
+
+        # Build the stats text with bonuses if they exist
+        var stats_text := "ATK: %d" % attack_power
+        if attack_bonus > 0:
+            stats_text += " [color=green](+%d)[/color]" % attack_bonus
+        elif attack_bonus < 0:
+            stats_text += " [color=red](%d)[/color]" % attack_bonus
+
+        stats_text += " | DEF: %d" % defense
+        if defense_bonus > 0:
+            stats_text += " [color=green](+%d)[/color]" % defense_bonus
+        elif defense_bonus < 0:
+            stats_text += " [color=red](%d)[/color]" % defense_bonus
+
+        stats_label.text = stats_text
 
 func _update_button_states() -> void:
     # Disable buttons if player is stunned, enable if not

@@ -11,7 +11,7 @@ bg_color = Color(0.97982, 0.233158, 5.77569e-07, 1)
 
 [node name="CombatPopup" type="Window"]
 initial_position = 2
-size = Vector2i(400, 197)
+size = Vector2i(400, 201)
 wrap_controls = true
 transient = true
 exclusive = true
@@ -49,6 +49,13 @@ fit_content = true
 horizontal_alignment = 1
 
 [node name="EnemyWeaknesses" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+horizontal_alignment = 1
+
+[node name="EnemyStats" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 bbcode_enabled = true
