@@ -49,9 +49,6 @@ func set_ai_component(new_ai_component: EnemyAIComponent) -> void:
 func get_ai_component() -> EnemyAIComponent:
     return resource.ai_component
 
-func get_attack() -> int:
-    return resource.attack
-
 # Enemy AI decision making - call this at the start of turn before damage
 # This method delegates to the AI component for intelligent decision making
 func plan_action() -> void:

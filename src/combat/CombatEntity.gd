@@ -46,6 +46,25 @@ func take_damage(damage: int) -> int:
 func heal(amount: int) -> int:
     return stats_component.heal(amount)
 
+# === STAT MANAGEMENT ===
+func get_total_attack_power() -> int:
+    return stats_component.get_total_attack_power()
+
+func get_total_defense() -> int:
+    return stats_component.get_total_defense()
+
+func get_base_attack_power() -> int:
+    return stats_component.attack_power
+
+func get_base_defense() -> int:
+    return stats_component.defense
+
+func get_attack_bonus() -> int:
+    return get_total_attack_power() - get_base_attack_power()
+
+func get_defense_bonus() -> int:
+    return get_total_defense() - get_base_defense()
+
 # === COMBAT STATE MANAGEMENT ===
 func set_defending(value: bool) -> void:
     if value:

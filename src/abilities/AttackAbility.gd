@@ -48,9 +48,8 @@ func execute(caster: CombatEntity, target: CombatEntity) -> void:
 func calculate_damage(caster: CombatEntity) -> int:
     var damage := base_damage
 
-    # Add caster's attack stat if available
-    if caster.has_method("get_attack"):
-        damage += caster.call("get_attack")
+    # Add caster's total attack power (unified method)
+    damage += caster.get_total_attack_power()
 
     # Add variance
     if damage_variance > 0:

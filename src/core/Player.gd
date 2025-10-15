@@ -72,7 +72,7 @@ func heal(amount: int) -> int:
     return stats_component.heal(amount)
 
 func take_damage(amount: int) -> int:
-    var defense_bonus := get_total_defense_bonus()
+    var defense_bonus := get_defense_bonus()
     # Use unified damage calculation through combat actor
     var final_damage: int = calculate_incoming_damage(max(1, amount - defense_bonus))
     return stats_component.take_damage(final_damage)
@@ -246,13 +246,6 @@ func get_weapon_condition() -> Dictionary:
             }
     return {"current": 0, "max": 0, "percentage": 0.0, "is_damaged": false, "is_broken": true}
 
-func get_total_attack_bonus() -> int:
-    return stats_component.get_total_attack_power() - stats_component.attack_power
-
-# Now uses status effects only
-func get_total_defense_bonus() -> int:
-    return stats_component.get_total_defense() - stats_component.defense
-
 # Get total max HP bonus from status effects
 func get_total_max_hp_bonus() -> int:
     return stats_component.get_total_max_health() - stats_component.max_health
@@ -288,10 +281,16 @@ func clear_all_negative_status_effects() -> Array[StatusCondition]:
     return removed_effects
 
 # === COMBAT CALCULATIONS ===
+# Override to include weapon damage in total attack power
+func get_total_attack_power() -> int:
+    var base_attack := super.get_total_attack_power()  # Get base + bonuses from stats
+    var weapon_damage := get_weapon_damage()  # Get weapon damage
+    return base_attack + weapon_damage
+
 func calculate_attack_damage() -> int:
-    var weapon_dmg := get_weapon_damage()
-    var buff_dmg := get_total_attack_bonus()
-    return weapon_dmg + buff_dmg
+    # Deprecated: Use get_total_attack_power() instead
+    # Now that get_total_attack_power() includes weapon damage, we can just use that
+    return get_total_attack_power()
 
 # Reduce weapon condition after attack - call this after damage logging
 func reduce_weapon_condition() -> void:
@@ -324,8 +323,8 @@ func reduce_weapon_condition() -> void:
 
 func get_total_attack_display() -> String:
     # This shows the total attack power for UI display purposes
-    # Base damage average + weapon + buffs
-    return "%d" % calculate_attack_damage()
+    # Now uses the unified get_total_attack_power() method
+    return "%d" % get_total_attack_power()
 
 # === INVENTORY COMPATIBILITY METHODS ===
 # These provide modern inventory access methods

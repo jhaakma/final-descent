@@ -320,7 +320,7 @@ func resolve_turn() -> void:
 
 
 func _on_attack() -> void:
-    var total_dmg := GameState.player.calculate_attack_damage()
+    var total_dmg := GameState.player.get_total_attack_power()
     var player_damage_type := GameState.player.get_attack_damage_type()
     var final_damage := current_enemy.calculate_incoming_damage(total_dmg, player_damage_type)
     current_enemy.take_damage(final_damage)

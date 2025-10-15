@@ -8,3 +8,4 @@
 - Don't write readme files for every change
 - Avoid using match statements, use dictionaries
 - Add methods as needed, don't add methods "just in case"
+- Godot can be run via command line, the executable is location at `"C:\Development\Godot 4\Godot_v4.4.1-stable_win64_console.exe"`
