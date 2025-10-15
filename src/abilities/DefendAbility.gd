@@ -13,7 +13,7 @@ func execute(caster: CombatEntity, _target: CombatEntity = null) -> void:
         # Use the unified defending system with configurable multiplier
         caster.set_defending(true)
         # Store the defense multiplier in the combat actor for use in damage calculation
-        caster.combat_actor.set_defense_multiplier(defense_multiplier)
+        caster.set_defense_multiplier(defense_multiplier)
     else:
         push_error("DefendAbility: Caster does not support defending system")
 

@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="ItemPotion" load_steps=5 format=3 uid="uid://bpscdhoshmjls"]
 
 [ext_resource type="Script" uid="uid://dikmkr6vyadjj" path="res://src/items/Potion.gd" id="1_m18rj"]
-[ext_resource type="Resource" path="res://data/effects/conditions/PoisonCondition.tres" id="2_djo22"]
+[ext_resource type="Resource" uid="uid://716qyo30rg5i" path="res://data/effects/conditions/PoisonCondition.tres" id="2_djo22"]
 [ext_resource type="Script" uid="uid://g8fqfpwlfdk3" path="res://src/effects/instant/cure_status_effect.gd" id="2_i6nc3"]
 
 [sub_resource type="Resource" id="Resource_ffo3h"]

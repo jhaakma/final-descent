@@ -54,6 +54,7 @@ abilities = Array[ExtResource("1_qi64t")]([ExtResource("4_cx28q"), SubResource("
 name = "Snake"
 max_hp = 15
 attack = 2
+defense = 0
 loot_component = SubResource("Resource_tqj67")
 avoid_chance = 0.5
 resistances = Array[int]([1])

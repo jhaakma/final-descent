@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="StatusCondition" load_steps=3 format=3 uid="uid://cl1234568aa0"]
+[gd_resource type="Resource" script_class="StatusCondition" load_steps=3 format=3 uid="uid://716qyo30rg5i"]
 
-[ext_resource type="Script" path="res://src/effects/condition/status_condition.gd" id="1_statusCondition"]
-[ext_resource type="Resource" path="res://data/effects/PoisonEffect.tres" id="2_poisonEffect"]
+[ext_resource type="Script" uid="uid://1rgx6dp1sjb2" path="res://src/effects/condition/status_condition.gd" id="1_statusCondition"]
+[ext_resource type="Resource" uid="uid://8asuhs1e5eh3" path="res://data/effects/PoisonEffect.tres" id="2_poisonEffect"]
 
 [resource]
 script = ExtResource("1_statusCondition")

@@ -1,5 +1,0 @@
-[gd_resource type="ElementalResistanceEffect" format=3]
-
-[resource]
-elemental_type = 4
-is_removable = true

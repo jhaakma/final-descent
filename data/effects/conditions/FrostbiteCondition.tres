@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="StatusCondition" load_steps=3 format=3 uid="uid://cl1234568aa2"]
+[gd_resource type="Resource" script_class="StatusCondition" load_steps=3 format=3 uid="uid://bl3ngn22d734y"]
 
-[ext_resource type="Script" path="res://src/effects/condition/status_condition.gd" id="1_statusCondition"]
-[ext_resource type="Resource" path="res://data/effects/FrostbiteEffect.tres" id="2_frostbiteEffect"]
+[ext_resource type="Script" uid="uid://1rgx6dp1sjb2" path="res://src/effects/condition/status_condition.gd" id="1_statusCondition"]
+[ext_resource type="Resource" uid="uid://dh0bhx4lcavna" path="res://data/effects/FrostbiteEffect.tres" id="2_frostbiteEffect"]
 
 [resource]
 script = ExtResource("1_statusCondition")

@@ -13,9 +13,12 @@ func get_attack_damage_type() -> DamageType.Type:
 
 # Core combat components - shared by all combat entities
 var stats_component: StatsComponent
-var combat_actor: CombatActor
 var status_effect_component: StatusEffectComponent
 var resistance_component: ResistanceComponent
+
+# Combat state (merged from CombatActor)
+var is_defending: bool = false
+var defense_multiplier: float = 0.5  # Configurable defense multiplier
 
 # Turn control - for effects like stun
 var skip_next_turn: bool = false
@@ -23,7 +26,6 @@ var skip_next_turn: bool = false
 # Base constructor for combat entities - must be called by subclasses
 func _init_combat_entity(max_health: int, attack_power: int, defense: int) -> void:
     stats_component = StatsComponent.new(max_health, attack_power, defense)
-    combat_actor = CombatActor.new(self)
     status_effect_component = StatusEffectComponent.new(self)
     resistance_component = ResistanceComponent.new()
 
@@ -47,19 +49,47 @@ func heal(amount: int) -> int:
 # === COMBAT STATE MANAGEMENT ===
 func set_defending(value: bool) -> void:
     if value:
-        combat_actor.start_defending()
+        start_defending()
     else:
-        combat_actor.stop_defending()
+        stop_defending()
 
 func get_is_defending() -> bool:
-    return combat_actor.get_is_defending()
+    return is_defending
+
+# === DEFENDING SYSTEM ===
+func can_defend() -> bool:
+    return not is_defending
+
+func start_defending() -> void:
+    is_defending = true
+
+func stop_defending() -> void:
+    is_defending = false
+
+func set_defense_multiplier(multiplier: float) -> void:
+    defense_multiplier = multiplier
+
+func apply_defend_action() -> void:
+    # Unified defend action for all actors
+    start_defending()
+
+func reset_combat_state() -> void:
+    is_defending = false
+    defense_multiplier = 0.5  # Reset to default
 
 # Calculate damage taken considering defense state and damage type resistance
 func calculate_incoming_damage(base_damage: int, damage_type: DamageType.Type = DamageType.Type.PHYSICAL) -> int:
-    # First apply standard defense calculation
-    var damage_after_defense := combat_actor.calculate_incoming_damage(base_damage)
+    # First apply standard defense calculation (merged from CombatActor)
+    var final_damage := base_damage
+
+    # Apply defending reduction using configurable multiplier
+    if is_defending:
+        final_damage = int(base_damage * defense_multiplier)
+        is_defending = false  # Defense is consumed
+        defense_multiplier = 0.5  # Reset to default for next use
+
     # Then apply damage type resistance
-    return resistance_component.apply_resistance(damage_after_defense, damage_type)
+    return resistance_component.apply_resistance(final_damage, damage_type)
 
 # === STATUS EFFECT MANAGEMENT ===
 func apply_status_effect(effect: StatusEffect) -> bool:

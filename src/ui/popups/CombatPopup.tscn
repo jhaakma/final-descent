@@ -11,7 +11,7 @@ bg_color = Color(0.97982, 0.233158, 5.77569e-07, 1)
 
 [node name="CombatPopup" type="Window"]
 initial_position = 2
-size = Vector2i(400, 657)
+size = Vector2i(400, 197)
 wrap_controls = true
 transient = true
 exclusive = true

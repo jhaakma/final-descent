@@ -17,7 +17,7 @@ func _init(enemy_resource: EnemyResource) -> void:
     resource = enemy_resource
 
     # Initialize base combat entity with enemy health
-    _init_combat_entity(resource.max_hp, resource.attack, 0)
+    _init_combat_entity(resource.max_hp, resource.attack, resource.defense)
 
     # Apply resistances and weaknesses from resource
     _apply_resistances_and_weaknesses()

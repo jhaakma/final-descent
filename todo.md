@@ -1,11 +1,26 @@
 # To do
 
+## Managers
+- Room Manager
+    - Stores the list of room types
+    - Holds logic for determining next room
+    - Room difficulty increases as player descends
+    - "Stages" - set of 10? rooms, with a boss at the end
+
+## Difficulty System
+- A mechanic for determining and validating difficulty rating of encounters
+- Prerequisites:
+    - Room Manager
+    - CombayEntity refactor
+
+
 ## Simplify CombatEntity and subclasses
 - Merge CombatActor into CombatEntity
 
 ## Reduce .calls by using is Class
 - Create subclass of StatusEffect that implements on_removed etc
 - Enemy get_attack -> replace with stats_component
+
 
 ## Theme
 Create and use a consistent theme
@@ -26,12 +41,6 @@ Remove all unnecessary theme overrides
 - Staves improve spell effectiveness
 - Wands with limited spell use
 
-## Managers
-- Room Manager
-    - Stores the list of room types
-    - Holds logic for determining next room
-    - Room difficulty increases as player descends
-    - "Stages" - set of 10? rooms, with a boss at the end
 
 ## More Rooms
 - Unsafe rest rooms
