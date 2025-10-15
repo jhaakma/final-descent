@@ -8,7 +8,10 @@ func on_strike(_target: CombatEntity) -> void:
 
 func initialise(_owner: Object) -> void:
     if is_valid_owner(_owner):
-        (_owner as Weapon).attack_hit.connect(on_strike)
+        var weapon := _owner as Weapon
+        if not weapon.attack_hit.is_connected(on_strike,):
+            weapon.attack_hit.connect(on_strike)
+            print_debug("Enchantment %s applied to %s" % [self.get_class(), _owner.get_class()])
     else:
         print_debug("Warning: Enchantment %s cannot be applied to %s" % [
             self.get_class(),

@@ -19,6 +19,7 @@ static var preferred_tab_index: int = 0
 @onready var all_list: VBoxContainer = %AllList
 @onready var weapons_list: VBoxContainer = %WeaponsList
 @onready var potions_list: VBoxContainer = %PotionsList
+@onready var scrolls_list: VBoxContainer = %ScrollsList
 @onready var misc_list: VBoxContainer = %MiscList
 
 var selected_item: Item = null
@@ -27,6 +28,7 @@ var inventory_rows: Dictionary[String, Array] = {
     "all": [] as Array[InventoryRow],
     "weapons": [] as Array[InventoryRow],
     "potions": [] as Array[InventoryRow],
+    "scrolls": [] as Array[InventoryRow],
     "misc": [] as Array[InventoryRow]
 }
 
@@ -110,6 +112,9 @@ func _refresh_inventory() -> void:
             Item.ItemCategory.POTION:
                 potions_list.add_child(row)
                 inventory_rows["potions"].append(row)
+            Item.ItemCategory.SCROLL:
+                scrolls_list.add_child(row)
+                inventory_rows["scrolls"].append(row)
             Item.ItemCategory.MISC:
                 misc_list.add_child(row)
                 inventory_rows["misc"].append(row)

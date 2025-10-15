@@ -1,8 +1,16 @@
 # To do
 
+## Block invalid scroll use
+- Trace back success/fail from status effect on_apply back to the use function
+- e.g. healing scrolls when already at full health
+
 ## Resolve logging issues
 - "Player casts" - should be "you cast" - move to LogManager
 - Consider using the LogManager.log with metadata option for other logging (big refactor)
+
+## Status Effect stacking issues
+- Still needs work, for example, poison from a spell and poison from a weapon aren't stacking
+- Status effects probably need a can_stack
 
 ## Integrate Combat Popup into RoomScene
 - Replace the action buttons section, which solves the need to disable anything
