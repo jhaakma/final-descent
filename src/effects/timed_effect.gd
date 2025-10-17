@@ -51,14 +51,10 @@ func handle_existing_condition(_component: StatusEffectComponent, new_condition:
     # If the new effect has longer duration, refresh it
     if existing_effect.get_remaining_turns() < new_effect.get_duration():
         existing_effect.remaining_turns = new_effect.get_duration()
-        LogManager.log_status_condition_applied(target, existing_condition, new_effect.get_duration())
+        LogManager.log_event("{You are} {effect_verb} with {effect:%s} (%d turns)!" % [existing_condition.get_log_name(), new_effect.get_duration()], {"target": target, "status_effect": existing_condition.status_effect})
         return true
     else:
-        LogManager.log({
-            text = "{You are} already affected by %s." % existing_condition.name,
-            target = target,
-            color = LogManager.LogColor.WARNING
-        })
+        LogManager.log_event("{You are} already affected by %s." % existing_condition.name, {"target": target})
         return false
 
 # Override: Handle applying new timed effect
@@ -69,7 +65,7 @@ func handle_new_condition(component: StatusEffectComponent, condition: StatusCon
     # Call lifecycle method
     on_applied(target)
 
-    LogManager.log_status_condition_applied(target, condition, get_duration())
+    LogManager.log_event("{You are} {effect_verb} with {effect:%s} (%d turns)!" % [condition.get_log_name(), get_duration()], {"target": target, "status_effect": condition.status_effect})
     component.effect_applied.emit(condition.name)
     return true
 

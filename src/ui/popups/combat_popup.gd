@@ -80,7 +80,7 @@ func _ready() -> void:
     _update_enemy_stats_display()
 
 
-    LogManager.log_combat("Encounter: %s (HP %d)" % [current_enemy.get_name(), current_enemy.get_max_hp()])
+    LogManager.log_event("Encounter: {enemy:%s} (HP %d)" % [current_enemy.get_name(), current_enemy.get_max_hp()])
     _refresh_bars()
     _setup_use_item_menu()
     attack_btn.pressed.connect(_on_attack)
@@ -96,10 +96,10 @@ func _ready() -> void:
         _disable_action_buttons()
 
         if avoid_failure:
-            LogManager.log_warning("You fail to avoid!")
-            LogManager.log_combat("The %s strikes first!" % current_enemy.get_name())
+            LogManager.log_event("{You} fail to avoid!", {"target": GameState.player})
+            LogManager.log_event("The {enemy:%s} strikes first!" % current_enemy.get_name())
         else:
-            LogManager.log_combat("The %s strikes first!" % current_enemy.get_name())
+            LogManager.log_event("The {enemy:%s} strikes first!" % current_enemy.get_name())
 
         # Add a small delay before the enemy attack to let the player see what's happening
         get_tree().create_timer(0.5).timeout.connect(func()->void:
@@ -230,7 +230,7 @@ func _setup_use_item_menu() -> void:
 
 func _check_end() -> void:
     if not current_enemy.is_alive():
-        LogManager.log_success("You defeated the %s!" % current_enemy.get_name())
+        LogManager.log_event("{You} {action} the {enemy:%s}!" % current_enemy.get_name(), {"target": GameState.player, "action": ["defeat", "defeats"]})
         emit_signal("combat_resolved", true)
         # Don't queue_free() here - let the loot screen handle it
     elif GameState.player.get_hp() <= 0:
@@ -244,7 +244,7 @@ func _check_end() -> void:
 
 func _check_end_with_delay() -> void:
     if not current_enemy.is_alive():
-        LogManager.log_success("You defeated the %s!" % current_enemy.get_name())
+        LogManager.log_event("{You} {action} the {enemy:%s}!" % current_enemy.get_name(), {"target": GameState.player, "action": ["defeat", "defeats"]})
         emit_signal("combat_resolved", true)
         # Don't queue_free() here - let the loot screen handle it
     elif GameState.player.get_hp() <= 0:
@@ -280,7 +280,7 @@ func _on_enemy_action(action_type: String, value: int, message: String) -> void:
     # Message is now handled by the enemy's enhanced logging
     # Only log if there's still a message (for backwards compatibility)
     if message != "":
-        LogManager.log_combat(message)
+        LogManager.log_event(message)
 
     match action_type:
         "attack":
@@ -298,7 +298,7 @@ func _on_enemy_action(action_type: String, value: int, message: String) -> void:
 func _enemy_turn() -> void:
     # Check if enemy should skip their turn BEFORE processing status effects
     if current_enemy.should_skip_turn():
-        LogManager.log_combat("%s is stunned and skips their turn!" % current_enemy.get_name())
+        LogManager.log_event("{enemy:%s} is stunned and skips their turn!" % current_enemy.get_name())
         # Refresh bars to show updated status effects
         _refresh_bars()
         # Check if player should skip their turn after enemy turn ended
@@ -321,7 +321,7 @@ func _enemy_turn() -> void:
 func _check_player_turn_skip() -> void:
     # Check if player should skip their turn (e.g., due to stun)
     if GameState.player.should_skip_turn():
-        LogManager.log_combat("You are stunned and skip your turn!")
+        LogManager.log_event("{You} are stunned and skip {your} turn!", {"target": GameState.player})
         # Process player effects when their turn is skipped
         GameState.player.process_status_effects()
         # Disable buttons temporarily to show turn was skipped
@@ -370,7 +370,11 @@ func _on_attack() -> void:
     var weapon_instance := GameState.player.get_equipped_weapon_instance()
     var weapon_name := weapon_instance.item.name if weapon_instance else ""
 
-    LogManager.log_attack(GameState.player, current_enemy, final_damage, weapon_name, player_damage_type)
+    # Log the attack
+    if weapon_name != "":
+        LogManager.log_event("{You} {action} {enemy:%s} with %s for {damage:%d}!" % [current_enemy.get_name(), weapon_name, final_damage], {"target": GameState.player, "damage_type": player_damage_type, "action": ["strike", "strikes"]})
+    else:
+        LogManager.log_event("{You} {action} {enemy:%s} for {damage:%d}!" % [current_enemy.get_name(), final_damage], {"target": GameState.player, "damage_type": player_damage_type, "action": ["attack", "attacks"]})
     if weapon_instance:
         # Check if weapon has special attack effects
         var weapon := weapon_instance.item as Weapon
@@ -398,7 +402,10 @@ func _on_flee() -> void:
     _process_start_of_player_turn_effects()
 
     var success := randf() < current_enemy.resource.avoid_chance
-    LogManager.log_flee_attempt(GameState.player, success)
+    if success:
+        LogManager.log_event("{You} flee successfully!", {"target": GameState.player})
+    else:
+        LogManager.log_event("{You} fail to flee!", {"target": GameState.player})
 
     if success:
         emit_signal("combat_fled")
@@ -415,7 +422,7 @@ func _on_use_item_index(idx: int) -> void:
 
     # Check if the index is valid in our mapping
     if idx < 0 or idx >= use_item_menu_mapping.size():
-        LogManager.log_message("Nothing happens…")
+        LogManager.log_event("Nothing happens…")
         # Use unified turn resolution
         resolve_turn()
         return

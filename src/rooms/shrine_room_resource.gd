@@ -37,43 +37,43 @@ func build_actions(actions_grid: GridContainer, room_screen: RoomScreen) -> void
 
 func _on_blessing(room_screen: RoomScreen) -> void:
     if not GameState.player.has_gold(blessing_cost):
-        LogManager.log_warning("Not enough gold.")
+        LogManager.log_event("Not enough gold.")
         return
     GameState.player.add_gold(-blessing_cost)
 
     # Grant a random status effect
     if blessings.size() > 0:
-        LogManager.log_success("You pray at the shrine and feel blessed!")
+        LogManager.log_event("You pray at the shrine and feel blessed!")
         var chosen_blessing: StatusCondition = blessings[GameState.rng.randi() % blessings.size()]
         GameState.player.apply_status_condition(chosen_blessing)
         room_screen.update()
     else:
-        LogManager.log_message("You pray at the shrine, but nothing happens.")
+        LogManager.log_event("You pray at the shrine, but nothing happens.")
     room_screen.mark_cleared()
 
 #Cure removes any status effects
 func _on_cure(room_screen: RoomScreen) -> void:
     if not GameState.player.has_gold(cure_cost):
-        LogManager.log_warning("Not enough gold.")
+        LogManager.log_event("Not enough gold.")
         return
 
-    LogManager.log_success("You pray at the shrine and feel cleansed!")
+    LogManager.log_event("You pray at the shrine and feel cleansed!")
     var removed_effects := GameState.player.clear_all_negative_status_effects()
     if removed_effects.size() > 0:
         GameState.player.add_gold(-cure_cost)
         room_screen.update()
         room_screen.mark_cleared()
     else:
-        LogManager.log_warning("You have no status effects to cure.")
+        LogManager.log_event("You have no status effects to cure.")
 
 
 func _on_heal(room_screen: RoomScreen) -> void:
     if not GameState.player.has_gold(heal_cost):
-        LogManager.log_warning("Not enough gold.")
+        LogManager.log_event("Not enough gold.")
         return
     GameState.player.add_gold(-heal_cost)
     GameState.player.heal(heal_amount)
-    LogManager.log_success("You pray at the shrine and heal %d HP." % heal_amount)
+    LogManager.log_event("You pray at the shrine and heal {healing:%d}." % heal_amount)
     room_screen.update()
     room_screen.mark_cleared()
 
@@ -83,7 +83,7 @@ func _on_loot(room_screen: RoomScreen) -> void:
     if GameState.rng.randf() < loot_curse_chance:
         var ghost_enemy: EnemyResource = curse_enemy
         if ghost_enemy != null:
-            LogManager.log_combat("As you loot the shrine, a vengeful spirit appears!")
+            LogManager.log_event("As you loot the shrine, a vengeful spirit appears!")
             var popup: CombatPopup = CombatPopup.get_scene().instantiate()
             popup.set_enemy(ghost_enemy)
             room_screen.add_child(popup)
@@ -101,9 +101,9 @@ func _on_loot(room_screen: RoomScreen) -> void:
                 room_screen.mark_cleared())
             return
         else:
-            LogManager.log_warning("Error: No ghost enemy configured!")
+            LogManager.log_event("Error: No ghost enemy configured!")
 
     var gold := loot_component.generate_loot().gold_total
     GameState.player.add_gold(gold)
-    LogManager.log_success("You loot the shrine and gain %d gold." % gold)
+    LogManager.log_event("You loot the shrine and gain %d gold." % gold)
     room_screen.mark_cleared()

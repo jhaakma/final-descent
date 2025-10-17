@@ -15,8 +15,8 @@ func apply_effect(target: CombatEntity) -> bool:
     var final_damage := target.calculate_incoming_damage(damage_per_turn, elemental_type)
     final_damage = target.take_damage(final_damage)
 
-    # Use enhanced logging with target context
-    LogManager.log_status_effect_damage(target, get_effect_name(), final_damage, elemental_type)
+    # Use new pattern-based logging
+    LogManager.log_event("{You} {action} {damage:%d} from {effect:%s}!" % [final_damage, get_effect_name()], {"target": target, "damage_type": elemental_type, "action": ["take", "takes"]})
 
     return true
 

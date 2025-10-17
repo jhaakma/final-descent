@@ -29,13 +29,10 @@ func _apply_status_effect(actual_target: CombatEntity, caster: CombatEntity) -> 
     if actual_target.has_method("apply_status_effect"):
 
         # Log the status effect application
-        var caster_name: String = _get_target_name(caster)
-        var target_name: String = _get_target_name(actual_target)
-
         if target_self:
-            LogManager.log_combat("%s applies %s to themselves!" % [caster_name.capitalize(), ability_name])
+            LogManager.log_event("{You} {action} %s to yourself!" % ability_name, {"target": caster, "action": ["apply", "applies"]})
         else:
-            LogManager.log_combat("%s applies %s to %s!" % [caster_name.capitalize(), effect_copy.get_effect_name(), target_name])
+            LogManager.log_event("{You} {action} %s to {enemy:%s}!" % [effect_copy.get_effect_name(), actual_target.get_name()], {"target": caster, "action": ["apply", "applies"]})
 
         actual_target.apply_status_effect(effect_copy)
     else:

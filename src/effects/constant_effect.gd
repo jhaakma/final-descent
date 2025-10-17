@@ -50,11 +50,7 @@ func should_store_in_active_conditions() -> bool:
 
 # Override: Constant effects don't stack by default
 func handle_existing_condition(_component: StatusEffectComponent, _new_condition: StatusCondition, existing_condition: StatusCondition, target: CombatEntity) -> bool:
-    LogManager.log({
-        text = "{You are} already affected by %s." % existing_condition.name,
-        target = target,
-        color = LogManager.LogColor.WARNING
-    })
+    LogManager.log_event("{You are} already affected by %s." % existing_condition.name, {"target": target})
     return false
 
 # Override: Handle applying new constant effect
@@ -67,6 +63,6 @@ func handle_new_condition(component: StatusEffectComponent, condition: StatusCon
 
     # Apply the constant effect once
     apply_effect(target)
-    LogManager.log_status_condition_applied(target, condition, 0) # 0 duration for constant
+    LogManager.log_event("{You are} {effect_verb} with {effect:%s}!" % [condition.get_log_name()], {"target": target, "status_effect": self})
     component.effect_applied.emit(condition.name)
     return true

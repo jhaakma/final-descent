@@ -13,10 +13,10 @@ func build_actions(_actions_grid: GridContainer, _room_screen: RoomScreen) -> vo
 
 func _on_open_chest(room_screen: RoomScreen) -> void:
     # Instead of giving loot, trigger combat with the mimic
-    LogManager.log_combat("The chest suddenly springs to life! It's a mimic!")
+    LogManager.log_event("The chest suddenly springs to life! It's a mimic!")
 
     if mimic_enemy == null:
-        LogManager.log_warning("Error: No mimic enemy configured!")
+        LogManager.log_event("Error: No mimic enemy configured!")
         room_screen.mark_cleared()
         return
 

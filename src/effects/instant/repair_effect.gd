@@ -37,13 +37,13 @@ func apply_effect(target: CombatEntity) -> bool:
             var max_condition := (weapon_instance.item as Weapon).get_max_condition()
             weapon_instance.item_data.current_condition = min(current_condition + repair_amount, max_condition)
             weapon_instance.item_data_updated()
-            LogManager.log_success("Repaired %s by %d points" % [weapon_instance.item.name, repair_amount])
+            LogManager.log_event("Repaired %s by %d points" % [weapon_instance.item.name, repair_amount])
             return true
         else:
-            LogManager.log_warning("Your equipped weapon is not damaged.")
+            LogManager.log_event("Your equipped weapon is not damaged.")
             return false
     else:
-        LogManager.log_warning("You have no weapon equipped to repair.")
+        LogManager.log_event("You have no weapon equipped to repair.")
         return false
 
 func get_description() -> String:

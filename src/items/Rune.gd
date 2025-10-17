@@ -13,12 +13,12 @@ func _on_use(_item_data: ItemData) -> bool:
     var player := GameState.player
     var current_weapon_instance := player.get_equipped_weapon()
     if not current_weapon_instance:
-        LogManager.log_warning("No weapon equipped to enchant.")
+        LogManager.log_event("No weapon equipped to enchant.")
         return false
 
     var current_weapon := current_weapon_instance.item as Weapon
     if current_weapon.enchantment:
-        LogManager.log_warning("Current weapon already has an enchantment.")
+        LogManager.log_event("Current weapon already has an enchantment.")
         return false
 
     current_weapon = current_weapon.duplicate() as Weapon
@@ -26,7 +26,7 @@ func _on_use(_item_data: ItemData) -> bool:
     current_weapon.name = "%s of %s" % [current_weapon.name, enchantment.get_enchantment_name()]
     current_weapon_instance.item = current_weapon
     player.equip_weapon(current_weapon_instance)
-    LogManager.log_success("You have successfully enchanted your weapon with %s." % enchantment.get_enchantment_name())
+    LogManager.log_event("You have successfully enchanted your weapon with %s." % enchantment.get_enchantment_name())
     return true
 
 func get_additional_tooltip_info() -> Array[AdditionalTooltipInfoData]:

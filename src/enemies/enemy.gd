@@ -67,7 +67,7 @@ func perform_planned_action() -> void:
     # Safety check: verify this entity should not skip their turn (e.g., due to stun)
     # Note: This is primarily a safety check since _enemy_turn() should handle this
     if should_skip_turn():
-        LogManager.log_combat("%s is stunned and skips their turn!" % get_name())
+        LogManager.log_event("{You are} {action} stunned and {action} {your} turn!" % [], {"target": self, "action": ["skip", "skips"]})
         return
 
     if planned_ability != null:
@@ -85,7 +85,7 @@ func perform_action() -> void:
     # Safety check: verify this entity should not skip their turn (e.g., due to stun)
     # Note: This is primarily a safety check since _enemy_turn() should handle this
     if should_skip_turn():
-        LogManager.log_combat("%s is stunned and skips their turn!" % get_name())
+        LogManager.log_event("{You are} stunned and {action} {your} turn!" % [], {"target": self, "action": ["skip", "skips"]})
         return
 
     # Check if we have an ability that's currently executing (multi-turn)

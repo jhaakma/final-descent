@@ -31,4 +31,4 @@ func generate_loot() -> LootResult:
 func apply_gold(loot_result: LootResult) -> void:
     if loot_result.gold_total > 0:
         GameState.player.add_gold(loot_result.gold_total)
-        LogManager.log_success("Received %d gold." % loot_result.gold_total)
+        LogManager.log_event("Received %d gold." % loot_result.gold_total)

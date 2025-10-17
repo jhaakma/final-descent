@@ -28,7 +28,7 @@ func _on_avoid_pressed(room_screen: RoomScreen) -> void:
     print("Avoid roll: %f" % roll)
     var avoided := roll < selected_enemy.avoid_chance
     if avoided:
-        LogManager.log_success("You avoid the combat and move on.")
+        LogManager.log_event("{You} avoid the combat and move on.")
         room_screen.mark_cleared()
     else:
         start_avoid_failure_fight(room_screen)

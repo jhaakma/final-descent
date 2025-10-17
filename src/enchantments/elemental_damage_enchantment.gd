@@ -28,10 +28,4 @@ func on_strike(target: CombatEntity) -> void:
 
         if final_elemental_damage > 0:
             var damage_type_name := DamageType.get_type_name(elemental_damage_type).to_lower()
-            var base_message := "The %s enchantment deals %d additional %s damage!" % [
-                DamageType.get_type_name(elemental_damage_type).to_lower(),
-                final_elemental_damage,
-                damage_type_name
-            ]
-
-            LogManager.log_damage(base_message, target, elemental_damage_type)
+            LogManager.log_event("The %s enchantment deals {damage:%d}!" % [damage_type_name, final_elemental_damage], {"target": target, "damage_type": elemental_damage_type})

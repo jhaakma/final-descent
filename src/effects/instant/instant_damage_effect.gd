@@ -23,8 +23,6 @@ func apply_effect(target: CombatEntity) -> bool:
     var actual_damage := target.take_damage(final_damage)
 
     if actual_damage > 0:
-        var damage_type_name := DamageType.get_type_name(damage_type).to_lower()
-
         # Use application context for better logging if available
         var source_name: String
         if application_context and application_context.log_ability_name:
@@ -32,7 +30,7 @@ func apply_effect(target: CombatEntity) -> bool:
         else:
             source_name = get_effect_name()
 
-        LogManager.log_damage("%s deals %d %s damage!" % [source_name, actual_damage, damage_type_name], target, damage_type)
+        LogManager.log_event("%s {action} {damage:%d}!" % [source_name, actual_damage], {"target": target, "damage_type": damage_type, "action": ["deals", "deals"]})
 
     return actual_damage > 0
 

@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_xx2h1")
 heal_amount = 10
-rest_message = "You sleep soundly."
+rest_message = "You sleep soundly, recovering {healing:%d}."
 title = "Bedroom"
 description = "Whoever sleeps here isn't around."
 weight = 8

@@ -15,6 +15,9 @@ func build_actions(_actions_grid: GridContainer, _room_screen: RoomScreen) -> vo
 
 func _on_rest(room_screen: RoomScreen) -> void:
     GameState.player.heal(heal_amount)
-    LogManager.log_healing(rest_message)
+    if rest_message.contains("{healing:%d}"):
+        LogManager.log_event(rest_message % heal_amount)
+    else:
+        LogManager.log_event(rest_message)
     room_screen.mark_cleared()
 

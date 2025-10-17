@@ -15,7 +15,8 @@ func get_effect_type() -> EffectType:
 func on_applied(target: CombatEntity) -> void:
     if target.has_method("add_stat_modifier"):
         target.call("add_stat_modifier", "strength", strength_bonus)
-    LogManager.log_status_effect_healing(target, get_effect_name(), strength_bonus)
+    # Note: This doesn't seem like healing, but keeping green color for positive effect
+    LogManager.log_event("{Your} strength increases by {bonus:+%d}!" % strength_bonus, {"target": target})
 
 # Called when the effect is removed from an entity
 func on_removed(target: CombatEntity) -> void:

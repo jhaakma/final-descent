@@ -108,7 +108,7 @@ func _on_inventory_changed() -> void:
 # === INVENTORY MANAGEMENT ===
 func add_items(item_instance: ItemInstance) -> void:
     inventory.add_item(item_instance)
-    LogManager.log_message("Received item: %s (x%d)" % [item_instance.item.name, item_instance.count])
+    LogManager.log_success("Received item: %s (x%d)" % [item_instance.item.name, item_instance.count])
 
 
 func remove_item(item_instance: ItemInstance) -> bool:
@@ -160,7 +160,7 @@ func equip_weapon(item_instance: ItemInstance) -> bool:
         if weapon.enchantment is ConstantEffectEnchantment:
             (weapon.enchantment as ConstantEffectEnchantment)._on_weapon_equipped(weapon)
 
-    LogManager.log_message("Equipped %s" % weapon.name)
+    LogManager.log_event("Equipped %s" % weapon.name)
     return true
 
 func unequip_weapon() -> bool:
@@ -182,7 +182,7 @@ func unequip_weapon() -> bool:
         if weapon.enchantment is ConstantEffectEnchantment:
             (weapon.enchantment as ConstantEffectEnchantment)._on_weapon_unequipped(weapon)
 
-    LogManager.log_message("Unequipped %s" % equipped_weapon.item.name)
+    LogManager.log_event("Unequipped %s" % equipped_weapon.item.name)
 
     equipped_weapon.is_equipped = false
     # Clear equipped weapon
@@ -312,7 +312,7 @@ func reduce_weapon_condition() -> void:
     # Check if weapon is destroyed
     if current_condition <= 0:
         var weapon_name := weapon.name
-        LogManager.log_warning("%s has broken and is destroyed!" % weapon_name)
+        LogManager.log_event("%s has broken and is destroyed!" % weapon_name)
         # Destroy the weapon (don't return it to inventory)
         equipped_weapon = null
         # Emit signal again to update UI when weapon is destroyed

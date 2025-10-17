@@ -1,48 +1,31 @@
 
 extends Node
-# Log color enum for different types of messages
 
-class LogMetadata:
+# Colors for different types of special parameters
+class LogColors:
+    static var HEALING: String = "#a1f7afff"  # Green
+    static var BONUS: String = "#5dffffff"   # Light Blue
+    static var ENEMY: String = "#ff5f2fff"    # Red
+    static var DEFAULT: String = "#ffffffff"  # White
+    static var COMBAT: String = "#f8e71cff"   # Yellow
+    static var SUCCESS: String = "#7ed321ff"  # Bright Green
+    static var WARNING: String = "#f5a623ff"  # Orange
 
-    func init(args: Dictionary) -> void:
-        text = args.get("text", "")
-        target = args.get("target", null)
-        color = args.get("color", LogColor.DEFAULT)
+# Special string patterns for contextual coloring and replacement:
+# {player:text} - Colors text blue and replaces pronouns for player context
+# {enemy:text} - Colors text red and replaces pronouns for enemy context
+# {healing:amount} - Colors healing amount green
+# {damage:amount:type} - Colors damage amount based on damage type (type is optional, defaults to PHYSICAL)
+# {effect:name} - Colors effect name appropriately
+# {action} - Chooses between player/non-player verb forms from context["action"] array: ["player_form", "non_player_form"]
+# Standard patterns: {You}, {you}, {Your}, {your}, etc. for pronoun replacement
 
-    var text: String
-    var target: CombatEntity
-    var color: LogColor
-
-enum LogColor {
-    DEFAULT,
-    DAMAGE_YOU,
-    DAMAGE_THEM,
-    HEALING,
-    BUFF,
-    COMBAT,
-    SUCCESS,
-    WARNING,
-}
-
-var LogColors: Dictionary[LogColor, String]= {
-    LogColor.DEFAULT: "#ffffffff",
-    LogColor.DAMAGE_YOU: "#ff0000ff",
-    LogColor.DAMAGE_THEM: "#b47bffff",
-    LogColor.HEALING: "#a1f7afff",
-    LogColor.BUFF: "#79fbffff",
-    LogColor.COMBAT: "#ff9900ff",
-    LogColor.SUCCESS: "#00ff00ff",
-    LogColor.WARNING: "#fffb00ff",
-}
-
-# Structure to store log entries
+# Structure to store log entries with rich text formatting
 class LogEntry:
-    var text: String
-    var color: String
+    var rich_text: String
 
-    func _init(log_text: String, log_color: String)->void:
-        text = log_text
-        color = log_color
+    func _init(log_rich_text: String) -> void:
+        rich_text = log_rich_text
 
 # Store log history to persist between rooms
 var log_history: Array[LogEntry] = []
@@ -75,98 +58,237 @@ func _update_all_displays() -> void:
             if index >= 0:
                 registered_log_displays.remove_at(index)
 
-## Utility function to replace {You}, {Your}, etc. in log strings
-static func replace_name_patterns(text: String, target: CombatEntity) -> String:
-    var replacements: Dictionary[String, String]
+# Main logging method - processes special patterns and adds formatted entry to history
+func log_event(message: String, context: Dictionary = {}) -> void:
+    var formatted_message := _process_message_patterns(message, context)
+    if context.has("base_color"):
+        formatted_message = "[color=%s]%s[/color]" % [context["base_color"], formatted_message]
+    elif GameState.is_in_combat:
+        formatted_message = "[color=%s]%s[/color]" % [LogColors.COMBAT, formatted_message]
+    _add_to_history(formatted_message)
+    _update_all_displays()
+
+func log_success(message: String, context: Dictionary = {}) -> void:
+    context["base_color"] = LogColors.SUCCESS
+    log_event(message, context)
+
+func log_warning(message: String, context: Dictionary = {}) -> void:
+    context["base_color"] = LogColors.WARNING
+    log_event(message, context)
+
+# Process special string patterns in the message
+func _process_message_patterns(message: String, context: Dictionary) -> String:
+    var processed := message
+
+    # Handle contextual pronoun replacement first
+    var target: CombatEntity = context.get("target", null)
+    if target == null:
+        target = GameState.player
+    processed = _replace_name_patterns(processed, target)
+    # Process special coloring patterns
+    processed = _process_player_patterns(processed, context)
+    processed = _process_enemy_patterns(processed, context)
+    processed = _process_healing_patterns(processed)
+    processed = _process_damage_patterns(processed, context)
+    processed = _process_effect_patterns(processed)
+    processed = _process_effect_verb_patterns(processed, context)
+    processed = _process_action_patterns(processed, context)
+
+    return processed
+
+func _replace_plural_patterns(text: String, count: int) -> String:
+    var result := text
+    if count == 1:
+        result = result.replace("{is_are}", "is")
+        result = result.replace("{has_have}", "has")
+    else:
+        result = result.replace("{is_are}", "are")
+        result = result.replace("{has_have}", "have")
+    return result
+
+
+# Replace pronoun patterns based on target and add appropriate coloring
+func _replace_name_patterns(text: String, target: CombatEntity) -> String:
     var is_player := target == GameState.player
+    var result := text
+
     if is_player:
-        replacements = {
-            "{You}": "You",
-            "{you}": "you",
-            "{Your}": "Your",
-            "{your}": "your",
-            "{You are}": "You are",
-            "{you are}": "you are",
-        }
+        # Player gets blue coloring - use format method for cleaner code
+        result = result.replace("{You}", "You")
+        result = result.replace("{you}", "you")
+        result = result.replace("{Your}", "Your")
+        result = result.replace("{your}", "your")
+        result = result.replace("{You are}", "You are")
+        result = result.replace("{you are}", "you are")
     else:
+        # Enemy gets red coloring
         var target_name := target.get_name()
-        replacements = {
-            "{You}": "%s" % target_name,
-            "{you}": "%s" % target_name,
-            "{Your}": "%s's" % target_name,
-            "{your}": "%s's" % target_name,
-            "{You are}": "%s is" % target_name,
-            "{you are}": "%s is" % target_name,
-        }
+        var enemy_color := LogColors.ENEMY
+        result = result.replace("{You}", "[color={color}]{name}[/color]".format({"color": enemy_color, "name": target_name}))
+        result = result.replace("{you}", "[color={color}]{name}[/color]".format({"color": enemy_color, "name": target_name}))
+        result = result.replace("{Your}", "[color={color}]{name}'s[/color]".format({"color": enemy_color, "name": target_name}))
+        result = result.replace("{your}", "[color={color}]their[/color]").format({"color": enemy_color})
+        result = result.replace("{You are}", "[color={color}]{name}[/color] is".format({"color": enemy_color, "name": target_name}))
+        result = result.replace("{you are}", "[color={color}]{name}[/color] is".format({"color": enemy_color, "name": target_name}))
 
-    for pattern: String in replacements.keys():
-        text = text.replace(pattern, replacements[pattern])
-    return text
+    return result
 
-func log(args: Dictionary) -> void:
-    var metadata := LogMetadata.new()
-    metadata.init(args)
-    var color_str := _get_color_str(metadata.color)
-    var entry_text := metadata.text
-    if metadata.target != null:
-        entry_text = replace_name_patterns(entry_text, metadata.target)
-    _add_to_history(entry_text, color_str)
-    _update_all_displays()
+# Process {player:text} patterns
+func _process_player_patterns(text: String, _context: Dictionary) -> String:
+    var regex := RegEx.new()
+    regex.compile("\\{player:([^}]+)\\}")
 
-# Logging convenience functions for different message types
-func log_message(text: String, color_str: String = _get_color_str(LogColor.DEFAULT)) -> void:
-    _add_to_history(text, color_str)
-    _update_all_displays()
+    var result := text
+    for regex_match in regex.search_all(text):
+        var full_match := regex_match.get_string(0)
+        var content := regex_match.get_string(1)
+        result = result.replace(full_match, content)
 
+    return result
 
-func log_damage(text: String, target: CombatEntity, damage_type: DamageType.Type = DamageType.Type.PHYSICAL) -> void:
-    var message: String = text
-    # Add resistance feedback
-    var resistance_message := _get_resistance_message(target, damage_type)
-    if resistance_message != "":
-        message += " " + resistance_message
+# Process {enemy:text} patterns
+func _process_enemy_patterns(text: String, _context: Dictionary) -> String:
+    var regex := RegEx.new()
+    regex.compile("\\{enemy:([^}]+)\\}")
 
-    var you := target == GameState.player
-    if you:
-        _add_to_history(message, _get_color_str(LogColor.DAMAGE_YOU))
-    else:
-        _add_to_history(message, _get_color_str(LogColor.DAMAGE_THEM))
-    _update_all_displays()
+    var result := text
+    for regex_match in regex.search_all(text):
+        var full_match := regex_match.get_string(0)
+        var content := regex_match.get_string(1)
+        var colored := "[color=%s]%s[/color]" % [LogColors.ENEMY, content]
+        result = result.replace(full_match, colored)
 
-func log_status(text: String, target: CombatEntity, positive: bool) -> void:
-    var replaced_text := replace_name_patterns(text, target)
-    if positive:
-        _add_to_history(replaced_text, _get_color_str(LogColor.BUFF))
-    else:
-        _add_to_history(replaced_text, _get_color_str(LogColor.WARNING))
-    _update_all_displays()
+    return result
 
-func log_healing(text: String) -> void:
-    _add_to_history(text, _get_color_str(LogColor.HEALING))
-    _update_all_displays()
+# Process {healing:amount} patterns
+func _process_healing_patterns(text: String) -> String:
+    var regex := RegEx.new()
+    regex.compile("\\{healing:([^}]+)\\}")
 
-func log_buff(text: String) -> void:
-    _add_to_history(text, _get_color_str(LogColor.BUFF))
-    _update_all_displays()
+    var result := text
+    for regex_match in regex.search_all(text):
+        var full_match := regex_match.get_string(0)
+        var content := regex_match.get_string(1)
+        var colored := "[color=%s]%s HP[/color]" % [LogColors.HEALING, content]
+        result = result.replace(full_match, colored)
 
-func log_combat(text: String) -> void:
-    _add_to_history(text, _get_color_str(LogColor.COMBAT))
-    _update_all_displays()
+    return result
 
-func log_success(text: String) -> void:
-    _add_to_history(text, _get_color_str(LogColor.SUCCESS))
-    _update_all_displays()
+# Process {bonus:amount} patterns
+func _process_bonus_patterns(text: String) -> String:
+    var regex := RegEx.new()
+    regex.compile("\\{bonus:([^}]+)\\}")
 
-func log_warning(text: String) -> void:
-    _add_to_history(text, _get_color_str(LogColor.WARNING))
-    _update_all_displays()
+    var result := text
+    for regex_match in regex.search_all(text):
+        var full_match := regex_match.get_string(0)
+        var content := regex_match.get_string(1)
+        var colored := "[color=%s]%s[/color]" % [LogColors.BONUS, content]
+        result = result.replace(full_match, colored)
+    return result
 
-func _get_color_str(color: LogColor) -> String:
-    return LogColors.get(color, "#ffffffff")
+# Process {damage:amount:type} patterns (type is optional, can also come from context)
+func _process_damage_patterns(text: String, context: Dictionary = {}) -> String:
+    var regex := RegEx.new()
+    regex.compile("\\{damage:([^:}]+)(?::([^}]+))?\\}")
+
+    var result := text
+    for regex_match in regex.search_all(text):
+        var full_match := regex_match.get_string(0)
+        var amount := regex_match.get_string(1)
+        var damage_type_str := regex_match.get_string(2) if regex_match.strings.size() > 2 else ""
+
+        var color: String = LogColors.DEFAULT
+        var damage_type_name: String = ""
+
+        # First check if damage type is provided in context
+        if context.has("damage_type"):
+            var damage_type: DamageType.Type = context["damage_type"]
+            color = DamageType.get_type_color(damage_type).to_html()
+            damage_type_name = DamageType.get_type_name(damage_type)
+        elif damage_type_str != "":
+            # Fall back to parsing from string
+            var damage_type := _string_to_damage_type(damage_type_str)
+            if damage_type != -1:
+                color = DamageType.get_type_color(damage_type).to_html()
+                damage_type_name = DamageType.get_type_name(damage_type)
+
+        var type_text := damage_type_name + " " if damage_type_name != "" else ""
+        var colored := "[color=%s]%s %sdamage[/color]" % [color, amount, type_text]
+        result = result.replace(full_match, colored)
+
+    return result
+
+# Process {effect:name} patterns
+func _process_effect_patterns(text: String) -> String:
+    var regex := RegEx.new()
+    regex.compile("\\{effect:([^}]+)\\}")
+
+    var result := text
+    for regex_match in regex.search_all(text):
+        var full_match := regex_match.get_string(0)
+        var content := regex_match.get_string(1)
+        # For now, use default color - could be enhanced to detect positive/negative effects
+        var colored := "[color=%s]%s[/color]" % [LogColors.DEFAULT, content]
+        result = result.replace(full_match, colored)
+
+    return result
+
+# Process {effect_verb} patterns based on status_effect context
+func _process_effect_verb_patterns(text: String, context: Dictionary) -> String:
+    if not text.contains("{effect_verb}"):
+        return text
+
+    var status_effect: StatusEffect = context.get("status_effect", null)
+    if status_effect == null:
+        return text.replace("{effect_verb}", "affected")
+
+    var is_positive: bool = status_effect.get_effect_type() == StatusEffect.EffectType.POSITIVE
+    var effect_verb: String = "bestowed" if is_positive else "afflicted"
+    return text.replace("{effect_verb}", effect_verb)
+
+# Process {action} patterns that choose between player/non-player verb forms
+func _process_action_patterns(text: String, context: Dictionary) -> String:
+    var regex := RegEx.new()
+    regex.compile("\\{action\\}")
+
+    var result := text
+    for regex_match in regex.search_all(text):
+        var full_match := regex_match.get_string(0)
+
+        # Get the action from context
+        var action_array: Array = context.get("action", [])
+        if action_array.is_empty() or action_array.size() < 2:
+            # Fallback if no proper action array provided
+            result = result.replace(full_match, "act")
+            continue
+
+        # Determine if target is the player
+        var target: CombatEntity = context.get("target", null)
+        var is_player: bool = (target != null and target == GameState.player)
+
+        # Choose the appropriate verb form: [player_form, non_player_form]
+        var chosen_action: String = action_array[0] if is_player else action_array[1]
+        result = result.replace(full_match, chosen_action)
+
+    return result
+
+# Helper to convert damage type string to enum value
+func _string_to_damage_type(damage_type_str: String) -> int:
+    var type_str := damage_type_str.to_upper()
+    match type_str:
+        "PHYSICAL": return DamageType.Type.PHYSICAL
+        "POISON": return DamageType.Type.POISON
+        "FIRE": return DamageType.Type.FIRE
+        "SHOCK": return DamageType.Type.SHOCK
+        "ICE": return DamageType.Type.ICE
+        "DARK": return DamageType.Type.DARK
+        "HOLY": return DamageType.Type.HOLY
+        _: return -1
 
 # Internal function to add entries to history
-func _add_to_history(text: String, color_str: String) -> void:
-    var entry := LogEntry.new(text, color_str)
+func _add_to_history(rich_text: String) -> void:
+    var entry := LogEntry.new(rich_text)
     log_history.push_front(entry)  # Add new entries to the beginning
 
     # Keep history within limits
@@ -174,11 +296,10 @@ func _add_to_history(text: String, color_str: String) -> void:
         log_history.pop_back()  # Remove oldest entries from the end
 
 # Function to restore log history to a RichTextLabel
-# Function to restore log history to a RichTextLabel
 func restore_log_history(log_label: RichTextLabel) -> void:
     log_label.clear()
     for entry in log_history:
-        log_label.append_text("[color=%s]%s[/color]\n" % [entry.color, entry.text])
+        log_label.append_text("%s\n" % [entry.rich_text])
     # No scrolling needed since newest entries are already at the top
 
 # Function to clear log history (useful for new runs)
@@ -189,7 +310,11 @@ func clear_log_history() -> void:
 func get_log_history() -> Array[LogEntry]:
     return log_history
 
-# === ENHANCED COMBAT LOGGING WITH TARGET CONTEXT ===
+# === LEGACY CONVENIENCE METHODS ===
+# These provide backwards compatibility while using the new system internally
+
+func log_message(text: String) -> void:
+    log_event(text)
 
 # Helper function to get display name for any target
 func _get_target_name(target: Object) -> String:
@@ -203,143 +328,3 @@ func _get_target_name(target: Object) -> String:
         return target.call("get_display_name")
     else:
         return "Unknown"
-
-# Enhanced combat logging methods with target context
-func log_attack(attacker: CombatEntity, target: CombatEntity, damage: int, weapon_name: String = "", damage_type: DamageType.Type = DamageType.Type.PHYSICAL) -> void:
-    var attacker_name := _get_target_name(attacker)
-    var target_name := _get_target_name(target)
-
-    # Add damage type to the message if it's not physical
-    var damage_type_text := ""
-    if damage_type != DamageType.Type.PHYSICAL:
-        damage_type_text = " %s" % DamageType.get_type_name(damage_type).to_lower()
-
-    var message: String
-    if weapon_name != "":
-        if attacker == GameState.player:
-            message = "%s strike %s with %s for %d%s damage!" % [attacker_name.capitalize(), target_name, weapon_name, damage, damage_type_text]
-        else:
-            message = "%s strikes %s with %s for %d%s damage!" % [attacker_name.capitalize(), target_name, weapon_name, damage, damage_type_text]
-    else:
-        if attacker == GameState.player:
-            message = "%s strike %s for %d%s damage!" % [attacker_name.capitalize(), target_name, damage, damage_type_text]
-        else:
-            message = "%s attacks %s for %d%s damage!" % [attacker_name.capitalize(), target_name, damage, damage_type_text]
-
-
-    log_damage(message, target, damage_type)
-
-func log_special_attack(attacker: CombatEntity, target: CombatEntity, attack_name: String, damage: int, additional_effects: String = "", damage_type: DamageType.Type = DamageType.Type.PHYSICAL) -> void:
-    var attacker_name := _get_target_name(attacker)
-    var target_name := _get_target_name(target)
-
-    # Add damage type to the message if it's not physical
-    var damage_type_text := ""
-    if damage_type != DamageType.Type.PHYSICAL:
-        damage_type_text = " (%s)" % DamageType.get_type_name(damage_type).to_lower()
-
-    var message := "%s uses %s on %s for %d%s damage!" % [attacker_name.capitalize(), attack_name, target_name, damage, damage_type_text]
-    if additional_effects != "":
-        message += " " + additional_effects
-
-    log_damage(message, target, damage_type)
-
-# Helper method to generate resistance feedback messages
-func _get_resistance_message(target: CombatEntity, damage_type: DamageType.Type) -> String:
-    if target.is_resistant_to(damage_type):
-        var target_name := _get_target_name(target)
-        if target == GameState.player:
-            return "You resist the damage!"
-        else:
-            return "%s resists the damage!" % [target_name.capitalize()]
-    elif target.is_weak_to(damage_type):
-        var target_name := _get_target_name(target)
-        if target == GameState.player:
-            return "You are vulnerable to the damage!"
-        else:
-            return "%s is vulnerable to the damage!" % [target_name.capitalize()]
-    return ""
-
-func log_defend(defender: CombatEntity) -> void:
-    var defender_name := _get_target_name(defender)
-    var message: String
-    if defender == GameState.player:
-        message = "You brace yourself for defense."
-    else:
-        message = "%s braces for defense!" % defender_name.capitalize()
-    log_combat(message)
-
-func log_status_condition_applied(target: CombatEntity, condition: StatusCondition, duration: int = 0) -> void:
-    var message: String
-
-    var positive := condition.status_effect.get_effect_type() == StatusEffect.EffectType.POSITIVE
-    var effect_verb := "bestowed" if positive else "afflicted"
-
-    var effect_name:= condition.get_log_name()
-
-    if target == GameState.player:
-        if duration > 0:
-            message = "You are %s with %s (%d turns)!" % [effect_verb, effect_name, duration]
-        else:
-            message = "You are %s with %s!" % [effect_verb, effect_name]
-    else:
-        var target_name := _get_target_name(target)
-        if duration > 0:
-            message = "%s is %s with %s (%d turns)!" % [target_name.capitalize(), effect_verb, effect_name, duration]
-        else:
-            message = "%s is %s with %s!" % [target_name.capitalize(), effect_verb, effect_name]
-
-    if positive:
-        log_buff(message)
-    else:
-        log_warning(message)
-
-
-func log_status_effect_damage(target: CombatEntity, effect_name: String, damage: int, damage_type: DamageType.Type) -> void:
-    var message: String
-
-    if target == GameState.player:
-        message = "You take %d damage from %s!" % [damage, effect_name]
-    else:
-        var target_name := _get_target_name(target)
-        message = "%s takes %d damage from %s!" % [target_name.capitalize(), damage, effect_name]
-
-    log_damage(message, target, damage_type)
-
-func log_status_effect_healing(target: CombatEntity, effect_name: String, healing: int) -> void:
-    var message: String
-
-    if target == GameState.player:
-        message = "You heal %d HP from %s!" % [healing, effect_name]
-    else:
-        var target_name := _get_target_name(target)
-        message = "%s heals %d HP from %s!" % [target_name.capitalize(), healing, effect_name]
-
-    log_healing(message)
-
-func log_status_effect_removed(target: CombatEntity, effect_name: String, reason: String = "expired") -> void:
-    var target_name := _get_target_name(target)
-    var message: String
-    if target == GameState.player:
-        message = "Your %s %s." % [effect_name, reason]
-    else:
-        message = "%s's %s %s." % [target_name.capitalize(), effect_name, reason]
-    log_warning(message)
-
-func log_flee_attempt(attacker: CombatEntity, success: bool) -> void:
-    var message: String
-
-    if success:
-        if attacker == GameState.player:
-            message = "You flee successfully!"
-        else:
-            var attacker_name := _get_target_name(attacker)
-            message = "%s flees from combat!" % attacker_name.capitalize()
-        log_success(message)
-    else:
-        if attacker == GameState.player:
-            message = "You fail to flee!"
-        else:
-            var attacker_name := _get_target_name(attacker)
-            message = "%s tries to flee but fails!" % attacker_name.capitalize()
-        log_warning(message)

@@ -14,7 +14,7 @@ func execute(caster: CombatEntity, target: CombatEntity = null) -> void:
 
     # Log the preparation
     var caster_name := _get_target_name(caster)
-    LogManager.log_combat("%s %s" % [caster_name.capitalize(), preparation_text])
+    LogManager.log_event("%s %s" % [caster_name.capitalize(), preparation_text])
 
 func continue_execution() -> void:
     # Execute the prepared ability on the second turn

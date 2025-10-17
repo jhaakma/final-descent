@@ -7,11 +7,13 @@ func _init() -> void:
 
 func execute(caster: CombatEntity, _target: CombatEntity = null) -> void:
     var success: bool = randf() < caster.flee_chance
-    LogManager.log_flee_attempt(caster, success)
 
+    # Log the flee attempt with new pattern-based approach
     if success:
+        LogManager.log_event("{You} flee successfully!", {"target": caster})
         caster.action_performed.emit("flee_success", 0, "")
     else:
+        LogManager.log_event("{You} fail to flee!", {"target": caster})
         caster.action_performed.emit("flee_fail", 0, "")
 
 func get_ability_type() -> Ability.AbilityType:

@@ -18,7 +18,7 @@ func cast(caster: CombatEntity, target: CombatEntity = null) -> bool:
         return false
 
     # Log spell casting
-    LogManager.log_combat("%s casts %s!" % [caster.get_name(), spell_name])
+    LogManager.log_event("{You} {action} %s!" % spell_name, {"target": caster, "action": ["cast", "casts"]})
 
     # Apply effects based on target type and track success
     var success := false

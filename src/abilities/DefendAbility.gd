@@ -13,7 +13,7 @@ func execute(caster: CombatEntity, _target: CombatEntity = null) -> void:
     caster.apply_status_effect(defend_effect)
 
     # Log the defend action
-    LogManager.log_defend(caster)
+    LogManager.log_event("{You} brace for defense.", {"target": caster})
 
 func get_ability_type() -> Ability.AbilityType:
     return Ability.AbilityType.DEFEND

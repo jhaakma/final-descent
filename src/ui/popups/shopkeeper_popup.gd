@@ -120,7 +120,7 @@ func _on_buy_item(item_instance: ItemInstance) -> void:
             if stack.item == item_instance.item:
                 stack.remove_instance_by_reference(item_instance.item_data)
 
-        LogManager.log_success("Bought %s for %d gold" % [item_instance.item.name, purchase_value])
+        LogManager.log_event("Bought %s for %d gold" % [item_instance.item.name, purchase_value])
         # Update displays and refresh the buy tab
         _update()
 
@@ -129,7 +129,7 @@ func _on_sell_item(item_instance: ItemInstance) -> void:
 
     # Check if shopkeeper can afford this item
     if shopkeeper_gold < sell_value:
-        LogManager.log_warning("Shopkeeper cannot afford %s (needs %d gold)" % [item_instance.item.name, sell_value])
+        LogManager.log_event("Shopkeeper cannot afford %s (needs %d gold)" % [item_instance.item.name, sell_value])
         return
 
     GameState.player.remove_item(item_instance)
@@ -153,7 +153,7 @@ func _on_sell_item(item_instance: ItemInstance) -> void:
             # Generic item - create stack with count 1
             var new_stack := ItemStack.new(item_instance.item, 1)
             items_for_sale.append(new_stack)
-    LogManager.log_success("Sold %s for %d gold" % [item_instance.item.name, sell_value])
+    LogManager.log_event("Sold %s for %d gold" % [item_instance.item.name, sell_value])
 
     # Update displays
     _update()

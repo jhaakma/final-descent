@@ -106,9 +106,15 @@ func _refresh_inventory() -> void:
                     var potion_row: InventoryRow = _create_inventory_row(tile)
                     potions_list.add_child(potion_row)
                     inventory_rows["potions"].append(potion_row)
+
+                    var scroll_row: InventoryRow = _create_inventory_row(tile)
+                    scrolls_list.add_child(scroll_row)
+                    inventory_rows["scrolls"].append(scroll_row)
+
                     var misc_row: InventoryRow = _create_inventory_row(tile)
                     misc_list.add_child(misc_row)
                     inventory_rows["misc"].append(misc_row)
+
             Item.ItemCategory.POTION:
                 potions_list.add_child(row)
                 inventory_rows["potions"].append(row)

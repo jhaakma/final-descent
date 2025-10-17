@@ -83,11 +83,7 @@ func should_store_in_active_conditions() -> bool:
 # Override in subclasses - handles when the same condition already exists
 func handle_existing_condition(_component: StatusEffectComponent, _new_condition: StatusCondition, existing_condition: StatusCondition, target: CombatEntity) -> bool:
     # Default: reject duplicate
-    LogManager.log({
-        text = "{You are} already affected by %s." % existing_condition.name,
-        target = target,
-        color = LogManager.LogColor.WARNING
-    })
+    LogManager.log_event("{You are} already affected by %s." % existing_condition.name, {"target": target})
     return false
 
 # Override in subclasses - handles applying a new condition
@@ -101,7 +97,11 @@ func handle_new_condition(component: StatusEffectComponent, condition: StatusCon
 
     # Apply the effect
     apply_effect(target)
-    LogManager.log_status_condition_applied(target, condition, get_log_duration())
+    var duration := get_log_duration()
+    if duration > 0:
+        LogManager.log_event("{You are} {effect_verb} with {effect:%s} (%d turns)!" % [condition.get_log_name(), duration], {"target": target, "status_effect": self})
+    else:
+        LogManager.log_event("{You are} {effect_verb} with {effect:%s}!" % [condition.get_log_name()], {"target": target, "status_effect": self})
     component.effect_applied.emit(condition.name)
     return true
 

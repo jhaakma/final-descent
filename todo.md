@@ -1,21 +1,17 @@
 # To do
 
-## ✅ Block invalid scroll use (COMPLETED)
-- ✅ Trace back success/fail from status effect on_apply back to the use function
-- ✅ e.g. healing scrolls when already at full health
-- Implementation: Modified Spell.cast() to return success status, updated scroll usage to respect this
-
 ## Resolve logging issues
-- "Player casts" - should be "you cast" - move to LogManager
-- Consider using the LogManager.log with metadata option for other logging (big refactor)
+- Continue improving logging functionality
+- Log colors for statuses, abilities
+- Make use of log_success and log_warning
+
+## Integrate Popups into RoomScene
+- Replace the action buttons section, which solves the need to disable anything
+- Remove "Use Item" button, make Inventory actions consume player turn if in combat
 
 ## Status Effect stacking issues
 - Still needs work, for example, poison from a spell and poison from a weapon aren't stacking
 - Status effects probably need a can_stack
-
-## Integrate Combat Popup into RoomScene
-- Replace the action buttons section, which solves the need to disable anything
-- Remove "Use Item" button, make Inventory actions consume player turn if in combat
 
 ## Managers
 - Room Manager
@@ -44,11 +40,9 @@ Remove all unnecessary theme overrides
     - Weakness - reduced damage
 
 ## Magic
-- Scrolls for single use spells
 - Books to learn spells, consumes mana
 - Staves improve spell effectiveness
 - Wands with limited spell use
-
 
 ## More Rooms
 - Unsafe rest rooms

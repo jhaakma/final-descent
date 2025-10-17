@@ -16,8 +16,8 @@ func apply_effect(target: CombatEntity) -> bool:
     # Apply healing to target
     target.heal(healing_per_turn)
 
-    # Use enhanced logging with target context
-    LogManager.log_status_effect_healing(target, get_effect_name(), healing_per_turn)
+    # Use new pattern-based logging
+    LogManager.log_event("{You} {action} {healing:%d} from {effect:%s}!" % [healing_per_turn, get_effect_name()], {"target": target, "action": ["heal", "heals"]})
 
     return true
 

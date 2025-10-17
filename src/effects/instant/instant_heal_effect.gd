@@ -20,12 +20,12 @@ func apply_effect(target: CombatEntity) -> bool:
         var source_name: String
         if application_context and application_context.log_ability_name:
             source_name = application_context.name
-            LogManager.log_healing("%s heals %d HP!" % [source_name, amount_healed])
+            LogManager.log_event("%s heals {healing:%d}!" % [source_name, amount_healed])
         else:
-            LogManager.log_healing("Healed %d HP!" % amount_healed)
+            LogManager.log_event("Healed {healing:%d}!" % amount_healed)
         return true
     else:
-        LogManager.log_warning("You are already at full health.")
+        LogManager.log_event("You are already at full health.")
         return false
 
 # Override get_description for instant heal formatting
