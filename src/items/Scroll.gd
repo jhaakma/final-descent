@@ -55,8 +55,8 @@ func _on_use(_item_data: ItemData) -> bool:
             target = caster  # Spell will handle both caster and target
 
     # Cast the spell
-    spell_cast.cast(caster, target)
-    return true
+    var success := spell_cast.cast(caster, target)
+    return success
 
 func get_description() -> String:
     if spell and spell is Spell:

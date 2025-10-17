@@ -1,8 +1,9 @@
 # To do
 
-## Block invalid scroll use
-- Trace back success/fail from status effect on_apply back to the use function
-- e.g. healing scrolls when already at full health
+## ✅ Block invalid scroll use (COMPLETED)
+- ✅ Trace back success/fail from status effect on_apply back to the use function
+- ✅ e.g. healing scrolls when already at full health
+- Implementation: Modified Spell.cast() to return success status, updated scroll usage to respect this
 
 ## Resolve logging issues
 - "Player casts" - should be "you cast" - move to LogManager

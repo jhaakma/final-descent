@@ -12,29 +12,36 @@ enum SpellTarget {
 @export var target_type: SpellTarget = SpellTarget.TARGET
 @export var mana_cost: int = 0
 
-func cast(caster: CombatEntity, target: CombatEntity = null) -> void:
+func cast(caster: CombatEntity, target: CombatEntity = null) -> bool:
     if not caster:
         push_error("Spell.cast(): No caster provided")
-        return
+        return false
 
     # Log spell casting
     LogManager.log_combat("%s casts %s!" % [caster.get_name(), spell_name])
 
-    # Apply effects based on target type
+    # Apply effects based on target type and track success
+    var success := false
     match target_type:
         SpellTarget.SELF:
-            _apply_spell_effects(caster)
+            success = _apply_spell_effects(caster)
         SpellTarget.TARGET:
             if target:
-                _apply_spell_effects(target)
+                success = _apply_spell_effects(target)
             else:
                 push_error("Spell.cast(): No target provided for TARGET spell")
+                return false
         SpellTarget.BOTH:
-            _apply_spell_effects(caster)
+            var caster_success := _apply_spell_effects(caster)
+            var target_success := false
             if target:
-                _apply_spell_effects(target)
+                target_success = _apply_spell_effects(target)
+            success = caster_success or target_success
 
-func _apply_spell_effects(entity: CombatEntity) -> void:
+    return success
+
+func _apply_spell_effects(entity: CombatEntity) -> bool:
+    var any_success := false
     for effect: StatusEffect in spell_effects:
         if not effect:
             continue
@@ -45,8 +52,12 @@ func _apply_spell_effects(entity: CombatEntity) -> void:
         condition.status_effect = effect.duplicate()
         condition.log_ability_name = true  # Log spell name instead of effect name
 
-        # Apply the condition to the entity
-        var _success := entity.apply_status_condition(condition)
+        # Apply the condition to the entity and track success
+        var success := entity.apply_status_condition(condition)
+        if success:
+            any_success = true
+
+    return any_success
 
 func get_description() -> String:
     var desc := description
