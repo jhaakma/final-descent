@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="Armor" load_steps=2 format=3 uid="uid://cplf8k3bhm7od"]
+
+[ext_resource type="Script" uid="uid://bnuj5rdlf2q2y" path="res://src/items/Armor.gd" id="1_abc123"]
+
+[resource]
+script = ExtResource("1_abc123")
+defense_bonus = 3
+armor_slot = 1
+condition = 8
+name = "Leather Helmet"
+purchase_value = 25
+metadata/_custom_type_script = "uid://bnuj5rdlf2q2y"

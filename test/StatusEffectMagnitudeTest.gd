@@ -1,4 +1,4 @@
-extends BaseTest
+class_name StatusEffectMagnitudeTest extends BaseTest
 
 func test_instant_damage_effect_magnitude() -> bool:
     var effect: InstantDamageEffect = InstantDamageEffect.new()

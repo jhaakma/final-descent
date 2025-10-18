@@ -1,9 +1,5 @@
 # To do
 
-## Enchantments and Repair Kits - pick a slot
-- Add more armors slots
-- When using an armor rune, popup asks which armor to enchant
-
 ## Status Effect stacking issues
 - Still needs work, for example, poison from a spell and poison from a weapon aren't stacking
 - Status effects probably need a can_stack
@@ -20,7 +16,6 @@
 - Prerequisites:
     - Room Manager
     - CombayEntity refactor
--
 
 ## Theme
 Create and use a consistent theme

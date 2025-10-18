@@ -18,36 +18,27 @@ func can_apply(target: CombatEntity) -> bool:
     if not target is Player:
         return false  # Only players can have items repaired
     var player := target as Player
-    var weapon_instance := player.get_equipped_weapon()
-    if weapon_instance:
-        if weapon_instance.item_data:
-            var current_condition := weapon_instance.item_data.current_condition
-            var max_condition := (weapon_instance.item as Weapon).get_max_condition()
-            return current_condition < max_condition  # Can apply if weapon is damaged
-        else:
-            return false  # No item data means nothing to repair
-    else:
-        return false  # No weapon equipped
+
+    # Check if any equipped item can be repaired
+    var all_equipped := player.get_all_equipped_items()
+    for item_instance: ItemInstance in all_equipped:
+        if item_instance.item_data and item_instance.item is Equippable:
+            var equippable := item_instance.item as Equippable
+            var current_condition := item_instance.item_data.current_condition
+            var max_condition := equippable.get_max_condition()
+            if current_condition < max_condition:
+                return true  # Found at least one item that can be repaired
+
+    return false  # No damaged items found
 
 func apply_effect(target: CombatEntity) -> bool:
     if not target is Player:
         return false  # Only players can have items repaired
-    var player := target as Player
-    var weapon_instance := player.get_equipped_weapon()
-    if weapon_instance:
-        if weapon_instance.item_data:
-            var current_condition := weapon_instance.item_data.current_condition
-            var max_condition := (weapon_instance.item as Weapon).get_max_condition()
-            weapon_instance.item_data.current_condition = min(current_condition + repair_amount, max_condition)
-            weapon_instance.item_data_updated()
-            LogManager.log_event("Repaired %s by %d points" % [weapon_instance.item.name, repair_amount])
-            return true
-        else:
-            LogManager.log_event("Your equipped weapon is not damaged.")
-            return false
-    else:
-        LogManager.log_event("You have no weapon equipped to repair.")
-        return false
+
+    # This method will be called after item selection in the popup
+    # For now, return false as the repair will be handled by the RepairTool directly
+    LogManager.log_event("Use item selection to repair specific items.")
+    return false
 
 func get_description() -> String:
     return "+%d condition" % repair_amount

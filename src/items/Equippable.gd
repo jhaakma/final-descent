@@ -10,7 +10,10 @@ signal unequip(equippable: Equippable)
 
 enum EquipSlot {
     WEAPON,
+    HELMET,   # Head armor
     CUIRASS,  # Chest armor
+    GLOVES,   # Hand armor
+    BOOTS,    # Foot armor
     SHIELD    # Shield slot
 }
 
@@ -95,8 +98,14 @@ func get_equip_slot_name() -> String:
     match get_equip_slot():
         EquipSlot.WEAPON:
             return "Weapon"
+        EquipSlot.HELMET:
+            return "Helmet"
         EquipSlot.CUIRASS:
             return "Cuirass"
+        EquipSlot.GLOVES:
+            return "Gloves"
+        EquipSlot.BOOTS:
+            return "Boots"
         EquipSlot.SHIELD:
             return "Shield"
         _:

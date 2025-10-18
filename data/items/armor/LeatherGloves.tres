@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Armor" load_steps=2 format=3 uid="uid://br7wlah4yp3ml"]
+
+[ext_resource type="Script" uid="uid://bnuj5rdlf2q2y" path="res://src/items/Armor.gd" id="1_def456"]
+
+[resource]
+script = ExtResource("1_def456")
+defense_bonus = 2
+armor_slot = 3
+name = "Leather Gloves"
+description = "Flexible leather gloves that provide minimal hand protection."
+consumable = false
+purchase_value = 15
+condition = 6
+metadata/_custom_type_script = "uid://bnuj5rdlf2q2y"

@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_ak74g")
 defense_bonus = 20
-armor_slot = 1
+armor_slot = 2
 condition = 50
 name = "Iron Armor"
 purchase_value = 75

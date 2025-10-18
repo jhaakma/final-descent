@@ -13,6 +13,9 @@ unique_name_in_owner = true
 [node name="TitleScene" parent="ScreenLayer" instance=ExtResource("2_rvslj")]
 theme = ExtResource("3_0bbpv")
 
+[node name="PopupLayer" type="CanvasLayer" parent="."]
+unique_name_in_owner = true
+
 [node name="OverlayLayer" type="CanvasLayer" parent="."]
 
 [node name="FadeOverlay" type="ColorRect" parent="OverlayLayer"]

@@ -9,6 +9,7 @@ signal death_fade_start  # Forwarded from player when death fade should start
 var current_floor: int = 1
 var player: Player
 var rng: RandomNumberGenerator
+var ui_manager: UIManager
 
 # Combat state tracking
 var is_in_combat: bool = false
@@ -17,6 +18,10 @@ var current_enemy: Enemy = null
 func _ready() -> void:
     rng = RandomNumberGenerator.new()
     rng.randomize()
+
+    # Initialize UI Manager
+    ui_manager = UIManager.new()
+    add_child(ui_manager)
 
     # Initialize player
     player = Player.new()

@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_cy51s")
 defense_bonus = 10
-armor_slot = 1
+armor_slot = 2
 condition = 20
 name = "Leather Cuirass"
 purchase_value = 30
