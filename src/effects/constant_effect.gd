@@ -57,7 +57,7 @@ func handle_existing_condition(_component: StatusEffectComponent, new_condition:
         existing_condition.add_equipment_stack()
         # Don't show a duplicate message - effect is already active
         return true
-    
+
     # For consumables and other sources, show "already affected" message
     LogManager.log_event("{You are} already affected by %s." % existing_condition.name, {"target": target})
     return false

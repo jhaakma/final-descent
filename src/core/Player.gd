@@ -131,6 +131,39 @@ func remove_item(item_instance: ItemInstance) -> bool:
         equipped_weapon = null
         emit_signal("inventory_changed")
         return true
+
+    # Check if removing an equipped item from the equipped_items dictionary
+    for slot: Equippable.EquipSlot in equipped_items.keys():
+        var equipped_instance: ItemInstance = equipped_items[slot]
+        if equipped_instance.matches(item_instance):
+            # Remove equipped item without adding back to inventory (for selling/destroying)
+            if item_instance.item is Equippable:
+                var equippable := item_instance.item as Equippable
+                if equippable is Armor:
+                    # Do the same cleanup as unequip_armor but don't add to inventory
+                    var armor: Armor = equipped_instance.item as Armor
+
+                    # Remove enchantment effects if the armor has any
+                    if armor.enchantment:
+                        if armor.enchantment is ConstantEffectEnchantment:
+                            (armor.enchantment as ConstantEffectEnchantment)._on_item_unequipped(armor)
+
+                    # Remove armor defense bonus
+                    _remove_armor_defense_bonus(armor)
+
+                    # Mark as unequipped and remove from equipped_items
+                    equipped_instance.is_equipped = false
+                    equipped_items.erase(slot)
+                    emit_signal("inventory_changed")
+                    return true
+                # Add other equippable types here if needed in the future
+            else:
+                # Fallback: just remove from equipped_items
+                equipped_items.erase(slot)
+                equipped_instance.is_equipped = false
+                emit_signal("inventory_changed")
+                return true
+
     return inventory.remove_item(item_instance)
 
 

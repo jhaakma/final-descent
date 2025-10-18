@@ -26,11 +26,11 @@ func parse_command_line_args() -> void:
             filter_pattern = arg
             print("Filter pattern: '%s'" % filter_pattern)
             break
-        elif arg == "--filter":
+        elif arg == "filter":
             filter_next = true
 
     if filter_next and filter_pattern == "":
-        print("Warning: --filter specified but no pattern provided")
+        print("Warning: -- filter specified but no pattern provided")
 
 func apply_filter_to_test_classes() -> void:
     if filter_pattern == "":

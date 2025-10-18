@@ -58,7 +58,7 @@ func remove_equipment_stack(effect: StatusEffect) -> void:
         if condition.status_effect.get_effect_id() == effect.get_effect_id():
             # Remove one equipment stack
             var should_remove_entirely := condition.remove_equipment_stack()
-            
+
             if should_remove_entirely:
                 # No more stacks - remove the entire effect
                 var status_effect := condition.status_effect
