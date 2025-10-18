@@ -14,6 +14,9 @@ func get_effect_name() -> String:
 func get_effect_type() -> EffectType:
     return EffectType.POSITIVE
 
+func get_magnitude() -> int:
+    return attack_bonus  # Use primary stat bonus as magnitude
+
 # Override to provide attack bonus
 func get_attack_bonus() -> int:
     return attack_bonus
@@ -23,7 +26,7 @@ func get_defense_bonus() -> int:
     return defense_bonus
 
 func get_description() -> String:
-    return "+%d ATK, +%d%% damage reduction for %d turns" % [attack_bonus, defense_bonus, get_remaining_turns()]
+    return "+%d ATK, +%d DEF for %d turns" % [attack_bonus, defense_bonus, get_remaining_turns()]
 
 func get_base_description() -> String:
-    return "+%d ATK, +%d%% damage reduction for %d turns" % [attack_bonus, defense_bonus, duration]
+    return "+%d ATK, +%d DEF for %d turns" % [attack_bonus, defense_bonus, duration]

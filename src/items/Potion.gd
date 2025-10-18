@@ -9,6 +9,12 @@ func get_category() -> Item.ItemCategory:
 func get_consumable() -> bool:
     return true
 
+func _get_name() -> String:
+    if name == "" and status_effect:
+        return "Potion of %s" % status_effect.get_effect_name()
+    return name
+
+
 func _on_use(_item_data: ItemData) -> bool:
     # Duplicate the effect to avoid modifying the original resource
     var condition := StatusCondition.new()

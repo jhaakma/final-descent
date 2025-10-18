@@ -25,7 +25,7 @@ var avoid_failure: bool = false
 var death_delay_timer: Timer = null
 
 static func get_scene() -> PackedScene:
-    return load("uid://cbkt5qp8g8cxk") as PackedScene  # Will need to create this scene
+    return load("uid://jne75qvyltc6") as PackedScene  # Will need to create this scene
 
 func set_enemy(enemy_res: EnemyResource) -> void:
     enemy_resource = enemy_res

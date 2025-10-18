@@ -8,7 +8,7 @@ enum ItemCategory {
     MISC
 }
 
-@export var name: String = "Item":
+@export var name: String = "":
     get = _get_name
 @export var purchase_value: int = 10
 

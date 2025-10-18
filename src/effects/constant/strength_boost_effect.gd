@@ -11,6 +11,9 @@ func get_effect_name() -> String:
 func get_effect_type() -> EffectType:
     return EffectType.POSITIVE
 
+func get_magnitude() -> int:
+    return strength_bonus
+
 # Called when the effect is first applied to an entity
 func on_applied(target: CombatEntity) -> void:
     if target.has_method("add_stat_modifier"):

@@ -11,6 +11,9 @@ func get_effect_name() -> String:
 func get_effect_type() -> EffectType:
     return EffectType.POSITIVE
 
+func get_magnitude() -> int:
+    return heal_amount
+
 # Override apply_effect to implement instant healing logic
 func apply_effect(target: CombatEntity) -> bool:
     # Apply healing to target
@@ -30,4 +33,4 @@ func apply_effect(target: CombatEntity) -> bool:
 
 # Override get_description for instant heal formatting
 func get_description() -> String:
-    return "Heal (%d HP)" % heal_amount
+    return "+%d HP" % heal_amount

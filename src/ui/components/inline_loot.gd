@@ -21,7 +21,7 @@ var pending_loot_data: LootComponent.LootResult
 var loot_already_collected: bool = false
 
 static func get_scene() -> PackedScene:
-    return load("uid://b8fke7xfdy2nb") as PackedScene
+    return load("uid://d007d2uy4wsn") as PackedScene
 
 func _ready() -> void:
     collect_btn.pressed.connect(_on_collect_loot)

@@ -12,7 +12,9 @@ func is_expired() -> bool:
     return remaining_turns <= 0
 
 # Get descriptive text for UI
+# Subclasses should override this to provide magnitude, unit and turns
 func get_description() -> String:
+    print_debug("get_description() not implemented in TimedEffect subclass: %s" % get_class())
     if remaining_turns > 0:
         return "%s (%d turns)" % [get_effect_name(), remaining_turns]
     else:

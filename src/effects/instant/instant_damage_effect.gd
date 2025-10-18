@@ -12,6 +12,9 @@ func get_effect_name() -> String:
 func get_effect_type() -> EffectType:
     return EffectType.NEGATIVE
 
+func get_magnitude() -> int:
+    return damage_amount
+
 func apply_effect(target: CombatEntity) -> bool:
     if not target:
         return false
@@ -35,8 +38,7 @@ func apply_effect(target: CombatEntity) -> bool:
     return actual_damage > 0
 
 func get_description() -> String:
-    var damage_type_name := DamageType.get_type_name(damage_type)
-    return "Deals %d %s damage" % [damage_amount, damage_type_name]
+    return "%d damage" % damage_amount
 
 func get_base_description() -> String:
     return get_description()

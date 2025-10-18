@@ -19,7 +19,9 @@ func is_expired() -> bool:
     return false
 
 # Get descriptive text for UI (no turn counter)
+# Subclasses should override this to provide magnitude and unit
 func get_description() -> String:
+    print_debug("get_description() not implemented in ConstantEffect subclass: %s" % get_class())
     return get_effect_name()
 
 func get_base_description() -> String:

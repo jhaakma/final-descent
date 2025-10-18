@@ -49,6 +49,18 @@ func get_description() -> String:
 func get_base_description() -> String:
     return get_description()
 
+## Returns the magnitude of this effect. Subclasses must override this method.
+## This should return the primary numerical value that represents the "strength" of the effect.
+## Examples:
+## - InstantDamageEffect: returns damage_amount
+## - InstantHealEffect: returns heal_amount
+## - ElementalTimedEffect: returns damage_per_turn
+## - DefenseBoostEffect: returns defense_bonus
+## - TimedEffect: returns duration
+func get_magnitude() -> int:
+    print_debug("get_magnitude() not implemented in subclass")
+    return 0
+
 # Template method for handling effect application to status component
 # Subclasses should override the specific methods they need to customize
 func handle_application(component: StatusEffectComponent, condition: StatusCondition, target: CombatEntity) -> bool:

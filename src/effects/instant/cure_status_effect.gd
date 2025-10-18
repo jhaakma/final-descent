@@ -15,6 +15,9 @@ func get_effect_name() -> String:
 func get_effect_type() -> EffectType:
     return EffectType.POSITIVE
 
+func get_magnitude() -> int:
+    return 1  # Cure effects have a magnitude of 1 (boolean effect)
+
 # Override apply_effect to implement cure logic
 func apply_effect(target: CombatEntity) -> bool:
     var target_entity := target as CombatEntity
@@ -32,5 +35,5 @@ func apply_effect(target: CombatEntity) -> bool:
 # Override get_description for better condition-specific formatting
 func get_description() -> String:
     if condition_to_cure:
-        return "Cures the %s condition." % condition_to_cure
-    return "Cures an unknown condition."
+        return "Cures %s" % condition_to_cure
+    return "Cures condition"

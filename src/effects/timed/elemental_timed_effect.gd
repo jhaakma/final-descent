@@ -9,6 +9,9 @@ func get_effect_name() -> String:
 func get_effect_type() -> EffectType:
     return EffectType.NEGATIVE
 
+func get_magnitude() -> int:
+    return damage_per_turn
+
 # Override apply_effect to implement elemental damage logic
 func apply_effect(target: CombatEntity) -> bool:
     # Apply elemental damage considering resistances
@@ -20,6 +23,8 @@ func apply_effect(target: CombatEntity) -> bool:
 
     return true
 
+func get_description() -> String:
+    return "%d damage for %d turns" % [damage_per_turn, get_remaining_turns()]
+
 func get_base_description() -> String:
-    var type_name := DamageType.get_type_name(elemental_type).to_lower()
-    return "%d %s damage for %d turns" % [damage_per_turn, type_name, duration]
+    return "%d damage for %d turns" % [damage_per_turn, duration]

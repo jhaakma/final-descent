@@ -27,7 +27,6 @@ unique_name_in_owner = true
 clip_contents = false
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.1
 bbcode_enabled = true
 text = "20"
 fit_content = true

@@ -11,6 +11,9 @@ func get_effect_name() -> String:
 func get_effect_type() -> EffectType:
     return EffectType.POSITIVE
 
+func get_magnitude() -> int:
+    return healing_per_turn
+
 # Override apply_effect to implement healing logic
 func apply_effect(target: CombatEntity) -> bool:
     # Apply healing to target
@@ -20,4 +23,10 @@ func apply_effect(target: CombatEntity) -> bool:
     LogManager.log_event("{You} {action} {healing:%d} from {effect:%s}!" % [healing_per_turn, get_effect_name()], {"target": target, "action": ["heal", "heals"], "status_effect": self})
 
     return true
+
+func get_description() -> String:
+    return "+%d HP for %d turns" % [healing_per_turn, get_remaining_turns()]
+
+func get_base_description() -> String:
+    return "+%d HP for %d turns" % [healing_per_turn, duration]
 

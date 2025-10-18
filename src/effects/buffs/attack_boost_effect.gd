@@ -23,3 +23,6 @@ func get_description() -> String:
 
 func get_base_description() -> String:
     return "+%d ATK for %d turns" % [attack_bonus, duration]
+
+func get_magnitude() -> int:
+    return attack_bonus

@@ -18,3 +18,9 @@ func apply_effect(_target: CombatEntity) -> bool:
     # when the effect is first applied, so we don't need to log here
 
     return true
+
+func get_description() -> String:
+    return "Stunned for %d turns" % get_remaining_turns()
+
+func get_base_description() -> String:
+    return "Stunned for %d turns" % duration

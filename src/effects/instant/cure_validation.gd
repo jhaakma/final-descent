@@ -22,7 +22,7 @@ func test_cure_system() -> void:
     print("✓ Successfully loaded both resources")
     print("  Poison condition name: ", poison_condition.name)
     print("  Cure effect name: ", cure_poison.get_effect_name())
-    print("  Cure targets: ", cure_poison.condition_to_cure.name if cure_poison.condition_to_cure else "null")
+    print("  Cure targets: ", cure_poison.condition_to_cure if cure_poison.condition_to_cure else "null")
 
     # Verify the poison condition uses ElementalTimedEffect
     if poison_condition.status_effect is ElementalTimedEffect:

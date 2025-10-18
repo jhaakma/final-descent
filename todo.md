@@ -1,8 +1,8 @@
 # To do
 
-## Item inventory colors
-- Each item type appears as different color, plus enchantments
-
+## Enchantments - pick a slot
+- Add more armors slots
+- When using an armor rune, popup asks which armor to enchant
 
 ## Resolve logging issues
 - Continue improving logging functionality

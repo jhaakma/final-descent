@@ -18,14 +18,14 @@ func initialize_with_condition(condition: StatusCondition) -> void:
     var color: String = StatusEffect.EffectTypeMap[effect.get_effect_type()]
     var display_text: String
 
-    if effect is TimedEffect:
-        var timed_effect := effect as TimedEffect
-        display_text = "[color=%s]%s (%d turns)[/color]" % [color, condition.name, timed_effect.get_remaining_turns()]
-    else:
-        display_text = "[color=%s]%s[/color]" % [color, condition.name]
+    display_text = "[color=%s]%s[/color]" % [color, condition.name]
 
     print("Initializing StatusRow with status effect: %s" % display_text)
 
     status_text.text = display_text
-    tooltip_text = effect.get_description()
+
+    var description := str(effect.get_description())
+    # status_value.text = "[color=%s]%s[/color]" % [color, description]
+    status_value.text = description
+
     print("StatusRow text set, visible: %s, size: %s" % [visible, size])

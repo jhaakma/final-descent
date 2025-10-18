@@ -11,6 +11,9 @@ func get_effect_name() -> String:
 func get_effect_type() -> EffectType:
     return EffectType.POSITIVE
 
+func get_magnitude() -> int:
+    return repair_amount
+
 func can_apply(target: CombatEntity) -> bool:
     if not target is Player:
         return false  # Only players can have items repaired
@@ -47,4 +50,4 @@ func apply_effect(target: CombatEntity) -> bool:
         return false
 
 func get_description() -> String:
-    return "Repairs %d condition to the equipped weapon." % repair_amount
+    return "+%d condition" % repair_amount
