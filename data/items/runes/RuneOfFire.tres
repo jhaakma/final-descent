@@ -14,4 +14,4 @@ metadata/_custom_type_script = "uid://kfpqhwn4ci4m"
 script = ExtResource("1_juv8j")
 weapon_enchantment = SubResource("Resource_2qstw")
 name = "Rune of Fire"
-purchase_value = 25
+purchase_value = 50

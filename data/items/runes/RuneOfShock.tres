@@ -1,10 +1,17 @@
-[gd_resource type="Resource" script_class="Rune" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="WeaponRune" load_steps=4 format=3 uid="uid://cc3e13h3supbc"]
 
-[ext_resource type="Script" path="res://src/items/Rune.gd" id="1_0"]
-[ext_resource type="Resource" path="res://data/enchantments/ShockDamageEnchantment.tres" id="2_0"]
+[ext_resource type="Script" uid="uid://cdt6w8cnn4udd" path="res://src/items/WeaponRune.gd" id="1_ojnmg"]
+[ext_resource type="Script" uid="uid://kfpqhwn4ci4m" path="res://src/enchantments/elemental_damage_enchantment.gd" id="2_cj2ol"]
+
+[sub_resource type="Resource" id="Resource_d56ej"]
+script = ExtResource("2_cj2ol")
+elemental_damage_type = 3
+elemental_damage = 3
+elemental_damage_chance = 1.0
+metadata/_custom_type_script = "uid://kfpqhwn4ci4m"
 
 [resource]
-script = ExtResource("1_0")
-enchantment = ExtResource("2_0")
+script = ExtResource("1_ojnmg")
+weapon_enchantment = SubResource("Resource_d56ej")
 name = "Rune of Shock"
-purchase_value = 30
+purchase_value = 50

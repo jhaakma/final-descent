@@ -11,7 +11,7 @@ func test_elemental_timed_effect_description() -> bool:
 	poison_effect.duration = 3
 	poison_effect.initialize()
 
-	var expected: String = "2 damage for 3 turns"
+	var expected: String = "2 Poison damage for 3 turns"
 	var actual: String = poison_effect.get_description()
 
 	return assert_equals(expected, actual, "Poison effect should show '2 damage for 3 turns'")

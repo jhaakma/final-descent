@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="LootPick" load_steps=9 format=3 uid="uid://dj6ctr2a52bmx"]
+
+[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="1_73vhi"]
+[ext_resource type="Resource" uid="uid://bnv00r86s3yqw" path="res://data/items/runes/RuneOfFire.tres" id="2_vabes"]
+[ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="2_vsut4"]
+[ext_resource type="Resource" uid="uid://8l6joadu85p3" path="res://data/items/runes/RuneOfFireResist.tres" id="3_smp4x"]
+[ext_resource type="Resource" uid="uid://m5dageinlf77" path="res://data/items/runes/RuneOfIce.tres" id="4_wvox3"]
+[ext_resource type="Resource" uid="uid://i3cxeo8eo70w" path="res://data/items/runes/RuneOfPoison.tres" id="5_8a7xq"]
+[ext_resource type="Resource" uid="uid://jh6urisffe2v" path="res://data/items/runes/RuneOfResistPoison.tres" id="6_ybnr2"]
+[ext_resource type="Resource" uid="uid://cc3e13h3supbc" path="res://data/items/runes/RuneOfShock.tres" id="7_t3611"]
+
+[resource]
+script = ExtResource("2_vsut4")
+loot_table = Array[ExtResource("1_73vhi")]([ExtResource("2_vabes"), ExtResource("3_smp4x"), ExtResource("4_wvox3"), ExtResource("5_8a7xq"), ExtResource("6_ybnr2"), ExtResource("7_t3611")])
+count = 1
+chance_none = 0.5
+pick_method = 0
+floor_min = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"

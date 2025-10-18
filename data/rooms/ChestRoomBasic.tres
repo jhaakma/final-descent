@@ -1,54 +1,12 @@
-[gd_resource type="Resource" script_class="ChestRoomResource" load_steps=14 format=3 uid="uid://b6x4kbxgbv6cq"]
+[gd_resource type="Resource" script_class="ChestRoomResource" load_steps=3 format=3 uid="uid://b6x4kbxgbv6cq"]
 
-[ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="1_lulew"]
-[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="2_fxh5e"]
-[ext_resource type="Resource" uid="uid://cttpxikq24nx" path="res://data/items/weapons/Dagger.tres" id="3_xjp3h"]
-[ext_resource type="Resource" uid="uid://clyabowguvivm" path="res://data/items/weapons/ShortSword.tres" id="4_gjxe1"]
-[ext_resource type="Resource" uid="uid://2s77tota5kam" path="res://data/items/potions/HealthPotionSmall.tres" id="5_eaqpx"]
-[ext_resource type="Resource" uid="uid://bpscdhoshmjls" path="res://data/items/potions/Antidote.tres" id="6_fsrti"]
-[ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="7_5k4w7"]
-[ext_resource type="Resource" uid="uid://dwqgodsd7t16e" path="res://data/items/repair_tools/RepairToolBasic.tres" id="7_fxh5e"]
+[ext_resource type="Resource" uid="uid://ngft0bfn2vcd" path="res://data/loot/BasicChest_01.tres" id="1_f5dk4"]
 [ext_resource type="Script" uid="uid://cuib3tlx6u7dn" path="res://src/rooms/chest_room_resource.gd" id="8_sxa5o"]
-
-[sub_resource type="Resource" id="Resource_fngsn"]
-script = ExtResource("1_lulew")
-loot_table = Array[ExtResource("2_fxh5e")]([ExtResource("3_xjp3h"), ExtResource("4_gjxe1")])
-count = 1
-chance_none = 0.6
-pick_method = 0
-floor_min = 0
-metadata/_custom_type_script = "uid://w4ie0s4l7syw"
-
-[sub_resource type="Resource" id="Resource_l4jfk"]
-script = ExtResource("1_lulew")
-loot_table = Array[ExtResource("2_fxh5e")]([ExtResource("5_eaqpx"), ExtResource("6_fsrti")])
-count = 1
-chance_none = 0.6
-pick_method = 0
-floor_min = 0
-metadata/_custom_type_script = "uid://w4ie0s4l7syw"
-
-[sub_resource type="Resource" id="Resource_xjp3h"]
-script = ExtResource("1_lulew")
-loot_table = Array[ExtResource("2_fxh5e")]([ExtResource("7_fxh5e")])
-count = 1
-chance_none = 0.8
-pick_method = 0
-floor_min = 0
-metadata/_custom_type_script = "uid://w4ie0s4l7syw"
-
-[sub_resource type="Resource" id="Resource_3nmwl"]
-script = ExtResource("7_5k4w7")
-gold_min = 5
-gold_max = 10
-chance_gold_none = 0.2
-loot_table = Array[ExtResource("1_lulew")]([SubResource("Resource_fngsn"), SubResource("Resource_l4jfk"), SubResource("Resource_xjp3h")])
-metadata/_custom_type_script = "uid://lj0e532l0dyu"
 
 [resource]
 script = ExtResource("8_sxa5o")
 chance_empty = 0.0
-loot_component = SubResource("Resource_3nmwl")
+loot_component = ExtResource("1_f5dk4")
 title = "Dusty Chest"
 description = "A worn old chest, covered in dust."
 weight = 25

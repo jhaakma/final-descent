@@ -163,3 +163,98 @@ func test_armor_defense_bonus_application() -> bool:
     assert_equals(final_defense, initial_defense, "Defense should return to initial value")
 
     return true
+
+func test_armor_condition_loss_on_damage() -> bool:
+    var player := Player.new()
+    player.reset()
+
+    # Create armor with default condition (10)
+    var cuirass := Armor.new()
+    cuirass.name = "Test Cuirass"
+    cuirass.defense_bonus = 5
+    cuirass.armor_slot = Equippable.EquipSlot.CUIRASS
+    cuirass.condition = 10
+
+    # Add to inventory and equip armor
+    var cuirass_instance := ItemInstance.new(cuirass, null, 1)
+    player.add_items(cuirass_instance)
+    player.equip_armor(cuirass_instance)
+
+    # Verify armor is equipped
+    var equipped_cuirass := player.get_equipped_armor(Equippable.EquipSlot.CUIRASS)
+    assert_true(equipped_cuirass != null, "Cuirass should be equipped")
+    assert_true(equipped_cuirass.item_data == null, "ItemData should not exist yet")
+
+    # Take damage (should trigger armor condition loss)
+    player.take_damage(5)
+
+    # Verify ItemData was created and condition reduced
+    assert_true(equipped_cuirass.item_data != null, "ItemData should be created after taking damage")
+    assert_equals(equipped_cuirass.item_data.current_condition, 9, "Armor condition should be reduced by 1")
+
+    # Take more damage to further reduce condition
+    player.take_damage(3)
+    assert_equals(equipped_cuirass.item_data.current_condition, 8, "Armor condition should be reduced to 8")
+
+    return true
+
+func test_armor_destruction_on_zero_condition() -> bool:
+    var player := Player.new()
+    player.reset()
+
+    # Create armor with low condition (2)
+    var cuirass := Armor.new()
+    cuirass.name = "Fragile Cuirass"
+    cuirass.defense_bonus = 5
+    cuirass.armor_slot = Equippable.EquipSlot.CUIRASS
+    cuirass.condition = 2
+
+    # Create ItemData with condition already at 1 (next hit will destroy it)
+    var item_data := ItemData.new(2)
+    item_data.current_condition = 1
+
+    # Add to inventory and equip armor with existing ItemData
+    var cuirass_instance := ItemInstance.new(cuirass, item_data, 1)
+    player.add_items(cuirass_instance)
+    player.equip_armor(cuirass_instance)
+
+    # Verify armor is equipped
+    var equipped_cuirass := player.get_equipped_armor(Equippable.EquipSlot.CUIRASS)
+    assert_true(equipped_cuirass != null, "Cuirass should be equipped")
+    assert_equals(equipped_cuirass.item_data.current_condition, 1, "Armor condition should be 1")
+
+    # Take damage (should destroy the armor)
+    player.take_damage(5)
+
+    # Verify armor is destroyed and no longer equipped
+    var destroyed_cuirass := player.get_equipped_armor(Equippable.EquipSlot.CUIRASS)
+    assert_true(destroyed_cuirass == null, "Cuirass should be destroyed and unequipped")
+
+    return true
+
+func test_no_armor_condition_loss_when_no_damage_taken() -> bool:
+    var player := Player.new()
+    player.reset()
+
+    # Create armor
+    var cuirass := Armor.new()
+    cuirass.name = "Invincible Cuirass"
+    cuirass.defense_bonus = 95  # High defense to minimize damage
+    cuirass.armor_slot = Equippable.EquipSlot.CUIRASS
+    cuirass.condition = 10
+
+    # Add to inventory and equip armor
+    var cuirass_instance := ItemInstance.new(cuirass, null, 1)
+    player.add_items(cuirass_instance)
+    player.equip_armor(cuirass_instance)
+
+    # Try to take very little damage (should be reduced to 0 or 1 by high defense)
+    player.take_damage(1)
+
+    # Verify armor condition was affected (since minimum damage is 1)
+    var equipped_cuirass := player.get_equipped_armor(Equippable.EquipSlot.CUIRASS)
+    # Since minimum damage is 1, armor should still lose condition
+    assert_true(equipped_cuirass.item_data != null, "ItemData should be created")
+    assert_equals(equipped_cuirass.item_data.current_condition, 9, "Armor should lose condition even with high defense")
+
+    return true

@@ -1,0 +1,64 @@
+[gd_resource type="Resource" script_class="LootComponent" load_steps=23 format=3 uid="uid://clh6idxy2sia7"]
+
+[ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="1_b3de6"]
+[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="2_1fedn"]
+[ext_resource type="Resource" uid="uid://2s77tota5kam" path="res://data/items/potions/HealthPotionSmall.tres" id="3_xggo2"]
+[ext_resource type="Resource" uid="uid://drc4rx6xim1bu" path="res://data/items/potions/HealthPotionMedium.tres" id="4_x7g7p"]
+[ext_resource type="Resource" uid="uid://c31wbx2iwa0s7" path="res://data/items/potions/RegenerationPotion.tres" id="5_vel7e"]
+[ext_resource type="Resource" uid="uid://bpscdhoshmjls" path="res://data/items/potions/Antidote.tres" id="6_f8ts2"]
+[ext_resource type="Resource" uid="uid://cttpxikq24nx" path="res://data/items/weapons/Dagger.tres" id="7_2foig"]
+[ext_resource type="Resource" uid="uid://ccfdsyvacqntq" path="res://data/items/potions/FireResistancePotion.tres" id="7_x7g7p"]
+[ext_resource type="Resource" uid="uid://clyabowguvivm" path="res://data/items/weapons/ShortSword.tres" id="8_1sdis"]
+[ext_resource type="Resource" uid="uid://d3gxakqdygrra" path="res://data/items/elixirs/ElixirOfDefense.tres" id="8_vel7e"]
+[ext_resource type="Resource" uid="uid://bjvu3fmob3t2k" path="res://data/items/weapons/Staff.tres" id="9_2ydsu"]
+[ext_resource type="Resource" uid="uid://cxkrul1kd2tmm" path="res://data/items/elixirs/ElixirOfStrength.tres" id="9_f8ts2"]
+[ext_resource type="Resource" uid="uid://camlnwiaxo4xp" path="res://data/items/elixirs/ElixirOfVitality.tres" id="10_2foig"]
+[ext_resource type="Resource" uid="uid://dwqgodsd7t16e" path="res://data/items/repair_tools/RepairToolBasic.tres" id="11_4im77"]
+[ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="12_jrygo"]
+[ext_resource type="Resource" uid="uid://dj6ctr2a52bmx" path="res://data/ItemPicks/Runes.tres" id="15_vel7e"]
+[ext_resource type="Resource" uid="uid://c5c0srvukvrrv" path="res://data/items/armor/IronArmor.tres" id="16_2foig"]
+[ext_resource type="Resource" uid="uid://d1bjavkp12hm8" path="res://data/items/armor/LeatherCuirass.tres" id="17_1sdis"]
+
+[sub_resource type="Resource" id="Resource_4aml0"]
+script = ExtResource("1_b3de6")
+loot_table = Array[ExtResource("2_1fedn")]([ExtResource("3_xggo2"), ExtResource("4_x7g7p"), ExtResource("5_vel7e"), ExtResource("6_f8ts2"), ExtResource("7_x7g7p"), ExtResource("5_vel7e"), ExtResource("8_vel7e"), ExtResource("9_f8ts2"), ExtResource("10_2foig")])
+count = 4
+chance_none = 0.0
+pick_method = 0
+floor_min = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"
+
+[sub_resource type="Resource" id="Resource_8wt3s"]
+script = ExtResource("1_b3de6")
+loot_table = Array[ExtResource("2_1fedn")]([ExtResource("7_2foig"), ExtResource("8_1sdis"), ExtResource("9_2ydsu")])
+count = null
+chance_none = 0.1
+pick_method = 0
+floor_min = null
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"
+
+[sub_resource type="Resource" id="Resource_3i78l"]
+script = ExtResource("1_b3de6")
+loot_table = Array[ExtResource("2_1fedn")]([ExtResource("11_4im77")])
+count = 1
+chance_none = 0.75
+pick_method = 0
+floor_min = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"
+
+[sub_resource type="Resource" id="Resource_2ydsu"]
+script = ExtResource("1_b3de6")
+loot_table = Array[ExtResource("2_1fedn")]([ExtResource("16_2foig"), ExtResource("17_1sdis")])
+count = 1
+chance_none = 0.6
+pick_method = 0
+floor_min = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"
+
+[resource]
+script = ExtResource("12_jrygo")
+gold_min = 20
+gold_max = 50
+chance_gold_none = 0.0
+loot_table = Array[ExtResource("1_b3de6")]([SubResource("Resource_4aml0"), SubResource("Resource_8wt3s"), SubResource("Resource_3i78l"), ExtResource("15_vel7e"), SubResource("Resource_2ydsu")])
+metadata/_custom_type_script = "uid://lj0e532l0dyu"

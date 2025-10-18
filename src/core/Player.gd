@@ -26,6 +26,7 @@ func _init() -> void:
     # Connect health component signals to player signals
     stats_component.health_changed.connect(_on_health_changed)
     stats_component.died.connect(_on_stats_component_died)
+    stats_component.stats_changed.connect(_on_stats_changed)
     # Connect inventory signals
     inventory.inventory_changed.connect(_on_inventory_changed)
     reset()
@@ -76,7 +77,13 @@ func heal(amount: int) -> int:
 func take_damage(amount: int) -> int:
     # Use unified damage calculation (now includes percentage-based defense)
     var final_damage: int = calculate_incoming_damage(amount)
-    return stats_component.take_damage(final_damage)
+    var actual_damage_taken: int = stats_component.take_damage(final_damage)
+
+    # Reduce armor condition if actual damage was taken
+    if actual_damage_taken > 0:
+        reduce_armor_condition()
+
+    return actual_damage_taken
 
 # Health component getters for compatibility
 func get_hp() -> int:
@@ -91,6 +98,9 @@ func get_max_hp() -> int:
 
 # Signal handlers for health component
 func _on_health_changed(_current_hp: int, _max_hp: int) -> void:
+    pass  # This method exists so we can later handle health changes if needed
+
+func _on_stats_changed() -> void:
     emit_signal("stats_changed")
 
 func _on_stats_component_died() -> void:
@@ -468,7 +478,40 @@ func reduce_weapon_condition() -> void:
         # Emit signal again to update UI when weapon is destroyed
         emit_signal("inventory_changed")
 
+# Reduce armor condition after taking damage - call this after damage calculation
+func reduce_armor_condition() -> void:
+    # Get all equipped armor items
+    var armor_items_to_remove: Array[Equippable.EquipSlot] = []
 
+    for slot: Equippable.EquipSlot in equipped_items.keys():
+        var equipped_instance: ItemInstance = equipped_items[slot]
+        if not equipped_instance or not equipped_instance.item is Armor:
+            continue
+
+        var armor := equipped_instance.item as Armor
+
+        # Create ItemData if it doesn't exist yet (first damage)
+        if not equipped_instance.item_data:
+            equipped_instance.item_data = ItemData.new(armor.condition)
+            equipped_instance.item_data.current_condition = armor.condition
+
+        var current_condition := equipped_instance.item_data.current_condition
+        current_condition -= 1
+        equipped_instance.item_data.current_condition = current_condition
+
+        # Check if armor is destroyed
+        if current_condition <= 0:
+            var armor_name := armor.name
+            LogManager.log_event("%s has broken and is destroyed!" % armor_name)
+            armor_items_to_remove.append(slot)
+
+    # Remove destroyed armor items (do this after iteration to avoid modifying dict during iteration)
+    for slot: Equippable.EquipSlot in armor_items_to_remove:
+        unequip_item(slot)
+
+    # Emit signal to update UI if any armor condition changed or was destroyed
+    if equipped_items.size() > 0 or armor_items_to_remove.size() > 0:
+        emit_signal("inventory_changed")
 
 func get_total_attack_display() -> String:
     # This shows the total attack power for UI display purposes

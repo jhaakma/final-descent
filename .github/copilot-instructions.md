@@ -66,3 +66,7 @@ This is a Godot 4 roguelike dungeon crawler game. Follow these guidelines when w
 - **Regression Testing**: Run full test suite before committing changes
 - **Code Review**: Follow established patterns in existing codebase
 - **Documentation**: Update relevant docs when adding significant features
+
+## Git Guidelines
+- **Commit Messages**: When completing a task, give a summary in the form of a git commit message, inside a code block
+- **Be concise**: Commit messages should omit small details, and combine related bullet points

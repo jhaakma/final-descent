@@ -14,4 +14,4 @@ metadata/_custom_type_script = "uid://kfpqhwn4ci4m"
 script = ExtResource("1_kah5s")
 weapon_enchantment = SubResource("Resource_iiysn")
 name = "Rune of Ice"
-purchase_value = 20
+purchase_value = 50

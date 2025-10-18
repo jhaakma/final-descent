@@ -1,50 +1,24 @@
-[gd_scene load_steps=20 format=3 uid="uid://c0cpy5xfdy2nb"]
+[gd_scene load_steps=10 format=3 uid="uid://c0cpy5xfdy2nb"]
 
 [ext_resource type="Theme" uid="uid://ch0ahyx502rlq" path="res://data/themes/theme.tres" id="1_fqbyh"]
 [ext_resource type="Script" uid="uid://bi2w4gopbk7mv" path="res://src/ui/screens/room_screen.gd" id="1_vxldv"]
 [ext_resource type="PackedScene" uid="uid://d4kfoqy7h5f0d" path="res://src/ui/widgets/hp_bar.tscn" id="2_71ary"]
-[ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="3_2vu3h"]
 [ext_resource type="Script" uid="uid://bdbhlyvac2es6" path="res://src/rooms/room_resource.gd" id="3_soduk"]
 [ext_resource type="PackedScene" uid="uid://cp3266w0ukw23" path="res://src/ui/widgets/inventory/InventoryContainer.tscn" id="3_vun85"]
-[ext_resource type="Resource" uid="uid://i5l4a63bwaev" path="res://data/rooms/ShopkeeperRoomBasic.tres" id="4_31aom"]
 [ext_resource type="PackedScene" uid="uid://b3c8d4h8p1q6r" path="res://src/ui/widgets/EquippedItemsWidget.tscn" id="4_equipped"]
-[ext_resource type="Resource" uid="uid://bhke1ujhajsrw" path="res://data/ItemPicks/StartingGear.tres" id="5_qopf2"]
-[ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="6_em7fl"]
+[ext_resource type="Resource" uid="uid://d32s4st32v1tk" path="res://data/loot/StartingLoot.tres" id="4_uffsh"]
 [ext_resource type="Script" uid="uid://cuib3tlx6u7dn" path="res://src/rooms/chest_room_resource.gd" id="7_soduk"]
-[ext_resource type="Resource" uid="uid://w3kd7cafprjg" path="res://data/enemies/Salamander.tres" id="9_t5d3n"]
-[ext_resource type="Script" uid="uid://b4y5n724vd0ph" path="res://src/enemies/enemy_resource.gd" id="9_thj5w"]
-[ext_resource type="Script" uid="uid://bqxhtkn1xkeqv" path="res://src/rooms/combat_room_resource.gd" id="11_am2x5"]
-[ext_resource type="Resource" uid="uid://ddgo03rs1qvck" path="res://data/rooms/ShrineRoomAncient.tres" id="18_wfawr"]
-[ext_resource type="Resource" uid="uid://deugb73fiqik0" path="res://data/rooms/ShrineRoomEvil.tres" id="19_hoodt"]
-
-[sub_resource type="Resource" id="Resource_bu8q4"]
-script = ExtResource("6_em7fl")
-gold_min = 50
-gold_max = 50
-chance_gold_none = 0.0
-loot_table = Array[ExtResource("3_2vu3h")]([ExtResource("5_qopf2")])
-metadata/_custom_type_script = "uid://lj0e532l0dyu"
 
 [sub_resource type="Resource" id="Resource_4t8ue"]
 script = ExtResource("7_soduk")
 chance_empty = 0.0
-loot_component = SubResource("Resource_bu8q4")
+loot_component = ExtResource("4_uffsh")
 title = "Room"
 description = "Description"
 weight = 10
 min_floor = 0
 max_floor = -1
 metadata/_custom_type_script = "uid://cuib3tlx6u7dn"
-
-[sub_resource type="Resource" id="Resource_037r1"]
-script = ExtResource("11_am2x5")
-enemy_list = Array[ExtResource("9_thj5w")]([ExtResource("9_t5d3n")])
-title = "Room"
-description = "Description"
-weight = 10
-min_floor = 0
-max_floor = -1
-metadata/_custom_type_script = "uid://bqxhtkn1xkeqv"
 
 [node name="RoomScreen" type="Control"]
 layout_mode = 3
@@ -55,7 +29,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_fqbyh")
 script = ExtResource("1_vxldv")
-starting_rooms = Array[ExtResource("3_soduk")]([SubResource("Resource_4t8ue"), SubResource("Resource_037r1"), ExtResource("4_31aom"), ExtResource("18_wfawr"), ExtResource("19_hoodt")])
+starting_rooms = Array[ExtResource("3_soduk")]([SubResource("Resource_4t8ue")])
 metadata/_edit_vertical_guides_ = [-118.0]
 
 [node name="MarginContainer" type="MarginContainer" parent="."]

@@ -1,13 +1,8 @@
 # To do
 
-## Enchantments - pick a slot
+## Enchantments and Repair Kits - pick a slot
 - Add more armors slots
 - When using an armor rune, popup asks which armor to enchant
-
-## Resolve logging issues
-- Continue improving logging functionality
-- Log colors for statuses, abilities
-- Make use of log_success and log_warning
 
 ## Status Effect stacking issues
 - Still needs work, for example, poison from a spell and poison from a weapon aren't stacking
@@ -25,6 +20,7 @@
 - Prerequisites:
     - Room Manager
     - CombayEntity refactor
+-
 
 ## Theme
 Create and use a consistent theme

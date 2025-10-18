@@ -21,4 +21,4 @@ metadata/_custom_type_script = "uid://on0my3ge7dka"
 script = ExtResource("1_bived")
 weapon_enchantment = SubResource("Resource_xlgnw")
 name = "Rune of Poison"
-purchase_value = 30
+purchase_value = 50
