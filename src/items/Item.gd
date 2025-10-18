@@ -2,6 +2,7 @@ class_name Item extends Resource
 
 enum ItemCategory {
     WEAPON,
+    ARMOR,
     POTION,
     SCROLL,
     MISC
@@ -57,6 +58,8 @@ func get_category_name() -> String:
     match get_category():
         ItemCategory.WEAPON:
             return "Weapons"
+        ItemCategory.ARMOR:
+            return "Armor"
         ItemCategory.POTION:
             return "Potions"
         ItemCategory.MISC:

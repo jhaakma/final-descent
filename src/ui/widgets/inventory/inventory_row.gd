@@ -12,6 +12,7 @@ signal item_sold(item_instance: ItemInstance)
 
 enum DisplayMode {
     INVENTORY,   # Show Use/Equip buttons
+    EQUIPPED,    # Show Unequip button, no green highlight
     SHOP_BUY,    # Show Buy button with price
     SHOP_SELL    # Show Sell button with price
 }
@@ -90,6 +91,9 @@ func _update_display() -> void:
         DisplayMode.INVENTORY:
             item_name_label.text = display_name
             price_label.visible = false
+        DisplayMode.EQUIPPED:
+            item_name_label.text = display_name
+            price_label.visible = false
         DisplayMode.SHOP_BUY:
             if item_instance.count > 1:
                 item_name_label.text = display_name
@@ -123,6 +127,8 @@ func _update_action_button() -> void:
     match display_mode:
         DisplayMode.INVENTORY:
             _update_inventory_action_button()
+        DisplayMode.EQUIPPED:
+            _update_equipped_action_button()
         DisplayMode.SHOP_BUY:
             _update_shop_buy_button()
         DisplayMode.SHOP_SELL:
@@ -133,7 +139,7 @@ func _update_inventory_action_button() -> void:
     # Consumable items (potions, scrolls, etc.) can be used during combat
     action_button.disabled = false
 
-    if item_instance.item is Weapon:
+    if item_instance.item is Equippable:
         # Weapons can always be equipped/unequipped
         # Set a fixed width to prevent layout changes
         action_button.custom_minimum_size.x = 80
@@ -146,6 +152,12 @@ func _update_inventory_action_button() -> void:
         action_button.text = "Use"
         # Reset to default width for non-weapons
         action_button.custom_minimum_size.x = 0
+
+func _update_equipped_action_button() -> void:
+    # In equipped mode, always show "Unequip" button
+    action_button.text = "Unequip"
+    action_button.custom_minimum_size.x = 80
+    action_button.disabled = false
 
 func _update_shop_buy_button() -> void:
     action_button.text = "Buy"
@@ -164,8 +176,9 @@ func _update_background() -> void:
     # Create a StyleBoxFlat for custom background colors
     var style_box := StyleBoxFlat.new()
 
-    # Check if this entry represents equipped item
-    var is_this_equipped := (item_instance.item is Weapon and item_instance.is_equipped)
+    # Check if this entry represents equipped item (but not in equipped display mode)
+    var is_this_equipped := (display_mode != DisplayMode.EQUIPPED and
+                             item_instance.item is Weapon and item_instance.is_equipped)
 
     if is_this_equipped:
         # Use a proper bright green
@@ -183,14 +196,14 @@ func _update_background() -> void:
         print("Setting default background for: ", item_instance.item.name if item_instance else "none")
 
 func _update_condition_bar() -> void:
-    # Show condition bar for weapons with damage (in any display mode)
-    var should_show: bool = (item_instance.item is Weapon and
+    # Show condition bar for equippable items with damage (in any display mode)
+    var should_show: bool = (item_instance.item is Equippable and
                       item_instance.item_data and
-                      item_instance.item_data.current_condition < (item_instance.item as Weapon).condition)
+                      item_instance.item_data.current_condition < (item_instance.item as Equippable).get_max_condition())
 
     if should_show:
         # Update the progress bar value
-        var max_condition := (item_instance.item as Weapon).condition
+        var max_condition := (item_instance.item as Equippable).get_max_condition()
         var current_condition := item_instance.item_data.current_condition
         condition_bar.max_value = max_condition
         condition_bar.value = current_condition
@@ -223,6 +236,8 @@ func _on_action_button_pressed() -> void:
 
     match display_mode:
         DisplayMode.INVENTORY:
+            item_used.emit(item_instance)
+        DisplayMode.EQUIPPED:
             item_used.emit(item_instance)
         DisplayMode.SHOP_BUY:
             item_bought.emit(item_instance)

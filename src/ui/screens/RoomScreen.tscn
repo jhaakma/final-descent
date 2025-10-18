@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://c0cpy5xfdy2nb"]
+[gd_scene load_steps=20 format=3 uid="uid://c0cpy5xfdy2nb"]
 
 [ext_resource type="Theme" uid="uid://ch0ahyx502rlq" path="res://data/themes/theme.tres" id="1_fqbyh"]
 [ext_resource type="Script" uid="uid://bi2w4gopbk7mv" path="res://src/ui/screens/room_screen.gd" id="1_vxldv"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://bdbhlyvac2es6" path="res://src/rooms/room_resource.gd" id="3_soduk"]
 [ext_resource type="PackedScene" uid="uid://cp3266w0ukw23" path="res://src/ui/widgets/inventory/InventoryContainer.tscn" id="3_vun85"]
 [ext_resource type="Resource" uid="uid://i5l4a63bwaev" path="res://data/rooms/ShopkeeperRoomBasic.tres" id="4_31aom"]
+[ext_resource type="PackedScene" uid="uid://b3c8d4h8p1q6r" path="res://src/ui/widgets/EquippedItemsWidget.tscn" id="4_equipped"]
 [ext_resource type="Resource" uid="uid://bhke1ujhajsrw" path="res://data/ItemPicks/StartingGear.tres" id="5_qopf2"]
 [ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="6_em7fl"]
 [ext_resource type="Script" uid="uid://cuib3tlx6u7dn" path="res://src/rooms/chest_room_resource.gd" id="7_soduk"]
@@ -77,7 +78,6 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="LeftPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel"]
@@ -169,6 +169,13 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 112.825)
 layout_mode = 2
 
+[node name="HSeparator3" type="HSeparator" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="EquippedItemsWidget" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer" instance=ExtResource("4_equipped")]
+unique_name_in_owner = true
+layout_mode = 2
+
 [node name="InventoryContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer" instance=ExtResource("3_vun85")]
 unique_name_in_owner = true
 layout_mode = 2
@@ -229,7 +236,7 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="RightPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2(400, 0)
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/RightPanel"]

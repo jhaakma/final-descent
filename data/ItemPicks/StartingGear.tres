@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="LootPick" load_steps=18 format=3 uid="uid://bhke1ujhajsrw"]
+[gd_resource type="Resource" script_class="LootPick" load_steps=19 format=3 uid="uid://bhke1ujhajsrw"]
 
 [ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="1_0agda"]
 [ext_resource type="Resource" uid="uid://i3cxeo8eo70w" path="res://data/items/runes/RuneOfPoison.tres" id="2_gl8j3"]
@@ -13,6 +13,7 @@
 [ext_resource type="Script" uid="uid://ctq6u1ndsne3p" path="res://src/items/Scroll.gd" id="10_252a0"]
 [ext_resource type="Script" uid="uid://bwj0xovfmtks4" path="res://src/abilities/Spell.gd" id="11_87537"]
 [ext_resource type="Script" uid="uid://rglym38nsnwg" path="res://src/effects/status_effect.gd" id="12_anin4"]
+[ext_resource type="Resource" uid="uid://d1bjavkp12hm8" path="res://data/items/armor/LeatherCuirass.tres" id="14_tsqjj"]
 [ext_resource type="Script" uid="uid://g8fqfpwlfdk3" path="res://src/effects/instant/cure_status_effect.gd" id="15_byfk2"]
 
 [sub_resource type="Resource" id="Resource_l152d"]
@@ -39,8 +40,8 @@ metadata/_custom_type_script = "uid://ctq6u1ndsne3p"
 
 [resource]
 script = ExtResource("9_87537")
-loot_table = Array[ExtResource("1_0agda")]([ExtResource("2_gl8j3"), ExtResource("3_hiswv"), ExtResource("4_ymuan"), ExtResource("5_4mrkg"), ExtResource("6_jwqcv"), ExtResource("7_tsqjj"), ExtResource("8_252a0"), ExtResource("9_gl8j3"), SubResource("Resource_tt7yc")])
-count = 2
+loot_table = Array[ExtResource("1_0agda")]([ExtResource("2_gl8j3"), ExtResource("3_hiswv"), ExtResource("4_ymuan"), ExtResource("5_4mrkg"), ExtResource("6_jwqcv"), ExtResource("7_tsqjj"), ExtResource("8_252a0"), ExtResource("9_gl8j3"), SubResource("Resource_tt7yc"), ExtResource("14_tsqjj")])
+count = 1
 chance_none = 0.0
 pick_method = 1
 floor_min = 0

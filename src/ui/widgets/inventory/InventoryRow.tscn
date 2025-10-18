@@ -34,6 +34,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 text = "Item Name"
+clip_text = true
 
 [node name="ConditionBar" type="ProgressBar" parent="MarginContainer/HBoxContainer/ItemInfo"]
 unique_name_in_owner = true

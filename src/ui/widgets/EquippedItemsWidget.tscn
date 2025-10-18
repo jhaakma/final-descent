@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3 uid="uid://b3c8d4h8p1q6r"]
+
+[ext_resource type="Script" uid="uid://cynx4aff8rfvf" path="res://src/ui/widgets/equipped_items_widget.gd" id="1_abc123"]
+
+[node name="EquippedItemsWidget" type="VBoxContainer"]
+script = ExtResource("1_abc123")
+
+[node name="EquippedLabel" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+text = "EQUIPPED"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="."]
+layout_mode = 2
+
+[node name="EquippedItemsContainer" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 2

@@ -1,13 +1,13 @@
 # To do
 
+## Item inventory colors
+- Each item type appears as different color, plus enchantments
+
+
 ## Resolve logging issues
 - Continue improving logging functionality
 - Log colors for statuses, abilities
 - Make use of log_success and log_warning
-
-## Integrate Popups into RoomScene
-- Replace the action buttons section, which solves the need to disable anything
-- Remove "Use Item" button, make Inventory actions consume player turn if in combat
 
 ## Status Effect stacking issues
 - Still needs work, for example, poison from a spell and poison from a weapon aren't stacking

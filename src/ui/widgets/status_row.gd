@@ -1,10 +1,13 @@
-class_name StatusRow extends RichTextLabel
+class_name StatusRow extends Control
+
+@onready var status_text: RichTextLabel = %StatusText
+@onready var status_value: RichTextLabel = %StatusValue
+
+static func get_scene() -> PackedScene:
+    return preload("uid://cfnfquwrmhs5x") as PackedScene
 
 func _ready() -> void:
     # Configure RichTextLabel properties for proper display
-    bbcode_enabled = true
-    fit_content = true
-    scroll_active = false
     # Set a reasonable size
     custom_minimum_size = Vector2(200, 20)
     size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -23,8 +26,6 @@ func initialize_with_condition(condition: StatusCondition) -> void:
 
     print("Initializing StatusRow with status effect: %s" % display_text)
 
-    bbcode_enabled = true
-    clear()
-    append_text(display_text)
+    status_text.text = display_text
     tooltip_text = effect.get_description()
     print("StatusRow text set, visible: %s, size: %s" % [visible, size])

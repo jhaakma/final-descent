@@ -25,3 +25,6 @@ func get_additional_tooltip_info() -> Array[AdditionalTooltipInfoData]:
 
     info.color = Color(0.6, 1.0, 0.8)
     return [info]
+
+func get_inventory_color() -> Color:
+    return Color("#a9dfc4ff")

@@ -105,5 +105,5 @@ func get_additional_tooltip_info() -> Array[AdditionalTooltipInfoData]:
     return info_array
 
 func get_inventory_color() -> Color:
-    # Purple tint for scrolls to distinguish them
-    return Color(0.9, 0.7, 1.0)
+    return Color("#d4cfaeff")
+

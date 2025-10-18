@@ -12,7 +12,8 @@ var gold: int = 0
 
 # Inventory and equipment - using new inventory component
 var inventory: ItemInventoryComponent
-var equipped_weapon: ItemInstance = null
+var equipped_weapon: ItemInstance = null  # Legacy - will be replaced with equipped_items
+var equipped_items: Dictionary = {}  # Maps Equippable.EquipSlot to ItemInstance
 
 # Constants for combat calculations
 
@@ -36,6 +37,7 @@ func reset() -> void:
     if inventory:
         inventory.clear()
     equipped_weapon = null
+    equipped_items.clear()
 
     # Clear status effects using inherited component
     clear_all_status_effects()
@@ -153,12 +155,9 @@ func equip_weapon(item_instance: ItemInstance) -> bool:
             emit_signal("inventory_changed")
     equipped_weapon.is_equipped = true
 
-    # Apply enchantment effects if the weapon has any
+    # Initialize enchantment if the weapon has any (on-strike enchantments only)
     if weapon.enchantment:
         weapon.enchantment.initialise(weapon)
-        # Check if it's a constant effect enchantment
-        if weapon.enchantment is ConstantEffectEnchantment:
-            (weapon.enchantment as ConstantEffectEnchantment)._on_weapon_equipped(weapon)
 
     LogManager.log_event("Equipped %s" % weapon.name)
     return true
@@ -175,13 +174,7 @@ func unequip_weapon() -> bool:
         # Undamaged - add as generic item
         inventory.add_item(equipped_weapon)
 
-    # Remove enchantment effects if the weapon has any
-    var weapon: Weapon = equipped_weapon.item as Weapon
-    if weapon.enchantment:
-        # Check if it's a constant effect enchantment
-        if weapon.enchantment is ConstantEffectEnchantment:
-            (weapon.enchantment as ConstantEffectEnchantment)._on_weapon_unequipped(weapon)
-
+    # Weapons only use on-strike enchantments, no cleanup needed on unequip
     LogManager.log_event("Unequipped %s" % equipped_weapon.item.name)
 
     equipped_weapon.is_equipped = false
@@ -218,6 +211,158 @@ func get_equipped_weapon_instance() -> ItemInstance:
         return equipped_weapon
     return null
 
+# === GENERAL EQUIPMENT MANAGEMENT ===
+func equip_item(item_instance: ItemInstance) -> bool:
+    if not item_instance.item is Equippable:
+        return false
+
+    var equippable: Equippable = item_instance.item as Equippable
+    var slot: Equippable.EquipSlot = equippable.get_equip_slot()
+
+    # Use legacy weapon system for weapons to maintain compatibility
+    if slot == Equippable.EquipSlot.WEAPON:
+        return equip_weapon(item_instance)
+
+    # Handle armor equipment
+    if equippable is Armor:
+        return equip_armor(item_instance)
+
+    return false
+
+func unequip_item(slot: Equippable.EquipSlot) -> bool:
+    # Use legacy weapon system for weapons
+    if slot == Equippable.EquipSlot.WEAPON:
+        return unequip_weapon()
+
+    # Handle armor unequipping
+    return unequip_armor(slot)
+
+func get_equipped_item(slot: Equippable.EquipSlot) -> ItemInstance:
+    if slot == Equippable.EquipSlot.WEAPON:
+        return equipped_weapon
+    return equipped_items.get(slot)
+
+func has_item_equipped(slot: Equippable.EquipSlot) -> bool:
+    return get_equipped_item(slot) != null
+
+# === ARMOR MANAGEMENT ===
+func equip_armor(item_instance: ItemInstance) -> bool:
+    if not item_instance.item is Armor:
+        return false
+
+    var armor: Armor = item_instance.item as Armor
+    var slot: Equippable.EquipSlot = armor.get_equip_slot()
+
+    # Unequip current armor in this slot if there is one
+    if equipped_items.has(slot):
+        unequip_armor(slot)
+
+    # Check if we have this armor in inventory
+    if not inventory.has_item(armor):
+        return false
+
+    var equipped_instance: ItemInstance
+    if item_instance.item_data:
+        # Equipping a specific instance - remove it from inventory
+        if inventory.take_item_instance(armor, item_instance.item_data):
+            equipped_instance = item_instance
+        else:
+            return false
+    else:
+        # Equipping a generic item - take one from stack
+        var taken: ItemInstance = inventory.get_item_stack(armor).take_one()
+        if taken:
+            equipped_instance = taken
+        else:
+            return false
+
+    equipped_instance.is_equipped = true
+    equipped_items[slot] = equipped_instance
+
+    # Apply enchantment effects if the armor has any
+    if armor.enchantment:
+        armor.enchantment.initialise(armor)
+        # Check if it's a constant effect enchantment
+        if armor.enchantment is ConstantEffectEnchantment:
+            (armor.enchantment as ConstantEffectEnchantment)._on_item_equipped(armor)
+
+    # Apply armor defense bonus
+    _apply_armor_defense_bonus(armor)
+
+    LogManager.log_event("Equipped %s" % armor.name)
+    emit_signal("inventory_changed")
+    return true
+
+func unequip_armor(slot: Equippable.EquipSlot) -> bool:
+    if not equipped_items.has(slot):
+        return false
+
+    var equipped_instance: ItemInstance = equipped_items[slot]
+    var armor: Armor = equipped_instance.item as Armor
+
+    # Return armor to inventory based on whether it has unique data
+    if equipped_instance.item_data and equipped_instance.item_data.is_unique():
+        # Has unique data (damaged/enchanted) - add as instance
+        inventory.add_item_instance(equipped_instance)
+    else:
+        # Undamaged - add as generic item
+        inventory.add_item(equipped_instance)
+
+    # Remove enchantment effects if the armor has any
+    if armor.enchantment:
+        # Check if it's a constant effect enchantment
+        if armor.enchantment is ConstantEffectEnchantment:
+            (armor.enchantment as ConstantEffectEnchantment)._on_item_unequipped(armor)
+
+    # Remove armor defense bonus
+    _remove_armor_defense_bonus(armor)
+
+    LogManager.log_event("Unequipped %s" % armor.name)
+
+    equipped_instance.is_equipped = false
+    equipped_items.erase(slot)
+    emit_signal("inventory_changed")
+    return true
+
+func get_equipped_armor(slot: Equippable.EquipSlot) -> ItemInstance:
+    return equipped_items.get(slot)
+
+func get_all_equipped_items() -> Array[ItemInstance]:
+    var items: Array[ItemInstance] = []
+
+    # Add legacy weapon
+    if equipped_weapon:
+        items.append(equipped_weapon)
+
+    # Add equipped armor
+    for item_instance: ItemInstance in equipped_items.values():
+        items.append(item_instance)
+
+    return items
+
+# Calculate total defense bonus from all equipped armor
+func get_total_armor_defense_bonus() -> int:
+    var total_bonus: int = 0
+
+    for item_instance: ItemInstance in equipped_items.values():
+        if item_instance.item is Armor:
+            var armor: Armor = item_instance.item as Armor
+            total_bonus += armor.get_defense_bonus()
+
+    return total_bonus
+
+# Apply armor defense bonus to stats component
+func _apply_armor_defense_bonus(armor: Equippable) -> void:
+    if armor is Armor:
+        var armor_item: Armor = armor as Armor
+        var source_id: String = "armor_%s" % armor.get_equip_slot_name().to_lower()
+        stats_component.add_defense_bonus(source_id, armor_item.get_defense_bonus())
+
+# Remove armor defense bonus from stats component
+func _remove_armor_defense_bonus(armor: Equippable) -> void:
+    var source_id: String = "armor_%s" % armor.get_equip_slot_name().to_lower()
+    stats_component.remove_defense_bonus(source_id)
+
 # Get current weapon condition information
 func get_weapon_condition() -> Dictionary:
     if equipped_weapon:
@@ -248,6 +393,11 @@ func get_weapon_condition() -> Dictionary:
 # Get total max HP bonus from status effects
 func get_total_max_hp_bonus() -> int:
     return stats_component.get_total_max_health() - stats_component.max_health
+
+# === DEFENSE MANAGEMENT ===
+# Override to ensure UI displays correct defense including armor
+func get_total_defense() -> int:
+    return stats_component.get_total_defense()
 
 # === STATUS EFFECT MANAGEMENT ===
 # Override the base method to emit stats_changed signal for UI updates
@@ -332,7 +482,7 @@ func get_total_attack_display() -> String:
 func get_inventory_display_info() -> Array:
     return inventory.get_inventory_display_info()
 
-# Get ItemTiles for UI display (includes equipped items)
+# Get ItemTiles for UI display (includes equipped items for shop/combat contexts)
 func get_item_tiles() -> Array[ItemInstance]:
     var tiles: Array[ItemInstance] = []
 
@@ -340,10 +490,18 @@ func get_item_tiles() -> Array[ItemInstance]:
     if equipped_weapon:
         tiles.append(equipped_weapon)
 
+    # Add equipped armor
+    for item_instance: ItemInstance in equipped_items.values():
+        tiles.append(item_instance)
+
     # Add inventory tiles
     tiles.append_array(inventory.get_item_tiles())
 
     return tiles
+
+# Get ItemTiles for inventory display only (excludes equipped items)
+func get_inventory_tiles() -> Array[ItemInstance]:
+    return inventory.get_item_tiles()
 
 
 # Take items and get their ItemData instances

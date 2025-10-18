@@ -1,7 +1,5 @@
-## A Rune is able to enchant the currently held weapon with the given enchantment
+## Base class for all runes - provides enchantment capabilities
 class_name Rune extends Item
-
-@export var enchantment: Enchantment
 
 func get_category() -> Item.ItemCategory:
     return Item.ItemCategory.MISC
@@ -9,31 +7,29 @@ func get_category() -> Item.ItemCategory:
 func get_consumable() -> bool:
     return true  # Runes are consumable
 
+## Override in subclasses to return the specific enchantment
+func get_enchantment() -> Enchantment:
+    push_error("Rune.get_enchantment() must be overridden in subclasses")
+    return null
+
+## Override in subclasses to implement specific enchantment logic
 func _on_use(_item_data: ItemData) -> bool:
-    var player := GameState.player
-    var current_weapon_instance := player.get_equipped_weapon()
-    if not current_weapon_instance:
-        LogManager.log_warning("No weapon equipped to enchant.")
-        return false
+    push_error("Rune._on_use() must be overridden in subclasses")
+    return false
 
-    var current_weapon := current_weapon_instance.item as Weapon
-    if current_weapon.enchantment:
-        LogManager.log_warning("Current weapon already has an enchantment.")
-        return false
-
-    current_weapon = current_weapon.duplicate() as Weapon
-    current_weapon.enchantment = enchantment
-    current_weapon.name = "%s of %s" % [current_weapon.name, enchantment.get_enchantment_name()]
-    current_weapon_instance.item = current_weapon
-    player.equip_weapon(current_weapon_instance)
-    LogManager.log_success("You have successfully enchanted your weapon with %s." % enchantment.get_enchantment_name())
-    return true
-
+## Override in subclasses to provide appropriate tooltip information
 func get_additional_tooltip_info() -> Array[AdditionalTooltipInfoData]:
+    var enchantment := get_enchantment()
     if not enchantment:
         return []
     var info := AdditionalTooltipInfoData.new()
-    if enchantment:
-        info.text = "🔮 Imbue Weapon: %s" % enchantment.get_description()
-        info.color = Color(0.8, 0.6, 1.0)
+    info.text = "🔮 %s: %s" % [get_rune_type_name(), enchantment.get_description()]
+    info.color = Color(0.8, 0.6, 1.0)
     return [info]
+
+## Override in subclasses to provide the rune type name for tooltips
+func get_rune_type_name() -> String:
+    return "Enchant"
+
+func get_inventory_color() -> Color:
+    return Color("#ff94abff")

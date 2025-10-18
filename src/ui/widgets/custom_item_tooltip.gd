@@ -107,8 +107,19 @@ func _update_item_type() -> void:
             type_text += " - Equipped)"
         else:
             type_text += ")"
+    elif current_item is Armor:
+        var armor := current_item as Armor
+        type_text = "(%s" % armor.get_equip_slot_name()
+        # Check if this armor is equipped
+        var equipped_armor := GameState.player.get_equipped_armor(armor.get_equip_slot())
+        if equipped_armor and equipped_armor.item == current_item:
+            type_text += " - Equipped)"
+        else:
+            type_text += ")"
     elif current_item is ItemPotion:
         type_text = "(Potion)"
+    elif current_item.get_consumable():
+        type_text = "(Consumable)"
     if type_text != "":
         item_type_label.text = type_text
 
@@ -149,9 +160,10 @@ func _update_stats() -> void:
 func _update_condition_label() -> void:
     if not condition_label:
         return
-    if "condition" in current_item:
-        var current_condition := (current_item as Weapon).condition
-        var max_condition := (current_item as Weapon).get_max_condition()
+    if current_item is Equippable:
+        var equippable_item: Equippable = current_item as Equippable
+        var current_condition := equippable_item.condition
+        var max_condition := equippable_item.get_max_condition()
 
         # Override with item data if available
         if current_item_data and "current_condition" in current_item_data:

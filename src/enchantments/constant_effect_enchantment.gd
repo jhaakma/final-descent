@@ -21,14 +21,28 @@ func initialise(_owner: Object) -> void:
 
 func _on_weapon_equipped(_weapon: Weapon) -> void:
     # Apply the constant effect when the weapon is equipped
+    _apply_effect()
+
+func _on_weapon_unequipped(_weapon: Weapon) -> void:
+    # Remove the constant effect when the weapon is unequipped
+    _remove_effect()
+
+func _on_item_equipped(_item: Equippable) -> void:
+    # Apply the constant effect when any equippable item is equipped
+    _apply_effect()
+
+func _on_item_unequipped(_item: Equippable) -> void:
+    # Remove the constant effect when any equippable item is unequipped
+    _remove_effect()
+
+func _apply_effect() -> void:
     if constant_effect:
         var player := GameState.player
         if player and player.has_method("apply_status_effect"):
             player.apply_status_effect(constant_effect)
             _applied_target = player
 
-func _on_weapon_unequipped(_weapon: Weapon) -> void:
-    # Remove the constant effect when the weapon is unequipped
+func _remove_effect() -> void:
     if auto_remove_on_unequip and _applied_target and constant_effect:
         if _applied_target.has_method("remove_status_effect"):
             _applied_target.remove_status_effect(constant_effect)
@@ -42,5 +56,6 @@ func on_unequip() -> void:
         _applied_target = null
 
 func is_valid_owner(owner: Object) -> bool:
-    # This enchantment can be applied to weapons
-    return owner is Weapon
+    # Constant effect enchantments can only be applied to armor, not weapons
+    # Weapons should use on-strike enchantments instead
+    return owner is Armor

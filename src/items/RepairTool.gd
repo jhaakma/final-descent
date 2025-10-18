@@ -13,3 +13,6 @@ func _on_use(_item_data: ItemData) -> bool:
 
 func get_description() -> String:
     return "Repairs %d condition to the equipped weapon." % [repair_amount]
+
+func get_inventory_color() -> Color:
+    return Color("#747065ff")

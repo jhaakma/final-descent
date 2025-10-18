@@ -1,10 +1,17 @@
-[gd_resource type="Resource" script_class="Rune" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="WeaponRune" load_steps=4 format=3 uid="uid://m5dageinlf77"]
 
-[ext_resource type="Script" path="res://src/items/Rune.gd" id="1_0"]
-[ext_resource type="Resource" path="res://data/enchantments/IceDamageEnchantment.tres" id="2_0"]
+[ext_resource type="Script" uid="uid://cdt6w8cnn4udd" path="res://src/items/WeaponRune.gd" id="1_kah5s"]
+[ext_resource type="Script" uid="uid://kfpqhwn4ci4m" path="res://src/enchantments/elemental_damage_enchantment.gd" id="2_ypqkk"]
+
+[sub_resource type="Resource" id="Resource_iiysn"]
+script = ExtResource("2_ypqkk")
+elemental_damage_type = 4
+elemental_damage = 2
+elemental_damage_chance = 1.0
+metadata/_custom_type_script = "uid://kfpqhwn4ci4m"
 
 [resource]
-script = ExtResource("1_0")
-enchantment = ExtResource("2_0")
+script = ExtResource("1_kah5s")
+weapon_enchantment = SubResource("Resource_iiysn")
 name = "Rune of Ice"
 purchase_value = 20

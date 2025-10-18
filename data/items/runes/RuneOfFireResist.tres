@@ -1,11 +1,25 @@
-[gd_resource type="Resource" script_class="Rune" load_steps=3 format=3 uid="uid://8l6joadu85p3"]
+[gd_resource type="Resource" script_class="ArmorRune" load_steps=6 format=3 uid="uid://8l6joadu85p3"]
 
-[ext_resource type="Script" uid="uid://io27es0e6r6q" path="res://src/items/Rune.gd" id="1_647kx"]
-[ext_resource type="Resource" uid="uid://ciff15gkdv8o6" path="res://data/enchantments/FireDamageEnchantment.tres" id="1_rm5gm"]
+[ext_resource type="Script" uid="uid://c8cr2b64fjwtu" path="res://src/effects/constant/elemental_resistance_effect.gd" id="1_dkiad"]
+[ext_resource type="Script" uid="uid://domk4jsmoova2" path="res://src/enchantments/constant_effect_enchantment.gd" id="2_ej1e5"]
+[ext_resource type="Script" uid="uid://bb0pbdgttoe02" path="res://src/items/ArmorRune.gd" id="3_82uso"]
+
+[sub_resource type="Resource" id="Resource_ie838"]
+script = ExtResource("1_dkiad")
+elemental_type = 2
+is_removable = true
+metadata/_custom_type_script = "uid://c8cr2b64fjwtu"
+
+[sub_resource type="Resource" id="Resource_v5bhl"]
+script = ExtResource("2_ej1e5")
+constant_effect = SubResource("Resource_ie838")
+auto_remove_on_unequip = true
+metadata/_custom_type_script = "uid://domk4jsmoova2"
 
 [resource]
-script = ExtResource("1_647kx")
-enchantment = ExtResource("1_rm5gm")
-name = "Rune of Poison Resistance"
+script = ExtResource("3_82uso")
+armor_enchantment = SubResource("Resource_v5bhl")
+target_slot = 1
+name = "Rune of Fire Resistance"
 purchase_value = 80
 metadata/_custom_type_script = "uid://io27es0e6r6q"

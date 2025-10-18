@@ -18,6 +18,7 @@ static var preferred_tab_index: int = 0
 @onready var tab_container: TabContainer = %TabContainer
 @onready var all_list: VBoxContainer = %AllList
 @onready var weapons_list: VBoxContainer = %WeaponsList
+@onready var armor_list: VBoxContainer = %ArmorList
 @onready var potions_list: VBoxContainer = %PotionsList
 @onready var scrolls_list: VBoxContainer = %ScrollsList
 @onready var misc_list: VBoxContainer = %MiscList
@@ -27,6 +28,7 @@ var is_combat_disabled: bool = false
 var inventory_rows: Dictionary[String, Array] = {
     "all": [] as Array[InventoryRow],
     "weapons": [] as Array[InventoryRow],
+    "armor": [] as Array[InventoryRow],
     "potions": [] as Array[InventoryRow],
     "scrolls": [] as Array[InventoryRow],
     "misc": [] as Array[InventoryRow]
@@ -83,8 +85,8 @@ func _refresh_inventory() -> void:
 
     selected_item = null
 
-    # Get ItemTiles from player
-    var all_tiles: Array[ItemInstance] = GameState.player.get_item_tiles()
+    # Get ItemTiles from player (inventory only, excluding equipped items)
+    var all_tiles: Array[ItemInstance] = GameState.player.get_inventory_tiles()
 
     # Sort tiles: equipped first, then by name (with instances after generic items for same type)
     all_tiles.sort_custom(func(a: ItemInstance, b: ItemInstance) -> bool:
@@ -101,20 +103,9 @@ func _refresh_inventory() -> void:
             Item.ItemCategory.WEAPON:
                 weapons_list.add_child(row)
                 inventory_rows["weapons"].append(row)
-                if tile.is_equipped:
-                    # If equipped, also add to other tabs
-                    var potion_row: InventoryRow = _create_inventory_row(tile)
-                    potions_list.add_child(potion_row)
-                    inventory_rows["potions"].append(potion_row)
-
-                    var scroll_row: InventoryRow = _create_inventory_row(tile)
-                    scrolls_list.add_child(scroll_row)
-                    inventory_rows["scrolls"].append(scroll_row)
-
-                    var misc_row: InventoryRow = _create_inventory_row(tile)
-                    misc_list.add_child(misc_row)
-                    inventory_rows["misc"].append(misc_row)
-
+            Item.ItemCategory.ARMOR:
+                armor_list.add_child(row)
+                inventory_rows["armor"].append(row)
             Item.ItemCategory.POTION:
                 potions_list.add_child(row)
                 inventory_rows["potions"].append(row)

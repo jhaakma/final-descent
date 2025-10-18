@@ -184,7 +184,7 @@ func _refresh_buffs() -> void:
         has_content = true
         print("Adding %d status conditions" % status_conditions.size())
         for condition: StatusCondition in status_conditions:
-            var status_row := StatusRow.new()
+            var status_row := StatusRow.get_scene().instantiate() as StatusRow
             buffs_block.add_child(status_row)
             status_row.initialize_with_condition(condition)
             print("Added condition StatusRow, children count: %d" % buffs_block.get_child_count())
@@ -193,11 +193,10 @@ func _refresh_buffs() -> void:
     if not has_content:
         print("No buffs or conditions, adding 'None' row")
         # Show "None" message when no buffs/conditions
-        var none_row := StatusRow.new()
+        var none_row := StatusRow.get_scene().instantiate() as StatusRow
         buffs_block.add_child(none_row)
-        none_row.bbcode_enabled = true
-        none_row.clear()
-        none_row.append_text("[color=gray]None[/color]")
+        none_row.status_text.text = "[color=gray]None[/color]"
+        none_row.status_value.text = ""
         none_row.tooltip_text = "No active buffs or status conditions"
         buffs_block.visible = true
         print("Added 'None' row, children count: %d" % buffs_block.get_child_count())

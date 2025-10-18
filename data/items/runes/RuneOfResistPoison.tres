@@ -1,8 +1,8 @@
-[gd_resource type="Resource" script_class="Rune" load_steps=6 format=3 uid="uid://jh6urisffe2v"]
+[gd_resource type="Resource" script_class="ArmorRune" load_steps=6 format=3 uid="uid://jh6urisffe2v"]
 
 [ext_resource type="Script" uid="uid://c8cr2b64fjwtu" path="res://src/effects/constant/elemental_resistance_effect.gd" id="1_3ssxy"]
 [ext_resource type="Script" uid="uid://domk4jsmoova2" path="res://src/enchantments/constant_effect_enchantment.gd" id="2_55nup"]
-[ext_resource type="Script" uid="uid://io27es0e6r6q" path="res://src/items/Rune.gd" id="3_w1xdr"]
+[ext_resource type="Script" uid="uid://bb0pbdgttoe02" path="res://src/items/ArmorRune.gd" id="3_3ssxy"]
 
 [sub_resource type="Resource" id="Resource_55nup"]
 script = ExtResource("1_3ssxy")
@@ -10,15 +10,16 @@ elemental_type = 1
 is_removable = true
 metadata/_custom_type_script = "uid://c8cr2b64fjwtu"
 
-[sub_resource type="Resource" id="Resource_mm5rg"]
+[sub_resource type="Resource" id="Resource_w1xdr"]
 script = ExtResource("2_55nup")
 constant_effect = SubResource("Resource_55nup")
 auto_remove_on_unequip = true
 metadata/_custom_type_script = "uid://domk4jsmoova2"
 
 [resource]
-script = ExtResource("3_w1xdr")
-enchantment = SubResource("Resource_mm5rg")
+script = ExtResource("3_3ssxy")
+armor_enchantment = SubResource("Resource_w1xdr")
+target_slot = 1
 name = "Rune of Poison Resist"
 purchase_value = 50
 metadata/_custom_type_script = "uid://io27es0e6r6q"

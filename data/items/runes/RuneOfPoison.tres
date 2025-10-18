@@ -1,12 +1,12 @@
-[gd_resource type="Resource" script_class="Rune" load_steps=6 format=3 uid="uid://i3cxeo8eo70w"]
+[gd_resource type="Resource" script_class="WeaponRune" load_steps=6 format=3 uid="uid://i3cxeo8eo70w"]
 
-[ext_resource type="Script" uid="uid://io27es0e6r6q" path="res://src/items/Rune.gd" id="1_0"]
 [ext_resource type="Script" uid="uid://on0my3ge7dka" path="res://src/enchantments/status_on_strike_enchantment.gd" id="1_5buat"]
+[ext_resource type="Script" uid="uid://cdt6w8cnn4udd" path="res://src/items/WeaponRune.gd" id="1_bived"]
 [ext_resource type="Script" uid="uid://b5iu05fqomptj" path="res://src/effects/timed/elemental_timed_effect.gd" id="2_bived"]
 
 [sub_resource type="Resource" id="Resource_tsorn"]
 script = ExtResource("2_bived")
-damage_per_turn = 1
+damage_per_turn = 2
 elemental_type = 1
 duration = 5
 metadata/_custom_type_script = "uid://b5iu05fqomptj"
@@ -18,7 +18,7 @@ effect_apply_chance = 1.0
 metadata/_custom_type_script = "uid://on0my3ge7dka"
 
 [resource]
-script = ExtResource("1_0")
-enchantment = SubResource("Resource_xlgnw")
+script = ExtResource("1_bived")
+weapon_enchantment = SubResource("Resource_xlgnw")
 name = "Rune of Poison"
 purchase_value = 30
