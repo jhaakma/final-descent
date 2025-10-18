@@ -17,12 +17,17 @@ func build_actions(actions_grid: GridContainer, room_screen: RoomScreen) -> void
     add_action_button(actions_grid, room_screen, talk_action)
 
 func _on_talk_to_shopkeeper(room_screen: RoomScreen) -> void:
-    # Show the shopkeeper popup
-    var shopkeeper_popup: ShopkeeperPopup = ShopkeeperPopup.get_scene().instantiate()
-    room_screen.add_child(shopkeeper_popup)
-    shopkeeper_popup.show_shop(loot_result, title)
+    # Show the inline shopkeeper
+    var shop_scene: PackedScene = load("res://src/ui/components/InlineShopkeeper.tscn")
+    var inline_shop: Control = shop_scene.instantiate()
+    inline_shop.call("show_shop", loot_result, title)
+
+    # Show the inline shop content
+    room_screen.show_inline_content(inline_shop)
+
     # Connect the shop closed signal to allow leaving the room
-    shopkeeper_popup.shop_closed.connect(_on_shop_closed.bind(room_screen))
+    if inline_shop.has_signal("shop_closed"):
+        inline_shop.connect("shop_closed", _on_shop_closed.bind(room_screen))
 
 func _on_shop_closed(_room_screen: RoomScreen) -> void:
     # Player can continue after shopping

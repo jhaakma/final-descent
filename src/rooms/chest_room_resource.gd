@@ -16,10 +16,12 @@ func _on_open_chest(room_screen: RoomScreen) -> void:
     # Look for a LootComponent node first, fallback to legacy loot_table
     var loot_data := loot_component.generate_loot()
 
-    # Show the loot popup
-    var loot_popup : LootPopup= LootPopup.get_scene().instantiate()
-    room_screen.add_child(loot_popup)
-    loot_popup.show_loot(loot_data, "You open the chest and find:")
+    # Show the inline loot
+    var loot_scene: PackedScene = load("res://src/ui/components/InlineLoot.tscn")
+    var inline_loot: Control = loot_scene.instantiate()
+    inline_loot.call("show_loot", loot_data, "You open the chest and find:")
+    room_screen.show_inline_content(inline_loot)
 
     # Connect the loot collected signal to mark room as cleared
-    loot_popup.loot_collected.connect(room_screen.mark_cleared)
+    if inline_loot.has_signal("loot_collected"):
+        inline_loot.connect("loot_collected", room_screen.mark_cleared)

@@ -1,0 +1,68 @@
+[gd_scene load_steps=2 format=3 uid="uid://d007d2uy4wsn"]
+
+[ext_resource type="Script" uid="uid://d25ygb4c3q4ga" path="res://src/ui/components/inline_loot.gd" id="1_nd4l2"]
+
+[node name="InlineLoot" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+theme_override_constants/margin_top = 20
+script = ExtResource("1_nd4l2")
+
+[node name="LootContainer" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="LootItemsContainer" type="VBoxContainer" parent="LootContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_vertical = 3
+alignment = 1
+
+[node name="LootLabel" type="Label" parent="LootContainer/LootItemsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HeaderSmall"
+text = "You found:"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="LootContainer/LootItemsContainer"]
+modulate = Color(1, 1, 1, 0.3)
+layout_mode = 2
+
+[node name="GoldLabel" type="Label" parent="LootContainer/LootItemsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Gold: 0"
+horizontal_alignment = 1
+
+[node name="ItemsLabel" type="Label" parent="LootContainer/LootItemsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Items:"
+horizontal_alignment = 1
+
+[node name="ItemsList" type="VBoxContainer" parent="LootContainer/LootItemsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="NoLootLabel" type="Label" parent="LootContainer/LootItemsContainer"]
+unique_name_in_owner = true
+visible = false
+modulate = Color(0.7, 0.7, 0.7, 1)
+layout_mode = 2
+text = "Nothing of value..."
+horizontal_alignment = 1
+
+[node name="HSeparator2" type="HSeparator" parent="LootContainer"]
+modulate = Color(1, 1, 1, 0.3)
+layout_mode = 2
+
+[node name="CollectBtn" type="Button" parent="LootContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Collect Loot"

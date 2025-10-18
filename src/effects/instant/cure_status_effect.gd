@@ -26,7 +26,7 @@ func apply_effect(target: CombatEntity) -> bool:
         return target_entity.remove_status_condition(condition_to_cure)
     else:
         var target_name: String = "You are" if target_entity == GameState.player else "%s is" % target_entity.get_name()
-        LogManager.log_event("%s not affected by %s" % [target_name, condition_to_cure])
+        LogManager.log_warning("%s not affected by %s" % [target_name, condition_to_cure])
         return false
 
 # Override get_description for better condition-specific formatting

@@ -129,11 +129,12 @@ func _update_action_button() -> void:
             _update_shop_sell_button()
 
 func _update_inventory_action_button() -> void:
-    action_button.disabled = is_combat_disabled
+    # Items should remain usable during combat - combat disabled only affects weapons
+    # Consumable items (potions, scrolls, etc.) can be used during combat
+    action_button.disabled = false
 
     if item_instance.item is Weapon:
         # Weapons can always be equipped/unequipped
-        action_button.disabled = false
         # Set a fixed width to prevent layout changes
         action_button.custom_minimum_size.x = 80
         # Simple check: if this entry represents equipped weapon, show unequip

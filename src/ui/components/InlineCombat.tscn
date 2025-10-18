@@ -1,0 +1,128 @@
+[gd_scene load_steps=5 format=3 uid="uid://jne75qvyltc6"]
+
+[ext_resource type="Script" uid="uid://dk74cscd8khhi" path="res://src/ui/components/inline_combat.gd" id="1_bl1wl"]
+[ext_resource type="PackedScene" uid="uid://d4kfoqy7h5f0d" path="res://src/ui/widgets/hp_bar.tscn" id="2_i1i2c"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wto6d"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i1i2c"]
+bg_color = Color(0.97982, 0.233158, 5.77569e-07, 1)
+
+[node name="InlineCombat" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+script = ExtResource("1_bl1wl")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+alignment = 1
+
+[node name="EnemyLabel" type="Label" parent="VBoxContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HeaderMedium"
+text = "ENEMY"
+horizontal_alignment = 1
+
+[node name="EnemyResistances" type="RichTextLabel" parent="VBoxContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+horizontal_alignment = 1
+
+[node name="EnemyWeaknesses" type="RichTextLabel" parent="VBoxContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+horizontal_alignment = 1
+
+[node name="EnemyStats" type="RichTextLabel" parent="VBoxContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+horizontal_alignment = 1
+
+[node name="EnemyHPBlock" type="MarginContainer" parent="VBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 80
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 80
+theme_override_constants/margin_bottom = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/VBoxContainer/EnemyHPBlock"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/VBoxContainer/EnemyHPBlock/VBoxContainer"]
+layout_mode = 2
+text = "Health:"
+horizontal_alignment = 1
+
+[node name="EnemyHP" type="ProgressBar" parent="VBoxContainer/VBoxContainer/EnemyHPBlock/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24.625)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/background = SubResource("StyleBoxFlat_wto6d")
+theme_override_styles/fill = SubResource("StyleBoxFlat_i1i2c")
+value = 58.0
+rounded = true
+show_percentage = false
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="PlayerHPBlock" type="HBoxContainer" parent="VBoxContainer/VBoxContainer/HBoxContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="VBoxContainer/VBoxContainer/HBoxContainer/PlayerHPBlock"]
+layout_mode = 2
+text = "You: "
+
+[node name="PlayerHP" parent="VBoxContainer/VBoxContainer/HBoxContainer/PlayerHPBlock" instance=ExtResource("2_i1i2c")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_top = 8
+
+[node name="Actions" type="VBoxContainer" parent="VBoxContainer/MarginContainer"]
+layout_mode = 2
+alignment = 2
+
+[node name="AttackBtn" type="Button" parent="VBoxContainer/MarginContainer/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Attack"
+
+[node name="DefendBtn" type="Button" parent="VBoxContainer/MarginContainer/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Defend"
+
+[node name="FleeBtn" type="Button" parent="VBoxContainer/MarginContainer/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Flee"

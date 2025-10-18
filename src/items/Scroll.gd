@@ -25,14 +25,14 @@ func _on_use(_item_data: ItemData) -> bool:
     # Check if this is a TARGET spell and we're not in combat
     if spell_cast.get_target_type() == Spell.SpellTarget.TARGET and requires_target:
         if not GameState.is_in_combat:
-            LogManager.log_event("This spell can only be used in combat!")
+            LogManager.log_warning("This spell can only be used in combat.")
             return false
 
     # Get the player as the caster
     var caster: CombatEntity = GameState.player
 
     if not spell_cast.can_cast(caster):
-        LogManager.log_event("You cannot cast this spell right now.")
+        LogManager.log_warning("You cannot cast this spell right now.")
         return false
 
     # Determine the target based on spell requirements and combat state
@@ -46,7 +46,7 @@ func _on_use(_item_data: ItemData) -> bool:
                 # In combat, target the enemy
                 target = GameState.get_current_enemy()
                 if not target:
-                    LogManager.log_event("No valid target available.")
+                    LogManager.log_warning("No valid target available.")
                     return false
             else:
                 # Outside combat or self-beneficial spell, target self

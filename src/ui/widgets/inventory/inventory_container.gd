@@ -166,7 +166,7 @@ func _on_item_used(item_instance: ItemInstance) -> void:
                 var same_item:= equipped_weapon.item == item_instance.item
                 var both_generic:= equipped_weapon.item_data == null and item_instance.item_data == null
                 if same_item and both_generic:
-                    print("Clicked weapon is already equipped (generic), ignoring.")
+                    LogManager.log_warning("%s is already equipped." % item_instance.item.name)
                     return
 
             # Equip this weapon instance (either specific or from generic stack)

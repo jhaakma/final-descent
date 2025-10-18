@@ -37,51 +37,64 @@ func _on_fight_pressed(room_screen: RoomScreen) -> void:
     start_fight(room_screen, false)
 
 func start_fight(room_screen: RoomScreen, enemy_first: bool) -> void:
-    var popup: CombatPopup = CombatPopup.get_scene().instantiate()
-    popup.set_enemy_first(enemy_first)
-    popup.set_enemy(selected_enemy)
-    room_screen.add_child(popup)
+    var combat_scene: PackedScene = load("res://src/ui/components/InlineCombat.tscn")
+    var inline_combat: Control = combat_scene.instantiate()
+    inline_combat.call("set_enemy_first", enemy_first)
+    inline_combat.call("set_enemy", selected_enemy)
+
+    # Show the inline combat content
+    room_screen.show_inline_content(inline_combat)
 
     # Connect turn_ended signal to update room screen at the end of each turn
-    popup.turn_ended.connect(func()->void:
-        room_screen.update()
-    )
+    if inline_combat.has_signal("turn_ended"):
+        inline_combat.connect("turn_ended", func()->void: room_screen.update())
 
-    popup.combat_resolved.connect(func(victory: bool)->void:
-        if victory:
-            var loot_data := selected_enemy.loot_component.generate_loot()
-            popup.show_loot_screen(loot_data)
-        else:
-            # defeat handled by GameState (hp 0), but we can still mark
-            # defeat handled by GameState (hp 0), but we can still mark
-            pass)
-    popup.combat_fled.connect(func()->void:
-        # Player fled successfully - just mark room as cleared, no loot
-        room_screen.mark_cleared())
-    popup.loot_collected.connect(func()->void:
-        room_screen.mark_cleared())
+    if inline_combat.has_signal("combat_resolved"):
+        inline_combat.connect("combat_resolved", func(victory: bool)->void:
+            if victory:
+                var loot_data := selected_enemy.loot_component.generate_loot()
+                inline_combat.call("show_loot_screen", loot_data)
+            else:
+                # defeat handled by GameState (hp 0), but we can still mark
+                pass)
+
+    if inline_combat.has_signal("combat_fled"):
+        inline_combat.connect("combat_fled", func()->void:
+            # Player fled successfully - just mark room as cleared, no loot
+            room_screen.mark_cleared())
+
+    if inline_combat.has_signal("loot_collected"):
+        inline_combat.connect("loot_collected", func()->void:
+            room_screen.mark_cleared())
 
 func start_avoid_failure_fight(room_screen: RoomScreen) -> void:
-    var popup: CombatPopup = CombatPopup.get_scene().instantiate()
-    popup.set_enemy_first(true)
-    popup.set_avoid_failure(true)
-    popup.set_enemy(selected_enemy)
-    room_screen.add_child(popup)
+    var combat_scene: PackedScene = load("res://src/ui/components/InlineCombat.tscn")
+    var inline_combat: Control = combat_scene.instantiate()
+    inline_combat.call("set_enemy_first", true)
+    inline_combat.call("set_avoid_failure", true)
+    inline_combat.call("set_enemy", selected_enemy)
+
+    # Show the inline combat content
+    room_screen.show_inline_content(inline_combat)
 
     # Connect turn_ended signal to update room screen at the end of each turn
-    popup.turn_ended.connect(func()->void:
-        room_screen.update()
-    )
+    if inline_combat.has_signal("turn_ended"):
+        inline_combat.connect("turn_ended", func()->void: room_screen.update())
 
-    popup.combat_resolved.connect(func(victory: bool)->void:
-        if victory:
-            var loot_data := selected_enemy.loot_component.generate_loot()
-            popup.show_loot_screen(loot_data)
-        else:
-            # defeat handled by GameState (hp 0), but we can still mark
-            pass)
-    popup.combat_fled.connect(func()->void:
-        # Player fled successfully - just mark room as cleared, no loot
-        room_screen.mark_cleared())
-    popup.loot_collected.connect(func()->void:
-        room_screen.mark_cleared())
+    if inline_combat.has_signal("combat_resolved"):
+        inline_combat.connect("combat_resolved", func(victory: bool)->void:
+            if victory:
+                var loot_data := selected_enemy.loot_component.generate_loot()
+                inline_combat.call("show_loot_screen", loot_data)
+            else:
+                # defeat handled by GameState (hp 0), but we can still mark
+                pass)
+
+    if inline_combat.has_signal("combat_fled"):
+        inline_combat.connect("combat_fled", func()->void:
+            # Player fled successfully - just mark room as cleared, no loot
+            room_screen.mark_cleared())
+
+    if inline_combat.has_signal("loot_collected"):
+        inline_combat.connect("loot_collected", func()->void:
+            room_screen.mark_cleared())

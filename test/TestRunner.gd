@@ -18,10 +18,25 @@ class TestResult:
 
 func _ready() -> void:
     print("=== Test Runner Started ===")
+
+    # Use call_deferred to ensure we're in the main thread properly
+    call_deferred("run_tests_deferred")
+
+func run_tests_deferred() -> void:
+    print("Discovering tests...")
     discover_tests()
+    print("Tests discovered: ", test_classes.size())
+
+    print("Running tests...")
     run_all_tests()
+    print("Tests completed.")
+
     print_results()
-    get_tree().quit()
+    print("=== Test Runner Finished ===")
+
+    # Force exit after a short delay
+    await get_tree().create_timer(0.1).timeout
+    get_tree().quit(0)
 
 func discover_tests() -> void:
     print("Discovering test classes...")

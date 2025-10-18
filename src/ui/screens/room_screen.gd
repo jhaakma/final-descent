@@ -16,14 +16,19 @@ var available_rooms: Array[RoomResource] = []
 @onready var buffs_block: Container = %BuffsBlock
 @onready var inventory_component: InventoryContainer = %InventoryContainer
 @onready var log_label: RichTextLabel = %Log
+@onready var inline_content_container: VBoxContainer = %InlineContentContainer
 @onready var actions_grid: GridContainer = %Actions
-@onready var next_btn: Button = %NextFloorBtn
-@onready var leave_btn: Button = %LeaveRunBtn
+@onready var actions_container: VBoxContainer = %ActionsContainer
 @onready var room_title: Label = %RoomTitle
 @onready var room_desc: Label = %RoomDescription
+@onready var next_btn: Button = %NextFloorBtn
+@onready var leave_btn: Button = %LeaveRunBtn
 
 var current_room: RoomResource
 var cleared: bool = false
+
+# Inline content system
+var current_inline_content: Control = null
 
 # Combat state management
 var is_in_combat: bool = false
@@ -202,11 +207,23 @@ func _refresh_buffs() -> void:
 
 # Inventory component callbacks
 func _on_item_used(_item_tile: ItemInstance) -> void:
+    # If in combat, trigger combat turn
+    if is_in_combat:
+        _trigger_combat_turn()
     update()
 
 func _on_inventory_updated() -> void:
-    # Update inventory component combat state when needed
-    inventory_component.set_combat_disabled(is_in_combat)
+    # No need to disable inventory during combat - items can be used
+    pass
+
+func _is_consumable_item(item: Item) -> bool:
+    """Check if an item is consumable (not a weapon - weapons don't consume turns)"""
+    return not (item is Weapon)
+
+func _trigger_combat_turn() -> void:
+    """Trigger the combat turn when a consumable item is used during combat"""
+    if current_inline_content and current_inline_content.has_method("resolve_turn"):
+        current_inline_content.call("resolve_turn")
 
 
 func _calculate_room_weights(valid_rooms: Array[RoomResource]) -> Array[float]:
@@ -311,18 +328,94 @@ func _mark_cleared_by_default() -> void:
 func mark_cleared() -> void:
     _mark_cleared()
 
+# === Inline Content Management ===
+
+func show_inline_content(content: Control) -> void:
+    """Replace the room container with inline content"""
+    # Hide room content
+    actions_container.visible = false
+
+    # Clear any existing inline content (without restoring room container)
+    if current_inline_content:
+        _clear_inline_content_only()
+
+    # Add and show new content
+    inline_content_container.add_child(content)
+    inline_content_container.visible = true
+
+    # Store reference and initialize if available
+    current_inline_content = content
+    if content.has_method("initialize"):
+        content.call("initialize", self)
+
+    # Connect signals using string-based connection (safer for dynamic types)
+    if content.has_signal("content_resolved"):
+        content.connect("content_resolved", _on_inline_content_resolved)
+    if content.has_signal("content_closed"):
+        content.connect("content_closed", _on_inline_content_closed)
+
+    # Check if this is combat content and update combat state
+    if content is InlineCombat:
+        is_in_combat = true
+        update()
+
+    # Call show_content if the method exists
+    if content.has_method("show_content"):
+        content.call("show_content")
+
+func _clear_inline_content_only() -> void:
+    """Clear inline content without restoring room container - used when replacing inline content"""
+    if current_inline_content and is_instance_valid(current_inline_content):
+        # Disconnect signals
+        if current_inline_content.has_signal("content_resolved"):
+            current_inline_content.disconnect("content_resolved", _on_inline_content_resolved)
+        if current_inline_content.has_signal("content_closed"):
+            current_inline_content.disconnect("content_closed", _on_inline_content_closed)
+
+        # Cleanup if method exists
+        if current_inline_content.has_method("cleanup"):
+            current_inline_content.call("cleanup")
+        current_inline_content = null
+
+    # Clear the inline container
+    for child in inline_content_container.get_children():
+        inline_content_container.remove_child(child)
+        child.queue_free()
+
+func hide_inline_content() -> void:
+    """Hide inline content and restore room container"""
+    # Check if we're hiding combat content and reset combat state
+    if current_inline_content is InlineCombat:
+        is_in_combat = false
+        update()
+
+    _clear_inline_content_only()
+
+    # Show room content
+    inline_content_container.visible = false
+    actions_container.visible = true
+
+func _on_inline_content_resolved() -> void:
+    """Called when inline content interaction is complete"""
+    hide_inline_content()
+    # Usually mark room as cleared when content is resolved
+    if not cleared:
+        _mark_cleared()
+
+func _on_inline_content_closed() -> void:
+    """Called when inline content should be closed"""
+    hide_inline_content()
+
 func _on_child_added(node: Node) -> void:
-    # Update UI when combat popup is added
+    # Update UI when combat popup is added (legacy support)
     if node is CombatPopup:
         is_in_combat = true
-        inventory_component.set_combat_disabled(true)
         update()
 
 func _on_child_removed(node: Node) -> void:
-    # Update UI when combat popup is removed
+    # Update UI when combat popup is removed (legacy support)
     if node is CombatPopup:
         is_in_combat = false
-        inventory_component.set_combat_disabled(false)
         update()
 
 func _exit_tree() -> void:

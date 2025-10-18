@@ -90,7 +90,7 @@ func _process_message_patterns(message: String, context: Dictionary) -> String:
     processed = _process_enemy_patterns(processed, context)
     processed = _process_healing_patterns(processed)
     processed = _process_damage_patterns(processed, context)
-    processed = _process_effect_patterns(processed)
+    processed = _process_effect_patterns(processed, context)
     processed = _process_effect_verb_patterns(processed, context)
     processed = _process_action_patterns(processed, context)
 
@@ -219,8 +219,10 @@ func _process_damage_patterns(text: String, context: Dictionary = {}) -> String:
 
     return result
 
+
+
 # Process {effect:name} patterns
-func _process_effect_patterns(text: String) -> String:
+func _process_effect_patterns(text: String, context: Dictionary) -> String:
     var regex := RegEx.new()
     regex.compile("\\{effect:([^}]+)\\}")
 
@@ -229,7 +231,13 @@ func _process_effect_patterns(text: String) -> String:
         var full_match := regex_match.get_string(0)
         var content := regex_match.get_string(1)
         # For now, use default color - could be enhanced to detect positive/negative effects
-        var colored := "[color=%s]%s[/color]" % [LogColors.DEFAULT, content]
+        var status_effect: StatusEffect = context.get("status_effect", null)
+        var colored: String = ""
+        if status_effect != null:
+            colored = "[color=%s]%s[/color]" % [status_effect.get_effect_color(), content]
+        else:
+            colored = "[color=%s]%s[/color]" % [LogColors.DEFAULT, content]
+
         result = result.replace(full_match, colored)
 
     return result

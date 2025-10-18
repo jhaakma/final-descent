@@ -43,7 +43,6 @@ func _on_blessing(room_screen: RoomScreen) -> void:
 
     # Grant a random status effect
     if blessings.size() > 0:
-        LogManager.log_event("You pray at the shrine and feel blessed!")
         var chosen_blessing: StatusCondition = blessings[GameState.rng.randi() % blessings.size()]
         GameState.player.apply_status_condition(chosen_blessing)
         room_screen.update()
@@ -56,8 +55,6 @@ func _on_cure(room_screen: RoomScreen) -> void:
     if not GameState.player.has_gold(cure_cost):
         LogManager.log_event("Not enough gold.")
         return
-
-    LogManager.log_event("You pray at the shrine and feel cleansed!")
     var removed_effects := GameState.player.clear_all_negative_status_effects()
     if removed_effects.size() > 0:
         GameState.player.add_gold(-cure_cost)
@@ -84,21 +81,28 @@ func _on_loot(room_screen: RoomScreen) -> void:
         var ghost_enemy: EnemyResource = curse_enemy
         if ghost_enemy != null:
             LogManager.log_event("As you loot the shrine, a vengeful spirit appears!")
-            var popup: CombatPopup = CombatPopup.get_scene().instantiate()
-            popup.set_enemy(ghost_enemy)
-            room_screen.add_child(popup)
-            popup.combat_resolved.connect(func(victory: bool)->void:
-                if victory:
-                    popup.show_loot_screen(loot_data)
-                    room_screen.mark_cleared()
-                else:
-                    # defeat handled by GameState (hp 0), but we can still mark
-                    pass)
-            popup.combat_fled.connect(func()-> void:
-                # Player fled from ghost - just mark room as cleared, no loot
-                room_screen.mark_cleared())
-            popup.loot_collected.connect(func()-> void:
-                room_screen.mark_cleared())
+            var combat_scene: PackedScene = load("res://src/ui/components/InlineCombat.tscn")
+            var inline_combat: Control = combat_scene.instantiate()
+            inline_combat.call("set_enemy", ghost_enemy)
+            room_screen.show_inline_content(inline_combat)
+
+            if inline_combat.has_signal("combat_resolved"):
+                inline_combat.connect("combat_resolved", func(victory: bool)->void:
+                    if victory:
+                        inline_combat.call("show_loot_screen", loot_data)
+                        room_screen.mark_cleared()
+                    else:
+                        # defeat handled by GameState (hp 0), but we can still mark
+                        pass)
+
+            if inline_combat.has_signal("combat_fled"):
+                inline_combat.connect("combat_fled", func()-> void:
+                    # Player fled from ghost - just mark room as cleared, no loot
+                    room_screen.mark_cleared())
+
+            if inline_combat.has_signal("loot_collected"):
+                inline_combat.connect("loot_collected", func()-> void:
+                    room_screen.mark_cleared())
             return
         else:
             LogManager.log_event("Error: No ghost enemy configured!")

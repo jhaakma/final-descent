@@ -14,7 +14,6 @@ ifeq ($(OS),Windows_NT)
                    godot godot.exe
     RM := del /q /f
     RMDIR := rmdir /s /q
-    NULL := nul
 else
     UNAME_S := $(shell uname -s)
     ifeq ($(UNAME_S),Linux)
@@ -27,13 +26,12 @@ else
     endif
     RM := rm -f
     RMDIR := rm -rf
-    NULL := /dev/null
 endif
 
 # Find Godot executable
 GODOT_CMD := $(shell \
     for path in $(GODOT_PATHS); do \
-        if command -v "$$path" > $(NULL) 2>&1 || [ -f "$$path" ]; then \
+        if command -v "$$path" >/dev/null 2>&1 || [ -f "$$path" ]; then \
             echo "$$path"; \
             break; \
         fi; \
@@ -97,19 +95,19 @@ setup:
 # Run tests
 test tests run-tests: setup
 	@echo "Running Final Descent tests..."
-	@"$(GODOT_CMD)" --headless res://test/test_runner.tscn
+	@"$(GODOT_CMD)" --headless --path . res://test/test_runner.tscn
 
 # Clean temporary files
 clean:
 	@echo "Cleaning temporary files..."
 ifeq ($(DETECTED_OS),Windows)
-	@if exist "*.tmp" $(RM) *.tmp 2>$(NULL) || echo.
-	@if exist "*.log" $(RM) *.log 2>$(NULL) || echo.
-	@if exist ".godot" $(RMDIR) .godot 2>$(NULL) || echo.
+	@-rm -f *.tmp 2>/dev/null || true
+	@-rm -f *.log 2>/dev/null || true
+	@-rm -rf .godot 2>/dev/null || true
 else
-	@find . -name "*.tmp" -type f -delete 2>$(NULL) || true
-	@find . -name "*.log" -type f -delete 2>$(NULL) || true
-	@$(RM) -rf .godot 2>$(NULL) || true
+	@find . -name "*.tmp" -type f -delete 2>/dev/null || true
+	@find . -name "*.log" -type f -delete 2>/dev/null || true
+	@rm -rf .godot 2>/dev/null || true
 endif
 	@echo "Clean complete."
 

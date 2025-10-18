@@ -1,0 +1,104 @@
+[gd_scene load_steps=2 format=3 uid="uid://ci80a5eumx74e"]
+
+[ext_resource type="Script" uid="uid://cct0j4cfnfiw5" path="res://src/ui/components/inline_shopkeeper.gd" id="1_shopkeeper"]
+
+[node name="InlineShopkeeper" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+script = ExtResource("1_shopkeeper")
+
+[node name="ShopContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="HeaderContainer" type="VBoxContainer" parent="ShopContainer"]
+layout_mode = 2
+
+[node name="GreetingLabel" type="Label" parent="ShopContainer/HeaderContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "Welcome to my shop!"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ShopContainer/HeaderContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="PlayerGoldLabel" type="Label" parent="ShopContainer/HeaderContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Your Gold: 0"
+
+[node name="ShopkeeperGoldLabel" type="Label" parent="ShopContainer/HeaderContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Merchant Gold: 0"
+horizontal_alignment = 2
+
+[node name="HSeparator" type="HSeparator" parent="ShopContainer"]
+modulate = Color(1, 1, 1, 0.3)
+layout_mode = 2
+
+[node name="ShopTabs" type="TabContainer" parent="ShopContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(400, 300)
+layout_mode = 2
+size_flags_vertical = 3
+current_tab = 0
+
+[node name="Buy" type="ScrollContainer" parent="ShopContainer/ShopTabs"]
+unique_name_in_owner = true
+layout_mode = 2
+metadata/_tab_name = "Buy"
+metadata/_tab_index = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="ShopContainer/ShopTabs/Buy"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="ItemsForSaleList" type="VBoxContainer" parent="ShopContainer/ShopTabs/Buy/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Sell" type="ScrollContainer" parent="ShopContainer/ShopTabs"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+metadata/_tab_name = "Sell"
+metadata/_tab_index = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="ShopContainer/ShopTabs/Sell"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="PlayerItemsList" type="VBoxContainer" parent="ShopContainer/ShopTabs/Sell/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HSeparator2" type="HSeparator" parent="ShopContainer"]
+modulate = Color(1, 1, 1, 0.3)
+layout_mode = 2
+
+[node name="CloseBtn" type="Button" parent="ShopContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Close Shop"

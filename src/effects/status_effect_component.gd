@@ -46,7 +46,7 @@ func remove_effect(effect: StatusEffect) -> void:
                 (status_effect as RemovableStatusEffect).on_removed(parent_entity)
 
             if parent_entity:
-                LogManager.log_event("{Your} {effect:%s} was removed." % condition.get_log_name(), {"target": parent_entity})
+                LogManager.log_event("{Your} {effect:%s} was removed." % condition.get_log_name(), {"target": parent_entity, "status_effect": status_effect})
             active_conditions.erase(condition_id)
             effect_removed.emit(condition_id)
             return
@@ -92,7 +92,7 @@ func remove_condition(condition_name: String) -> bool:
         (status_effect as RemovableStatusEffect).on_removed(parent_entity)
 
     if parent_entity:
-        LogManager.log_event("{Your} {effect:%s} was cured." % condition.get_log_name(), {"target": parent_entity})
+        LogManager.log_event("{Your} {effect:%s} was cured." % condition.get_log_name(), {"target": parent_entity, "status_effect": status_effect})
 
     active_conditions.erase(condition_name)
     effect_removed.emit(condition_name)
@@ -124,7 +124,7 @@ func process_turn(target: CombatEntity) -> void:
             if status_effect is RemovableStatusEffect:
                 (status_effect as RemovableStatusEffect).on_removed(target)
 
-            LogManager.log_event("{Your} {effect:%s} expired." % condition.get_log_name(), {"target": target})
+            LogManager.log_event("{Your} {effect:%s} expired." % condition.get_log_name(), {"target": target, "status_effect": status_effect})
             active_conditions.erase(condition_id)
             effect_removed.emit(condition_id)
 

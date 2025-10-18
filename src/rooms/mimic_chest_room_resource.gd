@@ -21,20 +21,27 @@ func _on_open_chest(room_screen: RoomScreen) -> void:
         return
 
     print("Spawning mimic enemy: %s" % mimic_enemy.name)
-    var popup: CombatPopup = CombatPopup.get_scene().instantiate()
-    popup.set_enemy(mimic_enemy)
-    room_screen.add_child(popup)
-    popup.combat_resolved.connect(_on_mimic_combat_resolved.bind(room_screen, popup))
-    popup.combat_fled.connect(func()->void:
-        # Player fled from mimic - just mark room as cleared, no loot
-        room_screen.mark_cleared())
-    popup.loot_collected.connect(func()->void:
-        room_screen.mark_cleared())
+    var combat_scene: PackedScene = load("res://src/ui/components/InlineCombat.tscn")
+    var inline_combat: Control = combat_scene.instantiate()
+    inline_combat.call("set_enemy", mimic_enemy)
+    room_screen.show_inline_content(inline_combat)
 
-func _on_mimic_combat_resolved(victory: bool, _room_screen: RoomScreen, popup: CombatPopup) -> void:
+    if inline_combat.has_signal("combat_resolved"):
+        inline_combat.connect("combat_resolved", _on_mimic_combat_resolved.bind(room_screen, inline_combat))
+
+    if inline_combat.has_signal("combat_fled"):
+        inline_combat.connect("combat_fled", func()->void:
+            # Player fled from mimic - just mark room as cleared, no loot
+            room_screen.mark_cleared())
+
+    if inline_combat.has_signal("loot_collected"):
+        inline_combat.connect("loot_collected", func()->void:
+            room_screen.mark_cleared())
+
+func _on_mimic_combat_resolved(victory: bool, _room_screen: RoomScreen, inline_combat: Control) -> void:
     if victory:
         var enemy_loot_data := mimic_enemy.loot_component.generate_loot()
-        popup.show_loot_screen(enemy_loot_data)
+        inline_combat.call("show_loot_screen", enemy_loot_data)
     else:
         # defeat handled by GameState (hp 0), but we can still mark
         pass
