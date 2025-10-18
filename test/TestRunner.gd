@@ -5,6 +5,7 @@ class_name TestRunner extends Node2D
 
 @export var test_classes: Array[Script] = []
 var test_results: Array[TestResult] = []
+var filter_pattern: String = ""  # Filter pattern from command line
 
 class TestResult:
     var test_name: String
@@ -16,8 +17,42 @@ class TestResult:
         passed = success
         message = msg
 
+func parse_command_line_args() -> void:
+    var args := OS.get_cmdline_user_args()  # Get user args after --
+    var filter_next := false
+
+    for arg in args:
+        if filter_next:
+            filter_pattern = arg
+            print("Filter pattern: '%s'" % filter_pattern)
+            break
+        elif arg == "--filter":
+            filter_next = true
+
+    if filter_next and filter_pattern == "":
+        print("Warning: --filter specified but no pattern provided")
+
+func apply_filter_to_test_classes() -> void:
+    if filter_pattern == "":
+        return  # No filter, keep all tests
+
+    print("Applying filter: '%s'" % filter_pattern)
+    var filtered_classes: Array[Script] = []
+
+    for test_script in test_classes:
+        # Check if test class name matches filter
+        var test_class_name := test_script.resource_path.get_file().get_basename()
+        if test_class_name.to_lower().contains(filter_pattern.to_lower()):
+            filtered_classes.append(test_script)
+
+    test_classes = filtered_classes
+    print("Filtered to %d test classes" % test_classes.size())
+
 func _ready() -> void:
     print("=== Test Runner Started ===")
+
+    # Parse command line arguments for filter
+    parse_command_line_args()
 
     # Use call_deferred to ensure we're in the main thread properly
     call_deferred("run_tests_deferred")
@@ -25,7 +60,7 @@ func _ready() -> void:
 func run_tests_deferred() -> void:
     print("Discovering tests...")
     discover_tests()
-    print("Tests discovered: ", test_classes.size())
+    print("Tests to run: ", test_classes.size())
 
     print("Running tests...")
     run_all_tests()
@@ -44,6 +79,7 @@ func discover_tests() -> void:
     # Option 1: Use the exported array if it's populated
     if test_classes.size() > 0:
         print("Using exported test classes: %d found" % test_classes.size())
+        apply_filter_to_test_classes()
         return
 
     # Option 2: Auto-discover test files in the test directory
@@ -54,6 +90,8 @@ func discover_tests() -> void:
         var script := load(file_path) as GDScript
         if script:
             test_classes.append(script)
+
+    apply_filter_to_test_classes()
 
 func get_test_files_in_directory(directory_path: String) -> Array[String]:
     var test_files: Array[String] = []
@@ -98,6 +136,25 @@ func run_test_class(test_script: Script) -> void:
     var test_instance: BaseTest = test_script.new()
     var category := test_instance.get_test_category()
     var test_methods := test_instance.get_test_methods()
+
+    # Apply method-level filtering if pattern is set
+    if filter_pattern != "":
+        var filtered_methods: Array[String] = []
+        var test_class_name := test_script.resource_path.get_file().get_basename()
+
+        # If class name matches, include all methods
+        if test_class_name.to_lower().contains(filter_pattern.to_lower()):
+            filtered_methods = test_methods
+        else:
+            # Otherwise, filter individual methods
+            for method_name in test_methods:
+                if method_name.to_lower().contains(filter_pattern.to_lower()):
+                    filtered_methods.append(method_name)
+
+        test_methods = filtered_methods
+
+    if test_methods.size() == 0:
+        return  # No matching methods to run
 
     print("\n--- Testing %s (%d tests) ---" % [category, test_methods.size()])
 

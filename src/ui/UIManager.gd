@@ -13,12 +13,15 @@ func _ready() -> void:
     instance = self
 
 ## Show a popup to select from available armor items for enchantment
-func show_armor_selection_popup(available_armor: Array[ItemInstance], callback: Callable) -> void:
+func show_armor_selection_popup(available_armor: Array[ItemInstance], callback: Callable, cancel_callback: Callable = Callable()) -> void:
     var popup := ITEM_SELECTION_POPUP_SCENE.instantiate()
 
     # Connect signals first
     popup.connect("item_selected", callback)
-    popup.connect("cancelled", _on_popup_cancelled)
+    if cancel_callback.is_valid():
+        popup.connect("cancelled", cancel_callback)
+    else:
+        popup.connect("cancelled", _on_popup_cancelled)
 
     # Use the existing PopupLayer from the main scene
     var main_scene := get_tree().current_scene
@@ -32,12 +35,15 @@ func show_armor_selection_popup(available_armor: Array[ItemInstance], callback: 
             popup.call("setup", "Select Armor to Enchant", available_armor)
 
 ## Show a popup to select from available equipped items for repair
-func show_repair_selection_popup(available_items: Array[ItemInstance], callback: Callable) -> void:
+func show_repair_selection_popup(available_items: Array[ItemInstance], callback: Callable, cancel_callback: Callable = Callable()) -> void:
     var popup := ITEM_SELECTION_POPUP_SCENE.instantiate()
 
     # Connect signals first
     popup.connect("item_selected", callback)
-    popup.connect("cancelled", _on_popup_cancelled)
+    if cancel_callback.is_valid():
+        popup.connect("cancelled", cancel_callback)
+    else:
+        popup.connect("cancelled", _on_popup_cancelled)
 
     # Use the existing PopupLayer from the main scene
     var main_scene := get_tree().current_scene

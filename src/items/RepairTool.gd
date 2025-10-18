@@ -2,11 +2,21 @@ class_name RepairTool extends Item
 
 @export var repair_amount: int = 5  # Amount to repair item condition
 
+# Store item data for completion signal
+var _current_item_data: ItemData
+
 func get_category() -> Item.ItemCategory:
     return Item.ItemCategory.MISC
 
-func _on_use(_item_data: ItemData) -> bool:
+## Override to indicate this item handles async completion
+func _handles_async_completion() -> bool:
+    return true
+
+func _on_use(item_data: ItemData) -> bool:
     var player := GameState.player
+
+    # Store item data for later use in completion signal
+    _current_item_data = item_data
 
     # Get all equipped items that can be repaired
     var available_items: Array[ItemInstance] = []
@@ -26,7 +36,9 @@ func _on_use(_item_data: ItemData) -> bool:
         return false
 
     # Show selection popup
-    GameState.ui_manager.show_repair_selection_popup(available_items, _on_item_selected_for_repair)
+    GameState.ui_manager.show_repair_selection_popup(available_items, _on_item_selected_for_repair, _on_selection_cancelled)
+
+    # Return true to indicate the action started successfully
     return true
 
 func _on_item_selected_for_repair(selected_item: ItemInstance) -> void:
@@ -43,6 +55,16 @@ func _on_item_selected_for_repair(selected_item: ItemInstance) -> void:
         GameState.player.emit_signal("inventory_changed")
 
         LogManager.log_success("Repaired %s by %d points" % [selected_item.item.name, actual_repair])
+
+        # Signal successful completion
+        item_action_completed.emit(true, _current_item_data)
+    else:
+        # Signal failure
+        item_action_completed.emit(false, _current_item_data)
+
+func _on_selection_cancelled() -> void:
+    # Signal that the action was cancelled (unsuccessful)
+    item_action_completed.emit(false, _current_item_data)
 
 func get_description() -> String:
     return "Repairs %d condition to a selected equipped item." % [repair_amount]

@@ -1,5 +1,8 @@
 class_name Item extends Resource
 
+## Emitted when the item has finished its action, with success flag
+signal item_action_completed(success: bool, item_data: ItemData)
+
 enum ItemCategory {
     WEAPON,
     ARMOR,
@@ -46,9 +49,30 @@ func calculate_buy_value(_item_data: ItemData = null) -> int:
 
 ## Do not override this method; use _on_use instead
 func use(item_data: ItemData) -> void:
+    # Connect to the completion signal to handle consumption
+    if not item_action_completed.is_connected(_on_item_action_completed):
+        item_action_completed.connect(_on_item_action_completed)
+
     var success: bool = _on_use(item_data)
+
+        # Item failed or is handling completion asynchronously
+    if not _handles_async_completion():
+        # Item failed and doesn't handle async completion
+        item_action_completed.emit.call_deferred(success, item_data)
+
+
+## Override this if the item handles its own completion signaling (e.g., items with popups)
+func _handles_async_completion() -> bool:
+    return false
+
+## Internal method to handle item consumption when action completes
+func _on_item_action_completed(success: bool, item_data_param: ItemData) -> void:
     if success and get_consumable():
-        GameState.player.remove_item(ItemInstance.new(self, item_data, 1))
+        GameState.player.remove_item(ItemInstance.new(self, item_data_param, 1))
+
+    # Disconnect the signal to avoid memory leaks
+    if item_action_completed.is_connected(_on_item_action_completed):
+        item_action_completed.disconnect(_on_item_action_completed)
 
 func get_inventory_color() -> Color:
     return Color(1, 1, 1)

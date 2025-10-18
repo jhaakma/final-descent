@@ -122,6 +122,9 @@ func clear_all_negative_status_effects() -> Array[StatusCondition]:
 func remove_status_effect(effect: StatusEffect) -> void:
     status_effect_component.remove_effect(effect)
 
+func remove_equipment_stack(effect: StatusEffect) -> void:
+    status_effect_component.remove_equipment_stack(effect)
+
 func remove_status_condition(condition_name: String) -> bool:
     return status_effect_component.remove_condition(condition_name)
 

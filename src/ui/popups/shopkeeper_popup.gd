@@ -80,8 +80,11 @@ func _update_inventory_display() -> void:
     if not player_items_list:
         return
 
-    # Clear existing items
+
+
+    # Clear existing items immediately
     for child in player_items_list.get_children():
+        player_items_list.remove_child(child)
         child.queue_free()
 
     if GameState.player.inventory.is_empty():
@@ -92,11 +95,18 @@ func _update_inventory_display() -> void:
 
     # Get ItemTiles from player (includes equipped items for selling)
     var all_tiles: Array[ItemInstance] = GameState.player.get_item_tiles()
-    var inventory_tiles: Array[ItemInstance] = []
+    var equipped_tiles: Array[ItemInstance] = []
+    var unequipped_tiles: Array[ItemInstance] = []
 
-    # Include all items (both inventory and equipped items can be sold)
+    # Separate equipped and unequipped items
     for tile: ItemInstance in all_tiles:
-        inventory_tiles.append(tile)
+        if tile.item is Equippable and tile.is_equipped:
+            equipped_tiles.append(tile)
+        else:
+            unequipped_tiles.append(tile)
+
+    # Combine with equipped items first (at the top)
+    var inventory_tiles: Array[ItemInstance] = equipped_tiles + unequipped_tiles
 
     for tile: ItemInstance in inventory_tiles:
         var item_container: InventoryRow = inventory_row_scene.instantiate()

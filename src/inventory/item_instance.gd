@@ -89,6 +89,9 @@ func use_item() -> bool:
         else:
             GameState.player.equip_weapon(self)
         return true
+    elif item is Armor:
+        # Special handling for armor - use the actual ItemInstance
+        return GameState.player.equip_armor(self)
     else:
         # For consumables and other items
         if is_unique_instance():

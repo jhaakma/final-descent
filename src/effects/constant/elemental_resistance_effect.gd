@@ -27,7 +27,7 @@ func on_removed(target: CombatEntity) -> void:
 # Override get_description for resistance formatting
 func get_description() -> String:
     var type_name := DamageType.get_type_name(elemental_type)
-    return "%s resistance" % type_name
+    return "50%% %s damage reduction." % type_name
 
 func get_base_description() -> String:
     var type_name := DamageType.get_type_name(elemental_type)

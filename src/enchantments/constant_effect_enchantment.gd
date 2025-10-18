@@ -3,8 +3,6 @@ class_name ConstantEffectEnchantment extends Enchantment
 @export var constant_effect: ConstantEffect
 @export var auto_remove_on_unequip: bool = true  # Remove effect when item is unequipped
 
-var _applied_target: CombatEntity = null
-
 func get_enchantment_name() -> String:
     if constant_effect:
         return constant_effect.get_effect_name()
@@ -38,22 +36,29 @@ func _on_item_unequipped(_item: Equippable) -> void:
 func _apply_effect() -> void:
     if constant_effect:
         var player := GameState.player
-        if player and player.has_method("apply_status_effect"):
-            player.apply_status_effect(constant_effect)
-            _applied_target = player
+        if player and player.has_method("apply_status_condition"):
+            # Create an equipment-based condition that can stack
+            var condition := StatusCondition.from_equipment_effect(constant_effect)
+            player.apply_status_condition(condition)
 
 func _remove_effect() -> void:
-    if auto_remove_on_unequip and _applied_target and constant_effect:
-        if _applied_target.has_method("remove_status_effect"):
-            _applied_target.remove_status_effect(constant_effect)
-        _applied_target = null
+    if auto_remove_on_unequip and constant_effect:
+        var player := GameState.player
+        if player and player.has_method("remove_equipment_stack"):
+            player.remove_equipment_stack(constant_effect)
+        elif player and player.has_method("remove_status_effect"):
+            # Fallback for non-equipment effects
+            player.remove_status_effect(constant_effect)
 
 func on_unequip() -> void:
     # Fallback method in case the signal approach doesn't work
-    if auto_remove_on_unequip and _applied_target and constant_effect:
-        if _applied_target.has_method("remove_status_effect"):
-            _applied_target.remove_status_effect(constant_effect)
-        _applied_target = null
+    if auto_remove_on_unequip and constant_effect:
+        var player := GameState.player
+        if player and player.has_method("remove_equipment_stack"):
+            player.remove_equipment_stack(constant_effect)
+        elif player and player.has_method("remove_status_effect"):
+            # Fallback for non-equipment effects
+            player.remove_status_effect(constant_effect)
 
 func is_valid_owner(owner: Object) -> bool:
     # Constant effect enchantments can only be applied to armor, not weapons

@@ -76,22 +76,37 @@ func remove_item(item_instance: ItemInstance) -> bool:
 
 # Remove a specific item instance with ItemData
 func remove_item_instance(item_instance: ItemInstance) -> bool:
-    if item_instance.item not in item_stacks:
-        return false
+    # First try the direct approach
+    if item_instance.item in item_stacks:
+        var stack: ItemStack = item_stacks[item_instance.item]
+        var success := stack.remove_instance_by_reference(item_instance.item_data)
 
-    var stack: ItemStack = item_stacks[item_instance.item]
-    var success := stack.remove_instance_by_reference(item_instance.item_data)
+        if success:
+            # Remove empty stacks
+            if stack.is_empty():
+                stack.stack_changed.disconnect(_on_stack_changed)
+                item_stacks.erase(item_instance.item)
 
-    if success:
-        # Remove empty stacks
-        if stack.is_empty():
-            stack.stack_changed.disconnect(_on_stack_changed)
-            item_stacks.erase(item_instance.item)
+            item_removed.emit(item_instance.item, 1)
+            inventory_changed.emit()
+            return true
 
-        item_removed.emit(item_instance.item, 1)
-        inventory_changed.emit()
+    # If direct approach failed, search all stacks for matching ItemData
+    # This handles cases where the item was replaced but we're still referencing old ItemInstance
+    if item_instance.item_data:
+        for item_key: Item in item_stacks.keys():
+            var stack: ItemStack = item_stacks[item_key]
+            if stack.remove_instance_by_reference(item_instance.item_data):
+                # Remove empty stacks
+                if stack.is_empty():
+                    stack.stack_changed.disconnect(_on_stack_changed)
+                    item_stacks.erase(item_key)
 
-    return success
+                item_removed.emit(item_key, 1)
+                inventory_changed.emit()
+                return true
+
+    return false
 
 # Take items from inventory and return their ItemData
 func take_items(item: Item, amount: int = 1) -> Array:
@@ -205,6 +220,24 @@ func get_item_tiles() -> Array[ItemInstance]:
 
     return tiles
 
+## Replace an item instance with a modified version
+## This handles both inventory and equipped items seamlessly
+## Returns true if the replacement was successful
+func replace_item_instance(old_instance: ItemInstance, new_item: Item) -> bool:
+    # Create new instance with same ItemData and count
+    var new_instance := ItemInstance.new(new_item, old_instance.item_data, old_instance.count)
+
+    # Try to remove the old instance
+    if not remove_item_instance(old_instance):
+        return false
+
+    # Try to add the new instance
+    if not add_item_instance(new_instance):
+        # If adding fails, try to restore the old instance
+        add_item_instance(old_instance)
+        return false
+
+    return true
 
 # === PRIVATE METHODS ===
 

@@ -30,7 +30,6 @@ var custom_tooltip_scene := CustomItemTooltip.get_scene()
 @onready var condition_bar: ProgressBar = %ConditionBar  # Reference to scene element
 
 var item_instance: ItemInstance = null  # Optional ItemInstance reference for context
-var is_selected: bool = false
 var is_combat_disabled: bool = false
 var display_mode: DisplayMode = DisplayMode.INVENTORY
 var shopkeeper_gold: int = 0  # For shop contexts, to determine if items can be afforded
@@ -68,10 +67,6 @@ func setup_with_mode(_item_tile: ItemInstance, _display_mode: DisplayMode, _is_c
         _update_background()
         _update_condition_bar()
 
-## Set the selection state of this row
-func set_selected(selected: bool) -> void:
-    is_selected = selected
-    _update_background()
 
 ## Set whether combat is disabled (affects button availability)
 func set_combat_disabled(disabled: bool) -> void:
@@ -178,22 +173,17 @@ func _update_background() -> void:
 
     # Check if this entry represents equipped item (but not in equipped display mode)
     var is_this_equipped := (display_mode != DisplayMode.EQUIPPED and
-                             item_instance.item is Weapon and item_instance.is_equipped)
+                             item_instance.item is Equippable and item_instance.is_equipped)
 
     if is_this_equipped:
         # Use a proper bright green
-        style_box.bg_color = Color(0.2, 0.4, 0.2)  # Bright green
+        style_box.bg_color = Color("#264125ff")  # Bright green
         background.add_theme_stylebox_override("panel", style_box)
-        print("Setting equipped background for: ", item_instance.item.name)
-    elif is_selected:
-        # Selection highlight - light blue
-        style_box.bg_color = Color(0.6, 0.8, 1.0)  # Light blue
-        background.add_theme_stylebox_override("panel", style_box)
-        print("Setting selected background for: ", item_instance.item.name)
+
     else:
         # Default state - remove override to use theme default
         background.remove_theme_stylebox_override("panel")
-        print("Setting default background for: ", item_instance.item.name if item_instance else "none")
+
 
 func _update_condition_bar() -> void:
     # Show condition bar for equippable items with damage (in any display mode)
@@ -228,7 +218,7 @@ func _update_condition_bar() -> void:
 
 func _on_background_input(event: InputEvent) -> void:
     if event is InputEventMouseButton and (event as InputEventMouseButton).pressed and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
-        item_selected.emit(item_instance.item)
+        item_selected.emit(item_instance)
 
 func _on_action_button_pressed() -> void:
     if not item_instance.item:

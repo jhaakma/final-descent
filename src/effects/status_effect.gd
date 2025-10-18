@@ -81,7 +81,7 @@ func handle_application(component: StatusEffectComponent, condition: StatusCondi
             push_error("No target available for instant effect application")
             return false
 
-    # Check for existing condition
+    # Check for existing condition by effect name
     var existing_condition: StatusCondition = component.active_conditions.get(condition_id)
     if existing_condition:
         return handle_existing_condition(component, condition, existing_condition, target)

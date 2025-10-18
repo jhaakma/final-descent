@@ -23,7 +23,7 @@ static var preferred_tab_index: int = 0
 @onready var scrolls_list: VBoxContainer = %ScrollsList
 @onready var misc_list: VBoxContainer = %MiscList
 
-var selected_item: Item = null
+var selected_item: ItemInstance = null
 var is_combat_disabled: bool = false
 var inventory_rows: Dictionary[String, Array] = {
     "all": [] as Array[InventoryRow],
@@ -62,11 +62,6 @@ func set_combat_disabled(disabled: bool) -> void:
         var rows: Array[InventoryRow] = inventory_rows[category_key]
         for row: InventoryRow in rows:
             row.set_combat_disabled(disabled)
-
-## Get the currently selected item
-func get_selected_item() -> Item:
-    return selected_item
-
 
 func _create_inventory_row(tile: ItemInstance) -> InventoryRow:
     var row: InventoryRow = inventory_row_scene.instantiate() as InventoryRow
@@ -133,14 +128,9 @@ func _on_tab_changed(tab_index: int) -> void:
 func _restore_tab(tab_index: int) -> void:
     tab_container.current_tab = tab_index
 
-func _on_item_selected(item: Item) -> void:
-    selected_item = item
+func _on_item_selected(item_instance: ItemInstance) -> void:
+    selected_item = item_instance
 
-    # Update visual selection on all rows across all tabs
-    for category_key: String in inventory_rows.keys():
-        var rows: Array[InventoryRow] = inventory_rows[category_key]
-        for row: InventoryRow in rows:
-            row.set_selected(row.item_instance.item == selected_item)
 
 func _on_item_used(item_instance: ItemInstance) -> void:
     if item_instance.item is Weapon:

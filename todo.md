@@ -1,5 +1,9 @@
 # To do
 
+## Loads of bugs around itemdata, equipping
+- ~~Equipping a stack shows the stack count in equipped field~~ ✅ FIXED
+- ~~Item duplication when equipping from stacks~~ ✅ FIXED
+
 ## Status Effect stacking issues
 - Still needs work, for example, poison from a spell and poison from a weapon aren't stacking
 - Status effects probably need a can_stack

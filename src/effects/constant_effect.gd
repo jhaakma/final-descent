@@ -50,8 +50,15 @@ func apply_effect(_target: CombatEntity) -> bool:
 func should_store_in_active_conditions() -> bool:
     return true
 
-# Override: Constant effects don't stack by default
-func handle_existing_condition(_component: StatusEffectComponent, _new_condition: StatusCondition, existing_condition: StatusCondition, target: CombatEntity) -> bool:
+# Override: Constant effects don't stack by default, except for equipment effects
+func handle_existing_condition(_component: StatusEffectComponent, new_condition: StatusCondition, existing_condition: StatusCondition, target: CombatEntity) -> bool:
+    # Allow stacking for equipment-based effects by incrementing stack count
+    if new_condition.source_type == StatusCondition.SourceType.EQUIPMENT:
+        existing_condition.add_equipment_stack()
+        # Don't show a duplicate message - effect is already active
+        return true
+    
+    # For consumables and other sources, show "already affected" message
     LogManager.log_event("{You are} already affected by %s." % existing_condition.name, {"target": target})
     return false
 

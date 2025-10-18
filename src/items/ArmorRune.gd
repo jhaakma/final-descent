@@ -2,34 +2,29 @@
 class_name ArmorRune extends Rune
 
 @export var armor_enchantment: ConstantEffectEnchantment
-## Specifies which armor slot this rune can enchant
-@export var target_slot: Equippable.EquipSlot = Equippable.EquipSlot.CUIRASS
+
+# Store item data for completion signal
+var _current_item_data: ItemData
 
 func get_enchantment() -> Enchantment:
     return armor_enchantment
 
-func _on_use(_item_data: ItemData) -> bool:
+## Override to indicate this item handles async completion
+func _handles_async_completion() -> bool:
+    return true
+
+func _on_use(item_data: ItemData) -> bool:
     var player := GameState.player
 
-    # Get all equipped armor pieces that can be enchanted
+    # Store item data for later use in completion signal
+    _current_item_data = item_data
+
+    # Get all armor pieces in inventory that can be enchanted
     var available_armor: Array[ItemInstance] = []
 
-    # Check all armor slots for equipped items that can be enchanted
-    var all_armor_slots := [
-        Equippable.EquipSlot.HELMET,
-        Equippable.EquipSlot.CUIRASS,
-        Equippable.EquipSlot.GLOVES,
-        Equippable.EquipSlot.BOOTS,
-        Equippable.EquipSlot.SHIELD
-    ]
-
-    for slot: Equippable.EquipSlot in all_armor_slots:
-        var armor_instance := player.get_equipped_armor(slot)
-        if armor_instance:
-            var armor := armor_instance.item as Armor
-            # Only add armor that doesn't already have an enchantment
-            if not armor.enchantment:
-                available_armor.append(armor_instance)
+    for armor_instance: ItemInstance in player.get_item_tiles():
+        if armor_instance.item is Armor:
+            available_armor.append(armor_instance)
 
     # Check if we have any armor to enchant
     if available_armor.is_empty():
@@ -43,31 +38,47 @@ func _on_use(_item_data: ItemData) -> bool:
         return false
 
     # Show selection popup
-    GameState.ui_manager.show_armor_selection_popup(available_armor, _on_armor_selected.bind(enchantment))
+    GameState.ui_manager.show_armor_selection_popup(
+        available_armor,
+        _on_armor_selected.bind(enchantment),
+        _on_selection_cancelled
+    )
+
+    # Return true to indicate the action started successfully
+    # Completion will be signaled later
     return true
 
-func _on_armor_selected(enchantment: Enchantment, selected_armor: ItemInstance) -> void:
+func _on_armor_selected(selected_armor: ItemInstance, enchantment: Enchantment) -> void:
     var armor := selected_armor.item as Armor
 
     # Validate the enchantment is compatible
     if not armor.is_valid_enchantment(enchantment):
         LogManager.log_warning("This enchantment cannot be applied to this armor.")
+        # Signal failure
+        item_action_completed.emit(false, _current_item_data)
         return
 
-    # Duplicate the armor and apply enchantment
-    armor = armor.duplicate() as Armor
-    armor.enchantment = enchantment
-    armor.name = "%s of %s" % [armor.name, enchantment.get_enchantment_name()]
-    selected_armor.item = armor
+    # Create a unique instance of the armor for enchantment
+    var enchanted_armor := armor.duplicate() as Armor
+    enchanted_armor.enchantment = enchantment
+    enchanted_armor.name = "%s of %s" % [armor.name, enchantment.get_enchantment_name()]
 
-    # Re-equip the armor to update the player's equipment
-    GameState.player.equip_armor(selected_armor)
+    # Use the reusable replacement method
+    var player := GameState.player
+    if not player.replace_item_instance(selected_armor, enchanted_armor):
+        LogManager.log_warning("Failed to replace armor with enchanted version.")
+        item_action_completed.emit(false, _current_item_data)
+        return
 
-    LogManager.log_success("You have successfully enchanted your %s with %s." % [armor.name, enchantment.get_enchantment_name()])
+    LogManager.log_success("You have successfully enchanted your %s with %s." % [enchanted_armor.name, enchantment.get_enchantment_name()])    # Signal successful completion
+    item_action_completed.emit(true, _current_item_data)
+
+func _on_selection_cancelled() -> void:
+    # Signal that the action was cancelled (unsuccessful)
+    item_action_completed.emit(false, _current_item_data)
 
 func get_rune_type_name() -> String:
-    var slot_name := _get_slot_name(target_slot)
-    return "Imbue %s" % slot_name
+    return "Imbue Armor"
 
 func _get_slot_name(slot: Equippable.EquipSlot) -> String:
     match slot:

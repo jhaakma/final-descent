@@ -42,7 +42,7 @@ func reset_run() -> void:
 
 func next_floor() -> void:
     current_floor += 1
-    
+
     # Advance stage manager
     StageManager.advance_floor()
 
@@ -75,15 +75,15 @@ func get_save_data() -> Dictionary:
 
 func load_save_data(data: Dictionary) -> void:
     current_floor = data.get("current_floor", 1)
-    
+
     # Load stage manager data
     if StageManager and data.has("stage_manager"):
         StageManager.load_save_data(data.stage_manager)
-    
+
     # Load player data (if player has save/load support)
     if player and player.has_method("load_save_data") and data.has("player"):
         player.load_save_data(data.player)
-    
+
     # Refresh UI
     emit_signal("stats_changed")
     emit_signal("inventory_changed")

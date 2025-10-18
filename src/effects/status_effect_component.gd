@@ -51,7 +51,25 @@ func remove_effect(effect: StatusEffect) -> void:
             effect_removed.emit(condition_id)
             return
 
-# Check if entity has a specific status effect
+# Remove an equipment stack from an effect, removing the effect entirely if no stacks remain
+func remove_equipment_stack(effect: StatusEffect) -> void:
+    for condition_id: String in active_conditions.keys():
+        var condition := active_conditions[condition_id]
+        if condition.status_effect.get_effect_id() == effect.get_effect_id():
+            # Remove one equipment stack
+            var should_remove_entirely := condition.remove_equipment_stack()
+            
+            if should_remove_entirely:
+                # No more stacks - remove the entire effect
+                var status_effect := condition.status_effect
+                if status_effect is RemovableStatusEffect:
+                    (status_effect as RemovableStatusEffect).on_removed(parent_entity)
+
+                if parent_entity:
+                    LogManager.log_event("{Your} {effect:%s} faded." % condition.get_log_name(), {"target": parent_entity, "status_effect": status_effect})
+                active_conditions.erase(condition_id)
+                effect_removed.emit(condition_id)
+            return# Check if entity has a specific status effect
 func has_effect(status_effect_id: String) -> bool:
     for condition_id: String in active_conditions.keys():
         var condition := active_conditions[condition_id]
