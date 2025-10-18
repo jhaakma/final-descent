@@ -214,11 +214,6 @@ size_flags_vertical = 3
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-alignment = 1
-
-[node name="Padding" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer/CenterPanel/MarginContainer/RoomContainer/ActionsContainer"]
-layout_mode = 2
-size_flags_vertical = 3
 
 [node name="Actions" type="GridContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/CenterPanel/MarginContainer/RoomContainer/ActionsContainer"]
 unique_name_in_owner = true
@@ -229,10 +224,9 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Next Floor"
 
-[node name="LeaveRunBtn" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/CenterPanel/MarginContainer/RoomContainer/ActionsContainer"]
-unique_name_in_owner = true
+[node name="Padding" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer/CenterPanel/MarginContainer/RoomContainer/ActionsContainer"]
 layout_mode = 2
-text = "Leave Run"
+size_flags_vertical = 3
 
 [node name="RightPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(400, 0)
@@ -276,6 +270,11 @@ theme_override_font_sizes/bold_font_size = 14
 bbcode_enabled = true
 deselect_on_focus_loss_enabled = false
 drag_and_drop_selection_enabled = false
+
+[node name="LeaveRunBtn" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/RightPanel/MarginContainer/PanelLog/VBoxLog"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Leave Run"
 
 [node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
