@@ -19,5 +19,6 @@ func _on_rest(room_screen: RoomScreen) -> void:
         LogManager.log_event(rest_message % heal_amount)
     else:
         LogManager.log_event(rest_message)
+    room_screen.update()
     room_screen.mark_cleared()
 

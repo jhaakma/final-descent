@@ -131,7 +131,10 @@ func _on_stats_changed() -> void:
     _refresh_buffs()  # Also refresh buffs since status effects are shown there
 
 func _refresh_stats() -> void:
-    floor_label.text = "FLOOR: %d" % GameState.current_floor
+    # Show stage and floor information with boss indicator
+    var stage_info := StageManager.get_debug_info() if StageManager else "FLOOR: %d" % GameState.current_floor
+    floor_label.text = stage_info
+    
     hp_label.text = "HP: %d/%d" % [GameState.player.get_hp(), GameState.player.get_max_hp()]
     hp_bar.max_value = GameState.player.get_max_hp()
     hp_bar.value = GameState.player.get_hp()

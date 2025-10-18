@@ -15,7 +15,7 @@
 - A mechanic for determining and validating difficulty rating of encounters
 - Prerequisites:
     - Room Manager
-    - CombayEntity refactor
+    - CombatEntity refactor
 
 ## Theme
 Create and use a consistent theme
