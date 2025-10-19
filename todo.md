@@ -1,9 +1,5 @@
 # To do
 
-## Item Selection Popup
-- Customise item labels: Only repair tool shows condition
-- Show whether its equipped or not
-
 ## Merchant inventory still not always highlighting equipped item
 
 ## Status Effect stacking issues

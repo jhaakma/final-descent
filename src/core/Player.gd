@@ -647,7 +647,8 @@ func replace_item_instance(old_instance: ItemInstance, new_item: Item) -> bool:
         else:
             new_item_data = null
 
-    var new_instance := ItemInstance.new(new_item, new_item_data, old_instance.count)
+    var new_instance := ItemInstance.new(new_item, new_item_data, old_instance.count, old_instance.is_equipped)
+
 
     # Handle equipped weapon
     if is_equipped_weapon:

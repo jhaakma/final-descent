@@ -18,11 +18,13 @@ func _init(
     p_item: Item,
     p_item_data: ItemData = null,
     p_count: int = 1,
+    p_is_equipped: bool = false
 
 ) -> void:
     item = p_item
     item_data = p_item_data
     count = p_count
+    is_equipped = p_is_equipped
 
 
 ## Check if this tile represents a generic stack (no specific ItemData)

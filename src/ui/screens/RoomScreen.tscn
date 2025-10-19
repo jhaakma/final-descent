@@ -66,81 +66,101 @@ theme_override_constants/margin_bottom = 10
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer"]
 layout_mode = 2
 
-[node name="VBoxStats" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 8
-
-[node name="FloorLabel" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats"]
+[node name="FloorLabel" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "FLOOR: X"
 horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="HPBlock" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats"]
+[node name="PlayerStats" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer"]
+clip_contents = true
+custom_minimum_size = Vector2(425, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Panel" type="Panel" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PlayerStats"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PlayerStats"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="HboxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PlayerStats/MarginContainer"]
+layout_mode = 2
+
+[node name="VBoxStats" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PlayerStats/MarginContainer/HboxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="HPBlock" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PlayerStats/MarginContainer/HboxContainer/VBoxStats"]
 layout_mode = 2
 size_flags_horizontal = 3
 alignment = 1
 
-[node name="HPLabel" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HPBlock"]
+[node name="HPLabel" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PlayerStats/MarginContainer/HboxContainer/VBoxStats/HPBlock"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(77.79, 0)
 layout_mode = 2
 text = "HP: 0/0"
 
-[node name="HPBar" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HPBlock" instance=ExtResource("2_71ary")]
+[node name="HPBar" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PlayerStats/MarginContainer/HboxContainer/VBoxStats/HPBlock" instance=ExtResource("2_71ary")]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats"]
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PlayerStats/MarginContainer/HboxContainer/VBoxStats"]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PlayerStats/MarginContainer/HboxContainer/VBoxStats"]
 layout_mode = 2
 
-[node name="StatsBlock" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="AtkBonus" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer/StatsBlock"]
+[node name="StatsBlock" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PlayerStats/MarginContainer/HboxContainer/VBoxStats/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="AtkValue" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer/StatsBlock/AtkBonus"]
+[node name="AtkBonus" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PlayerStats/MarginContainer/HboxContainer/VBoxStats/HBoxContainer/StatsBlock"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AtkValue" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PlayerStats/MarginContainer/HboxContainer/VBoxStats/HBoxContainer/StatsBlock/AtkBonus"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "ATK: 0"
 
-[node name="DefBonus" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer/StatsBlock"]
+[node name="DefBonus" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PlayerStats/MarginContainer/HboxContainer/VBoxStats/HBoxContainer/StatsBlock"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="DefValue" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer/StatsBlock/DefBonus"]
+[node name="DefValue" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PlayerStats/MarginContainer/HboxContainer/VBoxStats/HBoxContainer/StatsBlock/DefBonus"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "DEF: 0"
 
-[node name="GoldBlock" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer"]
+[node name="GoldBlock" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PlayerStats/MarginContainer/HboxContainer/VBoxStats/HBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 0
 
-[node name="GoldLabel" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer/GoldBlock"]
+[node name="GoldLabel" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PlayerStats/MarginContainer/HboxContainer/VBoxStats/HBoxContainer/GoldBlock"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.84, 0, 1)
 text = "Gold: "
 
-[node name="GoldValue" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats/HBoxContainer/GoldBlock"]
+[node name="GoldValue" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PlayerStats/MarginContainer/HboxContainer/VBoxStats/HBoxContainer/GoldBlock"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.84, 0, 1)
 text = "X"
 
-[node name="HSeparator2" type="HSeparator" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats"]
+[node name="HSeparator2" type="HSeparator" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PlayerStats/MarginContainer/HboxContainer/VBoxStats"]
 layout_mode = 2
 
-[node name="BuffsBlock" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/VBoxStats"]
+[node name="BuffsBlock" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PlayerStats/MarginContainer/HboxContainer/VBoxStats"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 112.825)
 layout_mode = 2
@@ -260,9 +280,6 @@ layout_mode = 2
 text = "Leave Run"
 
 [node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 0.2
-
-[node name="Panel" type="Panel" parent="MarginContainer/VBoxContainer/PanelContainer"]
+visible = false
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
