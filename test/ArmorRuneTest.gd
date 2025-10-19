@@ -17,10 +17,10 @@ func test_armor_rune_enchantment_application() -> bool:
     var armor_instance := ItemInstance.new(armor, item_data, 1)
 
     # Set up item data for the rune
-    armor_rune._current_item_data = ItemData.new()
+    var rune_item_data := ItemData.new()
 
-    # Test the callback method directly with correct parameter order (selected_armor, enchantment)
-    armor_rune._on_armor_selected(armor_instance, test_enchantment)
+    # Test the callback method directly with correct parameter order (selected_armor, enchantment, item_data)
+    armor_rune._on_armor_selected(armor_instance, test_enchantment, rune_item_data)
 
     # Verify the armor was enchanted
     var enchanted_armor := armor_instance.item as Armor
@@ -52,7 +52,6 @@ func test_armor_rune_completion_signal() -> bool:
 
     # Set up test data
     var rune_item_data := ItemData.new()
-    armor_rune._current_item_data = rune_item_data
 
     # Create a signal tracker
     var signal_tracker := SignalTracker.new()
@@ -61,7 +60,7 @@ func test_armor_rune_completion_signal() -> bool:
     armor_rune.item_action_completed.connect(signal_tracker.on_signal_emitted)
 
     # Test cancellation
-    armor_rune._on_selection_cancelled()
+    armor_rune._on_selection_cancelled(rune_item_data)
 
     # Verify signal was emitted with correct parameters
     assert_true(signal_tracker.was_emitted, "Signal should be emitted on cancellation")

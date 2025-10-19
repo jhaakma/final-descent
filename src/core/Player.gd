@@ -254,6 +254,8 @@ func get_equipped_weapon_instance() -> ItemInstance:
         return equipped_weapon
     return null
 
+
+
 # === GENERAL EQUIPMENT MANAGEMENT ===
 func equip_item(item_instance: ItemInstance) -> bool:
     if not item_instance.item is Equippable:
@@ -287,6 +289,17 @@ func get_equipped_item(slot: Equippable.EquipSlot) -> ItemInstance:
 
 func has_item_equipped(slot: Equippable.EquipSlot) -> bool:
     return get_equipped_item(slot) != null
+
+func is_equipped(item_instance: ItemInstance) -> bool:
+    # Check if the given item instance is currently equipped
+    if equipped_weapon and item_instance.matches(equipped_weapon):
+        return true
+
+    for equipped_instance: ItemInstance in equipped_items.values():
+        if item_instance.matches(equipped_instance):
+            return true
+
+    return false
 
 # === ARMOR MANAGEMENT ===
 func equip_armor(item_instance: ItemInstance) -> bool:

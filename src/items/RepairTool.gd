@@ -20,9 +20,9 @@ func _on_use(item_data: ItemData) -> bool:
 
     # Get all equipped items that can be repaired
     var available_items: Array[ItemInstance] = []
-    var all_equipped := player.get_all_equipped_items()
+    var items := player.get_item_tiles()
 
-    for item_instance: ItemInstance in all_equipped:
+    for item_instance: ItemInstance in items:
         if item_instance.item_data and item_instance.item is Equippable:
             var equippable := item_instance.item as Equippable
             var current_condition := item_instance.item_data.current_condition

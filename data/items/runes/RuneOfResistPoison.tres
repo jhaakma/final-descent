@@ -19,7 +19,6 @@ metadata/_custom_type_script = "uid://domk4jsmoova2"
 [resource]
 script = ExtResource("3_3ssxy")
 armor_enchantment = SubResource("Resource_w1xdr")
-target_slot = 1
 name = "Rune of Poison Resist"
 purchase_value = 50
 metadata/_custom_type_script = "uid://io27es0e6r6q"

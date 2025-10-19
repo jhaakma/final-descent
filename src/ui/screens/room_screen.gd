@@ -57,10 +57,6 @@ func _ready() -> void:
     inventory_component.item_used.connect(_on_item_used)
     inventory_component.inventory_updated.connect(_on_inventory_updated)
 
-    # Connect to child_entered_tree to detect when combat popups are added
-    child_entered_tree.connect(_on_child_added)
-    child_exiting_tree.connect(_on_child_removed)
-
     next_btn.disabled = true
     _refresh_stats()
     _refresh_buffs()
@@ -134,7 +130,7 @@ func _refresh_stats() -> void:
     # Show stage and floor information with boss indicator
     var stage_info := StageManager.get_debug_info() if StageManager else "FLOOR: %d" % GameState.current_floor
     floor_label.text = stage_info
-    
+
     hp_label.text = "HP: %d/%d" % [GameState.player.get_hp(), GameState.player.get_max_hp()]
     hp_bar.max_value = GameState.player.get_max_hp()
     hp_bar.value = GameState.player.get_hp()
@@ -408,17 +404,7 @@ func _on_inline_content_closed() -> void:
     """Called when inline content should be closed"""
     hide_inline_content()
 
-func _on_child_added(node: Node) -> void:
-    # Update UI when combat popup is added (legacy support)
-    if node is CombatPopup:
-        is_in_combat = true
-        update()
 
-func _on_child_removed(node: Node) -> void:
-    # Update UI when combat popup is removed (legacy support)
-    if node is CombatPopup:
-        is_in_combat = false
-        update()
 
 func _exit_tree() -> void:
     # Unregister log display when room screen is destroyed

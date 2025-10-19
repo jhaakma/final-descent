@@ -1,6 +1,4 @@
 class_name InlineCombat extends InlineContentBase
-
-## Inline combat component that replaces CombatPopup
 ## Displays combat interface directly in the room container
 
 signal combat_resolved(victory: bool)
@@ -151,8 +149,8 @@ func _enable_action_buttons() -> void:
     flee_btn.disabled = false
 
 func _refresh_bars() -> void:
-    you_bar.max_value = GameState.player.get_max_hp()
-    you_bar.value = GameState.player.get_hp()
+    GameState.player.stats_changed.emit()
+
     foe_bar.max_value = current_enemy.get_max_hp()
     foe_bar.value = current_enemy.get_current_hp()
 

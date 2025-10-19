@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="1_b65g0"]
 [ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="2_h6e54"]
-[ext_resource type="Resource" uid="uid://do8brech6sxxk" path="res://data/ItemPicks/BasicWeaponPick.tres" id="2_xyvj3"]
-[ext_resource type="Resource" uid="uid://b3cf085lrhdjy" path="res://data/ItemPicks/BasicPotionPick.tres" id="3_xyvj3"]
+[ext_resource type="Resource" uid="uid://do8brech6sxxk" path="res://data/lootPicks/BasicWeaponPick.tres" id="2_xyvj3"]
+[ext_resource type="Resource" uid="uid://b3cf085lrhdjy" path="res://data/lootPicks/BasicPotionPick.tres" id="3_xyvj3"]
 [ext_resource type="Resource" uid="uid://d1bjavkp12hm8" path="res://data/items/armor/LeatherCuirass.tres" id="6_b65g0"]
 [ext_resource type="Resource" uid="uid://dwqgodsd7t16e" path="res://data/items/repair_tools/RepairToolBasic.tres" id="7_r7juo"]
 [ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="8_tdawc"]

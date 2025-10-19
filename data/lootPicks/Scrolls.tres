@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="LootPick" load_steps=7 format=3 uid="uid://coqnmr4wr3swg"]
+
+[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="1_uljn4"]
+[ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="2_7h0tv"]
+[ext_resource type="Resource" uid="uid://bxeunqejsykb7" path="res://data/items/scrolls/ScrollOfFirebolt.tres" id="2_a5hrt"]
+[ext_resource type="Resource" uid="uid://cmn13awgg0add" path="res://data/items/scrolls/ScrollOfFrostbolt.tres" id="3_o8c4p"]
+[ext_resource type="Resource" uid="uid://bhbvnwynmqbs" path="res://data/items/scrolls/ScrollOfHealing.tres" id="4_5f05o"]
+[ext_resource type="Resource" uid="uid://c2fcxyd8jatqi" path="res://data/items/scrolls/ScrollOfPoisonbolt.tres" id="5_11myk"]
+
+[resource]
+script = ExtResource("2_7h0tv")
+loot_table = Array[ExtResource("1_uljn4")]([ExtResource("2_a5hrt"), ExtResource("3_o8c4p"), ExtResource("4_5f05o"), ExtResource("5_11myk")])
+count = 1
+chance_none = 0.4
+pick_method = 0
+floor_min = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"

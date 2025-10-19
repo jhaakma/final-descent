@@ -1,4 +1,3 @@
-@tool
 class_name Equippable extends Item
 
 signal equip(equippable: Equippable)

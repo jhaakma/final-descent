@@ -36,7 +36,7 @@ func test_selling_equipped_armor_removes_from_player() -> bool:
     # Now attempt to sell/remove the equipped armor - this simulates what happens in the shop
     var remove_successful := player.remove_item(equipped_cuirass)
     assert_true(remove_successful, "Should successfully remove equipped armor")
-    
+
     # After removal, verify it's no longer equipped
     var equipped_after_removal := player.get_equipped_armor(Equippable.EquipSlot.CUIRASS)
     assert_null(equipped_after_removal, "Should have no equipped cuirass after removal")    # Verify it doesn't appear in get_item_tiles anymore
@@ -50,7 +50,7 @@ func test_selling_equipped_armor_removes_from_player() -> bool:
 
     # Also verify it's not in the regular inventory
     assert_false(player.has_item(leather_cuirass), "Player should not have cuirass in inventory after removal")
-    
+
     return true
 
 func test_selling_equipped_weapon_removes_from_player() -> bool:

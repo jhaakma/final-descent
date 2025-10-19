@@ -19,7 +19,6 @@ metadata/_custom_type_script = "uid://domk4jsmoova2"
 [resource]
 script = ExtResource("3_82uso")
 armor_enchantment = SubResource("Resource_v5bhl")
-target_slot = 1
 name = "Rune of Fire Resistance"
 purchase_value = 50
 metadata/_custom_type_script = "uid://io27es0e6r6q"

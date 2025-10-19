@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="LootPick" load_steps=12 format=3 uid="uid://bhke1ujhajsrw"]
+
+[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="1_c8214"]
+[ext_resource type="Resource" uid="uid://cttpxikq24nx" path="res://data/items/weapons/Dagger.tres" id="2_lbgvo"]
+[ext_resource type="Resource" uid="uid://2s77tota5kam" path="res://data/items/potions/HealthPotionSmall.tres" id="3_qihph"]
+[ext_resource type="Resource" uid="uid://d1bjavkp12hm8" path="res://data/items/armor/LeatherCuirass.tres" id="4_gtqws"]
+[ext_resource type="Resource" uid="uid://cplf8k3bhm7od" path="res://data/items/armor/LeatherHelmet.tres" id="5_0jw7s"]
+[ext_resource type="Resource" uid="uid://8l6joadu85p3" path="res://data/items/runes/RuneOfFireResist.tres" id="6_bymid"]
+[ext_resource type="Resource" uid="uid://dwqgodsd7t16e" path="res://data/items/repair_tools/RepairToolBasic.tres" id="7_f5rsn"]
+[ext_resource type="Resource" uid="uid://cxkrul1kd2tmm" path="res://data/items/elixirs/ElixirOfStrength.tres" id="8_dkokx"]
+[ext_resource type="Resource" uid="uid://m5dageinlf77" path="res://data/items/runes/RuneOfIce.tres" id="9_nu0b1"]
+[ext_resource type="Resource" uid="uid://c5c0srvukvrrv" path="res://data/items/armor/IronArmor.tres" id="10_2hqi8"]
+[ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="11_y5nxv"]
+
+[resource]
+script = ExtResource("11_y5nxv")
+loot_table = Array[ExtResource("1_c8214")]([ExtResource("2_lbgvo"), ExtResource("3_qihph"), ExtResource("4_gtqws"), ExtResource("5_0jw7s"), ExtResource("6_bymid"), ExtResource("7_f5rsn"), ExtResource("8_dkokx"), ExtResource("9_nu0b1"), ExtResource("10_2hqi8")])
+count = 1
+chance_none = 0.0
+pick_method = 1
+floor_min = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"

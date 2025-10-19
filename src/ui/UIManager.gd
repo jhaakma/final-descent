@@ -34,10 +34,31 @@ func show_armor_selection_popup(available_armor: Array[ItemInstance], callback: 
             # Now setup the popup after it's in the tree
             popup.call("setup", "Select Armor to Enchant", available_armor)
 
-## Show a popup to select from available equipped items for repair
-func show_repair_selection_popup(available_items: Array[ItemInstance], callback: Callable, cancel_callback: Callable = Callable()) -> void:
+func show_weapon_selection_popup(available_weapons: Array[ItemInstance], callback: Callable, cancel_callback: Callable = Callable()) -> void:
     var popup := ITEM_SELECTION_POPUP_SCENE.instantiate()
 
+    # Connect signals first
+    popup.connect("item_selected", callback)
+    if cancel_callback.is_valid():
+        popup.connect("cancelled", cancel_callback)
+    else:
+        popup.connect("cancelled", _on_popup_cancelled)
+
+    # Use the existing PopupLayer from the main scene
+    var main_scene := get_tree().current_scene
+    if main_scene:
+        var popup_layer := main_scene.get_node("PopupLayer")
+        if popup_layer:
+            popup_layer.add_child(popup)
+            popup.set("visible", true)
+
+            # Now setup the popup after it's in the tree
+            popup.call("setup", "Select Weapon to Enchant", available_weapons)
+
+## Show a popup to select from available equipped items for repair
+func show_repair_selection_popup(available_items: Array[ItemInstance], callback: Callable, cancel_callback: Callable = Callable()) -> void:
+    var popup := ITEM_SELECTION_POPUP_SCENE.instantiate() as ItemSelectionPopup
+    popup.show_condition = true
     # Connect signals first
     popup.connect("item_selected", callback)
     if cancel_callback.is_valid():

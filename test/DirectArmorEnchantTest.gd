@@ -82,14 +82,14 @@ func test_actual_armor_rune_usage() -> bool:
     var armor_rune := ArmorRune.new()
     var fire_enchantment := ConstantEffectEnchantment.new()
     armor_rune.armor_enchantment = fire_enchantment
-    armor_rune._current_item_data = ItemData.new()  # Rune's own ItemData
+    var rune_item_data := ItemData.new()  # Rune's own ItemData
 
     # Get the equipped armor instance
     var equipped_armor: ItemInstance = player.equipped_items[Equippable.EquipSlot.CUIRASS]
     print("DEBUG: Before ArmorRune - equipped has ItemData: %s" % str(equipped_armor.item_data != null))
 
     # Call the actual ArmorRune method like the game does
-    armor_rune._on_armor_selected(equipped_armor, fire_enchantment)
+    armor_rune._on_armor_selected(equipped_armor, fire_enchantment, rune_item_data)
 
     # Check result
     var final_equipped: ItemInstance = player.equipped_items[Equippable.EquipSlot.CUIRASS]

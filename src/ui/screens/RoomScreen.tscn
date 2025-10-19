@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://c0cpy5xfdy2nb"]
+[gd_scene load_steps=12 format=3 uid="uid://c0cpy5xfdy2nb"]
 
 [ext_resource type="Theme" uid="uid://ch0ahyx502rlq" path="res://data/themes/theme.tres" id="1_fqbyh"]
 [ext_resource type="Script" uid="uid://bi2w4gopbk7mv" path="res://src/ui/screens/room_screen.gd" id="1_vxldv"]
@@ -8,6 +8,7 @@
 [ext_resource type="Resource" uid="uid://i5l4a63bwaev" path="res://data/rooms/ShopkeeperRoomBasic.tres" id="4_31aom"]
 [ext_resource type="PackedScene" uid="uid://b3c8d4h8p1q6r" path="res://src/ui/widgets/EquippedItemsWidget.tscn" id="4_equipped"]
 [ext_resource type="Resource" uid="uid://d32s4st32v1tk" path="res://data/loot/StartingLoot.tres" id="4_uffsh"]
+[ext_resource type="Resource" uid="uid://bhfn488v1wa0x" path="res://data/rooms/MimicRoomBasic.tres" id="6_smb4s"]
 [ext_resource type="Script" uid="uid://cuib3tlx6u7dn" path="res://src/rooms/chest_room_resource.gd" id="7_soduk"]
 
 [sub_resource type="Resource" id="Resource_4t8ue"]
@@ -30,7 +31,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_fqbyh")
 script = ExtResource("1_vxldv")
-starting_rooms = Array[ExtResource("3_soduk")]([SubResource("Resource_4t8ue"), ExtResource("4_31aom")])
+starting_rooms = Array[ExtResource("3_soduk")]([SubResource("Resource_4t8ue"), ExtResource("6_smb4s"), ExtResource("4_31aom")])
 metadata/_edit_vertical_guides_ = [-118.0]
 
 [node name="MarginContainer" type="MarginContainer" parent="."]

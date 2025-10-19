@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="LootComponent" load_steps=4 format=3 uid="uid://d32s4st32v1tk"]
 
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="1_b2t8e"]
-[ext_resource type="Resource" uid="uid://bhke1ujhajsrw" path="res://data/ItemPicks/StartingGear.tres" id="2_hdaht"]
+[ext_resource type="Resource" uid="uid://bhke1ujhajsrw" path="res://data/lootPicks/StartingGear.tres" id="2_b2t8e"]
 [ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="3_5kf5c"]
 
 [resource]
@@ -9,5 +9,5 @@ script = ExtResource("3_5kf5c")
 gold_min = 100
 gold_max = 100
 chance_gold_none = 0.0
-loot_table = Array[ExtResource("1_b2t8e")]([ExtResource("2_hdaht")])
+loot_table = Array[ExtResource("1_b2t8e")]([ExtResource("2_b2t8e")])
 metadata/_custom_type_script = "uid://lj0e532l0dyu"
