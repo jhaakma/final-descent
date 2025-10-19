@@ -38,10 +38,11 @@ func _on_open_chest(room_screen: RoomScreen) -> void:
         inline_combat.connect("loot_collected", func()->void:
             room_screen.mark_cleared())
 
-func _on_mimic_combat_resolved(victory: bool, _room_screen: RoomScreen, inline_combat: Control) -> void:
+func _on_mimic_combat_resolved(victory: bool, room_screen: RoomScreen, inline_combat: Control) -> void:
     if victory:
         var enemy_loot_data := mimic_enemy.loot_component.generate_loot()
         inline_combat.call("show_loot_screen", enemy_loot_data)
     else:
         # defeat handled by GameState (hp 0), but we can still mark
         pass
+    room_screen.mark_cleared()

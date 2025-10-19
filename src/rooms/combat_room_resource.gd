@@ -58,6 +58,7 @@ func start_fight(room_screen: RoomScreen, enemy_first: bool) -> void:
                 # defeat handled by GameState (hp 0), but we can still mark
                 pass)
 
+
     if inline_combat.has_signal("combat_fled"):
         inline_combat.connect("combat_fled", func()->void:
             # Player fled successfully - just mark room as cleared, no loot

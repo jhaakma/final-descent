@@ -69,7 +69,7 @@ func get_save_data() -> Dictionary:
     var save_data := {
         "current_floor": current_floor,
         "stage_manager": StageManager.get_save_data() if StageManager else {},
-        "player": player.get_save_data() if player and player.has_method("get_save_data") else {}
+        "player": player.call("get_save_data") if player and player.has_method("get_save_data") else {}
     }
     return save_data
 
@@ -82,7 +82,7 @@ func load_save_data(data: Dictionary) -> void:
 
     # Load player data (if player has save/load support)
     if player and player.has_method("load_save_data") and data.has("player"):
-        player.load_save_data(data.player)
+        player.call("load_save_data", data.player)
 
     # Refresh UI
     emit_signal("stats_changed")
