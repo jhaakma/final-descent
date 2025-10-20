@@ -1,5 +1,26 @@
 # To do
 
+## Delay animations
+- Short delay after player and enemy action
+
+
+## Class System
+
+When starting a new game, add menu for selecting a class. Each class
+
+### Mage
+- Has mana pool, regenerates mana each turn and when resting
+- Can learn spells from scrolls
+- New ability: Cast Spell
+### Thief
+- Chance to dodge attacks
+- Increased chance to flee and avoid
+- New ability: Steal
+### Warrior
+- Repair tools repair double the condition amount
+- New ability: Defend (exising defend ability now limited to Warrior) - take half damage next turn
+
+
 ## Merchant inventory still not always highlighting equipped item
 
 ## Status Effect stacking issues

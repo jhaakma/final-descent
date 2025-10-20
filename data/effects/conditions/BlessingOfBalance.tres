@@ -15,4 +15,6 @@ script = ExtResource("1_exm2n")
 name = "Blessing of Balance"
 status_effect = SubResource("Resource_g0yh8")
 log_ability_name = true
+source_type = 0
+equipment_stack_count = 0
 metadata/_custom_type_script = "uid://1rgx6dp1sjb2"

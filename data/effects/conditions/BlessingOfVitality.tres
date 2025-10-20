@@ -14,4 +14,6 @@ script = ExtResource("1_w8xm0")
 name = "Blessing of Vitality"
 status_effect = SubResource("Resource_i2hno")
 log_ability_name = true
+source_type = 0
+equipment_stack_count = 0
 metadata/_custom_type_script = "uid://1rgx6dp1sjb2"

@@ -54,17 +54,32 @@ func _on_armor_selected(selected_armor: ItemInstance, enchantment: Enchantment, 
         item_action_completed.emit(false, item_data)
         return
 
+    var player := GameState.player
+
+    # Remove old enchantment effects if the armor is equipped
+
+    var is_equipped := player.is_equipped(selected_armor)
+
+    if is_equipped and armor.enchantment:
+        if armor.enchantment is ConstantEffectEnchantment:
+            (armor.enchantment as ConstantEffectEnchantment)._on_item_unequipped(armor)
+
     # Create a unique instance of the armor for enchantment
     var enchanted_armor := armor.duplicate() as Armor
     enchanted_armor.enchantment = enchantment
     enchanted_armor.name = "%s of %s" % [armor.name, enchantment.get_enchantment_name()]
 
     # Use the reusable replacement method
-    var player := GameState.player
     if not player.replace_item_instance(selected_armor, enchanted_armor):
         LogManager.log_warning("Failed to replace armor with enchanted version.")
         item_action_completed.emit(false, item_data)
         return
+
+    # Apply new enchantment effects if the armor is equipped
+    if is_equipped:
+        enchanted_armor.enchantment.initialise(enchanted_armor)
+        if enchanted_armor.enchantment is ConstantEffectEnchantment:
+            (enchanted_armor.enchantment as ConstantEffectEnchantment)._on_item_equipped(enchanted_armor)
 
     LogManager.log_success("You have successfully enchanted your %s with %s." % [enchanted_armor.name, enchantment.get_enchantment_name()])
     # Signal successful completion

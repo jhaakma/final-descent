@@ -19,7 +19,7 @@
 [ext_resource type="Resource" uid="uid://m5dageinlf77" path="res://data/items/runes/RuneOfIce.tres" id="16_jnypv"]
 [ext_resource type="Resource" uid="uid://i3cxeo8eo70w" path="res://data/items/runes/RuneOfPoison.tres" id="17_2k84y"]
 [ext_resource type="Resource" uid="uid://jh6urisffe2v" path="res://data/items/runes/RuneOfResistPoison.tres" id="18_knk1e"]
-[ext_resource type="Resource" path="res://data/items/runes/RuneOfShock.tres" id="19_orgcv"]
+[ext_resource type="Resource" uid="uid://cc3e13h3supbc" path="res://data/items/runes/RuneOfShock.tres" id="19_orgcv"]
 
 [sub_resource type="Resource" id="Resource_o3oe0"]
 script = ExtResource("1_w2lto")

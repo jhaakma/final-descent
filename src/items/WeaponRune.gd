@@ -49,22 +49,34 @@ func _on_weapon_selected(selected_weapon: ItemInstance, enchantment: Enchantment
         item_action_completed.emit(false, null)
         return
 
+    var player := GameState.player
+
+    # Remove old enchantment effects if the weapon is equipped
+    if player.is_equipped(selected_weapon) and weapon.enchantment:
+        if weapon.enchantment is ConstantEffectEnchantment:
+            (weapon.enchantment as ConstantEffectEnchantment)._on_weapon_unequipped(weapon)
+
     # Create new weapon instance
     var enchanted_weapon := weapon.duplicate() as Weapon
     enchanted_weapon.enchantment = enchantment
     enchanted_weapon.name = "%s of %s" % [enchanted_weapon.name, enchantment.get_enchantment_name()]
 
-    if not GameState.player.replace_item_instance(selected_weapon, enchanted_weapon):
+    if not player.replace_item_instance(selected_weapon, enchanted_weapon):
         LogManager.log_warning("Failed to apply enchantment to weapon.")
         # Signal failure
         item_action_completed.emit(false, null)
         return
 
+    # Apply new enchantment effects if the weapon is equipped
+    if player.is_equipped(selected_weapon):
+        enchanted_weapon.enchantment.initialise(enchanted_weapon)
+        if enchanted_weapon.enchantment is ConstantEffectEnchantment:
+            (enchanted_weapon.enchantment as ConstantEffectEnchantment)._on_weapon_equipped(enchanted_weapon)
+
     LogManager.log_success("You have successfully enchanted your weapon with %s." % enchantment.get_enchantment_name())
 
     # Signal success
-    item_action_completed.emit(true, null
-)
+    item_action_completed.emit(true, null)
 
 func get_rune_type_name() -> String:
     return "Imbue Weapon"

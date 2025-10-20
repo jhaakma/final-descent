@@ -13,18 +13,20 @@ class_name ItemInstance extends RefCounted
 var item: Item
 var item_data: ItemData  # null for generic items, present for unique instances
 var count: int  # quantity for generic items, always 1 for unique instances
-var is_equipped: bool = false  # Whether this item is currently equipped (for weapons)
+
+# Computed property - checks if this item is currently equipped by the player
+var is_equipped: bool:
+    get:
+        return GameState.player.is_equipped(self)
+
 func _init(
     p_item: Item,
     p_item_data: ItemData = null,
-    p_count: int = 1,
-    p_is_equipped: bool = false
-
+    p_count: int = 1
 ) -> void:
     item = p_item
     item_data = p_item_data
     count = p_count
-    is_equipped = p_is_equipped
 
 
 ## Check if this tile represents a generic stack (no specific ItemData)
@@ -53,9 +55,7 @@ func get_full_display_name() -> String:
 ## Get sort key for consistent ordering
 func get_sort_key() -> String:
     var base_key := item.name
-    if is_equipped:
-        base_key = "0_" + base_key  # Equipped items first
-    elif is_unique_instance():
+    if is_unique_instance():
         base_key += "_instance"
     else:
         base_key += "_generic"
@@ -82,8 +82,7 @@ func use_item() -> bool:
         # Special handling for weapons
         var is_already_equipped: bool = (
             equipped_weapon != null and
-            equipped_weapon.item == item and
-            equipped_weapon.item_data == item_data
+            equipped_weapon.matches(self)
         )
 
         if is_already_equipped:
@@ -108,7 +107,16 @@ func use_item() -> bool:
             return true
 
 func matches(other: ItemInstance) -> bool:
-    return item == other.item and item_data == other.item_data
+    # Compare items by resource path to handle duplicated resources correctly
+    var items_match: bool = false
+    if item.resource_path != "" and other.item.resource_path != "":
+        # Both have resource paths - compare paths
+        items_match = item.resource_path == other.item.resource_path
+    else:
+        # One or both are runtime-created - fall back to reference comparison
+        items_match = item == other.item
+    
+    return items_match and item_data == other.item_data
 
 ## If item data was modified to be back to generic state, remove from instance
 func item_data_updated() -> bool:

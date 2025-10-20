@@ -6,6 +6,9 @@ signal run_ended(victory: bool)
 var available_rooms: Array[RoomResource] = []
 
 @export var starting_rooms: Array[RoomResource] = []
+## Manually specify all room resources for web export compatibility
+## When this array is populated, it will be used instead of dynamic directory scanning
+@export var all_rooms: Array[RoomResource] = []
 
 @onready var floor_label: Label = %FloorLabel
 @onready var hp_label: Label = %HPLabel
@@ -72,9 +75,22 @@ func _ready() -> void:
     leave_btn.pressed.connect(_on_leave_run_pressed)
 
 func _load_all_rooms() -> void:
-    """Automatically load all room resources from the data/rooms directory"""
+    """Load all room resources - uses all_rooms array if populated (web export), otherwise scans directory"""
     available_rooms.clear()
 
+    # If all_rooms is populated, use it directly (web export compatibility)
+    if all_rooms.size() > 0:
+        available_rooms = all_rooms.duplicate()
+        print("Loaded %d rooms from all_rooms array" % available_rooms.size())
+        for room in available_rooms:
+            if room:
+                print("Room loaded: %s" % room.title)
+            else:
+                print("Warning: Null room resource in all_rooms array")
+        return
+
+    # Fallback to directory scanning (development/desktop builds)
+    print("all_rooms array empty, falling back to directory scanning...")
     var dir := DirAccess.open("res://data/rooms/")
     if dir:
         dir.list_dir_begin()
@@ -108,12 +124,49 @@ func _load_all_rooms() -> void:
         if available_rooms.is_empty():
             print("Warning: No rooms were loaded from data/rooms/")
     else:
-        print("Error: Failed to open data/rooms directory")
+        print("Error: Failed to open data/rooms directory and no all_rooms specified")
 
 # Public method to reload all rooms (useful for development)
 func reload_rooms() -> void:
-    """Reload all room resources from the data/rooms directory"""
+    """Reload all room resources"""
     _load_all_rooms()
+
+# Public method to populate all_rooms array from directory (useful for setup)
+func populate_all_rooms_from_directory() -> void:
+    """Helper function to populate all_rooms array by scanning directory - use in editor"""
+    all_rooms.clear()
+
+    var dir := DirAccess.open("res://data/rooms/")
+    if dir:
+        dir.list_dir_begin()
+        var file_name := dir.get_next()
+        var file_names: Array[String] = []
+
+        # Collect all .tres files first
+        while file_name != "":
+            if file_name.ends_with(".tres"):
+                file_names.append(file_name)
+            file_name = dir.get_next()
+
+        dir.list_dir_end()
+
+        # Sort files for consistent loading order
+        file_names.sort()
+
+        # Load all room resources into all_rooms array
+        for file in file_names:
+            var resource_path := "res://data/rooms/" + file
+            var room_resource := load(resource_path) as RoomResource
+
+            if room_resource:
+                all_rooms.append(room_resource)
+                print("Added to all_rooms: ", file, " (", room_resource.title, ")")
+            else:
+                print("Warning: Failed to load room resource: ", file)
+
+        print("Total rooms added to all_rooms: ", all_rooms.size())
+    else:
+        print("Error: Failed to open data/rooms directory")
 
 # Call this to refresh all UI elements
 func update() -> void:

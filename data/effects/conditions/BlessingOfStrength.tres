@@ -14,4 +14,6 @@ script = ExtResource("1_bpbud")
 name = "Blessing of Strength"
 status_effect = SubResource("Resource_c7j8d")
 log_ability_name = true
+source_type = 0
+equipment_stack_count = 0
 metadata/_custom_type_script = "uid://1rgx6dp1sjb2"

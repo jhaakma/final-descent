@@ -127,7 +127,6 @@ func remove_item(item_instance: ItemInstance) -> bool:
     # If removing an equipped weapon, just clear the equipped reference
     # (equipped items are not in inventory, so we don't need to remove from inventory)
     if equipped_weapon and item_instance.matches(equipped_weapon):
-        equipped_weapon.is_equipped = false
         equipped_weapon = null
         emit_signal("inventory_changed")
         return true
@@ -151,8 +150,7 @@ func remove_item(item_instance: ItemInstance) -> bool:
                     # Remove armor defense bonus
                     _remove_armor_defense_bonus(armor)
 
-                    # Mark as unequipped and remove from equipped_items
-                    equipped_instance.is_equipped = false
+                    # Remove from equipped_items
                     equipped_items.erase(slot)
                     emit_signal("inventory_changed")
                     return true
@@ -160,7 +158,6 @@ func remove_item(item_instance: ItemInstance) -> bool:
             else:
                 # Fallback: just remove from equipped_items
                 equipped_items.erase(slot)
-                equipped_instance.is_equipped = false
                 emit_signal("inventory_changed")
                 return true
 
@@ -187,15 +184,18 @@ func equip_weapon(item_instance: ItemInstance) -> bool:
     if item_instance.item_data:
         # Equipping a specific instance - remove it from inventory
         if inventory.take_item_instance(item_instance.item, item_instance.item_data):
-            # Create new instance with count=1 for equipped weapon
+            # Create new instance with the existing item_data
             equipped_weapon = ItemInstance.new(item_instance.item, item_instance.item_data, 1)
     else:
-        # Equipping a generic item - take one from stack
+        # Equipping a generic item - take one from stack and create ItemData
         var taken : ItemInstance = inventory.get_item_stack(weapon).take_one()
         if taken:
-            equipped_weapon = taken
+            # Create ItemData for the equipped weapon (always needed for equipped tracking)
+            var new_item_data := ItemData.new(weapon.condition)
+            new_item_data.current_condition = weapon.condition
+            equipped_weapon = ItemInstance.new(weapon, new_item_data, 1)
 
-    equipped_weapon.is_equipped = true
+    # Equipment state is tracked by being in equipped_weapon, not by is_equipped flag
     emit_signal("inventory_changed")
 
     # Initialize enchantment if the weapon has any (on-strike enchantments only)
@@ -214,14 +214,13 @@ func unequip_weapon() -> bool:
         # Has unique data (damaged/enchanted) - add as instance
         inventory.add_item_instance(equipped_weapon)
     else:
-        # Undamaged - add as generic item
-        inventory.add_item(equipped_weapon)
+        # No unique data - add as generic item (ItemData will be cleaned up automatically)
+        inventory.add_item(ItemInstance.new(equipped_weapon.item, null, 1))
 
     # Weapons only use on-strike enchantments, no cleanup needed on unequip
     LogManager.log_event("Unequipped %s" % equipped_weapon.item.name)
 
-    equipped_weapon.is_equipped = false
-    # Clear equipped weapon
+    # Clear equipped weapon (equipment state tracked by presence in equipped_weapon)
     equipped_weapon = null
     emit_signal("inventory_changed")
     return true
@@ -296,7 +295,7 @@ func is_equipped(item_instance: ItemInstance) -> bool:
         return true
 
     for equipped_instance: ItemInstance in equipped_items.values():
-        if item_instance.matches(equipped_instance):
+        if equipped_instance.matches(item_instance):
             return true
 
     return false
@@ -320,16 +319,19 @@ func equip_armor(item_instance: ItemInstance) -> bool:
         # Equipping a specific instance with unique data - remove it from inventory
         if not inventory.take_item_instance(item_instance.item, item_instance.item_data):
             return false
-        # Create new instance with count=1 for equipped armor
+        # Create new instance with the existing item_data
         equipped_instance = ItemInstance.new(item_instance.item, item_instance.item_data, 1)
     else:
-        # Equipping a generic item - take one from stack
+        # Equipping a generic item - take one from stack and create ItemData
         var taken: ItemInstance = inventory.get_item_stack(armor).take_one()
         if not taken:
             return false
-        equipped_instance = taken
+        # Create ItemData for the equipped item (always needed for equipped tracking)
+        var new_item_data := ItemData.new(armor.condition)
+        new_item_data.current_condition = armor.condition
+        equipped_instance = ItemInstance.new(armor, new_item_data, 1)
 
-    equipped_instance.is_equipped = true
+    # Store the equipped instance in equipped_items (equipment state tracked here, not via is_equipped flag)
     equipped_items[slot] = equipped_instance
 
     # Apply enchantment effects if the armor has any
@@ -358,8 +360,8 @@ func unequip_armor(slot: Equippable.EquipSlot) -> bool:
         # Has unique data (damaged/enchanted) - add as instance
         inventory.add_item_instance(equipped_instance)
     else:
-        # Undamaged - add as generic item
-        inventory.add_item(equipped_instance)
+        # No unique data - add as generic item (ItemData will be cleaned up automatically)
+        inventory.add_item(ItemInstance.new(equipped_instance.item, null, 1))
 
     # Remove enchantment effects if the armor has any
     if armor.enchantment:
@@ -372,7 +374,6 @@ func unequip_armor(slot: Equippable.EquipSlot) -> bool:
 
     LogManager.log_event("Unequipped %s" % armor.name)
 
-    equipped_instance.is_equipped = false
     equipped_items.erase(slot)
     emit_signal("inventory_changed")
     return true
@@ -533,7 +534,8 @@ func reduce_armor_condition() -> void:
 
         var armor := equipped_instance.item as Armor
 
-        # Create ItemData if it doesn't exist yet (first damage)
+        # Equipped items should always have ItemData (created during equip)
+        # But add safety check in case of legacy equipped items
         if not equipped_instance.item_data:
             equipped_instance.item_data = ItemData.new(armor.condition)
             equipped_instance.item_data.current_condition = armor.condition
@@ -614,87 +616,26 @@ func take_items(item: Item, amount: int = 1) -> Array:
 ## This is useful for enchanting, repairing, or upgrading items
 ## Returns true if the replacement was successful
 func replace_item_instance(old_instance: ItemInstance, new_item: Item) -> bool:
-    # Check if this item is currently equipped
-    var is_equipped_weapon: bool = (equipped_weapon == old_instance)
-    var equipped_armor_slot: Variant = null
+    # Create new instance preserving ItemData and count
+    var new_instance := ItemInstance.new(new_item, old_instance.item_data, old_instance.count)
 
-    # Check if it's equipped armor
-    if old_instance.item is Armor:
-        var armor := old_instance.item as Armor
-        var armor_slot := armor.get_equip_slot()
-        if armor_slot in equipped_items and equipped_items[armor_slot] == old_instance:
-            equipped_armor_slot = armor_slot
-
-    # Create new instance preserving condition data
-    var new_item_data: ItemData = null
-    if old_instance.item_data:
-        # Preserve the current condition from old item data
-        var current_condition := old_instance.item_data.current_condition
-        # Create new ItemData with the new item's condition as the initial condition
-        if new_item is Equippable:
-            var new_equippable := new_item as Equippable
-            new_item_data = ItemData.new(new_equippable.condition)
-            new_item_data.current_condition = current_condition
-        else:
-            new_item_data = old_instance.item_data
-    else:
-        # No existing ItemData - create fresh ItemData for equippable items
-        if new_item is Equippable:
-            var new_equippable := new_item as Equippable
-            # For fresh equipment, assume full condition
-            new_item_data = ItemData.new(new_equippable.condition)
-            new_item_data.current_condition = new_equippable.condition
-        else:
-            new_item_data = null
-
-    var new_instance := ItemInstance.new(new_item, new_item_data, old_instance.count, old_instance.is_equipped)
-
-
-    # Handle equipped weapon
-    if is_equipped_weapon:
-        var old_weapon := old_instance.item as Weapon
-        var new_weapon := new_item as Weapon
-
-        # Remove old enchantment effects
-        if old_weapon.enchantment and old_weapon.enchantment is ConstantEffectEnchantment:
-            (old_weapon.enchantment as ConstantEffectEnchantment)._on_weapon_unequipped(old_weapon)
-
+    # Check if this item is currently equipped weapon
+    if equipped_weapon == old_instance:
         # Update the equipped reference
         equipped_weapon = new_instance
-
-        # Apply new enchantment effects
-        if new_weapon.enchantment:
-            new_weapon.enchantment.initialise(new_weapon)
-            if new_weapon.enchantment is ConstantEffectEnchantment:
-                (new_weapon.enchantment as ConstantEffectEnchantment)._on_weapon_equipped(new_weapon)
-
         inventory_changed.emit()
         stats_changed.emit()
         return true
 
-    # Handle equipped armor
-    if equipped_armor_slot != null:
-        var old_armor := old_instance.item as Armor
-        var new_armor := new_item as Armor
+    # Check if this item is currently equipped armor
+    for slot: Equippable.EquipSlot in equipped_items.keys():
+        var equipped_instance: ItemInstance = equipped_items[slot]
+        if equipped_instance.matches(old_instance):
+            # Update the equipped reference
+            equipped_items[slot] = new_instance
+            inventory_changed.emit()
+            stats_changed.emit()
+            return true
 
-        # Remove old enchantment effects
-        if old_armor.enchantment and old_armor.enchantment is ConstantEffectEnchantment:
-            (old_armor.enchantment as ConstantEffectEnchantment)._on_item_unequipped(old_armor)
-
-        # Update the equipped reference
-        equipped_items[equipped_armor_slot] = new_instance
-
-        # Apply new enchantment effects
-        if new_armor.enchantment:
-            new_armor.enchantment.initialise(new_armor)
-            if new_armor.enchantment is ConstantEffectEnchantment:
-                (new_armor.enchantment as ConstantEffectEnchantment)._on_item_equipped(new_armor)
-
-        inventory_changed.emit()
-        stats_changed.emit()
-        return true
-
-    # Handle inventory item - use the new instance we carefully created
-    if not inventory.remove_item_instance(old_instance):
-        return false
-    return inventory.add_item_instance(new_instance)
+    # Handle inventory item - delegate to inventory component
+    return inventory.replace_item_instance(old_instance, new_item)

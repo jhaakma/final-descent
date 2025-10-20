@@ -29,6 +29,11 @@ func repair_condition(amount: int) -> void:
     current_condition = min(20, current_condition + amount)  # Assuming 20 is max condition
 
 
+# Check if this ItemData should be removed because it has no unique data
+func is_empty() -> bool:
+    # If condition is at its initial value and no other unique data exists
+    return current_condition == _initial_condition
+
 # Check if two ItemData instances are equivalent (can be stacked together)
 func can_stack_with(other: ItemData) -> bool:
     if is_unique() or other.is_unique():
