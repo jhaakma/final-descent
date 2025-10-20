@@ -5,7 +5,8 @@
 [resource]
 script = ExtResource("1_mgxhe")
 damage = 5
-condition = 15
+damage_type = 0
+condition = 40
 name = "Staff"
 purchase_value = 8
 metadata/_custom_type_script = "uid://cp8w78pilenje"

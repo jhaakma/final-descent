@@ -5,7 +5,8 @@
 [resource]
 script = ExtResource("1_hmvtg")
 damage = 3
-condition = 10
+damage_type = 0
+condition = 20
 name = "Dagger"
 purchase_value = 5
 metadata/_custom_type_script = "uid://cp8w78pilenje"

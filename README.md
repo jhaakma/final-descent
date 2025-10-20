@@ -4,7 +4,7 @@ A roguelike dungeon crawler built with Godot 4, featuring turn-based combat, mag
 
 ## Summary
 
-Final Descent is a classic dungeon crawler that combines strategic turn-based combat with roguelike elements. Players descend through increasingly dangerous floors, battling enemies, collecting loot, and managing resources. The game features a comprehensive magic system with spells and scrolls, various consumable items like potions and elixirs, weapon degradation mechanics, and status effects that add tactical depth to combat encounters.
+Final Descent is a text-based dungeon crawler that combines strategic turn-based combat with roguelike elements. Players descend through increasingly dangerous floors, battling enemies, collecting loot, and managing resources. The game features a comprehensive magic system with spells and scrolls, various consumable items like potions and elixirs, weapon degradation mechanics, and status effects that add tactical depth to combat encounters.
 
 ## Features
 

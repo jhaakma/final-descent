@@ -115,7 +115,7 @@ func matches(other: ItemInstance) -> bool:
     else:
         # One or both are runtime-created - fall back to reference comparison
         items_match = item == other.item
-    
+
     return items_match and item_data == other.item_data
 
 ## If item data was modified to be back to generic state, remove from instance
