@@ -46,6 +46,7 @@ help:
 	@echo "  test         - Run all tests"
 	@echo "  tests        - Alias for test"
 	@echo "  run-tests    - Alias for test"
+	@echo "  test FILTER=name - Run tests matching filter"
 	@echo ""
 	@echo "Development:"
 	@echo "  clean        - Clean temporary files"
@@ -55,6 +56,7 @@ help:
 	@echo ""
 	@echo "Examples:"
 	@echo "  make test"
+	@echo "  make test FILTER=ScrollTest"
 	@echo "  make clean"
 	@echo "  make setup"
 	@echo ""
@@ -95,7 +97,12 @@ setup:
 # Run tests
 test tests run-tests: setup
 	@echo "Running Final Descent tests..."
+ifdef FILTER
+	@echo "Filtering tests by: $(FILTER)"
+	@"$(GODOT_CMD)" --headless --path . res://test/test_runner.tscn -- filter $(FILTER)
+else
 	@"$(GODOT_CMD)" --headless --path . res://test/test_runner.tscn
+endif
 
 # Clean temporary files
 clean:
