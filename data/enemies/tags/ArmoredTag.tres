@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="EnemyTag" load_steps=3 format=3 uid="uid://b7p7r7qtply70"]
+
+[ext_resource type="Script" uid="uid://cd5jgl58xp5ju" path="res://src/enemies/enemy_tag.gd" id="1"]
+[ext_resource type="Script" uid="uid://bkhqo7pjlc7bi" path="res://src/abilities/Ability.gd" id="1_yth1s"]
+
+[resource]
+script = ExtResource("1")
+name = "Armored"
+description = "Protected by thick armor or natural plating"
+hp_multiplier = 1.1
+attack_multiplier = 0.9
+defense_multiplier = 1.5
+hp_bonus = 3
+attack_bonus = 0
+defense_bonus = 2
+grants_resistances = Array[int]([5])
+grants_weaknesses = Array[int]([])
+removes_resistances = Array[int]([])
+removes_weaknesses = Array[int]([])
+granted_abilities = Array[ExtResource("1_yth1s")]([])
+restricted_archetypes = Array[int]([])
+name_prefix = ""
+name_suffix = ""
+tag_type = 2

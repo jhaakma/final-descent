@@ -8,7 +8,7 @@
 script = ExtResource("2_h8ec8")
 damage_per_turn = 2
 elemental_type = 1
-duration = 1
+duration = 5
 metadata/_custom_type_script = "uid://b5iu05fqomptj"
 
 [sub_resource type="Resource" id="Resource_21c22"]

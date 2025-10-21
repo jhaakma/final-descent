@@ -24,6 +24,9 @@ var current_state: AbilityState = AbilityState.READY
 var caster_ref: CombatEntity = null  # Store reference to caster for multi-turn abilities
 var target_ref: CombatEntity = null  # Store reference to target for multi-turn abilities
 
+func get_cooldown() -> int:
+    return 0  # Default no cooldown
+
 # Abstract method - override in subclasses to define specific ability behavior
 func execute(_caster: CombatEntity, _target: CombatEntity) -> void:
     push_error("Ability.execute() must be overridden in subclasses")

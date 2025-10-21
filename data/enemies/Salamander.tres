@@ -19,7 +19,7 @@ metadata/_custom_type_script = "uid://b5iu05fqomptj"
 
 [sub_resource type="Resource" id="Resource_dcspj"]
 script = ExtResource("2_7ohqo")
-base_damage = 10
+base_damage = 5
 damage_variance = 5
 override_damage_type = true
 damage_type = 2

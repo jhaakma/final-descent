@@ -1,17 +1,21 @@
 class_name AttackAbility extends Ability
 
+
 @export var base_damage: int = 0
 @export var damage_variance: int = 3  # Random variance in damage
 @export var override_damage_type: bool = true  # Whether to override caster's damage type
 @export var damage_type: DamageType.Type = DamageType.Type.PHYSICAL  # Damage type override
 @export var status_effect: StatusEffect = null  # Optional status effect to apply
 @export var effect_chance: float = 1.0  # Chance to apply status effect if present
-
+@export var _cooldown: int = 0  # Turns required between uses
 
 func _init() -> void:
     ability_name = "Attack"
     description = "A basic attack ability."
     priority = 10
+
+func get_cooldown() -> int:
+    return _cooldown
 
 func execute(caster: CombatEntity, target: CombatEntity) -> void:
     if target == null:

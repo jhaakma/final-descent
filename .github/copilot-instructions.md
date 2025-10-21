@@ -24,7 +24,7 @@ Godot 4 roguelike dungeon crawler game guidelines.
 
 ## Testing
 
-- **Run**: `make test` or `godot --headless res://test/test_runner.tscn`
+- **Run**: `make test` or `make test filter=TestName`
 - **Files**: Extend `BaseTest`, methods start with `test_`, return `bool`
 - **Structure**: Separate files per feature (`ScrollTest.gd`, `PotionTest.gd`)
 

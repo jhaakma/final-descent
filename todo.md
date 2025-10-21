@@ -1,8 +1,12 @@
 # To do
 
+## Ability Mechanics
+- Cooldowns
+- AI for selecting abilities
+    - Logic + randomness
+
 ## Delay animations
 - Short delay after player and enemy action
-
 
 ## Class System
 
