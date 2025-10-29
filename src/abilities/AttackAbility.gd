@@ -1,4 +1,4 @@
-class_name AttackAbility extends Ability
+class_name AttackAbility extends AbilityResource
 
 
 @export var base_damage: int = 0
@@ -17,7 +17,7 @@ func _init() -> void:
 func get_cooldown() -> int:
     return _cooldown
 
-func execute(caster: CombatEntity, target: CombatEntity) -> void:
+func execute(_instance: AbilityInstance, caster: CombatEntity, target: CombatEntity) -> void:
     if target == null:
         push_error("AttackAbility requires a target")
         return
@@ -46,6 +46,9 @@ func execute(caster: CombatEntity, target: CombatEntity) -> void:
         var effect_copy: StatusEffect = status_effect.create()
         target.apply_status_effect(effect_copy)
 
+    # Mark single-turn ability as completed immediately
+    _instance.current_state = AbilityInstance.AbilityState.COMPLETED
+
 
 
 
@@ -61,8 +64,8 @@ func calculate_damage(caster: CombatEntity) -> int:
 
     return max(damage, 1)  # Minimum 1 damage
 
-func get_ability_type() -> Ability.AbilityType:
-    return Ability.AbilityType.ATTACK
+func get_ability_type() -> AbilityResource.AbilityType:
+    return AbilityResource.AbilityType.ATTACK
 
 func can_use(caster: CombatEntity) -> bool:
     # Attack abilities can generally always be used

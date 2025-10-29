@@ -49,7 +49,6 @@ gdscript/warnings/integer_division=0
 window/size/viewport_width=1600
 window/size/viewport_height=900
 window/stretch/mode="canvas_items"
-window/stretch/scale_mode="integer"
 
 [editor_plugins]
 
@@ -70,4 +69,5 @@ timers/name="UI Components"
 
 [rendering]
 
+textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="mobile"

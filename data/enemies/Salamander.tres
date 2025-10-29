@@ -1,43 +1,11 @@
-[gd_resource type="Resource" script_class="EnemyResource" load_steps=15 format=3 uid="uid://w3kd7cafprjg"]
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=9 format=3 uid="uid://w3kd7cafprjg"]
 
-[ext_resource type="Script" uid="uid://bkhqo7pjlc7bi" path="res://src/abilities/Ability.gd" id="1_vyh0g"]
+[ext_resource type="Script" uid="uid://bn114y7jrm4cf" path="res://src/abilities/AbilityResource.gd" id="1_vyh0g"]
 [ext_resource type="Script" uid="uid://b4y5n724vd0ph" path="res://src/enemies/enemy_resource.gd" id="2_5vp76"]
-[ext_resource type="Script" uid="uid://b3hu85dtjat08" path="res://src/abilities/AttackAbility.gd" id="2_7ohqo"]
-[ext_resource type="Script" uid="uid://b5iu05fqomptj" path="res://src/effects/timed/elemental_timed_effect.gd" id="3_dqq62"]
-[ext_resource type="Script" uid="uid://pm8es32y8icp" path="res://src/abilities/PreparationAbility.gd" id="4_k0dbn"]
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="5_22nrv"]
 [ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="6_3tscu"]
 [ext_resource type="Resource" uid="uid://bnv00r86s3yqw" path="res://data/items/runes/RuneOfFire.tres" id="7_ybh7h"]
 [ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="8_epl8e"]
-
-[sub_resource type="Resource" id="Resource_mo02c"]
-script = ExtResource("3_dqq62")
-damage_per_turn = 2
-elemental_type = 2
-duration = 3
-metadata/_custom_type_script = "uid://b5iu05fqomptj"
-
-[sub_resource type="Resource" id="Resource_dcspj"]
-script = ExtResource("2_7ohqo")
-base_damage = 5
-damage_variance = 5
-override_damage_type = true
-damage_type = 2
-status_effect = SubResource("Resource_mo02c")
-effect_chance = 0.5
-ability_name = "Fire Breath"
-description = "Burns over time"
-priority = 0
-metadata/_custom_type_script = "uid://b3hu85dtjat08"
-
-[sub_resource type="Resource" id="Resource_7i4p0"]
-script = ExtResource("4_k0dbn")
-prepared_ability = SubResource("Resource_dcspj")
-preparation_text = "breathes in deeply..."
-ability_name = "Fire Breath"
-description = "Prepare a Fire breath attack"
-priority = 15
-metadata/_custom_type_script = "uid://pm8es32y8icp"
 
 [sub_resource type="Resource" id="Resource_l4xfh"]
 script = ExtResource("5_22nrv")
@@ -58,7 +26,7 @@ metadata/_custom_type_script = "uid://lj0e532l0dyu"
 
 [resource]
 script = ExtResource("2_5vp76")
-abilities = Array[ExtResource("1_vyh0g")]([SubResource("Resource_7i4p0")])
+abilities = Array[ExtResource("1_vyh0g")]([])
 name = "Salamander"
 max_hp = 50
 attack = 5

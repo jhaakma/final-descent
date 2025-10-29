@@ -1,12 +1,12 @@
 [gd_resource type="Resource" script_class="EnemyResource" load_steps=17 format=3 uid="uid://br1d7l4wph3un"]
 
-[ext_resource type="Script" uid="uid://bkhqo7pjlc7bi" path="res://src/abilities/Ability.gd" id="1_bm85k"]
+[ext_resource type="Script" uid="uid://bn114y7jrm4cf" path="res://src/abilities/AbilityResource.gd" id="1_bm85k"]
 [ext_resource type="Script" uid="uid://b4y5n724vd0ph" path="res://src/enemies/enemy_resource.gd" id="2_4agyd"]
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="2_6jgvs"]
 [ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="3_tv5va"]
-[ext_resource type="Resource" path="res://data/items/runes/RuneOfShock.tres" id="4_rvhrj"]
+[ext_resource type="Resource" uid="uid://cc3e13h3supbc" path="res://data/items/runes/RuneOfShock.tres" id="4_rvhrj"]
 [ext_resource type="Resource" uid="uid://i3cxeo8eo70w" path="res://data/items/runes/RuneOfPoison.tres" id="5_myyve"]
-[ext_resource type="Resource" path="res://data/items/runes/RuneOfIce.tres" id="6_nawgq"]
+[ext_resource type="Resource" uid="uid://m5dageinlf77" path="res://data/items/runes/RuneOfIce.tres" id="6_nawgq"]
 [ext_resource type="Resource" uid="uid://bnv00r86s3yqw" path="res://data/items/runes/RuneOfFire.tres" id="7_ane6q"]
 [ext_resource type="Script" uid="uid://kfpqhwn4ci4m" path="res://src/enchantments/elemental_damage_enchantment.gd" id="8_v81vu"]
 [ext_resource type="Script" uid="uid://cp8w78pilenje" path="res://src/items/Weapon.gd" id="9_nfwnn"]
@@ -61,6 +61,7 @@ abilities = Array[ExtResource("1_bm85k")]([])
 name = "Dragon"
 max_hp = 100
 attack = 5
+defense = 0
 loot_component = SubResource("Resource_bq0r2")
 avoid_chance = 0.0
 resistances = Array[int]([5, 2])

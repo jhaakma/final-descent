@@ -1,6 +1,6 @@
-class_name PreparationAbility extends Ability
+class_name PreparationAbility extends AbilityResource
 
-@export var prepared_ability: Ability = null  # The ability to execute next turn
+@export var prepared_ability: AbilityResource = null  # The ability to execute next turn
 @export var preparation_text: String = "prepares for something..."
 
 func _init() -> void:
@@ -8,35 +8,38 @@ func _init() -> void:
     description = "Prepare to perform a powerful ability next turn."
     priority = 15  # High priority for strategic abilities
 
-func execute(caster: CombatEntity, target: CombatEntity = null) -> void:
+func execute(instance: AbilityInstance, caster: CombatEntity, target: CombatEntity = null) -> void:
     # Start the preparation phase
-    _start_execution(caster, target)
+    instance._start_execution(caster, target)
 
     # Log the preparation
     var caster_name := _get_target_name(caster)
     LogManager.log_event("%s %s" % [caster_name.capitalize(), preparation_text])
 
-func continue_execution() -> void:
+func continue_execution(instance: AbilityInstance) -> void:
     # Execute the prepared ability on the second turn
-    if prepared_ability != null and caster_ref != null:
+    if prepared_ability != null and instance.caster_ref != null:
         print("PreparationAbility: Executing prepared ability '%s'" % prepared_ability.ability_name)
-        prepared_ability.execute(caster_ref, target_ref)
+        # Create a temporary instance for the prepared ability
+        var prepared_instance := AbilityInstance.new(prepared_ability)
+        prepared_ability.execute(prepared_instance, instance.caster_ref, instance.target_ref)
 
     # Mark preparation as completed
-    current_state = AbilityState.COMPLETED
+    instance.current_state = AbilityInstance.AbilityState.COMPLETED
 
-func get_ability_type() -> Ability.AbilityType:
-    return prepared_ability.get_ability_type()
+func get_ability_type() -> AbilityResource.AbilityType:
+    if prepared_ability != null:
+        return prepared_ability.get_ability_type()
+    return AbilityResource.AbilityType.SUPPORT
 
 func can_use(caster: CombatEntity) -> bool:
     return (caster != null and
             caster.has_method("is_alive") and
             caster.is_alive() and
-            prepared_ability != null and
-            current_state == AbilityState.READY)
+            prepared_ability != null)
 
-func get_status_text(_caster: CombatEntity) -> String:
-    if current_state == AbilityState.EXECUTING:
+func get_status_text(instance: AbilityInstance, _caster: CombatEntity) -> String:
+    if instance.current_state == AbilityInstance.AbilityState.EXECUTING:
         return "Prepared: %s" % (prepared_ability.ability_name if prepared_ability else "Unknown")
     return ""
 

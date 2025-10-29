@@ -1,10 +1,14 @@
 class_name InlineCombat extends InlineContentBase
 ## Displays combat interface directly in the room container
+## Uses SOLID combat system with CombatStateManager, PlayerTurnProcessor, and CombatUI
 
 signal combat_resolved(victory: bool)
 signal combat_fled()
 signal loot_collected()
 signal turn_ended()
+
+# Preload the CombatUI class
+const CombatUIClass = preload("res://src/combat/ui/CombatUI.gd")
 
 @onready var label: Label = %EnemyLabel
 @onready var resistance_label: RichTextLabel = %EnemyResistances
@@ -16,11 +20,15 @@ signal turn_ended()
 @onready var defend_btn: Button = %DefendBtn
 @onready var flee_btn: Button = %FleeBtn
 
-var current_enemy: Enemy
+# New SOLID combat system components
+var combat_context: CombatContext
+var state_manager: CombatStateManager
+var player_processor: PlayerTurnProcessor
+var combat_ui: CombatUIClass
+
 var enemy_resource: EnemyResource
 var enemy_first: bool = false
 var avoid_failure: bool = false
-var death_delay_timer: Timer = null
 
 static func get_scene() -> PackedScene:
     return load("uid://jne75qvyltc6") as PackedScene  # Will need to create this scene
@@ -37,13 +45,6 @@ func set_enemy_first(value: bool) -> void:
 func set_avoid_failure(value: bool) -> void:
     avoid_failure = value
 
-func get_a_an(_name: String) -> String:
-    var vowels := ["a", "e", "i", "o", "u"]
-    if _name.length() > 0 and _name[0].to_lower() in vowels:
-        return "an %s" % _name
-    else:
-        return "a %s" % _name
-
 func _ready() -> void:
     # Initialize combat if enemy resource is already set
     if enemy_resource:
@@ -57,322 +58,164 @@ func _initialize_combat() -> void:
     if not label:
         await ready
 
-    current_enemy = Enemy.new(enemy_resource)
-    var enemy_name := current_enemy.get_name()
-    current_enemy.action_performed.connect(_on_enemy_action)
+    # Create new SOLID combat system components
+    var current_enemy := Enemy.new(enemy_resource)
+    combat_context = CombatContext.new(GameState.player, current_enemy, enemy_resource)
+    combat_context.enemy_first = enemy_first
 
-    label.text = "%s appears!" % [get_a_an(enemy_name).capitalize()]
+    # Initialize state manager
+    state_manager = CombatStateManager.new(combat_context)
+
+    # Initialize processors
+    player_processor = PlayerTurnProcessor.new()
+
+    # Initialize UI component
+    combat_ui = CombatUIClass.new()
+    _setup_combat_ui()
+
+    # Connect state manager signals
+    _connect_state_manager_signals()
 
     # Register combat state with GameState
     GameState.start_combat(current_enemy)
 
-    # Update resistance labels
-    _update_resistance_labels()
-    _update_weakness_labels()
-    _update_enemy_stats_display()
-
     LogManager.log_event("Encounter: {enemy:%s} (HP %d)" % [current_enemy.get_name(), current_enemy.get_max_hp()])
-    _refresh_bars()
 
-    # Connect buttons
-    attack_btn.pressed.connect(_on_attack)
-    defend_btn.pressed.connect(_on_defend)
-    flee_btn.pressed.connect(_on_flee)
+    # Initialize combat display
+    combat_ui.initialize_combat_display(combat_context)
 
-    # Plan the enemy's first action based on starting HP
-    current_enemy.plan_action()
-
-    # If enemy_first is true, give the enemy an immediate attack before normal combat
+    # Handle enemy first mechanics
     if enemy_first:
-        # Disable buttons during the surprise attack
-        _disable_action_buttons()
-
-        if avoid_failure:
-            LogManager.log_event("{You} fail to avoid!", {"target": GameState.player})
-            LogManager.log_event("The {enemy:%s} strikes first!" % current_enemy.get_name())
-        else:
-            LogManager.log_event("The {enemy:%s} strikes first!" % current_enemy.get_name())
-
-        # Add a small delay before the enemy attack
-        get_tree().create_timer(0.5).timeout.connect(func()->void:
-            _enemy_turn()
-            _check_end_with_delay()
-        )
+        _handle_enemy_first_attack()
     else:
-        _enable_action_buttons()
+        # Start normal combat
+        state_manager.start_combat()
+
+func _setup_combat_ui() -> void:
+    # Set up UI references for CombatUI component
+    var ui_refs := {
+        "label": label,
+        "resistance_label": resistance_label,
+        "weakness_label": weakness_label,
+        "stats_label": stats_label,
+        "you_bar": you_bar,
+        "foe_bar": foe_bar,
+        "attack_btn": attack_btn,
+        "defend_btn": defend_btn,
+        "flee_btn": flee_btn
+    }
+    combat_ui.setup_ui_references(ui_refs)
+
+    # Connect UI signals to our handlers
+    combat_ui.attack_requested.connect(_on_attack)
+    combat_ui.defend_requested.connect(_on_defend)
+    combat_ui.flee_requested.connect(_on_flee)
+
+func _connect_state_manager_signals() -> void:
+    state_manager.state_changed.connect(_on_state_changed)
+    state_manager.combat_started.connect(_on_combat_started)
+    state_manager.player_turn_started.connect(_on_player_turn_started)
+    state_manager.enemy_turn_started.connect(_on_enemy_turn_started)
+    state_manager.turn_ended.connect(_on_turn_ended)
+    state_manager.combat_ended.connect(_on_combat_ended)
+
+func _handle_enemy_first_attack() -> void:
+    # Disable buttons during the surprise attack
+    combat_ui.disable_actions()
+
+    if avoid_failure:
+        LogManager.log_event("{You} fail to avoid!", {"target": GameState.player})
+        LogManager.log_event("The {enemy:%s} strikes first!" % combat_context.enemy.get_name())
+    else:
+        LogManager.log_event("The {enemy:%s} strikes first!" % combat_context.enemy.get_name())
+
+    # Add a small delay before the enemy attack
+    get_tree().create_timer(0.5).timeout.connect(func()->void:
+        # Start combat with enemy turn
+        state_manager.start_combat()
+    )
+
+# Signal handlers for state manager
+func _on_state_changed(_new_state: CombatStateManager.State, _context: CombatContext) -> void:
+    # Update UI based on state changes
+    combat_ui.update_display()
+
+func _on_combat_started(_context: CombatContext) -> void:
+    # Combat has started, UI is already initialized
+    pass
+
+func _on_player_turn_started(_context: CombatContext) -> void:
+    # Enable player actions
+    combat_ui.enable_actions()
+
+func _on_enemy_turn_started(_context: CombatContext) -> void:
+    # Disable player actions and process enemy turn
+    combat_ui.disable_actions()
+    _process_enemy_turn()
+
+func _on_turn_ended(_context: CombatContext) -> void:
+    # Turn has ended, emit signal for room updates
+    turn_ended.emit()
+
+func _on_combat_ended(_context: CombatContext, victory: bool) -> void:
+    # Combat is over
+    combat_resolved.emit(victory)
+    if not victory:
+        content_resolved.emit()
+
+func _process_enemy_turn() -> void:
+    # Check if enemy should skip their turn
+    if combat_context.enemy.should_skip_turn():
+        LogManager.log_event("{enemy:%s} is stunned and skips their turn!" % combat_context.enemy.get_name())
+        # Go to turn end to continue the state machine
+        state_manager.transition_to_turn_end()
+        return
+
+    # Process enemy status effects at start of their turn
+    combat_context.enemy.process_status_effects()
+
+    if combat_context.enemy.is_alive():
+        # Execute enemy action
+        combat_context.enemy.perform_action()
+        # Go to turn end
+        state_manager.transition_to_turn_end()
+
+# Combat action handlers (called by CombatUI)
+func _on_attack() -> void:
+    var result := player_processor.execute_action(PlayerTurnProcessor.PlayerAction.ATTACK, combat_context)
+    _handle_action_result(result)
+
+func _on_defend() -> void:
+    var result := player_processor.execute_action(PlayerTurnProcessor.PlayerAction.DEFEND, combat_context)
+    _handle_action_result(result)
+
+func _on_flee() -> void:
+    var result := player_processor.execute_action(PlayerTurnProcessor.PlayerAction.FLEE, combat_context)
+    _handle_action_result(result)
+
+func _handle_action_result(result: ActionResult) -> void:
+    match result.action_type:
+        ActionResult.ActionType.FLEE when result.combat_fled:
+            combat_fled.emit()
+            content_resolved.emit()
+        _:
+            # For all other actions, continue to turn end
+            state_manager.transition_to_turn_end()
+
+func handle_item_used() -> void:
+    """Handle when an item is used during combat - treat as player action"""
+    # Process the item usage as a player action (consumes the turn)
+    var result := player_processor.execute_action(PlayerTurnProcessor.PlayerAction.ITEM_USE, combat_context)
+    _handle_action_result(result)
 
 func show_content() -> void:
     super.show_content()
-    # Check if player should skip their first turn due to existing stun
-    if not enemy_first:
-        _enable_action_buttons()  # This will check for stun and handle it
+    # UI will be updated by state changes
 
 func cleanup() -> void:
     super.cleanup()
     # Clean up combat state when combat is destroyed
     GameState.end_combat()
-
-func _update_resistance_labels() -> void:
-    resistance_label.text = ""
-    var resistances := current_enemy.get_resistances()
-    if resistances.size() > 0:
-        resistance_label.text = "Resistances: "
-        for i in range(resistances.size()):
-            var damage_type := resistances[i]
-            var color := DamageType.get_type_color(damage_type).to_html()
-            resistance_label.text += "[color=%s]%s[/color]" % [color, DamageType.get_type_name((damage_type))]
-
-func _update_weakness_labels() -> void:
-    weakness_label.text = ""
-    var weaknesses := current_enemy.get_weaknesses()
-    if weaknesses.size() > 0:
-        weakness_label.text = "Weaknesses: "
-        for i in range(weaknesses.size()):
-            var damage_type := weaknesses[i]
-            var color := DamageType.get_type_color(damage_type).to_html()
-            weakness_label.text += "[color=%s]%s[/color]" % [color, DamageType.get_type_name((damage_type))]
-
-func _disable_action_buttons() -> void:
-    attack_btn.disabled = true
-    defend_btn.disabled = true
-    flee_btn.disabled = true
-
-func _enable_action_buttons() -> void:
-    # Update button states based on stun status
-    if GameState.player.should_skip_turn():
-        _check_player_turn_skip()
-        return
-
-    # Enable all buttons normally
-    attack_btn.disabled = false
-    defend_btn.disabled = false
-    flee_btn.disabled = false
-
-func _refresh_bars() -> void:
-    GameState.player.stats_changed.emit()
-
-    foe_bar.max_value = current_enemy.get_max_hp()
-    foe_bar.value = current_enemy.get_current_hp()
-
-    # Update tooltips with status effects
-    var player_tooltip := "HP: %d/%d" % [GameState.player.get_hp(), GameState.player.get_max_hp()]
-    var player_effects_desc := GameState.player.get_status_effects_description()
-    if player_effects_desc != "":
-        player_tooltip += "\n%s" % player_effects_desc
-    you_bar.tooltip_text = player_tooltip
-
-    var enemy_tooltip := "HP: %d/%d" % [current_enemy.get_current_hp(), current_enemy.get_max_hp()]
-    var enemy_effects_desc := current_enemy.get_status_effects_description()
-    if enemy_effects_desc != "":
-        enemy_tooltip += "\n%s" % enemy_effects_desc
-    foe_bar.tooltip_text = enemy_tooltip
-
-    # Update button states based on player stun status
-    _update_button_states()
-    _update_enemy_stats_display()
-
-func _update_enemy_stats_display() -> void:
-    if stats_label:
-        var attack_power := current_enemy.get_total_attack_power()
-        var current_defense := current_enemy.get_current_defense_percentage()
-        var defend_bonus := current_enemy.get_defend_bonus_percentage()
-        var attack_bonus := current_enemy.get_attack_bonus()
-        var defense_bonus := current_enemy.get_defense_bonus()
-
-        # Build the stats text with bonuses if they exist
-        var stats_text := "ATK: %d" % attack_power
-        if attack_bonus > 0:
-            stats_text += " [color=green](+%d)[/color]" % attack_bonus
-        elif attack_bonus < 0:
-            stats_text += " [color=red](%d)[/color]" % attack_bonus
-
-        # Show defense with defend bonus if defending
-        if defend_bonus > 0:
-            stats_text += " | DEF: %d%% [color=cyan](+%d%% defending)[/color]" % [current_defense, defend_bonus]
-        else:
-            stats_text += " | DEF: %d%%" % current_defense
-            if defense_bonus > 0:
-                stats_text += " [color=green](+%d%%)[/color]" % defense_bonus
-            elif defense_bonus < 0:
-                stats_text += " [color=red](-%d%%)[/color]" % abs(defense_bonus)
-
-        stats_label.text = stats_text
-
-func _update_button_states() -> void:
-    # Disable buttons if player is stunned, enable if not
-    var is_stunned: bool = GameState.player.should_skip_turn()
-    attack_btn.disabled = is_stunned
-    defend_btn.disabled = is_stunned
-    flee_btn.disabled = is_stunned
-
-# Combat action methods (copied from CombatPopup)
-func _on_attack() -> void:
-    # Process player status effects at start of turn
-    _process_start_of_player_turn_effects()
-
-    var total_dmg := GameState.player.get_total_attack_power()
-    var player_damage_type := GameState.player.get_attack_damage_type()
-    var final_damage := current_enemy.calculate_incoming_damage(total_dmg, player_damage_type)
-    current_enemy.take_damage(final_damage)
-    var weapon_instance := GameState.player.get_equipped_weapon_instance()
-    var weapon_name := weapon_instance.item.name if weapon_instance else ""
-
-    # Log the attack
-    if weapon_name != "":
-        LogManager.log_event("{You} {action} {enemy:%s} with %s for {damage:%d}!" % [current_enemy.get_name(), weapon_name, final_damage], {"target": GameState.player, "damage_type": player_damage_type, "action": ["strike", "strikes"]})
-    else:
-        LogManager.log_event("{You} {action} {enemy:%s} for {damage:%d}!" % [current_enemy.get_name(), final_damage], {"target": GameState.player, "damage_type": player_damage_type, "action": ["attack", "attacks"]})
-    if weapon_instance:
-        # Check if weapon has special attack effects
-        var weapon := weapon_instance.item as Weapon
-        weapon.on_attack_hit(current_enemy)
-
-    # Reduce weapon condition after logging the attack
-    GameState.player.reduce_weapon_condition()
-
-    # Use unified turn resolution
-    resolve_turn()
-
-func _on_defend() -> void:
-    # Process player status effects at start of turn
-    _process_start_of_player_turn_effects()
-
-    # Use the shared defend ability for consistency
-    var defend_ability := DefendAbility.new()
-    defend_ability.execute(GameState.player)
-
-    # Use unified turn resolution
-    resolve_turn()
-
-func _on_flee() -> void:
-    # Process player status effects at start of turn
-    _process_start_of_player_turn_effects()
-
-    var success := randf() < current_enemy.resource.avoid_chance
-    if success:
-        LogManager.log_event("{You} flee successfully!", {"target": GameState.player})
-    else:
-        LogManager.log_event("{You} fail to flee!", {"target": GameState.player})
-
-    if success:
-        emit_signal("combat_fled")
-        emit_signal("content_resolved")
-    else:
-        # Use unified turn resolution when flee fails
-        resolve_turn()
-
-func _on_enemy_action(action_type: String, value: int, message: String) -> void:
-    # Message is now handled by the enemy's enhanced logging
-    # Only log if there's still a message (for backwards compatibility)
-    if message != "":
-        LogManager.log_event(message)
-
-    match action_type:
-        "attack":
-            GameState.player.take_damage(value)
-        "defend":
-            # Enemy is now defending, no immediate effect
-            pass
-        "flee_success":
-            emit_signal("combat_fled")
-            emit_signal("content_resolved")
-        "flee_fail":
-            # Enemy failed to flee and attacks instead
-            pass
-
-func _enemy_turn() -> void:
-    # Check if enemy should skip their turn BEFORE processing status effects
-    if current_enemy.should_skip_turn():
-        LogManager.log_event("{enemy:%s} is stunned and skips their turn!" % current_enemy.get_name())
-        # Refresh bars to show updated status effects
-        _refresh_bars()
-        # Check if player should skip their turn after enemy turn ended
-        _check_player_turn_skip()
-        return
-
-    # Process enemy status effects at start of their turn
-    current_enemy.process_status_effects()
-
-    if current_enemy.is_alive():
-        # Execute enemy action (handles both continuing multi-turn abilities and new actions)
-        current_enemy.perform_action()
-
-        # Immediately refresh bars after enemy action to show any newly applied status effects
-        _refresh_bars()
-
-        # Check if player should skip their turn after enemy action
-        _check_player_turn_skip()
-
-func _check_end_with_delay() -> void:
-    if not current_enemy.is_alive():
-        LogManager.log_event("{You} {action} the {enemy:%s}!" % current_enemy.get_name(), {"target": GameState.player, "action": ["defeat", "defeats"]})
-        emit_signal("combat_resolved", true)
-        # Don't emit content_resolved here - let the loot screen handle it
-    elif GameState.player.get_hp() <= 0:
-        # Disable buttons to prevent input during death sequence
-        _disable_action_buttons()
-        # Death delay is now handled in Player.take_damage
-        emit_signal("combat_resolved", false)
-        emit_signal("content_resolved")
-    else:
-        # Player survived the surprise attack, re-enable buttons for normal combat
-        _enable_action_buttons()
-        _refresh_bars()
-
-func _check_player_turn_skip() -> void:
-    # Check if player should skip their turn (e.g., due to stun)
-    if GameState.player.should_skip_turn():
-        LogManager.log_event("{You} are stunned and skip {your} turn!", {"target": GameState.player})
-        # Process player effects when their turn is skipped
-        GameState.player.process_status_effects()
-        # Disable buttons temporarily to show turn was skipped
-        _disable_action_buttons()
-        # After a brief delay, continue to enemy turn (buttons will be updated based on stun status)
-        get_tree().create_timer(1.0).timeout.connect(func()->void:
-            _enemy_turn()
-            _check_end()
-            # Emit turn_ended signal for stunned player turn
-            emit_signal("turn_ended")
-        )
-
-func resolve_turn() -> void:
-    """Unified method to handle all end-of-turn logic and emit turn_ended signal"""
-    # Check if combat has ended before processing turn
-    if not current_enemy.is_alive() or GameState.player.get_hp() <= 0:
-        _check_end()
-        return
-
-    # If combat is still ongoing, trigger enemy turn
-    _enemy_turn()
-
-    # Check end conditions after enemy turn
-    _check_end()
-
-    # Emit turn_ended signal to notify room screen to update
-    emit_signal("turn_ended")
-
-func _process_start_of_player_turn_effects() -> void:
-    # Process player status effects at the START of their turn
-    # This ensures effects remain visible throughout the enemy turn
-    GameState.player.process_status_effects()
-
-    # Update button states and UI after processing player status effects
-    _update_button_states()
-    _refresh_bars()
-
-func _check_end() -> void:
-    if not current_enemy.is_alive():
-        LogManager.log_event("{You} {action} the {enemy:%s}!" % current_enemy.get_name(), {"target": GameState.player, "action": ["defeat", "defeats"]})
-        emit_signal("combat_resolved", true)
-        # Don't emit content_resolved here - let the loot screen handle it
-    elif GameState.player.get_hp() <= 0:
-        # Disable buttons to prevent input during death sequence
-        _disable_action_buttons()
-        # Death delay is now handled in Player.take_damage
-        emit_signal("combat_resolved", false)
-        emit_signal("content_resolved")
-    else:
-        _refresh_bars()
 
 func show_loot_screen(loot_data: LootComponent.LootResult) -> void:
     # Replace combat content with loot content
@@ -385,5 +228,5 @@ func show_loot_screen(loot_data: LootComponent.LootResult) -> void:
 
         # Connect loot collected signal
         inline_loot.loot_collected.connect(func()->void:
-            emit_signal("loot_collected")
+            loot_collected.emit()
         )

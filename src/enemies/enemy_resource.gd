@@ -1,6 +1,6 @@
 class_name EnemyResource extends Resource
 
-@export var abilities: Array[Ability] = []  # New ability system
+@export var abilities: Array[AbilityResource] = []  # New ability system
 @export var name: String = "Enemy"
 @export var max_hp: int = 10
 @export var attack: int = 2
@@ -11,5 +11,5 @@ class_name EnemyResource extends Resource
 @export var resistances: Array[DamageType.Type] = []  # Damage types this enemy resists
 @export var weaknesses: Array[DamageType.Type] = []  # Damage types this enemy is weak to
 
-func get_abilities() -> Array[Ability]:
+func get_abilities() -> Array[AbilityResource]:
     return abilities

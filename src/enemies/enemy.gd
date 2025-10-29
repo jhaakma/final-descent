@@ -1,14 +1,13 @@
 # enemies/Enemy.gd
 class_name Enemy extends CombatEntity
 
-signal action_performed(action_type: Ability.AbilityType, value: int, message: String)
-
 # AI Component for decision making
 
 
 var resource: EnemyResource
 var flee_chance: float = 0.3  # Base flee chance
-var planned_ability: Ability = null  # Store the ability planned at start of turn
+var planned_ability: AbilityInstance = null  # Store the ability instance planned at start of turn
+var ability_instances: Array[AbilityInstance] = []  # Instance objects created from ability resources
 
 # Optional inventory for enemies that can carry items
 var inventory_component : ItemInventoryComponent = null
@@ -22,6 +21,9 @@ func _init(enemy_resource: EnemyResource) -> void:
     # Apply resistances and weaknesses from resource
     _apply_resistances_and_weaknesses()
 
+    # Initialize ability instances from ability resources
+    _initialize_ability_instances()
+
     # Initialize inventory if this enemy should carry items
     # This can be extended based on enemy type or resource configuration
     inventory_component = ItemInventoryComponent.new()
@@ -33,6 +35,13 @@ func _apply_resistances_and_weaknesses() -> void:
 
     for weakness_type: DamageType.Type in resource.weaknesses:
         set_weak_to(weakness_type)
+
+# Initialize ability instances from the ability resources
+func _initialize_ability_instances() -> void:
+    ability_instances.clear()
+    for ability_resource: AbilityResource in resource.get_abilities():
+        var instance: AbilityInstance = AbilityInstance.new(ability_resource)
+        ability_instances.append(instance)
 
 func get_name() -> String:
     return resource.name
@@ -52,15 +61,30 @@ func get_ai_component() -> EnemyAIComponent:
 # Enemy AI decision making - call this at the start of turn before damage
 # This method delegates to the AI component for intelligent decision making
 func plan_action() -> void:
-    # Get available abilities from the resource
-    var available_abilities: Array[Ability] = get_available_abilities()
+    # Get available ability instances
+    var available_abilities: Array[AbilityInstance] = get_available_ability_instances()
     if available_abilities.is_empty():
-        # If no abilities available, use legacy system
-        planned_ability = null
+        # If no abilities available, create a basic attack as fallback
+        planned_ability = _create_fallback_attack_instance()
         return
 
-    # Delegate decision making to the AI component
-    planned_ability = resource.ai_component.plan_action(self, available_abilities, stats_component.get_health_percentage())
+    # Delegate decision making to the AI component (legacy compatibility)
+    # Convert instances to legacy format for AI component
+    var legacy_abilities: Array[Ability] = []
+    for instance: AbilityInstance in available_abilities:
+        if instance.ability_resource is Ability:
+            legacy_abilities.append(instance.ability_resource as Ability)
+
+    if not legacy_abilities.is_empty():
+        var selected_legacy: Ability = resource.ai_component.plan_action(self, legacy_abilities, stats_component.get_health_percentage())
+        # Find the corresponding instance
+        for instance: AbilityInstance in available_abilities:
+            if instance.ability_resource == selected_legacy:
+                planned_ability = instance
+                break
+    else:
+        # Fallback to first available instance
+        planned_ability = available_abilities[0] if not available_abilities.is_empty() else null
 
 # Execute the ability that was planned at the start of the turn
 func perform_planned_action() -> void:
@@ -75,7 +99,7 @@ func perform_planned_action() -> void:
 
         # If the ability is not a multi-turn ability, mark it as completed
         if not planned_ability.is_executing():
-            planned_ability.current_state = Ability.AbilityState.COMPLETED
+            planned_ability.current_state = AbilityInstance.AbilityState.COMPLETED
             planned_ability.reset_ability_state()
             planned_ability = null
 
@@ -99,20 +123,50 @@ func perform_action() -> void:
             planned_ability = null
     else:
         # No ongoing ability, plan and execute a new one
+        # First reduce cooldowns on all abilities
+        _reduce_ability_cooldowns()
         plan_action()
         perform_planned_action()
 
 
 # === ABILITY SYSTEM HELPERS ===
 func get_available_abilities() -> Array[Ability]:
-    # Get abilities from the resource, combining new abilities with legacy special attacks
+    # Legacy method - get ability resources for backward compatibility
     var abilities: Array[Ability] = []
 
     # Add abilities from the new system if available
     if resource.has_method("get_abilities"):
-        abilities.append_array(resource.get_abilities())
+        for ability_resource: AbilityResource in resource.get_abilities():
+            if ability_resource is Ability:
+                abilities.append(ability_resource as Ability)
 
     return abilities
+
+func get_available_ability_instances() -> Array[AbilityInstance]:
+    # Get ability instances that are available to use
+    var available: Array[AbilityInstance] = []
+
+    for instance: AbilityInstance in ability_instances:
+        if instance.is_available(self):
+            available.append(instance)
+
+    return available
+
+# Reduce cooldowns for all ability instances
+func _reduce_ability_cooldowns() -> void:
+    for instance: AbilityInstance in ability_instances:
+        instance.reduce_cooldown()
+
+# Create a fallback basic attack when enemy has no abilities configured
+func _create_fallback_attack_instance() -> AbilityInstance:
+    var attack_resource := AttackAbility.new()
+    attack_resource.ability_name = "Attack"
+    attack_resource.description = "A basic attack"
+    attack_resource.base_damage = 0  # Will use enemy's attack stat
+    attack_resource.damage_variance = 2
+    attack_resource.priority = 10
+
+    return AbilityInstance.new(attack_resource)
 
 
 # === INVENTORY MANAGEMENT ===

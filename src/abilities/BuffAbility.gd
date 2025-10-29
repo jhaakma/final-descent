@@ -1,4 +1,4 @@
-class_name BuffAbility extends Ability
+class_name BuffAbility extends AbilityResource
 
 @export var target_self: bool = true  # Whether this buff targets the caster or target
 @export var status_effect_to_apply: StatusEffect = null  # The status effect to apply
@@ -8,7 +8,7 @@ func _init() -> void:
     description = "Apply a beneficial effect."
     priority = 12  # Medium-high priority
 
-func execute(caster: CombatEntity, target: CombatEntity = null) -> void:
+func execute(_instance: AbilityInstance, caster: CombatEntity, target: CombatEntity = null) -> void:
     # Determine the actual target
     var actual_target := caster if target_self else target
     if actual_target == null:
@@ -38,8 +38,8 @@ func _apply_status_effect(actual_target: CombatEntity, caster: CombatEntity) -> 
     else:
         push_error("Target does not support status effects (missing apply_status_effect method)")
 
-func get_ability_type() -> Ability.AbilityType:
-    return Ability.AbilityType.SUPPORT
+func get_ability_type() -> AbilityResource.AbilityType:
+    return AbilityResource.AbilityType.SUPPORT
 
 func can_use(caster: CombatEntity) -> bool:
     # Can use if caster is alive and has a status effect to apply
@@ -48,7 +48,7 @@ func can_use(caster: CombatEntity) -> bool:
             caster.is_alive() and
             status_effect_to_apply != null)
 
-func get_status_text(_caster: CombatEntity) -> String:
+func get_status_text(_instance: AbilityInstance, _caster: CombatEntity) -> String:
     if status_effect_to_apply:
         return "Status Effect: %s" % status_effect_to_apply.get_effect_name()
     return ""

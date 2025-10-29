@@ -1,11 +1,9 @@
-[gd_resource type="Resource" script_class="EnemyResource" load_steps=19 format=3 uid="uid://cvx4kbxgbv6cq"]
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=17 format=3 uid="uid://cvx4kbxgbv6cq"]
 
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="1_2e6c4"]
-[ext_resource type="Script" uid="uid://bkhqo7pjlc7bi" path="res://src/abilities/Ability.gd" id="1_wym4u"]
+[ext_resource type="Script" uid="uid://bn114y7jrm4cf" path="res://src/abilities/AbilityResource.gd" id="1_nvxdp"]
 [ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="2_awbqc"]
-[ext_resource type="Resource" uid="uid://dqsktrv7t6d4i" path="res://data/abilities/BasicAttack.tres" id="2_fcj01"]
 [ext_resource type="Resource" uid="uid://cttpxikq24nx" path="res://data/items/weapons/Dagger.tres" id="3_ctcoa"]
-[ext_resource type="Resource" uid="uid://bxhc5gwyvpwrd" path="res://data/abilities/PowerStrike.tres" id="4_1hkbx"]
 [ext_resource type="Resource" uid="uid://clyabowguvivm" path="res://data/items/weapons/ShortSword.tres" id="4_fntsa"]
 [ext_resource type="Resource" uid="uid://bjvu3fmob3t2k" path="res://data/items/weapons/Staff.tres" id="5_wym4u"]
 [ext_resource type="Resource" uid="uid://drc4rx6xim1bu" path="res://data/items/potions/HealthPotionMedium.tres" id="7_aom7d"]
@@ -44,7 +42,7 @@ metadata/_custom_type_script = "uid://lj0e532l0dyu"
 
 [resource]
 script = ExtResource("10_isltm")
-abilities = Array[ExtResource("1_wym4u")]([ExtResource("4_1hkbx"), ExtResource("2_fcj01")])
+abilities = Array[ExtResource("1_nvxdp")]([])
 name = "Mimic"
 max_hp = 35
 attack = 2

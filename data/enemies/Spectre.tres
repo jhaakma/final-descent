@@ -1,13 +1,10 @@
-[gd_resource type="Resource" script_class="EnemyResource" load_steps=12 format=3 uid="uid://bkonmcshbq6xa"]
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=9 format=3 uid="uid://bkonmcshbq6xa"]
 
-[ext_resource type="Script" uid="uid://bkhqo7pjlc7bi" path="res://src/abilities/Ability.gd" id="1_kyeep"]
+[ext_resource type="Script" uid="uid://bn114y7jrm4cf" path="res://src/abilities/AbilityResource.gd" id="1_06oro"]
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="1_o38fi"]
 [ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="2_i1sxv"]
-[ext_resource type="Resource" uid="uid://dqsktrv7t6d4i" path="res://data/abilities/BasicAttack.tres" id="2_mu24s"]
 [ext_resource type="Resource" uid="uid://2s77tota5kam" path="res://data/items/potions/HealthPotionSmall.tres" id="3_fgn3b"]
-[ext_resource type="Resource" uid="uid://d4cfekbrastfr" path="res://data/abilities/BasicDefend.tres" id="3_uxwkt"]
 [ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="4_24cih"]
-[ext_resource type="Resource" uid="uid://bxhc5gwyvpwrd" path="res://data/abilities/PowerStrike.tres" id="4_tfhrh"]
 [ext_resource type="Script" uid="uid://b4y5n724vd0ph" path="res://src/enemies/enemy_resource.gd" id="5_kyeep"]
 
 [sub_resource type="Resource" id="Resource_vnjkq"]
@@ -29,7 +26,7 @@ metadata/_custom_type_script = "uid://lj0e532l0dyu"
 
 [resource]
 script = ExtResource("5_kyeep")
-abilities = Array[ExtResource("1_kyeep")]([ExtResource("2_mu24s"), ExtResource("3_uxwkt"), ExtResource("4_tfhrh")])
+abilities = Array[ExtResource("1_06oro")]([])
 name = "Dark Spectre"
 max_hp = 30
 attack = 1

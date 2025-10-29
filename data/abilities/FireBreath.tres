@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="AttackAbility" load_steps=4 format=3 uid="uid://ddtf3lmwdexmo"]
+
+[ext_resource type="Script" uid="uid://b3hu85dtjat08" path="res://src/abilities/AttackAbility.gd" id="1_r6u4y"]
+[ext_resource type="Script" uid="uid://b5iu05fqomptj" path="res://src/effects/timed/elemental_timed_effect.gd" id="2_bkulx"]
+
+[sub_resource type="Resource" id="Resource_m7p0w"]
+script = ExtResource("2_bkulx")
+damage_per_turn = 2
+elemental_type = 2
+duration = 3
+metadata/_custom_type_script = "uid://b5iu05fqomptj"
+
+[resource]
+script = ExtResource("1_r6u4y")
+base_damage = 8
+damage_variance = 3
+override_damage_type = true
+damage_type = 2
+status_effect = SubResource("Resource_m7p0w")
+effect_chance = 0.25
+_cooldown = 0
+ability_name = "Flame Breath"
+description = "A powerful breath of flame."
+priority = 0
+metadata/_custom_type_script = "uid://b3hu85dtjat08"

@@ -273,8 +273,8 @@ func _is_consumable_item(item: Item) -> bool:
 
 func _trigger_combat_turn() -> void:
     """Trigger the combat turn when a consumable item is used during combat"""
-    if current_inline_content and current_inline_content.has_method("resolve_turn"):
-        current_inline_content.call("resolve_turn")
+    if current_inline_content and current_inline_content.has_method("handle_item_used"):
+        current_inline_content.call("handle_item_used")
 
 
 func _calculate_room_weights(valid_rooms: Array[RoomResource]) -> Array[float]:
