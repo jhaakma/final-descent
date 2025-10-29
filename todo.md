@@ -1,5 +1,9 @@
 # To do
 
+## Armor Resistances
+- Create Armor generators
+- Armor material have resistances to different damage types
+
 ## Ability Mechanics
 - Cooldowns
 - AI for selecting abilities

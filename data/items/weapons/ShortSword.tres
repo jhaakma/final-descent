@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_mpiug")
 damage = 5
-damage_type = 0
+damage_type = 1
 condition = 40
 name = "Shortsword"
 purchase_value = 10

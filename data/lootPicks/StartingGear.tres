@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="LootPick" load_steps=8 format=3 uid="uid://bhke1ujhajsrw"]
+[gd_resource type="Resource" script_class="LootPick" load_steps=9 format=3 uid="uid://bhke1ujhajsrw"]
 
 [ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="1_c8214"]
 [ext_resource type="Script" uid="uid://bluj7o55snofj" path="res://src/generators/item_generator.gd" id="1_qroob"]
@@ -6,11 +6,12 @@
 [ext_resource type="Resource" uid="uid://d1bjavkp12hm8" path="res://data/items/armor/LeatherCuirass.tres" id="5_bhv2k"]
 [ext_resource type="Resource" uid="uid://8l6joadu85p3" path="res://data/items/runes/RuneOfFireResist.tres" id="6_j7c8s"]
 [ext_resource type="Resource" uid="uid://dwqgodsd7t16e" path="res://data/items/repair_tools/RepairToolBasic.tres" id="7_f5rsn"]
+[ext_resource type="Resource" uid="uid://m5dageinlf77" path="res://data/items/runes/RuneOfIce.tres" id="7_j7c8s"]
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="11_y5nxv"]
 
 [resource]
 script = ExtResource("11_y5nxv")
-loot_table = Array[ExtResource("1_c8214")]([ExtResource("3_qihph"), ExtResource("7_f5rsn"), ExtResource("5_bhv2k"), ExtResource("6_j7c8s")])
+loot_table = Array[ExtResource("1_c8214")]([ExtResource("3_qihph"), ExtResource("7_f5rsn"), ExtResource("5_bhv2k"), ExtResource("6_j7c8s"), ExtResource("7_j7c8s")])
 generators = Array[ExtResource("1_qroob")]([])
 count = 1
 chance_none = 0.0

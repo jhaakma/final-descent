@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="WeaponGenerator" load_steps=11 format=3 uid="uid://dia2d4bgg8pfo"]
+
+[ext_resource type="Script" uid="uid://o0v85n0xt30i" path="res://src/generators/weapon/weapon_material.gd" id="1_uwb5a"]
+[ext_resource type="Resource" uid="uid://3iopkgopxw25" path="res://data/generated/weapons/materials/lvl1_Iron.tres" id="2_5ymx5"]
+[ext_resource type="Script" uid="uid://gtxyetgdgqct" path="res://src/generators/weapon/weapon_generator.gd" id="3_42ed1"]
+[ext_resource type="Script" uid="uid://cc4icclfe5frf" path="res://src/generators/weapon/weapon_template.gd" id="4_ifqqf"]
+[ext_resource type="Resource" uid="uid://c0103p8u7cl8c" path="res://data/generated/weapons/templates/lvl_01_pierce_dagger.tres" id="5_jvt0e"]
+[ext_resource type="Resource" uid="uid://bft52e4dnnuwc" path="res://data/generated/weapons/templates/lvl_01_slash_shortsword.tres" id="6_yovbr"]
+[ext_resource type="Resource" uid="uid://bjtivk1dbjaan" path="res://data/generated/weapons/templates/lvl_01_blunt_staff.tres" id="7_4j24u"]
+[ext_resource type="Resource" uid="uid://dggastp8ownfm" path="res://data/generated/weapons/templates/lvl_02_pierce_rapier.tres" id="8_v3r55"]
+[ext_resource type="Resource" uid="uid://dwvceu6xdq0mk" path="res://data/generated/weapons/templates/lvl_02_slash_waraxe.tres" id="9_kpj6h"]
+[ext_resource type="Resource" uid="uid://dtnsfdipx0dq8" path="res://data/generated/weapons/templates/lvl_02_blunt_quarterstaff.tres" id="10_yq5yu"]
+
+[resource]
+script = ExtResource("3_42ed1")
+weapon_templates = Array[ExtResource("4_ifqqf")]([ExtResource("5_jvt0e"), ExtResource("6_yovbr"), ExtResource("7_4j24u"), ExtResource("8_v3r55"), ExtResource("9_kpj6h"), ExtResource("10_yq5yu")])
+materials = Array[ExtResource("1_uwb5a")]([ExtResource("2_5ymx5")])
+material_weights = Array[float]([])
+generation_weight = 1.0
+floor_min = 0
+floor_max = -1
+metadata/_custom_type_script = "uid://gtxyetgdgqct"

@@ -5,7 +5,7 @@
 
 [sub_resource type="Resource" id="Resource_1qwer"]
 script = ExtResource("2_mno345")
-elemental_damage_type = 2
+elemental_damage_type = 4
 elemental_damage = 1
 elemental_damage_chance = 0.5
 metadata/_custom_type_script = "uid://kfpqhwn4ci4m"
@@ -13,8 +13,6 @@ metadata/_custom_type_script = "uid://kfpqhwn4ci4m"
 [resource]
 script = ExtResource("1_jkl012")
 armor_enchantment = SubResource("Resource_1qwer")
-target_slot = 1
 name = "Armor Rune of Fire"
-description = "Enchants any equipped armor with fire protection."
 purchase_value = 75
 metadata/_custom_type_script = "uid://bb0pbdgttoe02"

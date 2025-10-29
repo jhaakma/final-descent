@@ -7,7 +7,7 @@ func on_strike(target: CombatEntity) -> void:
     if randf() < effect_apply_chance:
         var damage_type : DamageType.Type = status_effect.get("elemental_type")
         if damage_type == null:
-            damage_type = DamageType.Type.PHYSICAL  # Default to physical if not specified
+            damage_type = DamageType.Type.BLUNT  # Default to blunt if not specified
         LogManager.log_event("{You} {action} {effect:%s} on {enemy:%s}!" % [status_effect.get_effect_name(), target.get_name()], {"target": GameState.player, "action": ["inflict", "inflicts"], "enemy": target, "effect": status_effect})
         target.apply_status_effect(status_effect)
 

@@ -15,7 +15,7 @@ class LogColors:
 # {player:text} - Colors text blue and replaces pronouns for player context
 # {enemy:text} - Colors text red and replaces pronouns for enemy context
 # {healing:amount} - Colors healing amount green
-# {damage:amount:type} - Colors damage amount based on damage type (type is optional, defaults to PHYSICAL)
+# {damage:amount:type} - Colors damage amount based on damage type (type is optional, defaults to BLUNT)
 # {effect:name} - Colors effect name appropriately
 # {action} - Chooses between player/non-player verb forms from context["action"] array: ["player_form", "non_player_form"]
 # Standard patterns: {You}, {you}, {Your}, {your}, etc. for pronoun replacement
@@ -285,7 +285,9 @@ func _process_action_patterns(text: String, context: Dictionary) -> String:
 func _string_to_damage_type(damage_type_str: String) -> int:
     var type_str := damage_type_str.to_upper()
     match type_str:
-        "PHYSICAL": return DamageType.Type.PHYSICAL
+        "BLUNT": return DamageType.Type.BLUNT
+        "SLASHING": return DamageType.Type.SLASHING
+        "PIERCING": return DamageType.Type.PIERCING
         "POISON": return DamageType.Type.POISON
         "FIRE": return DamageType.Type.FIRE
         "SHOCK": return DamageType.Type.SHOCK

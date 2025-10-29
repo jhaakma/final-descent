@@ -6,7 +6,7 @@
 
 [sub_resource type="Resource" id="Resource_ie838"]
 script = ExtResource("1_dkiad")
-elemental_type = 2
+elemental_type = 4
 is_removable = true
 metadata/_custom_type_script = "uid://c8cr2b64fjwtu"
 

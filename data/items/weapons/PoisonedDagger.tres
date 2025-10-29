@@ -7,7 +7,7 @@
 [sub_resource type="Resource" id="Resource_ldjhj"]
 script = ExtResource("2_h8ec8")
 damage_per_turn = 2
-elemental_type = 1
+elemental_type = 3
 duration = 5
 metadata/_custom_type_script = "uid://b5iu05fqomptj"
 
@@ -20,7 +20,7 @@ metadata/_custom_type_script = "uid://on0my3ge7dka"
 [resource]
 script = ExtResource("3_wcgm2")
 damage = 3
-damage_type = 0
+damage_type = 2
 condition = 10
 enchantment = SubResource("Resource_21c22")
 name = "Poisoned Dagger"

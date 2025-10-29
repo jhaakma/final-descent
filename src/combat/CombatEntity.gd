@@ -9,7 +9,7 @@ func get_name() -> String:
 
 # Abstract method to be implemented by subclasses to provide attack damage type
 func get_attack_damage_type() -> DamageType.Type:
-    return DamageType.Type.PHYSICAL  # Default to physical damage
+    return DamageType.Type.BLUNT  # Default to blunt damage
 
 # Core combat components - shared by all combat entities
 var stats_component: StatsComponent
@@ -78,7 +78,7 @@ func get_defend_bonus_percentage() -> int:
     return 0
 
 # Calculate damage taken considering defense state and damage type resistance
-func calculate_incoming_damage(base_damage: int, damage_type: DamageType.Type = DamageType.Type.PHYSICAL) -> int:
+func calculate_incoming_damage(base_damage: int, damage_type: DamageType.Type = DamageType.Type.BLUNT) -> int:
     # Start with base damage
     var final_damage := base_damage
 

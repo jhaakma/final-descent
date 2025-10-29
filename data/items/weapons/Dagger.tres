@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_hmvtg")
 damage = 3
-damage_type = 0
+damage_type = 2
 condition = 20
 name = "Dagger"
 purchase_value = 5

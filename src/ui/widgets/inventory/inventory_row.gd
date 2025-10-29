@@ -145,8 +145,8 @@ func _update_inventory_action_button() -> void:
             action_button.text = "Equip"
     else:
         action_button.text = "Use"
-        # Reset to default width for non-weapons
-        action_button.custom_minimum_size.x = 0
+    # Reset to default width for non-weapons
+    action_button.custom_minimum_size.x = 80
 
 func _update_equipped_action_button() -> void:
     # In equipped mode, always show "Unequip" button

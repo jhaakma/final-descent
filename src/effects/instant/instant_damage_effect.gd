@@ -1,7 +1,7 @@
 class_name InstantDamageEffect extends StatusEffect
 
 @export var damage_amount: int = 5
-@export var damage_type: DamageType.Type = DamageType.Type.PHYSICAL
+@export var damage_type: DamageType.Type = DamageType.Type.BLUNT
 
 func get_effect_id() -> String:
     return "instant_damage"

@@ -6,7 +6,7 @@
 
 [sub_resource type="Resource" id="Resource_55nup"]
 script = ExtResource("1_3ssxy")
-elemental_type = 1
+elemental_type = 3
 is_removable = true
 metadata/_custom_type_script = "uid://c8cr2b64fjwtu"
 

@@ -4,7 +4,7 @@ class_name Weapon extends Equippable
 signal attack_hit(target: CombatEntity)
 
 @export var damage: int = 3
-@export var damage_type: DamageType.Type = DamageType.Type.PHYSICAL
+@export var damage_type: DamageType.Type = DamageType.Type.BLUNT
 
 func _init() -> void:
     name = "Weapon"

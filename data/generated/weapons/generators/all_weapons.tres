@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="WeaponGenerator" load_steps=15 format=3 uid="uid://bg1bg1ybncvbi"]
+
+[ext_resource type="Script" uid="uid://o0v85n0xt30i" path="res://src/generators/weapon/weapon_material.gd" id="1_aqihb"]
+[ext_resource type="Resource" uid="uid://3iopkgopxw25" path="res://data/generated/weapons/materials/lvl1_Iron.tres" id="2_14u0r"]
+[ext_resource type="Script" uid="uid://gtxyetgdgqct" path="res://src/generators/weapon/weapon_generator.gd" id="2_v1w2c"]
+[ext_resource type="Script" uid="uid://cc4icclfe5frf" path="res://src/generators/weapon/weapon_template.gd" id="3_bbvw2"]
+[ext_resource type="Resource" uid="uid://uo52g67imoeh" path="res://data/generated/weapons/materials/lvl2_Steel.tres" id="3_vn7ka"]
+[ext_resource type="Resource" uid="uid://cp841pw0jucf1" path="res://data/generated/weapons/materials/lvl3_Silver.tres" id="4_8p725"]
+[ext_resource type="Resource" uid="uid://m3kjlo2s11to" path="res://data/generated/weapons/materials/lvl4_special_Glass.tres" id="5_ipjqs"]
+[ext_resource type="Resource" uid="uid://cwpphkhnyfgaq" path="res://data/generated/weapons/materials/lvl4_Diamond.tres" id="6_c3on4"]
+[ext_resource type="Resource" uid="uid://c0103p8u7cl8c" path="res://data/generated/weapons/templates/lvl_01_pierce_dagger.tres" id="9_pnxav"]
+[ext_resource type="Resource" uid="uid://bft52e4dnnuwc" path="res://data/generated/weapons/templates/lvl_01_slash_shortsword.tres" id="10_yrevu"]
+[ext_resource type="Resource" uid="uid://bjtivk1dbjaan" path="res://data/generated/weapons/templates/lvl_01_blunt_staff.tres" id="11_nul7c"]
+[ext_resource type="Resource" uid="uid://dggastp8ownfm" path="res://data/generated/weapons/templates/lvl_02_pierce_rapier.tres" id="12_4woeg"]
+[ext_resource type="Resource" uid="uid://dwvceu6xdq0mk" path="res://data/generated/weapons/templates/lvl_02_slash_waraxe.tres" id="13_d18yd"]
+[ext_resource type="Resource" uid="uid://dtnsfdipx0dq8" path="res://data/generated/weapons/templates/lvl_02_blunt_quarterstaff.tres" id="14_1n0eq"]
+
+[resource]
+script = ExtResource("2_v1w2c")
+weapon_templates = Array[ExtResource("3_bbvw2")]([ExtResource("9_pnxav"), ExtResource("10_yrevu"), ExtResource("11_nul7c"), ExtResource("12_4woeg"), ExtResource("13_d18yd"), ExtResource("14_1n0eq")])
+materials = Array[ExtResource("1_aqihb")]([ExtResource("2_14u0r"), ExtResource("3_vn7ka"), ExtResource("4_8p725"), ExtResource("5_ipjqs"), ExtResource("6_c3on4")])
+material_weights = Array[float]([40.0, 30.0, 15.0, 10.0, 5.0])
+generation_weight = 1.0
+floor_min = 0
+floor_max = -1
+metadata/_custom_type_script = "uid://gtxyetgdgqct"

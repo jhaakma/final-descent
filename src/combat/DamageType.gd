@@ -1,7 +1,9 @@
 class_name DamageType extends RefCounted
 
 enum Type {
-    PHYSICAL,
+    BLUNT,
+    SLASHING,
+    PIERCING,
     POISON,
     FIRE,
     SHOCK,
@@ -12,7 +14,9 @@ enum Type {
 
 # Human-readable names for damage types
 static var type_names := {
-    Type.PHYSICAL: "Physical",
+    Type.BLUNT: "Blunt",
+    Type.SLASHING: "Slashing",
+    Type.PIERCING: "Piercing",
     Type.POISON: "Poison",
     Type.FIRE: "Fire",
     Type.SHOCK: "Shock",
@@ -24,13 +28,15 @@ static var type_names := {
 
 # Colors for UI display of damage types
 static var type_colors := {
-    Type.PHYSICAL: "#a1a1a1ff",  # Light gray
-    Type.POISON: "#8cbd3dff",    # Green
-    Type.FIRE: "#ff5f2fff",      # Red-orange
-    Type.SHOCK: "#fff568ff",     # Yellow
-    Type.ICE: "#71ffe0ff",       # Light blue
-    Type.DARK: "#653d80ff",      # Dark purple
-    Type.HOLY: "#ffdb67ff"       # Golden yellow
+    Type.BLUNT: "#a1a1a1ff",      # Light gray
+    Type.SLASHING: "#a1a1a1ff",   # Dark goldenrod
+    Type.PIERCING: "#a1a1a1ff",   # Slate gray
+    Type.POISON: "#8cbd3dff",     # Green
+    Type.FIRE: "#ff5f2fff",       # Red-orange
+    Type.SHOCK: "#fff568ff",      # Yellow
+    Type.ICE: "#71ffe0ff",        # Light blue
+    Type.DARK: "#653d80ff",       # Dark purple
+    Type.HOLY: "#ffdb67ff"        # Golden yellow
 }
 
 # Get the display name for a damage type

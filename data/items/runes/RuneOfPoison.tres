@@ -7,7 +7,7 @@
 [sub_resource type="Resource" id="Resource_tsorn"]
 script = ExtResource("2_bived")
 damage_per_turn = 2
-elemental_type = 1
+elemental_type = 3
 duration = 5
 metadata/_custom_type_script = "uid://b5iu05fqomptj"
 

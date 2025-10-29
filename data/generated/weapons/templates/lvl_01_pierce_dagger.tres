@@ -5,8 +5,8 @@
 [resource]
 script = ExtResource("1_3o6it")
 base_name = "Dagger"
-base_damage = 3
-damage_type = 0
-base_condition = 35
-base_purchase_value = 10
+base_damage = 5
+damage_type = 2
+base_condition = 50
+base_purchase_value = 20
 metadata/_custom_type_script = "uid://cc4icclfe5frf"

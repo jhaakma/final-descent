@@ -53,7 +53,7 @@ func get_attack_damage_type() -> DamageType.Type:
     if equipped_weapon:
         var weapon := equipped_weapon.item as Weapon
         return weapon.damage_type
-    return DamageType.Type.PHYSICAL
+    return DamageType.Type.BLUNT
 
 # === GOLD MANAGEMENT ===
 func has_gold(amount: int) -> bool:

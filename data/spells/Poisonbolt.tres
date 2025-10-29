@@ -8,13 +8,13 @@
 [sub_resource type="Resource" id="Resource_nhji5"]
 script = ExtResource("3_gffdj")
 damage_amount = 10
-damage_type = 1
+damage_type = 3
 metadata/_custom_type_script = "uid://b2retcdwypmv8"
 
 [sub_resource type="Resource" id="Resource_gffdj"]
 script = ExtResource("4_oba20")
 damage_per_turn = 2
-elemental_type = 1
+elemental_type = 3
 duration = 4
 metadata/_custom_type_script = "uid://b5iu05fqomptj"
 
