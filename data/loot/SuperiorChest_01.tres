@@ -1,6 +1,7 @@
-[gd_resource type="Resource" script_class="LootComponent" load_steps=25 format=3 uid="uid://dttfj0jfoqm7m"]
+[gd_resource type="Resource" script_class="LootComponent" load_steps=26 format=3 uid="uid://dttfj0jfoqm7m"]
 
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="1_w2lto"]
+[ext_resource type="Script" uid="uid://bluj7o55snofj" path="res://src/generators/item_generator.gd" id="2_g40ob"]
 [ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="2_rx5eq"]
 [ext_resource type="Resource" uid="uid://bjvu3fmob3t2k" path="res://data/items/weapons/Staff.tres" id="3_8hdol"]
 [ext_resource type="Resource" uid="uid://meq6o4s58qqk" path="res://data/items/weapons/Waraxe.tres" id="4_l28rj"]
@@ -24,6 +25,7 @@
 [sub_resource type="Resource" id="Resource_o3oe0"]
 script = ExtResource("1_w2lto")
 loot_table = Array[ExtResource("2_rx5eq")]([ExtResource("3_8hdol"), ExtResource("4_l28rj"), ExtResource("5_fvgjd")])
+generators = Array[ExtResource("2_g40ob")]([])
 count = 1
 chance_none = 0.3
 pick_method = 0
@@ -33,6 +35,7 @@ metadata/_custom_type_script = "uid://w4ie0s4l7syw"
 [sub_resource type="Resource" id="Resource_guvpa"]
 script = ExtResource("1_w2lto")
 loot_table = Array[ExtResource("2_rx5eq")]([ExtResource("6_inuys"), ExtResource("7_08anu"), ExtResource("8_t5n4m"), ExtResource("9_g40ob"), ExtResource("10_5mfof"), ExtResource("11_3aw1a"), ExtResource("12_7e0j3")])
+generators = Array[ExtResource("2_g40ob")]([])
 count = 1
 chance_none = 0.4
 pick_method = 0
@@ -42,6 +45,7 @@ metadata/_custom_type_script = "uid://w4ie0s4l7syw"
 [sub_resource type="Resource" id="Resource_q6jmq"]
 script = ExtResource("1_w2lto")
 loot_table = Array[ExtResource("2_rx5eq")]([ExtResource("9_wfvfp")])
+generators = Array[ExtResource("2_g40ob")]([])
 count = 1
 chance_none = 0.8
 pick_method = 0
@@ -51,6 +55,7 @@ metadata/_custom_type_script = "uid://w4ie0s4l7syw"
 [sub_resource type="Resource" id="Resource_jpj3w"]
 script = ExtResource("1_w2lto")
 loot_table = Array[ExtResource("2_rx5eq")]([ExtResource("14_suuww"), ExtResource("15_3fgp1"), ExtResource("16_jnypv"), ExtResource("17_2k84y"), ExtResource("18_knk1e"), ExtResource("19_orgcv")])
+generators = Array[ExtResource("2_g40ob")]([])
 count = 1
 chance_none = 0.0
 pick_method = 0

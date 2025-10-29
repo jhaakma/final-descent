@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="WeaponMaterial" load_steps=2 format=3 uid="uid://m3kjlo2s11to"]
+
+[ext_resource type="Script" uid="uid://o0v85n0xt30i" path="res://src/generators/weapon/weapon_material.gd" id="1_3me2n"]
+
+[resource]
+script = ExtResource("1_3me2n")
+name = "Glass"
+damage_modifier = 3.0
+condition_modifier = 0.3
+purchase_value_modifier = 5.0
+metadata/_custom_type_script = "uid://o0v85n0xt30i"

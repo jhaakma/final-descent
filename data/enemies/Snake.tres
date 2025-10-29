@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="EnemyResource" load_steps=12 format=3 uid="uid://dij2m52fyjwqp"]
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=13 format=3 uid="uid://dij2m52fyjwqp"]
 
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="1_ay8s6"]
 [ext_resource type="Script" uid="uid://bn114y7jrm4cf" path="res://src/abilities/AbilityResource.gd" id="1_ebvod"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://b3hu85dtjat08" path="res://src/abilities/AttackAbility.gd" id="2_o42x6"]
 [ext_resource type="Resource" uid="uid://bpscdhoshmjls" path="res://data/items/potions/Antidote.tres" id="3_pbona"]
 [ext_resource type="Resource" uid="uid://2s77tota5kam" path="res://data/items/potions/HealthPotionSmall.tres" id="4_11xwu"]
+[ext_resource type="Script" uid="uid://bluj7o55snofj" path="res://src/generators/item_generator.gd" id="4_irdem"]
 [ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="5_qi64t"]
 
 [sub_resource type="Resource" id="Resource_irdem"]
@@ -25,6 +26,7 @@ metadata/_custom_type_script = "uid://b3hu85dtjat08"
 [sub_resource type="Resource" id="Resource_fsbsf"]
 script = ExtResource("1_ay8s6")
 loot_table = Array[ExtResource("2_0bara")]([ExtResource("3_pbona"), ExtResource("4_11xwu")])
+generators = Array[ExtResource("4_irdem")]([])
 count = 1
 chance_none = 0.75
 pick_method = 0

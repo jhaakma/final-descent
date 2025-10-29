@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="WeaponMaterial" load_steps=2 format=3 uid="uid://3iopkgopxw25"]
+
+[ext_resource type="Script" uid="uid://o0v85n0xt30i" path="res://src/generators/weapon/weapon_material.gd" id="1_hrwqv"]
+
+[resource]
+script = ExtResource("1_hrwqv")
+name = "Iron"
+damage_modifier = 1.0
+condition_modifier = 1.0
+purchase_value_modifier = 1.0
+metadata/_custom_type_script = "uid://o0v85n0xt30i"

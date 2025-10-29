@@ -1,9 +1,10 @@
-[gd_resource type="Resource" script_class="LootComponent" load_steps=10 format=3 uid="uid://ngft0bfn2vcd"]
+[gd_resource type="Resource" script_class="LootComponent" load_steps=11 format=3 uid="uid://ngft0bfn2vcd"]
 
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="1_b65g0"]
 [ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="2_h6e54"]
 [ext_resource type="Resource" uid="uid://do8brech6sxxk" path="res://data/lootPicks/BasicWeaponPick.tres" id="2_xyvj3"]
 [ext_resource type="Resource" uid="uid://b3cf085lrhdjy" path="res://data/lootPicks/BasicPotionPick.tres" id="3_xyvj3"]
+[ext_resource type="Script" uid="uid://bluj7o55snofj" path="res://src/generators/item_generator.gd" id="4_b65g0"]
 [ext_resource type="Resource" uid="uid://d1bjavkp12hm8" path="res://data/items/armor/LeatherCuirass.tres" id="6_b65g0"]
 [ext_resource type="Resource" uid="uid://dwqgodsd7t16e" path="res://data/items/repair_tools/RepairToolBasic.tres" id="7_r7juo"]
 [ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="8_tdawc"]
@@ -11,6 +12,7 @@
 [sub_resource type="Resource" id="Resource_xjp3h"]
 script = ExtResource("1_b65g0")
 loot_table = Array[ExtResource("2_h6e54")]([ExtResource("7_r7juo")])
+generators = Array[ExtResource("4_b65g0")]([])
 count = 1
 chance_none = 0.8
 pick_method = 0
@@ -20,6 +22,7 @@ metadata/_custom_type_script = "uid://w4ie0s4l7syw"
 [sub_resource type="Resource" id="Resource_h6e54"]
 script = ExtResource("1_b65g0")
 loot_table = Array[ExtResource("2_h6e54")]([ExtResource("6_b65g0")])
+generators = Array[ExtResource("4_b65g0")]([])
 count = 1
 chance_none = 0.8
 pick_method = 0

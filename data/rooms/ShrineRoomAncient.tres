@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ShrineRoomResource" load_steps=14 format=3 uid="uid://ddgo03rs1qvck"]
+[gd_resource type="Resource" script_class="ShrineRoomResource" load_steps=15 format=3 uid="uid://ddgo03rs1qvck"]
 
 [ext_resource type="Resource" uid="uid://cc0x7rr8ri1m0" path="res://data/enemies/Ghost.tres" id="1_6b3sh"]
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="1_eaur7"]
@@ -9,11 +9,13 @@
 [ext_resource type="Resource" uid="uid://bjvu3fmob3t2k" path="res://data/items/weapons/Staff.tres" id="4_ewu44"]
 [ext_resource type="Resource" uid="uid://drc4rx6xim1bu" path="res://data/items/potions/HealthPotionMedium.tres" id="5_ppc15"]
 [ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="5_stdmh"]
+[ext_resource type="Script" uid="uid://bluj7o55snofj" path="res://src/generators/item_generator.gd" id="6_0eywi"]
 [ext_resource type="Script" uid="uid://bnlue0rcqdx6d" path="res://src/rooms/shrine_room_resource.gd" id="12_4okh8"]
 
 [sub_resource type="Resource" id="Resource_sybd7"]
 script = ExtResource("1_eaur7")
 loot_table = Array[ExtResource("2_g15dw")]([ExtResource("4_ewu44")])
+generators = Array[ExtResource("6_0eywi")]([])
 count = 1
 chance_none = 0.9
 pick_method = 0
@@ -23,6 +25,7 @@ metadata/_custom_type_script = "uid://w4ie0s4l7syw"
 [sub_resource type="Resource" id="Resource_0wc5j"]
 script = ExtResource("1_eaur7")
 loot_table = Array[ExtResource("2_g15dw")]([ExtResource("5_ppc15")])
+generators = Array[ExtResource("6_0eywi")]([])
 count = 1
 chance_none = 0.0
 pick_method = 0

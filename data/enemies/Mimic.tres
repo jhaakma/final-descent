@@ -1,9 +1,10 @@
-[gd_resource type="Resource" script_class="EnemyResource" load_steps=17 format=3 uid="uid://cvx4kbxgbv6cq"]
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=18 format=3 uid="uid://cvx4kbxgbv6cq"]
 
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="1_2e6c4"]
 [ext_resource type="Script" uid="uid://bn114y7jrm4cf" path="res://src/abilities/AbilityResource.gd" id="1_nvxdp"]
 [ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="2_awbqc"]
 [ext_resource type="Resource" uid="uid://cttpxikq24nx" path="res://data/items/weapons/Dagger.tres" id="3_ctcoa"]
+[ext_resource type="Script" uid="uid://bluj7o55snofj" path="res://src/generators/item_generator.gd" id="3_qa6w1"]
 [ext_resource type="Resource" uid="uid://clyabowguvivm" path="res://data/items/weapons/ShortSword.tres" id="4_fntsa"]
 [ext_resource type="Resource" uid="uid://bjvu3fmob3t2k" path="res://data/items/weapons/Staff.tres" id="5_wym4u"]
 [ext_resource type="Resource" uid="uid://drc4rx6xim1bu" path="res://data/items/potions/HealthPotionMedium.tres" id="7_aom7d"]
@@ -17,6 +18,7 @@
 [sub_resource type="Resource" id="Resource_j5rkl"]
 script = ExtResource("1_2e6c4")
 loot_table = Array[ExtResource("2_awbqc")]([ExtResource("3_ctcoa"), ExtResource("4_fntsa"), ExtResource("5_wym4u"), ExtResource("9_cpjox")])
+generators = Array[ExtResource("3_qa6w1")]([])
 count = 1
 chance_none = 0.0
 pick_method = 0
@@ -26,6 +28,7 @@ metadata/_custom_type_script = "uid://w4ie0s4l7syw"
 [sub_resource type="Resource" id="Resource_u4erl"]
 script = ExtResource("1_2e6c4")
 loot_table = Array[ExtResource("2_awbqc")]([ExtResource("7_aom7d"), ExtResource("11_wym4u"), ExtResource("12_fcj01"), ExtResource("8_1hkbx")])
+generators = Array[ExtResource("3_qa6w1")]([])
 count = 1
 chance_none = 0.2
 pick_method = 0

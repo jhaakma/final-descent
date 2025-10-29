@@ -1,8 +1,9 @@
-[gd_resource type="Resource" script_class="EnemyResource" load_steps=9 format=3 uid="uid://bkonmcshbq6xa"]
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=10 format=3 uid="uid://bkonmcshbq6xa"]
 
 [ext_resource type="Script" uid="uid://bn114y7jrm4cf" path="res://src/abilities/AbilityResource.gd" id="1_06oro"]
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="1_o38fi"]
 [ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="2_i1sxv"]
+[ext_resource type="Script" uid="uid://bluj7o55snofj" path="res://src/generators/item_generator.gd" id="3_7n36n"]
 [ext_resource type="Resource" uid="uid://2s77tota5kam" path="res://data/items/potions/HealthPotionSmall.tres" id="3_fgn3b"]
 [ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="4_24cih"]
 [ext_resource type="Script" uid="uid://b4y5n724vd0ph" path="res://src/enemies/enemy_resource.gd" id="5_kyeep"]
@@ -10,6 +11,7 @@
 [sub_resource type="Resource" id="Resource_vnjkq"]
 script = ExtResource("1_o38fi")
 loot_table = Array[ExtResource("2_i1sxv")]([ExtResource("3_fgn3b")])
+generators = Array[ExtResource("3_7n36n")]([])
 count = 1
 chance_none = 0.8
 pick_method = 0

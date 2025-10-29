@@ -1,7 +1,8 @@
-[gd_resource type="Resource" script_class="EnemyResource" load_steps=9 format=3 uid="uid://w3kd7cafprjg"]
+[gd_resource type="Resource" script_class="EnemyResource" load_steps=10 format=3 uid="uid://w3kd7cafprjg"]
 
 [ext_resource type="Script" uid="uid://bn114y7jrm4cf" path="res://src/abilities/AbilityResource.gd" id="1_vyh0g"]
 [ext_resource type="Script" uid="uid://b4y5n724vd0ph" path="res://src/enemies/enemy_resource.gd" id="2_5vp76"]
+[ext_resource type="Script" uid="uid://bluj7o55snofj" path="res://src/generators/item_generator.gd" id="3_bf8fr"]
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="5_22nrv"]
 [ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="6_3tscu"]
 [ext_resource type="Resource" uid="uid://bnv00r86s3yqw" path="res://data/items/runes/RuneOfFire.tres" id="7_ybh7h"]
@@ -10,6 +11,7 @@
 [sub_resource type="Resource" id="Resource_l4xfh"]
 script = ExtResource("5_22nrv")
 loot_table = Array[ExtResource("6_3tscu")]([ExtResource("7_ybh7h")])
+generators = Array[ExtResource("3_bf8fr")]([])
 count = 1
 chance_none = 0.5
 pick_method = 0

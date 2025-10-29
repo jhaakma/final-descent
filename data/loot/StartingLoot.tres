@@ -1,13 +1,43 @@
-[gd_resource type="Resource" script_class="LootComponent" load_steps=4 format=3 uid="uid://d32s4st32v1tk"]
+[gd_resource type="Resource" script_class="LootComponent" load_steps=16 format=3 uid="uid://d32s4st32v1tk"]
 
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="1_b2t8e"]
 [ext_resource type="Resource" uid="uid://bhke1ujhajsrw" path="res://data/lootPicks/StartingGear.tres" id="2_b2t8e"]
 [ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="3_5kf5c"]
+[ext_resource type="Script" uid="uid://bluj7o55snofj" path="res://src/generators/item_generator.gd" id="3_5rg2i"]
+[ext_resource type="Script" uid="uid://o0v85n0xt30i" path="res://src/generators/weapon/weapon_material.gd" id="4_owjvf"]
+[ext_resource type="Resource" uid="uid://3iopkgopxw25" path="res://data/generated/weapons/materials/Iron.tres" id="5_akbow"]
+[ext_resource type="Resource" uid="uid://uo52g67imoeh" path="res://data/generated/weapons/materials/Steel.tres" id="6_086er"]
+[ext_resource type="Resource" uid="uid://m3kjlo2s11to" path="res://data/generated/weapons/materials/Glass.tres" id="7_mnxv6"]
+[ext_resource type="Script" uid="uid://gtxyetgdgqct" path="res://src/generators/weapon/weapon_generator.gd" id="8_1tyb0"]
+[ext_resource type="Script" uid="uid://cc4icclfe5frf" path="res://src/generators/weapon/weapon_template.gd" id="9_xfl6j"]
+[ext_resource type="Resource" uid="uid://c0103p8u7cl8c" path="res://data/generated/weapons/templates/dagger.tres" id="10_wyxtc"]
+[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="11_jlqqn"]
+[ext_resource type="Resource" uid="uid://bft52e4dnnuwc" path="res://data/generated/weapons/templates/shortsword.tres" id="11_ye465"]
+
+[sub_resource type="Resource" id="Resource_j8uad"]
+script = ExtResource("8_1tyb0")
+weapon_templates = Array[ExtResource("9_xfl6j")]([ExtResource("10_wyxtc"), ExtResource("11_ye465")])
+materials = Array[ExtResource("4_owjvf")]([ExtResource("5_akbow"), ExtResource("6_086er"), ExtResource("7_mnxv6")])
+material_weights = Array[float]([50.0, 30.0, 20.0])
+generation_weight = 1.0
+floor_min = 0
+floor_max = -1
+metadata/_custom_type_script = "uid://gtxyetgdgqct"
+
+[sub_resource type="Resource" id="Resource_hpof5"]
+script = ExtResource("1_b2t8e")
+loot_table = Array[ExtResource("11_jlqqn")]([])
+generators = Array[ExtResource("3_5rg2i")]([SubResource("Resource_j8uad")])
+count = 1
+chance_none = 0.0
+pick_method = 0
+floor_min = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"
 
 [resource]
 script = ExtResource("3_5kf5c")
 gold_min = 100
 gold_max = 100
 chance_gold_none = 0.0
-loot_table = Array[ExtResource("1_b2t8e")]([ExtResource("2_b2t8e")])
+loot_table = Array[ExtResource("1_b2t8e")]([ExtResource("2_b2t8e"), SubResource("Resource_hpof5")])
 metadata/_custom_type_script = "uid://lj0e532l0dyu"

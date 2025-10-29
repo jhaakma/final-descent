@@ -1,5 +1,6 @@
-[gd_resource type="Resource" script_class="LootPick" load_steps=7 format=3 uid="uid://coqnmr4wr3swg"]
+[gd_resource type="Resource" script_class="LootPick" load_steps=8 format=3 uid="uid://coqnmr4wr3swg"]
 
+[ext_resource type="Script" uid="uid://bluj7o55snofj" path="res://src/generators/item_generator.gd" id="1_o8c4p"]
 [ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="1_uljn4"]
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="2_7h0tv"]
 [ext_resource type="Resource" uid="uid://bxeunqejsykb7" path="res://data/items/scrolls/ScrollOfFirebolt.tres" id="2_a5hrt"]
@@ -10,6 +11,7 @@
 [resource]
 script = ExtResource("2_7h0tv")
 loot_table = Array[ExtResource("1_uljn4")]([ExtResource("2_a5hrt"), ExtResource("3_o8c4p"), ExtResource("4_5f05o"), ExtResource("5_11myk")])
+generators = Array[ExtResource("1_o8c4p")]([])
 count = 1
 chance_none = 0.4
 pick_method = 0
