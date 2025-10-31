@@ -58,9 +58,9 @@ func add_item_instance(item_instance: ItemInstance) -> bool:
         item_stacks[item_instance.item] = stack
         stack.stack_changed.connect(_on_stack_changed)
 
-    # Create ItemData if none provided
-    if item_instance.item_data == null:
-        item_instance.item_data = ItemData.new()
+    # # Create ItemData if none provided
+    # if item_instance.item_data == null:
+    #     item_instance.item_data = ItemData.new()
 
     # Add instance
     stack.add_instance(item_instance.item_data)

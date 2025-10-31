@@ -1,15 +1,16 @@
-[gd_resource type="Theme" load_steps=2 format=3 uid="uid://ch0ahyx502rlq"]
+[gd_resource type="Theme" load_steps=3 format=3 uid="uid://ch0ahyx502rlq"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wvktn"]
-content_margin_left = 8.0
-content_margin_top = 2.0
-content_margin_right = 8.0
-content_margin_bottom = 2.0
-bg_color = Color(0, 0, 0, 0.5)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
+[ext_resource type="FontFile" uid="uid://c7wp6hjwt1rm7" path="res://assets/Fonts/m5x7.ttf" id="1_em43o"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_em43o"]
+bg_color = Color(0.0846899, 0.0846899, 0.0846899, 1)
+corner_detail = 20
 
 [resource]
-TooltipPanel/styles/panel = SubResource("StyleBoxFlat_wvktn")
+default_font = ExtResource("1_em43o")
+BoxContainer/constants/separation = 4
+MarginContainer/constants/margin_bottom = 4
+MarginContainer/constants/margin_left = 4
+MarginContainer/constants/margin_right = 4
+MarginContainer/constants/margin_top = 4
+PopupPanel/styles/panel = SubResource("StyleBoxFlat_em43o")

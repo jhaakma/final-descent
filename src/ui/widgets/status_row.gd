@@ -6,11 +6,6 @@ class_name StatusRow extends Control
 static func get_scene() -> PackedScene:
     return preload("uid://cfnfquwrmhs5x") as PackedScene
 
-func _ready() -> void:
-    # Configure RichTextLabel properties for proper display
-    # Set a reasonable size
-    custom_minimum_size = Vector2(200, 20)
-    size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 # Initialize the StatusRow with a StatusCondition
 func initialize_with_condition(condition: StatusCondition) -> void:

@@ -6,7 +6,11 @@
 bg_color = Color(0.449834, 0.667121, 0.405756, 1)
 
 [node name="InventoryRow" type="MarginContainer"]
-custom_minimum_size = Vector2(0, 42)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_horizontal = 3
 script = ExtResource("1_x8v9z")
 
@@ -16,10 +20,6 @@ layout_mode = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 8
-theme_override_constants/margin_bottom = 8
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
 layout_mode = 2

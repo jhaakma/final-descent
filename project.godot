@@ -46,10 +46,8 @@ gdscript/warnings/integer_division=0
 
 [display]
 
-window/size/viewport_width=1600
-window/size/viewport_height=900
 window/stretch/mode="viewport"
-window/stretch/aspect="keep_width"
+window/stretch/aspect="keep_height"
 window/stretch/scale_mode="integer"
 
 [editor_plugins]
@@ -73,3 +71,4 @@ timers/name="UI Components"
 
 textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="mobile"
+anti_aliasing/screen_space_roughness_limiter/enabled=false

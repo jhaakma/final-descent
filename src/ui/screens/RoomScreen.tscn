@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://c0cpy5xfdy2nb"]
+[gd_scene load_steps=26 format=3 uid="uid://c0cpy5xfdy2nb"]
 
 [ext_resource type="Theme" uid="uid://ch0ahyx502rlq" path="res://data/themes/theme.tres" id="1_fqbyh"]
 [ext_resource type="Script" uid="uid://bi2w4gopbk7mv" path="res://src/ui/screens/room_screen.gd" id="1_vxldv"]
@@ -44,6 +44,8 @@ min_floor = 0
 max_floor = -1
 metadata/_custom_type_script = "uid://bqxhtkn1xkeqv"
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hoodt"]
+
 [node name="RoomScreen" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -77,6 +79,7 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="LeftPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(350, 0)
 layout_mode = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel"]
@@ -98,9 +101,7 @@ vertical_alignment = 1
 
 [node name="PlayerStats" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer"]
 clip_contents = true
-custom_minimum_size = Vector2(425, 0)
 layout_mode = 2
-size_flags_horizontal = 4
 
 [node name="Panel" type="Panel" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PlayerStats"]
 layout_mode = 2
@@ -185,7 +186,7 @@ layout_mode = 2
 
 [node name="BuffsBlock" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer/PlayerStats/MarginContainer/HboxContainer/VBoxStats"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 112.825)
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 
 [node name="HSeparator3" type="HSeparator" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftPanel/MarginContainer/VBoxContainer"]
@@ -202,6 +203,7 @@ layout_mode = 2
 [node name="CenterPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_stretch_ratio = 29.55
 
 [node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/CenterPanel"]
 layout_mode = 2
@@ -255,7 +257,7 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="RightPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2(300, 0)
+custom_minimum_size = Vector2(350, 0)
 layout_mode = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/RightPanel"]
@@ -306,3 +308,4 @@ text = "Leave Run"
 visible = false
 custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_hoodt")

@@ -1,4 +1,4 @@
-class_name EquippedItemsWidget extends VBoxContainer
+class_name EquippedItemsWidget extends Container
 
 @onready var equipped_label: Label = %EquippedLabel
 @onready var equipped_items_container: VBoxContainer = %EquippedItemsContainer
@@ -32,6 +32,7 @@ func _update_equipped_display() -> void:
         empty_label.text = "None equipped"
         empty_label.add_theme_color_override("font_color", Color.GRAY)
         empty_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+        empty_label.custom_minimum_size.y = 20
         equipped_items_container.add_child(empty_label)
         return
 
