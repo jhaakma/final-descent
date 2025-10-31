@@ -147,7 +147,7 @@ func _update_stats() -> void:
     for additional_tooltip_info in additional_tooltip_infos:
         var info_label := Label.new()
         info_label.text = additional_tooltip_info.text
-        info_label.add_theme_font_size_override("font_size", 10)
+        info_label.add_theme_font_size_override("font_size", 16)
         info_label.modulate = additional_tooltip_info.color
         info_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
         info_label.custom_minimum_size.x = 180

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ArmorMaterial" load_steps=2 format=3 uid="uid://drnjr3ldsmah"]
+
+[ext_resource type="Script" uid="uid://dw4sh85r15pp6" path="res://src/generators/armor/armor_material.gd" id="1_docd4"]
+
+[resource]
+script = ExtResource("1_docd4")
+name = "Iron"
+defense_modifier = 1.0
+condition_modifier = 1.0
+purchase_value_modifier = 1.0
+resistances = Dictionary[int, bool]({
+0: true,
+2: true
+})
+metadata/_custom_type_script = "uid://dw4sh85r15pp6"

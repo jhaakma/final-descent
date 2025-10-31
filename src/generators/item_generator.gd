@@ -6,8 +6,12 @@ class_name ItemGenerator extends Resource
 @export var floor_min: int = 0
 @export var floor_max: int = -1  # -1 means no maximum
 
+## Cache for generated items to avoid redundant generation and ensure item stacking
+var cache: Dictionary[String, Variant] = {}
+
 ## Virtual method to generate a single item
 ## Override this in subclasses to implement specific generation logic
+## Ensure cache is checked before returning a generated item
 func generate_item() -> Item:
     push_error("generate_item() must be implemented by subclass")
     return null

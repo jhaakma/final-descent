@@ -5,8 +5,8 @@
 [resource]
 script = ExtResource("1_wp83m")
 base_name = "Staff"
-base_damage = 5
-damage_type = 0
+base_damage = 10
+damage_type = 1
 base_condition = 50
 base_purchase_value = 20
 metadata/_custom_type_script = "uid://cc4icclfe5frf"

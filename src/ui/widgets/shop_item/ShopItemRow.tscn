@@ -27,7 +27,7 @@ text = "ItemName"
 [node name="ItemDescription" type="Label" parent="MarginContainer/HBoxContainer/ItemInfo"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 16
 text = "ItemDescription"
 
 [node name="PriceBuyBlock" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
@@ -41,7 +41,7 @@ text = "Price"
 [node name="BuySellButton" type="Button" parent="MarginContainer/HBoxContainer/PriceBuyBlock"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 16
 text = "Buy"
 
 [node name="HSeparator" type="HSeparator" parent="."]

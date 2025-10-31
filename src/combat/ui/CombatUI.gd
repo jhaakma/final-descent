@@ -133,7 +133,10 @@ func _update_resistance_labels() -> void:
         for i in range(resistances.size()):
             var damage_type := resistances[i]
             var color := DamageType.get_type_color(damage_type).to_html()
-            resistance_label.text += "[color=%s]%s[/color]" % [color, DamageType.get_type_name((damage_type))]
+            resistance_label.text += "[color=%s]%s[/color] " % [color, DamageType.get_type_name((damage_type))]
+        #strip trailing space
+        resistance_label.text = resistance_label.text.strip_edges()
+
 
 func _update_weakness_labels() -> void:
     if not weakness_label or not context:
@@ -146,7 +149,9 @@ func _update_weakness_labels() -> void:
         for i in range(weaknesses.size()):
             var damage_type := weaknesses[i]
             var color := DamageType.get_type_color(damage_type).to_html()
-            weakness_label.text += "[color=%s]%s[/color]" % [color, DamageType.get_type_name((damage_type))]
+            weakness_label.text += "[color=%s]%s[/color] " % [color, DamageType.get_type_name((damage_type))]
+        #strip trailing space
+        weakness_label.text = weakness_label.text.strip_edges()
 
 func _update_enemy_stats_display() -> void:
     if not stats_label or not context:

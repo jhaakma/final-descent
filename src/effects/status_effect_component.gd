@@ -68,8 +68,9 @@ func remove_equipment_stack(effect: StatusEffect) -> void:
                 if parent_entity:
                     LogManager.log_event("{Your} {effect:%s} faded." % condition.get_log_name(), {"target": parent_entity, "status_effect": status_effect})
                 active_conditions.erase(condition_id)
-                effect_removed.emit(condition_id)
+                effect_removed.emit(condition_id)  # Emit signal for UI updates
             return# Check if entity has a specific status effect
+
 func has_effect(status_effect_id: String) -> bool:
     for condition_id: String in active_conditions.keys():
         var condition := active_conditions[condition_id]

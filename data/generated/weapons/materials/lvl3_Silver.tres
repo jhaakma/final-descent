@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_y4e5o")
 name = "Silver"
-damage_modifier = 2.5
+damage_modifier = 2.0
 condition_modifier = 1.2
 purchase_value_modifier = 4.0
 metadata/_custom_type_script = "uid://o0v85n0xt30i"

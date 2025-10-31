@@ -1,6 +1,12 @@
-[gd_resource type="Theme" load_steps=3 format=3 uid="uid://ch0ahyx502rlq"]
+[gd_resource type="Theme" load_steps=5 format=3 uid="uid://ch0ahyx502rlq"]
 
 [ext_resource type="FontFile" uid="uid://c7wp6hjwt1rm7" path="res://assets/Fonts/m5x7.ttf" id="1_em43o"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bur2f"]
+bg_color = Color(0.132206, 0.140162, 0.193119, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kkut7"]
+bg_color = Color(0.176696, 0.184925, 0.255294, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_em43o"]
 bg_color = Color(0.0846899, 0.0846899, 0.0846899, 1)
@@ -8,9 +14,15 @@ corner_detail = 20
 
 [resource]
 default_font = ExtResource("1_em43o")
+default_font_size = 16
 BoxContainer/constants/separation = 4
+Button/constants/outline_size = 1
+HeaderLarge/base_type = &"Label"
+HeaderLarge/font_sizes/font_size = 32
 MarginContainer/constants/margin_bottom = 4
 MarginContainer/constants/margin_left = 4
 MarginContainer/constants/margin_right = 4
 MarginContainer/constants/margin_top = 4
+Panel/styles/panel = SubResource("StyleBoxFlat_bur2f")
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_kkut7")
 PopupPanel/styles/panel = SubResource("StyleBoxFlat_em43o")

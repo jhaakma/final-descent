@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="ArmorTemplate" load_steps=2 format=3 uid="uid://dfuxec4hr5wkn"]
+
+[ext_resource type="Script" uid="uid://bwfxsf5cy4s03" path="res://src/generators/armor/armor_template.gd" id="1_ry7ea"]
+
+[resource]
+script = ExtResource("1_ry7ea")
+base_name = "Cuirass"
+base_defense = 5
+armor_slot = 2
+base_condition = 25
+base_purchase_value = 15
+metadata/_custom_type_script = "uid://bwfxsf5cy4s03"

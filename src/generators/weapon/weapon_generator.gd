@@ -20,6 +20,12 @@ func generate_item() -> Item:
     _apply_template(template, generated_weapon)
     _apply_material(material, generated_weapon)
 
+    if cache.has(generated_weapon.name):
+        print("Using cached weapon: %s" % generated_weapon.name)
+        return cache[generated_weapon.name]
+    else:
+        cache[generated_weapon.name] = generated_weapon
+
     return generated_weapon
 
 ## Select a material based on weights or randomly

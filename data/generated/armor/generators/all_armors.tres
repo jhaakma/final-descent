@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ArmorGenerator" load_steps=4 format=3 uid="uid://bultv0ouhc8hl"]
+
+[ext_resource type="Script" uid="uid://72oxxrarpirv" path="res://src/generators/armor/armor_generator.gd" id="1_4lujh"]
+[ext_resource type="Resource" uid="uid://dfuxec4hr5wkn" path="res://data/generated/armor/templates/Cuirass.tres" id="1_8naf6"]
+[ext_resource type="Resource" uid="uid://drnjr3ldsmah" path="res://data/generated/armor/materials/Iron.tres" id="2_la2xj"]
+
+[resource]
+script = ExtResource("1_4lujh")
+armor_templates = Array[Resource]([ExtResource("1_8naf6")])
+materials = Array[Resource]([ExtResource("2_la2xj")])
+material_weights = Array[float]([])
+generation_weight = 1.0
+floor_min = 0
+floor_max = -1
+metadata/_custom_type_script = "uid://72oxxrarpirv"

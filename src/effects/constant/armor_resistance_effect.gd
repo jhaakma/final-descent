@@ -1,8 +1,12 @@
-class_name ElementalResistanceEffect extends ConstantEffect
+class_name ArmorResistanceEffect extends ConstantEffect
+## Equipment-based resistance effect that provides damage reduction
+## Uses same effect IDs as elemental resistance effects for proper stacking
 
 @export var elemental_type: DamageType.Type = DamageType.Type.FIRE
+@export var source_armor_name: String = ""
 
 func get_effect_id() -> String:
+    # Use same ID pattern as ElementalResistanceEffect for stacking/deduplication
     return "%s_resistance" % DamageType.get_type_name(elemental_type).to_lower()
 
 func get_effect_name() -> String:
@@ -27,12 +31,16 @@ func on_removed(target: CombatEntity) -> void:
 # Override get_description for resistance formatting
 func get_description() -> String:
     var type_name := DamageType.get_type_name(elemental_type)
-    return "50%% %s damage reduction." % type_name
+    if source_armor_name.is_empty():
+        return "50%% %s damage reduction." % type_name
+    else:
+        return "50%% %s damage reduction from %s." % [type_name, source_armor_name]
 
 func get_base_description() -> String:
     var type_name := DamageType.get_type_name(elemental_type)
     var desc := "%s Resistance" % type_name
-    if is_permanent():
-        return "%s (permanent)" % desc
-    else:
-        return "%s (constant)" % desc
+    if not source_armor_name.is_empty():
+        desc += " from %s" % source_armor_name
+
+    # Armor resistances are permanent while equipped
+    return "%s (equipment)" % desc

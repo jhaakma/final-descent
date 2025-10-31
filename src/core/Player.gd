@@ -1,5 +1,7 @@
 class_name Player extends CombatEntity
 
+const ArmorResistanceEffect = preload("res://src/effects/constant/armor_resistance_effect.gd")
+
 var name: String = "Player"
 
 signal stats_changed
@@ -149,6 +151,9 @@ func remove_item(item_instance: ItemInstance) -> bool:
 
                     # Remove armor defense bonus
                     _remove_armor_defense_bonus(armor)
+
+                    # Remove armor resistances
+                    _remove_armor_resistances(armor)
 
                     # Remove from equipped_items
                     equipped_items.erase(slot)
@@ -344,6 +349,9 @@ func equip_armor(item_instance: ItemInstance) -> bool:
     # Apply armor defense bonus
     _apply_armor_defense_bonus(armor)
 
+    # Apply armor resistances
+    _apply_armor_resistances(armor)
+
     LogManager.log_event("Equipped %s" % armor.name)
     emit_signal("inventory_changed")
     return true
@@ -371,6 +379,9 @@ func unequip_armor(slot: Equippable.EquipSlot) -> bool:
 
     # Remove armor defense bonus
     _remove_armor_defense_bonus(armor)
+
+    # Remove armor resistances
+    _remove_armor_resistances(armor)
 
     LogManager.log_event("Unequipped %s" % armor.name)
 
@@ -416,6 +427,40 @@ func _apply_armor_defense_bonus(armor: Equippable) -> void:
 func _remove_armor_defense_bonus(armor: Equippable) -> void:
     var source_id: String = "armor_%s" % armor.get_equip_slot_name().to_lower()
     stats_component.remove_defense_bonus(source_id)
+
+# Apply armor resistances to resistance component
+func _apply_armor_resistances(armor: Equippable) -> void:
+    if armor is Armor:
+        var armor_item: Armor = armor as Armor
+        if armor_item.has_resistances():
+            for damage_type: DamageType.Type in armor_item.get_resistances().keys():
+                var has_resistance: bool = armor_item.get_resistance(damage_type)
+                if has_resistance:
+                    # Create and apply an armor resistance effect instead of direct resistance
+                    var armor_resistance := ElementalResistanceEffect.new()
+                    armor_resistance.elemental_type = damage_type
+
+                    var condition := StatusCondition.from_status_effect(armor_resistance)
+                    condition.source_type = StatusCondition.SourceType.EQUIPMENT
+                    condition.add_equipment_stack()
+
+                    # Apply through status effect system for UI display and proper stacking
+                    status_effect_component.apply_status_condition(condition, self)
+                    emit_signal("stats_changed")
+
+# Remove armor resistances from resistance component
+func _remove_armor_resistances(armor: Equippable) -> void:
+    if armor is Armor:
+        var armor_item: Armor = armor as Armor
+        if armor_item.has_resistances():
+            for damage_type: DamageType.Type in armor_item.get_resistances().keys():
+                var has_resistance: bool = armor_item.get_resistance(damage_type)
+                if has_resistance:
+                    # Remove the specific armor resistance effect
+                    var armor_resistance := ElementalResistanceEffect.new()
+                    armor_resistance.elemental_type = damage_type
+                    status_effect_component.remove_equipment_stack(armor_resistance)
+                    emit_signal("stats_changed")
 
 # Get current weapon condition information
 func get_weapon_condition() -> Dictionary:
