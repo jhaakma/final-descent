@@ -94,7 +94,7 @@ func test_player_turn_processor_defend() -> bool:
         return false
 
     # Verify player has defend effect (this tests the DefendAbility integration)
-    if not player.has_status_effect("defend"):
+    if not player.has_status_effect("Defending"):
         push_error("Player should have defend status effect after defending")
         return false
 
@@ -212,7 +212,7 @@ func test_player_turn_processor_can_process_turn() -> bool:
 
     # Apply stun effect to player (this tests the integration with status effects)
     var stun_effect := StunEffect.new()
-    stun_effect.duration = 1
+    stun_effect.set_expire_after_turns(1)
     player.apply_status_effect(stun_effect)
 
     if processor.can_process_turn(context):

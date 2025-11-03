@@ -24,4 +24,4 @@ func get_description() -> String:
     return "+%d MAX HP for %d turns" % [max_hp_bonus, get_remaining_turns()]
 
 func get_base_description() -> String:
-    return "+%d MAX HP for %d turns" % [max_hp_bonus, duration]
+    return "+%d MAX HP for %d turns" % [max_hp_bonus, expire_after_turns]

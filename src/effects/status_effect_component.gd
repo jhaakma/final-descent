@@ -75,9 +75,6 @@ func has_effect(status_effect_id: String) -> bool:
     for condition_id: String in active_conditions.keys():
         var condition := active_conditions[condition_id]
         if condition.status_effect.get_effect_id() == status_effect_id:
-            var effect := condition.status_effect
-            if effect is TimedEffect:
-                return not (effect as TimedEffect).is_expired()
             return true
     return false
 
@@ -86,12 +83,7 @@ func get_effect(status_effect_id: String) -> StatusCondition:
     for condition_id: String in active_conditions.keys():
         var condition := active_conditions[condition_id]
         if condition.status_effect.get_effect_id() == status_effect_id:
-            var effect := condition.status_effect
-            if effect is TimedEffect:
-                if not (effect as TimedEffect).is_expired():
-                    return condition
-            else:
-                return condition
+            return condition
     return null
 
 # Check if entity has a specific condition by name
@@ -117,22 +109,51 @@ func remove_condition(condition_name: String) -> bool:
     effect_removed.emit(condition_name)
     return true
 
-# Process all status conditions for one turn
+# Process status effects for a general turn (legacy compatibility)
 func process_turn(target: CombatEntity) -> void:
+    # For general turn processing, we'll process TURN_START effects
+    # This maintains backward compatibility with the old interface
+    var current_turn := 1  # Default turn for general processing
+    process_status_effects_at_timing(EffectTiming.Type.ROUND_START, current_turn, target)
+
+# Process status effects that should expire at a specific timing phase
+func process_status_effects_at_timing(timing: EffectTiming.Type, current_turn: int, target: CombatEntity) -> void:
+    print("DEBUG: StatusEffectComponent processing timing ", timing, " on turn ", current_turn, " for ", target.get_name())
+    if timing == EffectTiming.Type.ROUND_START:
+        print("DEBUG: ROUND_START call - Stack trace:")
+        print(get_stack())
+    print("DEBUG: Active conditions: ", active_conditions.keys())
+
     var conditions_to_remove: Array[StatusCondition] = []
+
     for condition_id: String in active_conditions.keys():
         var condition := active_conditions[condition_id]
         var effect := condition.status_effect
-        var result := effect.apply_effect(target)
+        print("DEBUG: Processing condition '", condition_id, "' with effect: ", effect)
 
+        # Apply timed effects at their designated timing
         if effect is TimedEffect:
             var timed_effect := effect as TimedEffect
-            timed_effect.tick_turn()
-            if timed_effect.is_expired():
-                conditions_to_remove.append(condition)
-        # Constant effects don't tick or expire, they just persist
+            print("DEBUG: TimedEffect - expire timing: ", timed_effect.get_expire_timing(), ", current timing: ", timing)
 
-        effect_processed.emit(condition_id, result)
+            # Apply the effect if this is the correct timing
+            if timed_effect.get_expire_timing() == timing:
+                print("DEBUG: Timing matches! Applying effect")
+                timed_effect.apply_effect(target)
+                # Decrement turns after applying the effect
+                timed_effect.process_turn()
+                print("DEBUG: Remaining turns after processing: ", timed_effect.get_remaining_turns())
+            else:
+                print("DEBUG: Timing doesn't match, skipping apply_effect")
+
+            # Check if this effect should expire at this timing and turn
+            if timed_effect.should_expire_at(timing, current_turn):
+                print("DEBUG: Effect should expire, adding to removal list")
+                conditions_to_remove.append(condition)
+            else:
+                print("DEBUG: Effect should not expire yet")
+
+    print("DEBUG: Conditions to remove: ", conditions_to_remove.size())
 
     # Remove expired conditions
     for condition in conditions_to_remove:
@@ -147,16 +168,51 @@ func process_turn(target: CombatEntity) -> void:
             active_conditions.erase(condition_id)
             effect_removed.emit(condition_id)
 
+# Process all timed effects regardless of timing (for room transitions)
+func process_all_timed_effects(target: CombatEntity) -> void:
+    print("DEBUG: Processing ALL timed effects for room transition on ", target.get_name())
+
+    var conditions_to_remove: Array[StatusCondition] = []
+
+    for condition_id: String in active_conditions.keys():
+        var condition := active_conditions[condition_id]
+        var effect := condition.status_effect
+
+        # Process all timed effects
+        if effect is TimedEffect:
+            var timed_effect := effect as TimedEffect
+            print("DEBUG: Processing timed effect: ", condition_id, " (", timed_effect.get_remaining_turns(), " turns remaining)")
+
+            # Apply the effect
+            timed_effect.apply_effect(target)
+            # Decrement turns after applying the effect
+            timed_effect.process_turn()
+            print("DEBUG: Remaining turns after processing: ", timed_effect.get_remaining_turns())
+
+            # Check if effect should now expire (0 or negative turns)
+            if timed_effect.get_remaining_turns() <= 0:
+                print("DEBUG: Effect expired, adding to removal list")
+                conditions_to_remove.append(condition)
+
+    # Remove expired conditions
+    for condition in conditions_to_remove:
+        var condition_id := condition.name
+        if active_conditions.has(condition_id):
+            # Call lifecycle method before removal
+            var status_effect := condition.status_effect
+            if status_effect is RemovableStatusEffect:
+                (status_effect as RemovableStatusEffect).on_removed(target)
+
+            LogManager.log_event("{Your} {effect:%s} expired." % condition.get_log_name(), {"target": target, "status_effect": status_effect})
+            print("DEBUG: Removing expired condition: ", condition_id)
+            active_conditions.erase(condition_id)
+            effect_removed.emit(condition_id)
+
 # Get all active status conditions
 func get_all_conditions() -> Array[StatusCondition]:
     var conditions: Array[StatusCondition] = []
     for condition: StatusCondition in active_conditions.values():
-        var effect := condition.status_effect
-        if effect is TimedEffect:
-            if not (effect as TimedEffect).is_expired():
-                conditions.append(condition)
-        else:
-            conditions.append(condition)
+        conditions.append(condition)
     return conditions
 
 # Get descriptions of all active conditions for UI

@@ -113,13 +113,13 @@ func _replace_name_patterns(text: String, target: CombatEntity) -> String:
     var result := text
 
     if is_player:
-        # Player gets blue coloring - use format method for cleaner code
-        result = result.replace("{You}", "You")
-        result = result.replace("{you}", "you")
-        result = result.replace("{Your}", "Your")
-        result = result.replace("{your}", "your")
-        result = result.replace("{You are}", "You are")
-        result = result.replace("{you are}", "you are")
+        # Player gets blue coloring
+        result = result.replace("{You}", "[color=#4a90e2ff]You[/color]")
+        result = result.replace("{you}", "[color=#4a90e2ff]you[/color]")
+        result = result.replace("{Your}", "[color=#4a90e2ff]Your[/color]")
+        result = result.replace("{your}", "[color=#4a90e2ff]your[/color]")
+        result = result.replace("{You are}", "[color=#4a90e2ff]You[/color] are")
+        result = result.replace("{you are}", "[color=#4a90e2ff]you[/color] are")
     else:
         # Enemy gets red coloring
         var target_name := target.get_name()
@@ -142,7 +142,9 @@ func _process_player_patterns(text: String, _context: Dictionary) -> String:
     for regex_match in regex.search_all(text):
         var full_match := regex_match.get_string(0)
         var content := regex_match.get_string(1)
-        result = result.replace(full_match, content)
+        # Apply blue color to player text
+        var colored := "[color=#4a90e2ff]%s[/color]" % content
+        result = result.replace(full_match, colored)
 
     return result
 
@@ -169,7 +171,7 @@ func _process_healing_patterns(text: String) -> String:
     for regex_match in regex.search_all(text):
         var full_match := regex_match.get_string(0)
         var content := regex_match.get_string(1)
-        var colored := "[color=%s]%s HP[/color]" % [LogColors.HEALING, content]
+        var colored := "[color=%s]%s[/color] HP" % [LogColors.HEALING, content]
         result = result.replace(full_match, colored)
 
     return result
@@ -199,22 +201,19 @@ func _process_damage_patterns(text: String, context: Dictionary = {}) -> String:
         var damage_type_str := regex_match.get_string(2) if regex_match.strings.size() > 2 else ""
 
         var color: String = LogColors.DEFAULT
-        var damage_type_name: String = ""
 
         # First check if damage type is provided in context
         if context.has("damage_type"):
             var damage_type: DamageType.Type = context["damage_type"]
             color = DamageType.get_type_color(damage_type).to_html()
-            damage_type_name = DamageType.get_type_name(damage_type)
         elif damage_type_str != "":
             # Fall back to parsing from string
             var damage_type := _string_to_damage_type(damage_type_str)
             if damage_type != -1:
                 color = DamageType.get_type_color(damage_type).to_html()
-                damage_type_name = DamageType.get_type_name(damage_type)
 
-        var type_text := damage_type_name + " " if damage_type_name != "" else ""
-        var colored := "[color=%s]%s %sdamage[/color]" % [color, amount, type_text]
+        # Only color the amount, not the damage type name
+        var colored := "[color=%s]%s[/color]" % [color, amount]
         result = result.replace(full_match, colored)
 
     return result

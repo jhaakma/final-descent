@@ -1,5 +1,10 @@
 class_name StunEffect extends TimedEffect
 
+func _init() -> void:
+    # Initialize with default timing properties
+    set_expire_timing(EffectTiming.Type.TURN_END)
+    set_expire_after_turns(1)
+
 func get_effect_id() -> String:
     return "stun"
 
@@ -20,7 +25,7 @@ func apply_effect(_target: CombatEntity) -> bool:
     return true
 
 func get_description() -> String:
-    return "Stunned for %d turns" % get_remaining_turns()
+    return "Stunned for %d turns" % expire_after_turns
 
 func get_base_description() -> String:
-    return "Stunned for %d turns" % duration
+    return "Stunned for %d turns" % expire_after_turns

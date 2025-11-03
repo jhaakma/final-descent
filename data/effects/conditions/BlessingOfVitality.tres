@@ -6,7 +6,10 @@
 [sub_resource type="Resource" id="Resource_i2hno"]
 script = ExtResource("2_7bv0h")
 max_hp_bonus = 5
-duration = 10
+expire_timing = 3
+expire_after_turns = 1
+expire_condition = Callable()
+applied_turn = 0
 metadata/_custom_type_script = "uid://bprhm4eacabtk"
 
 [resource]

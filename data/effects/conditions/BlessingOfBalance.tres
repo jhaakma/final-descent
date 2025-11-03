@@ -7,7 +7,10 @@
 script = ExtResource("2_2kd65")
 attack_bonus = 2
 defense_bonus = 10
-duration = 10
+expire_timing = 3
+expire_after_turns = 1
+expire_condition = Callable()
+applied_turn = 0
 metadata/_custom_type_script = "uid://njc2axxd473o"
 
 [resource]

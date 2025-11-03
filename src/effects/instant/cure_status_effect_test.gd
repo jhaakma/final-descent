@@ -23,7 +23,7 @@ static func run_test() -> void:
         var elemental_effect := poison_condition.status_effect as ElementalTimedEffect
         print("✓ Poison condition uses ElementalTimedEffect")
         print("  - Damage per turn: ", elemental_effect.damage_per_turn)
-        print("  - Duration: ", elemental_effect.duration)
+        print("  - Duration: ", elemental_effect.get_expire_after_turns())
         print("  - Elemental type: ", elemental_effect.elemental_type)
     else:
         print("✗ Poison condition does not use ElementalTimedEffect")

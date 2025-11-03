@@ -53,7 +53,7 @@ func _weighted_select_material() -> Resource:
     return materials[materials.size() - 1]
 
 ## Copy properties from template to generated armor
-func _apply_template(template: Resource, target: Armor) -> void:
+func _apply_template(template: ArmorTemplate, target: Armor) -> void:
     # Access ArmorTemplate properties through Resource
     target.name = template.base_name
     target.defense_bonus = template.base_defense
@@ -62,7 +62,7 @@ func _apply_template(template: Resource, target: Armor) -> void:
     target.purchase_value = template.base_purchase_value
 
 ## Apply material modifiers to the armor
-func _apply_material(material: Resource, armor: Armor) -> void:
+func _apply_material(material: ArmorMaterial, armor: Armor) -> void:
     # Update armor name with material prefix
     armor.name = "%s %s" % [material.name, armor.name]
 

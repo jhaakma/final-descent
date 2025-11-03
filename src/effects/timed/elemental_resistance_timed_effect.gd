@@ -28,4 +28,4 @@ func get_description() -> String:
 
 func get_base_description() -> String:
     var type_name := DamageType.get_type_name(elemental_type)
-    return "%s Resistance (50%% damage reduction) for %d turns" % [type_name, duration]
+    return "%s Resistance (50%% damage reduction) for %d turns" % [type_name, expire_after_turns]

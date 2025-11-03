@@ -37,16 +37,8 @@ func apply_filter_to_test_classes() -> void:
         return  # No filter, keep all tests
 
     print("Applying filter: '%s'" % filter_pattern)
-    var filtered_classes: Array[Script] = []
-
-    for test_script in test_classes:
-        # Check if test class name matches filter
-        var test_class_name := test_script.resource_path.get_file().get_basename()
-        if test_class_name.to_lower().contains(filter_pattern.to_lower()):
-            filtered_classes.append(test_script)
-
-    test_classes = filtered_classes
-    print("Filtered to %d test classes" % test_classes.size())
+    # Don't filter classes here anymore - we'll filter at the method level
+    # This allows filtering on method names across all classes
 
 func _ready() -> void:
     print("=== Test Runner Started ===")
@@ -142,14 +134,20 @@ func run_test_class(test_script: Script) -> void:
         var filtered_methods: Array[String] = []
         var test_class_name := test_script.resource_path.get_file().get_basename()
 
-        # If class name matches, include all methods
-        if test_class_name.to_lower().contains(filter_pattern.to_lower()):
-            filtered_methods = test_methods
-        else:
-            # Otherwise, filter individual methods
-            for method_name in test_methods:
-                if method_name.to_lower().contains(filter_pattern.to_lower()):
-                    filtered_methods.append(method_name)
+        for method_name in test_methods:
+            # Check if the filter matches:
+            # 1. The test class name
+            # 2. The method name (with or without "test_" prefix)
+            # 3. The full test name format "ClassName::method_name"
+            var method_name_clean := method_name.replace("test_", "")
+            var full_test_name := "%s::%s" % [category, method_name_clean]
+
+            if (test_class_name.to_lower().contains(filter_pattern.to_lower()) or
+                method_name.to_lower().contains(filter_pattern.to_lower()) or
+                method_name_clean.to_lower().contains(filter_pattern.to_lower()) or
+                full_test_name.to_lower().contains(filter_pattern.to_lower()) or
+                category.to_lower().contains(filter_pattern.to_lower())):
+                filtered_methods.append(method_name)
 
         test_methods = filtered_methods
 

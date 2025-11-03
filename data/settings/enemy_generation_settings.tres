@@ -1,0 +1,36 @@
+[gd_resource type="Resource" script_class="EnemyGenerationSettings" load_steps=2 format=3 uid="uid://b75okqb4d4brw"]
+
+[ext_resource type="Script" uid="uid://61ax046q562x" path="res://src/core/EnemyGenerationSettings.gd" id="1_2tn48"]
+
+[resource]
+script = ExtResource("1_2tn48")
+base_hp = 50
+base_attack = 4
+base_defense = 5
+base_avoid_chance = 0.5
+hp_level_scaling = 0.25
+attack_level_scaling = 0.2
+defense_level_scaling = 0.5
+warrior_hp_modifier = 1.0
+warrior_attack_modifier = 1.0
+warrior_defense_bonus = 1
+barbarian_hp_modifier = 0.8
+barbarian_attack_modifier = 1.4
+barbarian_defense_bonus = 0
+tank_hp_modifier = 1.5
+tank_attack_modifier = 0.8
+tank_defense_bonus = 2
+small_hp_modifier = 0.7
+small_attack_modifier = 0.8
+small_avoid_bonus = 0.2
+medium_hp_modifier = 1.0
+medium_attack_modifier = 1.0
+large_hp_modifier = 1.3
+large_attack_modifier = 1.2
+large_defense_bonus = 1
+large_avoid_penalty = -0.1
+huge_hp_modifier = 1.8
+huge_attack_modifier = 1.5
+huge_defense_bonus = 2
+huge_avoid_penalty = -0.2
+metadata/_custom_type_script = "uid://61ax046q562x"

@@ -28,5 +28,5 @@ func get_description() -> String:
     return "+%d HP for %d turns" % [healing_per_turn, get_remaining_turns()]
 
 func get_base_description() -> String:
-    return "+%d HP for %d turns" % [healing_per_turn, duration]
+    return "+%d HP for %d turns" % [healing_per_turn, expire_after_turns]
 

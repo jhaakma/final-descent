@@ -37,8 +37,8 @@ func test_regeneration_effect_magnitude() -> bool:
 
 func test_timed_effect_magnitude() -> bool:
     var effect: TimedEffect = TimedEffect.new()
-    effect.duration = 5
-    assert_equals(effect.get_magnitude(), 5, "TimedEffect should return duration as magnitude")
+    effect.expire_after_turns = 5
+    assert_equals(effect.get_magnitude(), 5, "TimedEffect should return expire_after_turns as magnitude")
     return true
 
 func test_strength_boost_effect_magnitude() -> bool:

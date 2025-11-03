@@ -46,8 +46,8 @@ func next_floor() -> void:
     # Advance stage manager
     StageManager.advance_floor()
 
-    # Process status effects and apply their effects
-    player.process_status_effects()
+    # Process all timed status effects when transitioning floors
+    player.process_all_timed_effects()
 
     # Death from status effects is now handled by Player.take_damage signal
     emit_signal("stats_changed")

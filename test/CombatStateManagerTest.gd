@@ -7,7 +7,7 @@ class SignalTracker extends RefCounted:
     var combat_started_received := false
     var player_turn_started_received := false
     var enemy_turn_started_received := false
-    var turn_ended_received := false
+    var round_ended_received := false
     var combat_ended_received := false
     var victory_result := false
 
@@ -23,8 +23,8 @@ class SignalTracker extends RefCounted:
     func on_enemy_turn_started(_context) -> void:
         enemy_turn_started_received = true
 
-    func on_turn_ended(_context) -> void:
-        turn_ended_received = true
+    func on_round_ended(_context) -> void:
+        round_ended_received = true
 
     func on_combat_ended(_context, victory) -> void:
         combat_ended_received = true
@@ -65,17 +65,24 @@ func test_state_transitions() -> bool:
 
     var state_manager := CombatStateManager.new(context)
 
-    # Test manual transition to player turn
-    state_manager.transition_to_player_turn()
+    # Test start combat which automatically transitions to first turn
+    state_manager.start_combat()
+    # start_combat() automatically goes to first turn (player turn by default)
     if state_manager.get_current_state() != CombatStateManager.State.PLAYER_TURN:
-        push_error("Should transition to PLAYER_TURN")
+        push_error("Should be in PLAYER_TURN after start_combat")
         return false
 
-    # Test transition to turn end from player turn
-    # This should automatically transition to enemy turn since combat is ongoing
-    state_manager.transition_to_turn_end()
+    # Test end current turn - this should go to enemy turn
+    state_manager.end_current_turn()
     if state_manager.get_current_state() != CombatStateManager.State.ENEMY_TURN:
-        push_error("Should automatically transition to ENEMY_TURN after player turn end")
+        push_error("Should transition to ENEMY_TURN after player turn end")
+        return false
+
+    # End enemy turn - since both actors have acted, should go to ROUND_END
+    state_manager.end_current_turn()
+    # After ROUND_END processing, it should automatically start next round (player turn)
+    if state_manager.get_current_state() != CombatStateManager.State.PLAYER_TURN:
+        push_error("Should transition to PLAYER_TURN for next round after both turns completed")
         return false
 
     # Test manual transition to combat end
@@ -106,7 +113,7 @@ func test_signal_emissions() -> bool:
     state_manager.combat_started.connect(tracker.on_combat_started)
     state_manager.player_turn_started.connect(tracker.on_player_turn_started)
     state_manager.enemy_turn_started.connect(tracker.on_enemy_turn_started)
-    state_manager.turn_ended.connect(tracker.on_turn_ended)
+    state_manager.round_ended.connect(tracker.on_round_ended)
     state_manager.combat_ended.connect(tracker.on_combat_ended)
 
     # Test start combat signal - this will automatically start first turn
@@ -121,18 +128,20 @@ func test_signal_emissions() -> bool:
         push_error("player_turn_started signal should have been emitted (default first turn)")
         return false
 
-    # To test enemy turn, we need to go through TURN_END first, or start with enemy first
-    # Let's test by going through proper flow: PLAYER_TURN -> TURN_END -> ENEMY_TURN
-    tracker.turn_ended_received = false
+    # To test enemy turn, we need to end the player turn
+    tracker.round_ended_received = false
     tracker.enemy_turn_started_received = false
-    state_manager.transition_to_turn_end()  # This will auto-transition to enemy turn
-
-    if not tracker.turn_ended_received:
-        push_error("turn_ended signal should have been emitted")
-        return false
+    state_manager.end_current_turn()  # This transitions to enemy turn
 
     if not tracker.enemy_turn_started_received:
-        push_error("enemy_turn_started signal should have been emitted after turn end")
+        push_error("enemy_turn_started signal should have been emitted after player turn end")
+        return false
+
+    # End enemy turn to complete the round
+    state_manager.end_current_turn()  # This completes the round and starts next round
+
+    if not tracker.round_ended_received:
+        push_error("round_ended signal should have been emitted")
         return false
 
     # Test combat end signal
@@ -196,9 +205,9 @@ func test_automatic_combat_end() -> bool:
     # Kill the enemy
     enemy.take_damage(1000)
 
-    # The state manager should detect combat end when transition_to_turn_end is called
-    # since _check_combat_end_conditions is called within transition_to_turn_end
-    state_manager.transition_to_turn_end()
+    # The state manager should detect combat end when end_current_turn is called
+    # since _check_combat_end_conditions is called within end_current_turn
+    state_manager.end_current_turn()
 
     if not tracker.combat_ended_received:
         push_error("Combat should have ended automatically when enemy died")

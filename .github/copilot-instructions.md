@@ -8,6 +8,7 @@ Godot 4 roguelike dungeon crawler game guidelines.
 - **Logic**: Use enums/constants/dictionaries, avoid string matching
 - **Godot**: Use 4.4 APIs, add methods only when needed
 - **Style**: Spaces not tabs, UI in `.tscn` files, dictionaries over match statements
+- **Enums**: Use enums for fixed sets of values, never use int as types when referencing enums
 
 ## Project Structure
 
@@ -24,7 +25,7 @@ Godot 4 roguelike dungeon crawler game guidelines.
 
 ## Testing
 
-- **Run**: `make test` or `make test filter=TestName`
+- **Run**: `make test` or `make test filter=TestName` (filter only works on one class or method name)
 - **Files**: Extend `BaseTest`, methods start with `test_`, return `bool`
 - **Structure**: Separate files per feature (`ScrollTest.gd`, `PotionTest.gd`)
 

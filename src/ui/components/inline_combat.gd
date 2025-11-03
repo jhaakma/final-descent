@@ -116,7 +116,7 @@ func _connect_state_manager_signals() -> void:
     state_manager.combat_started.connect(_on_combat_started)
     state_manager.player_turn_started.connect(_on_player_turn_started)
     state_manager.enemy_turn_started.connect(_on_enemy_turn_started)
-    state_manager.turn_ended.connect(_on_turn_ended)
+    state_manager.round_ended.connect(_on_round_ended)
     state_manager.combat_ended.connect(_on_combat_ended)
 
 func _handle_enemy_first_attack() -> void:
@@ -153,8 +153,8 @@ func _on_enemy_turn_started(_context: CombatContext) -> void:
     combat_ui.disable_actions()
     _process_enemy_turn()
 
-func _on_turn_ended(_context: CombatContext) -> void:
-    # Turn has ended, emit signal for room updates
+func _on_round_ended(_context: CombatContext) -> void:
+    # Round has ended, emit signal for room updates
     turn_ended.emit()
 
 func _on_combat_ended(_context: CombatContext, victory: bool) -> void:
@@ -167,18 +167,18 @@ func _process_enemy_turn() -> void:
     # Check if enemy should skip their turn
     if combat_context.enemy.should_skip_turn():
         LogManager.log_event("{enemy:%s} is stunned and skips their turn!" % combat_context.enemy.get_name())
-        # Go to turn end to continue the state machine
-        state_manager.transition_to_turn_end()
+        # End enemy's turn (will be handled by the round system)
+        state_manager.end_current_turn()
         return
 
     # Process enemy status effects at start of their turn
-    combat_context.enemy.process_status_effects()
+    # Note: Status effects are now processed by CombatStateManager at proper timing phases
 
     if combat_context.enemy.is_alive():
         # Execute enemy action
         combat_context.enemy.perform_action()
-        # Go to turn end
-        state_manager.transition_to_turn_end()
+        # End enemy's turn
+        state_manager.end_current_turn()
 
 # Combat action handlers (called by CombatUI)
 func _on_attack() -> void:
@@ -200,7 +200,7 @@ func _handle_action_result(result: ActionResult) -> void:
             content_resolved.emit()
         _:
             # For all other actions, continue to turn end
-            state_manager.transition_to_turn_end()
+            state_manager.end_current_turn()
 
 func handle_item_used() -> void:
     """Handle when an item is used during combat - treat as player action"""

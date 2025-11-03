@@ -5,5 +5,8 @@
 [resource]
 script = ExtResource("1_0")
 damage_per_turn = 1
-elemental_type = 1
-duration = 6
+elemental_type = 3
+expire_timing = 2
+expire_after_turns = 5
+expire_condition = Callable()
+applied_turn = 0

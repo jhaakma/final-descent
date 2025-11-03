@@ -22,7 +22,7 @@ func get_description() -> String:
     return "+%d ATK for %d turns" % [attack_bonus, get_remaining_turns()]
 
 func get_base_description() -> String:
-    return "+%d ATK for %d turns" % [attack_bonus, duration]
+    return "+%d ATK for %d turns" % [attack_bonus, expire_after_turns]
 
 func get_magnitude() -> int:
     return attack_bonus

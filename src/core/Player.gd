@@ -1,6 +1,5 @@
 class_name Player extends CombatEntity
 
-const ArmorResistanceEffect = preload("res://src/effects/constant/armor_resistance_effect.gd")
 
 var name: String = "Player"
 

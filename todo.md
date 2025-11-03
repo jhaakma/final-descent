@@ -1,5 +1,9 @@
 # To do
 
+## Combat flow overhaul
+- Simplify combat flow, reduce state management overhead, signals etc
+- Refactor TimedEffects to properly expire
+
 ## Armor Resistances
 - Create Armor generators
 - Armor material have resistances to different damage types

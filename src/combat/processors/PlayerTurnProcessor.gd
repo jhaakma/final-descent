@@ -82,10 +82,11 @@ func _execute_item_use(_context: CombatContext) -> ActionResult:
     # The actual item effect has already been applied when this is called
     return ActionResult.create_item_use_result()
 
-func _process_start_of_player_turn_effects(context: CombatContext) -> void:
+func _process_start_of_player_turn_effects(_context: CombatContext) -> void:
     # Process player status effects at the START of their turn
     # This ensures effects remain visible throughout the enemy turn
-    context.player.process_status_effects()
+    # Note: Status effects are now processed by CombatStateManager at proper timing phases
+    pass
 
 ## Override base class method - players can always process their turn
 func can_process_turn(context: CombatContext) -> bool:

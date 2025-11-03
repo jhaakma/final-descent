@@ -107,14 +107,20 @@ func apply_status_effect(effect: StatusEffect) -> bool:
 func apply_status_condition(condition: StatusCondition) -> bool:
     return status_effect_component.apply_status_condition(condition, self)
 
-func has_status_effect(effect_id: String) -> bool:
-    return status_effect_component.has_effect(effect_id)
+func has_status_effect(effect_name: String) -> bool:
+    return status_effect_component.has_condition(effect_name)
 
 func has_status_condition(condition_name: String) -> bool:
     return status_effect_component.has_condition(condition_name)
 
 func process_status_effects() -> void:
     status_effect_component.process_turn(self)
+
+func process_status_effects_at_timing(timing: EffectTiming.Type, current_turn: int) -> void:
+    status_effect_component.process_status_effects_at_timing(timing, current_turn, self)
+
+func process_all_timed_effects() -> void:
+    status_effect_component.process_all_timed_effects(self)
 
 func clear_all_negative_status_effects() -> Array[StatusCondition]:
     return status_effect_component.clear_all_negative_status_effects()

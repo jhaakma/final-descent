@@ -4,7 +4,9 @@ class_name DefendEffect extends StatBoostEffect
 
 func _init(defense_value: int = 50) -> void:
     defense_bonus = defense_value
-    duration = 1  # Lasts for 1 turn (now works correctly with fixed combat flow)
+    # Use new timing system: expire after taking one attack (POST_ACTION timing)
+    expire_timing = EffectTiming.Type.ROUND_END
+    expire_after_turns = 1
 
 func get_effect_id() -> String:
     return "defend"
@@ -28,4 +30,4 @@ func get_description() -> String:
     return "+%d DEF for %d turns (defending)" % [defense_bonus, get_remaining_turns()]
 
 func get_base_description() -> String:
-    return "+%d DEF for %d turns (defending)" % [defense_bonus, duration]
+    return "+%d DEF for %d turns (defending)" % [defense_bonus, expire_after_turns]
