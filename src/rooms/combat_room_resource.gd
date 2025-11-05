@@ -1,6 +1,7 @@
 class_name CombatRoomResource extends RoomResource
 
 @export var enemy_list: Array[EnemyResource] = []
+@export var enemy_generator: EnemyGenerator = null
 
 var selected_enemy: EnemyResource = null
 
@@ -8,7 +9,17 @@ func is_cleared_by_default() -> bool:
     return false
 
 func build_actions(_actions_grid: GridContainer, _room_screen: RoomScreen) -> void:
-    selected_enemy = enemy_list[GameState.rng.randi_range(0, enemy_list.size() - 1)]
+    # Generate or select enemy
+    if enemy_generator and not enemy_generator.enemy_templates.is_empty():
+        # Use generator to create enemy
+        selected_enemy = enemy_generator.generate_enemy()
+    elif not enemy_list.is_empty():
+        # Fall back to enemy list
+        selected_enemy = enemy_list[GameState.rng.randi_range(0, enemy_list.size() - 1)]
+    else:
+        # No enemies configured
+        push_error("CombatRoomResource: No enemies or generator configured")
+        return
 
     var fight_action := RoomAction.new("Fight", "Engage in combat with the %s" % selected_enemy.name)
     fight_action.is_enabled = true

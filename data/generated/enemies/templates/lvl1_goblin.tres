@@ -1,16 +1,14 @@
 [gd_resource type="Resource" script_class="EnemyTemplate" load_steps=2 format=3 uid="uid://cul3vtqmbkrw7"]
 
-[ext_resource type="Script" uid="uid://bkdmkv18op321" path="res://src/generators/enemies/enemy_template.gd" id="1_vbukg"]
+[ext_resource type="Script" uid="uid://c0acru57thtrf" path="res://src/generators/enemies/enemy_template.gd" id="1_vbukg"]
 
 [resource]
 script = ExtResource("1_vbukg")
 base_name = "Goblin"
-archetype = 1
 base_level = 1
-element_affinity = 1
+archetype = 1
 size_category = 1
+element_affinity = 0
 ability_templates = Array[int]([1, 4])
-possible_modifiers = Array[int]([])
-modifier_weights = Array[float]([])
-modifier_chance = 0.0
-metadata/_custom_type_script = "uid://bkdmkv18op321"
+possible_modifiers = Array[int]([4])
+modifier_chance = 1.0

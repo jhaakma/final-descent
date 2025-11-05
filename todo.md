@@ -1,19 +1,13 @@
 # To do
 
-
-
-## Combat flow overhaul
-- Simplify combat flow, reduce state management overhead, signals etc
-- PlayerTurnProcessor seems unnecessary to be split out like that
-- Refactor TimedEffects to properly expire - fix TURN_START, which requires the refactor to have an entry point between clicking an ability and that ability executing
-- Enemies still not getting affected by status effects
-
-## Armor Resistances
-- Create Armor generators
-- Armor material have resistances to different damage types
+# Enemy Generation
+- Enemy template
+    - Base Name (Goblin)
+    - Archetype (Warrior, Barbarian, Tank)
+    - Size (Small, Medium, Large, Huge)
+    - Abilities
 
 ## Ability Mechanics
-- Cooldowns
 - AI for selecting abilities
     - Logic + randomness
 

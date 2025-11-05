@@ -1,14 +1,21 @@
-[gd_resource type="Resource" script_class="CombatRoomResource" load_steps=6 format=3 uid="uid://dt8u500wdj8ww"]
+[gd_resource type="Resource" script_class="CombatRoomResource" load_steps=7 format=3 uid="uid://dt8u500wdj8ww"]
 
 [ext_resource type="Script" uid="uid://bqxhtkn1xkeqv" path="res://src/rooms/combat_room_resource.gd" id="1_4ityu"]
 [ext_resource type="Script" uid="uid://b4y5n724vd0ph" path="res://src/enemies/enemy_resource.gd" id="1_18ni0"]
-[ext_resource type="Resource" uid="uid://b6dwx6cyxq8a6" path="res://data/enemies/Goblin.tres" id="2_o3uu3"]
-[ext_resource type="Resource" uid="uid://dij2m52fyjwqp" path="res://data/enemies/Snake.tres" id="3_25rw3"]
-[ext_resource type="Resource" uid="uid://b5lgukv8r3muy" path="res://data/enemies/Rat.tres" id="4_87hxs"]
+[ext_resource type="Script" uid="uid://c0acru57thtrf" path="res://src/generators/enemies/enemy_template.gd" id="1_vim1p"]
+[ext_resource type="Resource" uid="uid://cul3vtqmbkrw7" path="res://data/generated/enemies/templates/lvl1_goblin.tres" id="2_i2f6n"]
+[ext_resource type="Script" uid="uid://ct0vsrv3vbnmr" path="res://src/generators/enemies/enemy_generator.gd" id="3_65oy5"]
+
+[sub_resource type="Resource" id="Resource_0hmet"]
+script = ExtResource("3_65oy5")
+enemy_templates = Array[ExtResource("1_vim1p")]([ExtResource("2_i2f6n")])
+modifier_chance = 0.2
+metadata/_custom_type_script = "uid://ct0vsrv3vbnmr"
 
 [resource]
 script = ExtResource("1_4ityu")
-enemy_list = Array[ExtResource("1_18ni0")]([ExtResource("2_o3uu3"), ExtResource("3_25rw3"), ExtResource("4_87hxs")])
+enemy_list = Array[ExtResource("1_18ni0")]([])
+enemy_generator = SubResource("Resource_0hmet")
 title = "A Dark Room"
 description = "An enemy lurks in the darkness..."
 weight = 60
