@@ -10,5 +10,5 @@ archetype = 1
 size_category = 1
 element_affinity = 0
 ability_templates = Array[int]([1, 4])
-possible_modifiers = Array[int]([4])
+possible_modifiers = Array[int]([4, 3, 7, 9, 10, 1])
 modifier_chance = 1.0

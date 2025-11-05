@@ -177,65 +177,16 @@ func execute_player_action(action: PlayerAction) -> ActionResult:
 
     match action:
         PlayerAction.ATTACK:
-            result = _execute_attack()
+            result = PlayerActionExecutor.execute_attack(context)
         PlayerAction.DEFEND:
-            result = _execute_defend()
+            result = PlayerActionExecutor.execute_defend(context)
         PlayerAction.FLEE:
-            result = _execute_flee()
+            result = PlayerActionExecutor.execute_flee(context)
         PlayerAction.ITEM_USE:
-            result = _execute_item_use()
+            result = PlayerActionExecutor.execute_item_use(context)
         PlayerAction.SKIP_TURN:
             result = ActionResult.create_skip_turn()
         _:
             result = ActionResult.new()  # Default fallback
 
     return result
-
-func _execute_attack() -> ActionResult:
-    var total_dmg: int = context.player.get_total_attack_power()
-    var player_damage_type: DamageType.Type = context.player.get_attack_damage_type()
-    var final_damage: int = context.enemy.calculate_incoming_damage(total_dmg, player_damage_type)
-    context.enemy.take_damage(final_damage)
-
-    var weapon_instance := context.player.get_equipped_weapon_instance()
-    var weapon_name: String = weapon_instance.item.name if weapon_instance else ""
-
-    # Log the attack
-    if weapon_name != "":
-        LogManager.log_event("{You} {action} {enemy:%s} with %s for {damage:%d}!" % [context.enemy.get_name(), weapon_name, final_damage], {"target": context.player, "damage_type": player_damage_type, "action": ["strike", "strikes"]})
-    else:
-        LogManager.log_event("{You} {action} {enemy:%s} for {damage:%d}!" % [context.enemy.get_name(), final_damage], {"target": context.player, "damage_type": player_damage_type, "action": ["attack", "attacks"]})
-
-    if weapon_instance:
-        # Check if weapon has special attack effects
-        var weapon := weapon_instance.item as Weapon
-        weapon.on_attack_hit(context.enemy)
-
-    # Reduce weapon condition after logging the attack
-    context.player.reduce_weapon_condition()
-
-    return ActionResult.create_attack_result(final_damage)
-
-func _execute_defend() -> ActionResult:
-    # Use the shared defend ability for consistency
-    var defend_ability := DefendAbility.new()
-    var instance := AbilityInstance.new(defend_ability)
-    instance.execute(context.player)
-
-    return ActionResult.create_defend_result()
-
-func _execute_flee() -> ActionResult:
-    var success: bool = randf() < context.enemy_resource.avoid_chance
-
-    if success:
-        LogManager.log_event("{You} flee successfully!", {"target": context.player})
-        return ActionResult.create_flee_success()
-    else:
-        LogManager.log_event("{You} fail to flee!", {"target": context.player})
-        return ActionResult.create_flee_failure()
-
-func _execute_item_use() -> ActionResult:
-    # Item usage is handled externally (through inventory system)
-    # This action type just confirms that the player's turn was consumed
-    # The actual item effect has already been applied when this is called
-    return ActionResult.create_item_use_result()
