@@ -4,13 +4,13 @@ class_name ShouldExpireAtTest extends BaseTest
 func test_should_expire_at_basic_logic() -> bool:
     var effect := TimedEffect.new()
 
-    # Test with default values (TURN_END, expire_after_turns = 1)
-    var result1 := effect.should_expire_at(EffectTiming.Type.TURN_END, 1)
+    # Test with default values (ROUND_END, expire_after_turns = 1)
+    var result1 := effect.should_expire_at(EffectTiming.Type.ROUND_END, 1)
     if not assert_true(result1):
-        print("FAIL: Default should expire at TURN_END, turn 1")
+        print("FAIL: Default should expire at ROUND_END, turn 1")
         return false
 
-    var result2 := effect.should_expire_at(EffectTiming.Type.TURN_END, 0)
+    var result2 := effect.should_expire_at(EffectTiming.Type.ROUND_END, 0)
     if not assert_false(result2):
         print("FAIL: Should not expire at turn 0")
         return false
@@ -46,8 +46,8 @@ func test_should_expire_at_turn_start_timing() -> bool:
         return false
 
     # Test wrong timing
-    var result3 := effect.should_expire_at(EffectTiming.Type.TURN_END, 2)
-    print("should_expire_at(TURN_END, 2): ", result3)
+    var result3 := effect.should_expire_at(EffectTiming.Type.ROUND_END, 2)
+    print("should_expire_at(ROUND_END, 2): ", result3)
     if not assert_false(result3):
         print("FAIL: Should not expire at wrong timing")
         return false
@@ -121,7 +121,7 @@ func test_property_persistence_after_application() -> bool:
 class TestPoisonEffect extends TimedEffect:
     func _init() -> void:
         # Initialize with default values that will be overridden in the test
-        set_expire_timing(EffectTiming.Type.TURN_END)
+        set_expire_timing(EffectTiming.Type.ROUND_END)
         set_expire_after_turns(1)
 
     func get_effect_id() -> String:

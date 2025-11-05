@@ -62,9 +62,9 @@ func test_expire_timing_validation() -> bool:
     var effect = TimedEffect.new()
 
     # Test setting valid timing values
-    effect.set_expire_timing(EffectTiming.Type.TURN_END)
+    effect.set_expire_timing(EffectTiming.Type.ROUND_END)
     var timing_result: EffectTiming.Type = effect.get_expire_timing()
-    if not assert_equals(timing_result, EffectTiming.Type.TURN_END):
+    if not assert_equals(timing_result, EffectTiming.Type.ROUND_END):
         return false
 
     effect.set_expire_timing(EffectTiming.Type.ROUND_END)

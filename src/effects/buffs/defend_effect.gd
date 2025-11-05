@@ -27,8 +27,3 @@ func get_defense_bonus() -> int:
 
 func get_description() -> String:
     return "+%d DEF for %d turns (defending)" % [defense_bonus, get_remaining_turns()]
-
-# Called when the effect is first applied to an entity
-func on_applied(_target: CombatEntity) -> void:
-    # Set applied_turn to 1 since defend is typically applied during turn 1
-    applied_turn = 1

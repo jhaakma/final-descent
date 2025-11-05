@@ -203,7 +203,7 @@ func create_test_player_with_effects() -> Dictionary:
     # Defend effect expiring at TURN_END
     var defend := {}
     defend["name"] = "Defend"
-    defend["expire_timing"] = EffectTiming.Type.TURN_END
+    defend["expire_timing"] = EffectTiming.Type.ROUND_END
     defend["expire_after_turns"] = 1
     defend["applied_turn"] = 1
     effects.append(defend)

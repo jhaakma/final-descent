@@ -19,8 +19,8 @@ func test_poison_timing_direct() -> bool:
 
 func test_status_effect_component_direct() -> bool:
     # Create a simple effect and component
-
-    var component = StatusEffectComponent.new()
+    var parent = CombatEntity.new()
+    var component = StatusEffectComponent.new(parent)
     var poison = TimedEffect.new()
     poison.set_expire_timing(EffectTiming.Type.ROUND_START)
     poison.set_expire_after_turns(2)

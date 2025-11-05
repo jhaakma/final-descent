@@ -122,8 +122,8 @@ func test_stun_effect_expires_correctly() -> bool:
         return false
 
     # Process status effects (this should expire the effect)
-    # Since stun effect expires at TURN_END by default, we need to process TURN_END timing
-    target.process_status_effects_at_timing(EffectTiming.Type.TURN_END, 1)
+    # Since stun effect expires at ROUND_END by default, we need to process ROUND_END timing
+    target.process_status_effects_at_timing(EffectTiming.Type.ROUND_END, 1)
 
     # Effect should have expired and been removed
     if target.has_status_effect("Stun"):
@@ -169,7 +169,7 @@ func test_stunned_enemy_status_effects_never_processed() -> bool:
         # Current buggy behavior: don't process status effects
         pass
     else:
-        target.process_status_effects_at_timing(EffectTiming.Type.TURN_END, 1)
+        target.process_status_effects_at_timing(EffectTiming.Type.ROUND_END, 1)
 
     # The bug: effect should expire but doesn't because it was never processed
     if not target.has_status_effect("Stun"):
@@ -214,7 +214,7 @@ func test_stunned_enemy_status_effects_processed_correctly() -> bool:
         return false
 
     # Simulate the FIXED combat logic where status effects ARE processed even when skipping turn
-    target.process_status_effects_at_timing(EffectTiming.Type.TURN_END, 1)  # Process effects regardless of skip status
+    target.process_status_effects_at_timing(EffectTiming.Type.ROUND_END, 1)  # Process effects regardless of skip status
 
     # The fix: effect should expire after being processed
     if target.has_status_effect("Stun"):

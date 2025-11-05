@@ -88,7 +88,7 @@ func test_status_effect_component_timing_integration() -> bool:
 
     # Test that status effect component properly handles timing-specific processing
     var effect := TestStunEffect.new()
-    effect.set_expire_timing(EffectTiming.Type.TURN_END)
+    effect.set_expire_timing(EffectTiming.Type.ROUND_END)
     effect.set_expire_after_turns(1)
 
     player.apply_status_effect(effect)
@@ -97,8 +97,8 @@ func test_status_effect_component_timing_integration() -> bool:
     if not assert_true(player.has_status_effect("stun")):
         return false
 
-    # Should expire when processing TURN_END timing at turn 1
-    player.process_status_effects_at_timing(EffectTiming.Type.TURN_END, 1)
+    # Should expire when processing ROUND_END timing at turn 1
+    player.process_status_effects_at_timing(EffectTiming.Type.ROUND_END, 1)
     return assert_false(player.has_status_effect("stun"))
 
 # Test effect classes that extend the new timing system

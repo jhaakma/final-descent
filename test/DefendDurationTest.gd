@@ -30,16 +30,21 @@ func test_defend_effect_timing() -> bool:
     # Player attacks - defend should be active
     player.process_status_effects()  # Start of player turn
     var enemy_defense_before := enemy.get_total_defense()
-    print("Enemy defense before attack: %d" % enemy_defense_before)
-    print("Enemy has defend effect: %s" % enemy.has_status_effect("defend"))
+    var enemy_base_defense := enemy.get_base_defense()
+    print("Enemy base defense: %d" % enemy_base_defense)
+    print("Enemy total defense before attack: %d" % enemy_defense_before)
+    print("Enemy defense bonus: %d" % (enemy_defense_before - enemy_base_defense))
+    if not assert_true(enemy.has_status_effect("defend"), "Enemy should have defend effect during turn 2"):
+        return false
 
     # Simulate player attack
     var damage := 10
     var final_damage := enemy.calculate_incoming_damage(damage)
     print("Attack damage: %d, final damage after defense: %d" % [damage, final_damage])
+    print("Expected damage with 53%% defense: %d" % int(damage * (1.0 - 0.53)))
 
     # Process POST_ACTION timing to expire defend effect after attack
-    enemy.process_status_effects_at_timing(EffectTiming.Type.POST_ACTION, 2)
+    enemy.process_status_effects_at_timing(EffectTiming.Type.TURN_START, 2)
 
     print("=== Turn 3: Enemy turn (defend should expire) ===")
     # Enemy's next turn - defend should expire
@@ -54,19 +59,15 @@ func test_defend_effect_timing() -> bool:
     player.process_status_effects()  # Start of player turn
     var enemy_defense_after := enemy.get_total_defense()
     print("Enemy defense after defend expired: %d" % enemy_defense_after)
-    print("Enemy has defend effect: %s" % enemy.has_status_effect("defend"))
+    if not assert_false(enemy.has_status_effect("defend"), "Defend effect should have expired by turn 4"):
+        return false
 
     # Simulate second player attack
     var final_damage_2 := enemy.calculate_incoming_damage(damage)
     print("Second attack damage: %d, final damage: %d" % [damage, final_damage_2])
 
     # Verify that first attack was defended but second was not
-    if final_damage >= final_damage_2:
-        push_error("First attack should have been more defended than second attack")
-        return false
-
-    if enemy.has_status_effect("defend"):
-        push_error("Defend effect should have expired by turn 4")
+    if not assert_true(final_damage < final_damage_2, "First attack (%d) should have been more defended than second attack (%d)" % [final_damage, final_damage_2]):
         return false
 
     print("✓ Defend effect timing test passed")

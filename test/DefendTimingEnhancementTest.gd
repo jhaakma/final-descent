@@ -34,11 +34,6 @@ func test_defend_effect_turn_start_timing() -> bool:
     if not assert_true(player.has_status_effect("defend"), "Defend effect should persist through first TURN_START"):
         return false
 
-    print("--- Processing TURN_END (should not expire) ---")
-    player.process_status_effects_at_timing(EffectTiming.Type.TURN_END, 1)
-    if not assert_true(player.has_status_effect("defend"), "Defend effect should persist after TURN_END"):
-        return false
-
     print("--- Processing TURN_START round 2 (should expire) ---")
     player.process_status_effects_at_timing(EffectTiming.Type.TURN_START, 2)
     if not assert_false(player.has_status_effect("defend"), "Defend effect should expire on second TURN_START"):

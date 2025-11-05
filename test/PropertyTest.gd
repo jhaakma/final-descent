@@ -30,15 +30,15 @@ func test_timing_property_basic() -> bool:
 func test_effect_timing_enum_values() -> bool:
     print("=== ENUM VALUES TEST ===")
     print("TURN_START: ", EffectTiming.Type.TURN_START)
-    print("TURN_END: ", EffectTiming.Type.TURN_END)
+    print("ROUND_END: ", EffectTiming.Type.ROUND_END)
 
     # Verify the enum values are as expected
     if EffectTiming.Type.TURN_START != 1:
         print("ERROR: TURN_START should be 1, got: ", EffectTiming.Type.TURN_START)
         return false
 
-    if EffectTiming.Type.TURN_END != 2:
-        print("ERROR: TURN_END should be 2, got: ", EffectTiming.Type.TURN_END)
+    if EffectTiming.Type.ROUND_END != 2:
+        print("ERROR: ROUND_END should be 2, got: ", EffectTiming.Type.ROUND_END)
         return false
 
     return true
