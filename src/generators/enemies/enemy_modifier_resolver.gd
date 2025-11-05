@@ -117,12 +117,6 @@ static func select_random_modifier() -> ModifierType:
     # Fallback to first available modifier
     return get_all_modifier_types()[0]
 
-static func can_apply_modifier_to_template(modifier_type: ModifierType, _template: EnemyTemplate) -> bool:
-    """Check if a modifier can be applied to a specific template"""
-    # Base implementation allows all modifiers on all templates
-    # Override this method to add specific restrictions
-    var _data := get_modifier_data(modifier_type)
-    return _data != null
 
 static func apply_modifier_to_enemy(modifier_type: ModifierType, enemy: EnemyResource) -> void:
     """Apply a modifier's effects to an enemy resource"""

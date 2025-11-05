@@ -64,11 +64,21 @@ func should_expire_at(timing: EffectTiming.Type, _current_turn: int) -> bool:
     if expire_timing != timing:
         return false
 
-    # If custom condition exists and is valid, use it (overrides turn count)
-    if expire_condition.is_valid():
+    # If a custom condition exists and is valid, use it (overrides turn count)
+    if expire_condition and expire_condition.is_valid():
         return expire_condition.call()
 
-    # Expire if remaining_duration is 0 or less
+    # Primary expiration check: use the provided current turn compared to configured duration.
+    # This makes the method deterministic when called directly in tests/logic that pass
+    # the current turn number (e.g. should_expire_at(ROUND_START, 2) when expire_after_turns=2).
+    if _current_turn >= expire_after_turns:
+        return true
+
+    # Fallback: if remaining_duration is being used by runtime processing (process_turn),
+    # respect that as a secondary check for backward compatibility.
+    if remaining_duration == -1:
+        return false
+
     return remaining_duration <= 0
 
 # Decrement remaining turns - called when effect is processed

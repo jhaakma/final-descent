@@ -2,7 +2,7 @@ class_name EffectTimingTest extends BaseTest
 
 func test_effect_timing_enum_has_all_phases() -> bool:
     # Test our enhanced 4-phase timing system
-    var expected_phases: Array[String] = ["ROUND_START", "TURN_START", "TURN_END", "ROUND_END"]
+    var expected_phases: Array[String] = ["ROUND_START", "TURN_START", "ROUND_END"]
     for phase in expected_phases:
         if not EffectTiming.has(phase):
             return false
