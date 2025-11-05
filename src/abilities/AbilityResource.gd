@@ -3,6 +3,8 @@ class_name AbilityResource extends Resource
 @export var ability_name: String = "Ability"
 @export var description: String = "A basic ability."
 @export var priority: int = 0  # Higher priority abilities are preferred in AI selection
+@export var log_action_player: String = ""  # Optional override for player action verb (e.g., "attack" instead of "use [ability_name]")
+@export var log_action_enemy: String = ""   # Optional override for enemy action verb (e.g., "attacks" or "breathes fire")
 
 # Types of abilities for categorization and AI decision making
 enum AbilityType {
@@ -49,3 +51,25 @@ func on_select(_instance: AbilityInstance, _caster: CombatEntity) -> void:
 # Called after ability execution for cleanup
 func on_complete(_instance: AbilityInstance, _caster: CombatEntity) -> void:
     pass
+
+# Helper method to get the action verb for logging
+# Returns [player_form, non_player_form] for use with {action} pattern in LogManager
+#
+# Default behavior (when log_action_player/enemy are empty):
+#   - "You use [ability_name] for X damage"
+#   - "[Enemy] uses [ability_name] for X damage"
+#
+# With action overrides set (e.g., log_action_player="attack", log_action_enemy="attacks"):
+#   - "You attack for X damage"
+#   - "[Enemy] attacks for X damage"
+#
+# For complex actions (e.g., log_action_player="breathe fire", log_action_enemy="breathes fire"):
+#   - "You breathe fire for X damage"
+#   - "[Enemy] breathes fire for X damage"
+func get_log_action_verb() -> Array:
+    if log_action_player != "" and log_action_enemy != "":
+        # Use explicit overrides
+        return [log_action_player, log_action_enemy]
+    else:
+        # Default to "use [ability_name]" / "uses [ability_name]"
+        return ["use %s" % ability_name, "uses %s" % ability_name]

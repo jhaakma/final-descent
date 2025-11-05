@@ -35,11 +35,11 @@ func execute(_instance: AbilityInstance, caster: CombatEntity, target: CombatEnt
     var final_damage := target.calculate_incoming_damage(damage, attack_damage_type)
     final_damage = target.take_damage(final_damage)
 
-    # Log the attack with new pattern-based approach
-    if status_effect != null:
-        LogManager.log_event("{You} {action} %s for {damage:%d}!" % [ability_name, final_damage], {"target": caster, "damage_type": attack_damage_type, "action": ["use", "uses"]})
-    else:
-        LogManager.log_event("{You} {action} for {damage:%d}!" % [final_damage], {"target": caster, "damage_type": attack_damage_type, "action": ["attack", "attacks"]})
+    # Log the attack using the action verb from the ability
+    var action_verb: Array = get_log_action_verb()
+    var log_message: String = "{You} {action} for {damage:%d}!" % [final_damage]
+
+    LogManager.log_event(log_message, {"target": caster, "damage_type": attack_damage_type, "action": action_verb})
 
     # Apply status effect if present and chance succeeds
     if status_effect != null and randf() < effect_chance:

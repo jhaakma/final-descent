@@ -40,6 +40,8 @@ static func _create_basic_attack() -> AbilityResource:
     ability.priority = 10
     ability.base_damage = 0  # Will use enemy's attack stat
     ability.damage_variance = 2
+    ability.log_action_player = "attack"
+    ability.log_action_enemy = "attacks"
     return ability
 
 ## Create basic strike ability
@@ -50,6 +52,8 @@ static func _create_basic_strike(level: int) -> AbilityResource:
     ability.priority = 8
     ability.base_damage = 2 + level
     ability.damage_variance = 2
+    ability.log_action_player = "strike"
+    ability.log_action_enemy = "strikes"
     return ability
 
 ## Create elemental strike ability
@@ -77,6 +81,9 @@ static func _create_breath_attack(
     ability.base_damage = 5 + (level * 2)
     ability.damage_variance = 3
     ability.damage_type = _get_damage_type(element_affinity)
+    ability.log_action_player = "breathe %s" % element_name.to_lower()
+    ability.log_action_enemy = "breathes %s" % element_name.to_lower()
+    ability._cooldown = 3
     return ability
 
 ## Create poison attack ability
@@ -88,7 +95,10 @@ static func _create_poison_attack(level: int) -> AbilityResource:
     ability.base_damage = 2 + level
     ability.damage_variance = 2
     ability.damage_type = DamageType.Type.POISON
+    ability.status_effect = ElementalTimedEffect.new(1, DamageType.Type.POISON, 4)
     return ability
+
+
 
 ## Create defend ability
 static func _create_defend_ability() -> AbilityResource:

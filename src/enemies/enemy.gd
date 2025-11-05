@@ -117,19 +117,6 @@ func perform_action() -> void:
         perform_planned_action()
 
 
-# === ABILITY SYSTEM HELPERS ===
-func get_available_abilities() -> Array[Ability]:
-    # Legacy method - get ability resources for backward compatibility
-    var abilities: Array[Ability] = []
-
-    # Add abilities from the new system if available
-    if resource.has_method("get_abilities"):
-        for ability_resource: AbilityResource in resource.get_abilities():
-            if ability_resource is Ability:
-                abilities.append(ability_resource as Ability)
-
-    return abilities
-
 func get_available_ability_instances() -> Array[AbilityInstance]:
     # Get ability instances that are available to use
     var available: Array[AbilityInstance] = []
