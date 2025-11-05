@@ -81,7 +81,7 @@ func _on_armor_selected(selected_armor: ItemInstance, enchantment: Enchantment, 
         if enchanted_armor.enchantment is ConstantEffectEnchantment:
             (enchanted_armor.enchantment as ConstantEffectEnchantment)._on_item_equipped(enchanted_armor)
 
-    LogManager.log_success("You have successfully enchanted your %s with %s." % [enchanted_armor.name, enchantment.get_enchantment_name()])
+    LogManager.log_success("You have successfully enchanted your %s with %s." % [selected_armor.item.name, enchantment.get_enchantment_name()])
     # Signal successful completion
     item_action_completed.emit(true, item_data)
 
