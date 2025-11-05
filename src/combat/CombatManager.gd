@@ -28,7 +28,6 @@ enum PlayerAction {
 var current_state: State = State.COMBAT_START
 var context: CombatContext
 var round_number: int = 1
-var turns_this_round: int = 0  # Track how many actors have acted this round
 
 func _init(combat_context: CombatContext) -> void:
     context = combat_context
@@ -36,62 +35,40 @@ func _init(combat_context: CombatContext) -> void:
 func start_combat() -> void:
     current_state = State.COMBAT_START
     round_number = 1
-    turns_this_round = 0
     combat_started.emit(context)
 
     # Process ROUND_START effects for new round
     _process_round_start_effects()
 
-    # Determine who goes first
-    if context.enemy_first:
-        transition_to_enemy_turn()
-    else:
-        transition_to_player_turn()
+    # Always start with player turn - they just skip if they failed to avoid
+    transition_to_player_turn()
 
 func transition_to_player_turn() -> void:
-
-
     if _can_transition_to(State.PLAYER_TURN):
         current_state = State.PLAYER_TURN
-
         player_turn_started.emit(context)
 
 func transition_to_enemy_turn() -> void:
     if _can_transition_to(State.ENEMY_TURN):
         current_state = State.ENEMY_TURN
-
-        # Process TURN_START effects for the enemy immediately
-        # (No UI delay for enemies - they act immediately)
-
-
         enemy_turn_started.emit(context)
 
 func end_current_turn() -> void:
     """Call this when an actor has finished their turn"""
-    turns_this_round += 1
-    print("DEBUG: Turn ended, turns_this_round = ", turns_this_round)
-
     # Check for combat end first
     if _check_combat_end_conditions():
         return
 
-
-    # If both actors have acted this round, end the round
-    if turns_this_round >= 2:
-        print("DEBUG: Round complete, transitioning to round end")
-        transition_to_round_end()
-    else:
-        # Continue to next actor's turn
-        if context.enemy.should_skip_turn():
-            # Enemy skips, count as their turn and potentially end round
-            turns_this_round += 1
-            if turns_this_round >= 2:
-                transition_to_round_end()
-            else:
-                # This shouldn't happen in a 2-actor system
-                transition_to_player_turn()
-        else:
+    # Explicit state-based transitions: PLAYER_TURN -> ENEMY_TURN -> ROUND_END
+    match current_state:
+        State.PLAYER_TURN:
+            # Player just acted, now it's enemy's turn
             transition_to_enemy_turn()
+        State.ENEMY_TURN:
+            # Enemy just acted, round is complete
+            transition_to_round_end()
+        _:
+            push_error("end_current_turn called in invalid state: %s" % current_state)
 
 func transition_to_round_end() -> void:
     if _can_transition_to(State.ROUND_END):
@@ -109,17 +86,13 @@ func transition_to_round_end() -> void:
 func _start_next_round() -> void:
     """Start a new round after the previous one has ended"""
     round_number += 1
-    turns_this_round = 0
     context.increment_turn()  # This tracks overall game turns
 
     # Process ROUND_START effects for new round
     _process_round_start_effects()
 
-    # Determine who goes first this round (could add initiative system here)
-    if context.enemy_first:
-        transition_to_enemy_turn()
-    else:
-        transition_to_player_turn()
+    # Always start with player turn (they can skip if needed)
+    transition_to_player_turn()
 
 
 

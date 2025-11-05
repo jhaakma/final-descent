@@ -26,8 +26,7 @@ var state_manager: CombatStateManager
 var combat_ui: CombatUIClass
 
 var enemy_resource: EnemyResource
-var enemy_first: bool = false
-var avoid_failure: bool = false
+var player_skips_first_turn: bool = false
 
 static func get_scene() -> PackedScene:
     return load("uid://jne75qvyltc6") as PackedScene  # Will need to create this scene
@@ -39,10 +38,11 @@ func set_enemy(enemy_res: EnemyResource) -> void:
         _initialize_combat()
 
 func set_enemy_first(value: bool) -> void:
-    enemy_first = value
+    # Deprecated - use set_avoid_failure instead
+    player_skips_first_turn = value
 
 func set_avoid_failure(value: bool) -> void:
-    avoid_failure = value
+    player_skips_first_turn = value
 
 func _ready() -> void:
     # Initialize combat if enemy resource is already set
@@ -60,7 +60,6 @@ func _initialize_combat() -> void:
     # Create new SOLID combat system components
     var current_enemy := Enemy.new(enemy_resource)
     combat_context = CombatContext.new(GameState.player, current_enemy, enemy_resource)
-    combat_context.enemy_first = enemy_first
 
     # Initialize state manager
     state_manager = CombatStateManager.new(combat_context)
@@ -80,12 +79,13 @@ func _initialize_combat() -> void:
     # Initialize combat display
     combat_ui.initialize_combat_display(combat_context)
 
-    # Handle enemy first mechanics
-    if enemy_first:
-        _handle_enemy_first_attack()
-    else:
-        # Start normal combat
-        state_manager.start_combat()
+    # Log avoid failure message if applicable
+    if player_skips_first_turn:
+        LogManager.log_event("{You} fail to avoid!", {"target": GameState.player})
+        LogManager.log_event("The {enemy:%s} strikes first!" % combat_context.enemy.get_name())
+
+    # Start combat - player turn will handle skipping if needed
+    state_manager.start_combat()
 
 func _setup_combat_ui() -> void:
     # Set up UI references for CombatUI component
@@ -114,22 +114,6 @@ func _connect_state_manager_signals() -> void:
     state_manager.round_ended.connect(_on_round_ended)
     state_manager.combat_ended.connect(_on_combat_ended)
 
-func _handle_enemy_first_attack() -> void:
-    # Disable buttons during the surprise attack
-    combat_ui.disable_actions()
-
-    if avoid_failure:
-        LogManager.log_event("{You} fail to avoid!", {"target": GameState.player})
-        LogManager.log_event("The {enemy:%s} strikes first!" % combat_context.enemy.get_name())
-    else:
-        LogManager.log_event("The {enemy:%s} strikes first!" % combat_context.enemy.get_name())
-
-    # Add a small delay before the enemy attack
-    get_tree().create_timer(0.5).timeout.connect(func()->void:
-        # Start combat with enemy turn
-        state_manager.start_combat()
-    )
-
 # Signal handlers for state manager
 func _on_combat_started(_context: CombatContext) -> void:
     # Combat has started, UI is already initialized
@@ -138,6 +122,18 @@ func _on_combat_started(_context: CombatContext) -> void:
 func _on_player_turn_started(_context: CombatContext) -> void:
     # Enable player actions and update UI
     combat_ui.update_display()
+
+    # Check if this is the first turn and player should skip due to avoid failure
+    if player_skips_first_turn and state_manager.get_current_round() == 1:
+        # Disable actions and automatically skip the player's turn
+        combat_ui.disable_actions()
+
+        # Wait a moment, then process enemy turn
+        get_tree().create_timer(0.5).timeout.connect(func()->void:
+            var result := state_manager.execute_player_action(CombatStateManager.PlayerAction.SKIP_TURN)
+            _handle_action_result(result)
+        )
+        return
 
     # Check if player should skip their turn (e.g., stunned)
     if combat_context.player.should_skip_turn():
