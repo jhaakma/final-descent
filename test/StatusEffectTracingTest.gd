@@ -37,7 +37,7 @@ func test_trace_status_effect_expiration() -> bool:
     debugger.call("trace_status_effect_expiration", effect, EffectTiming.Type.TURN_START)
 
     return (assert_equals(logged_messages.size(), 1, "Should log one message") and
-            assert_string_contains(logged_messages[0], "expired at 0", "Should contain timing information"))
+            assert_string_contains(logged_messages[0], "expired at 1", "Should contain timing information"))
 
 func test_get_active_effects_summary() -> bool:
     # This will fail until CombatDebugger is implemented
@@ -63,9 +63,9 @@ func test_get_active_effects_summary() -> bool:
     # Should contain effect information
     return (assert_string_contains(summary, "Active Effects", "Summary should contain header") and
             assert_string_contains(summary, "Poison", "Summary should contain poison effect") and
-            assert_string_contains(summary, "0", "Summary should contain timing information (TURN_START=0)") and
+            assert_string_contains(summary, "1", "Summary should contain timing information (TURN_START=1)") and
             assert_string_contains(summary, "Defend", "Summary should contain defend effect") and
-            assert_string_contains(summary, "3", "Summary should contain defend timing (TURN_END=3)"))
+            assert_string_contains(summary, "2", "Summary should contain defend timing (ROUND_END=2)"))
 
 func test_effect_expiration_timeline() -> bool:
     # This will fail until CombatDebugger is implemented
@@ -86,8 +86,8 @@ func test_effect_expiration_timeline() -> bool:
     # Should return an array of timeline entries
     return (assert_true(timeline is Array, "Timeline should be an array") and
             assert_true(timeline.size() > 0, "Timeline should not be empty") and
-            assert_string_contains(str(timeline), "Turn 1 3: Defend", "Timeline should show defend expiring at turn 1 with TURN_END(3)") and
-            assert_string_contains(str(timeline), "Turn 2 0: Poison", "Timeline should show poison expiring at turn 2 with TURN_START(0)"))
+            assert_string_contains(str(timeline), "Turn 1 2: Defend", "Timeline should show defend expiring at turn 1 with ROUND_END(2)") and
+            assert_string_contains(str(timeline), "Turn 2 1: Poison", "Timeline should show poison expiring at turn 2 with TURN_START(1)"))
 
 func test_debugger_logs_effect_application() -> bool:
     # This will fail until CombatDebugger is implemented

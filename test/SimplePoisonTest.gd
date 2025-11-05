@@ -6,8 +6,6 @@ func test_simple_poison() -> bool:
     # Load the actual poison effect resource
     var poison_effect_resource: ElementalTimedEffect = load("res://data/effects/PoisonEffect.tres")
     print("Poison effect loaded: ", poison_effect_resource)
-    print("Poison expire timing: ", poison_effect_resource.expire_timing)
-    print("Poison expire timing type: ", typeof(poison_effect_resource.expire_timing))
 
     # Create a combat entity
     var entity: CombatEntity = CombatEntity.new()

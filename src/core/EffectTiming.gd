@@ -6,8 +6,7 @@ class_name EffectTiming
 enum Type {
     ROUND_START = 0,   # Beginning of combat round, before any actor acts
     TURN_START = 1,    # Beginning of individual actor's turn, when they can take actions
-    _TURN_END = 2,      # End of individual turn, after an actor's actions
-    ROUND_END = 3      # End of combat round, after all actors have acted
+    ROUND_END = 2      # End of combat round, after all actors have acted
 }
 
 ## Check if the enum has a specific phase name

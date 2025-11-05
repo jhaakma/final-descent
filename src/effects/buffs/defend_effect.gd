@@ -4,7 +4,6 @@ class_name DefendEffect extends StatBoostEffect
 
 func _init(defense_value: int = 50) -> void:
     defense_bonus = defense_value
-    expire_timing = EffectTiming.Type.TURN_START
     expire_after_turns = 1  # Lasts through current turn and expires on next player TURN_START
 
 func get_effect_id() -> String:
@@ -26,4 +25,9 @@ func get_defense_bonus() -> int:
     return defense_bonus
 
 func get_description() -> String:
-    return "+%d DEF for %d turns (defending)" % [defense_bonus, get_remaining_turns()]
+    return "+%d DEF for %d turns (defending)" % [defense_bonus, expire_after_turns]
+
+func get_description_with_instance(instance: EffectInstance) -> String:
+    if instance:
+        return "+%d DEF for %d turns (defending)" % [defense_bonus, instance.get_remaining_turns()]
+    return get_description()

@@ -78,9 +78,9 @@ func test_state_transitions() -> bool:
         push_error("Should transition to ENEMY_TURN after player turn end")
         return false
 
-    # End enemy turn - since both actors have acted, should go to ROUND_END
+    # End enemy turn - since both actors have acted, should go to TURN_START
     state_manager.end_current_turn()
-    # After ROUND_END processing, it should automatically start next round (player turn)
+    # After TURN_START processing, it should automatically start next round (player turn)
     if state_manager.get_current_state() != CombatStateManager.State.PLAYER_TURN:
         push_error("Should transition to PLAYER_TURN for next round after both turns completed")
         return false

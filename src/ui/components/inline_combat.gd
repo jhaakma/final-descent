@@ -138,7 +138,20 @@ func _on_combat_started(_context: CombatContext) -> void:
 func _on_player_turn_started(_context: CombatContext) -> void:
     # Enable player actions and update UI
     combat_ui.update_display()
-    combat_ui.enable_actions()
+
+    # Check if player should skip their turn (e.g., stunned)
+    if combat_context.player.should_skip_turn():
+        # Disable actions and show skip message
+        combat_ui.disable_actions()
+        LogManager.log_event("{You} are stunned and skip {your} turn!", {"target": combat_context.player})
+
+        # Wait a second, then automatically end the player's turn
+        get_tree().create_timer(1.0).timeout.connect(func()->void:
+            var result := state_manager.execute_player_action(CombatStateManager.PlayerAction.SKIP_TURN)
+            _handle_action_result(result)
+        )
+    else:
+        combat_ui.enable_actions()
 
 func _on_enemy_turn_started(_context: CombatContext) -> void:
     # Disable player actions, update UI, and process enemy turn
@@ -164,17 +177,13 @@ func _process_enemy_turn() -> void:
     if combat_context.enemy.should_skip_turn():
         LogManager.log_event("{enemy:%s} is stunned and skips their turn!" % combat_context.enemy.get_name())
         # End enemy's turn (will be handled by the round system)
-        state_manager.end_current_turn()
         return
-
-    # Process enemy status effects at start of their turn
-    # Note: Status effects are now processed by CombatStateManager at proper timing phases
 
     if combat_context.enemy.is_alive():
         # Execute enemy action
         combat_context.enemy.perform_action()
-        # End enemy's turn
-        state_manager.end_current_turn()
+    # End enemy's turn
+    state_manager.end_current_turn()
 
 # Combat action handlers (called by CombatUI)
 func _on_attack() -> void:
@@ -188,6 +197,8 @@ func _on_defend() -> void:
 func _on_flee() -> void:
     var result := state_manager.execute_player_action(CombatStateManager.PlayerAction.FLEE)
     _handle_action_result(result)
+
+
 
 func _handle_action_result(result: ActionResult) -> void:
     match result.action_type:

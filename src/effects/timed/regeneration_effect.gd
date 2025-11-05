@@ -25,7 +25,12 @@ func apply_effect(target: CombatEntity) -> bool:
     return true
 
 func get_description() -> String:
-    return "+%d HP for %d turns" % [healing_per_turn, get_remaining_turns()]
+    return "+%d HP for %d turns" % [healing_per_turn, expire_after_turns]
+
+func get_description_with_instance(instance: EffectInstance) -> String:
+    if instance:
+        return "+%d HP for %d turns" % [healing_per_turn, instance.get_remaining_turns()]
+    return get_description()
 
 func get_base_description() -> String:
     return "+%d HP for %d turns" % [healing_per_turn, expire_after_turns]

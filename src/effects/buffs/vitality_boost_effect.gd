@@ -21,7 +21,12 @@ func get_max_hp_bonus() -> int:
     return max_hp_bonus
 
 func get_description() -> String:
-    return "+%d MAX HP for %d turns" % [max_hp_bonus, get_remaining_turns()]
+    return "+%d MAX HP for %d turns" % [max_hp_bonus, expire_after_turns]
+
+func get_description_with_instance(instance: EffectInstance) -> String:
+    if instance:
+        return "+%d MAX HP for %d turns" % [max_hp_bonus, instance.get_remaining_turns()]
+    return get_description()
 
 func get_base_description() -> String:
     return "+%d MAX HP for %d turns" % [max_hp_bonus, expire_after_turns]

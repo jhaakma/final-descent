@@ -1,15 +1,9 @@
 class_name TimedEffect extends RemovableStatusEffect
 
-# New timing system properties - marked as @export to preserve during duplication
-@export var expire_timing: EffectTiming.Type = EffectTiming.Type.ROUND_END  # When during combat this effect should expire
-@export var expire_after_turns: int = 1  # Original duration (never changes)
-@export var expire_condition: Callable  # Optional custom expiration condition
-@export var applied_turn: int = 0  # (Legacy, not used with new duration logic)
+# Immutable effect configuration - these define the effect template
+@export var expire_after_turns: int = 1  # Base duration (never changes - immutable)
 
-# Instance variable for tracking remaining duration (not exported, so not saved in resources)
-var remaining_duration: int = -1  # -1 means not initialized yet
-
-# Get descriptive text for UI
+# Get descriptive text for UI (base description with default duration)
 # Subclasses should override this to provide magnitude, unit and turns
 func get_description() -> String:
     print_debug("get_description() not implemented in TimedEffect subclass: %s" % get_class())
@@ -18,77 +12,32 @@ func get_description() -> String:
 func get_base_description() -> String:
     return "%s for %d turns" % [get_effect_name(), expire_after_turns]
 
+# Get description with runtime instance data (remaining turns)
+# Subclasses should override this for custom descriptions
+func get_description_with_instance(instance: EffectInstance) -> String:
+    if instance:
+        return "%s (%d turns)" % [get_effect_name(), instance.get_remaining_turns()]
+    return get_description()
+
 func get_duration() -> int:
     return expire_after_turns
 
-func get_remaining_turns() -> int:
-    # If not initialized yet, return the original duration
-    if remaining_duration == -1:
-        return expire_after_turns
-    return remaining_duration
 
 # For TimedEffect, magnitude represents the duration/turns
 func get_magnitude() -> int:
     return expire_after_turns
 
-# Initialize the effect with its duration
-func initialize() -> void:
-    # Initialize remaining duration if not already set
-    if remaining_duration == -1:
-        remaining_duration = expire_after_turns
-
-# New timing system methods
+# Timing system methods - getters for immutable configuration
 func get_expire_timing() -> EffectTiming.Type:
-    return expire_timing
+    return EffectTiming.Type.TURN_START
 
-func set_expire_timing(timing: EffectTiming.Type) -> void:
-    expire_timing = timing
 
 func get_expire_after_turns() -> int:
     return expire_after_turns
 
 func set_expire_after_turns(turns: int) -> void:
     expire_after_turns = turns
-    # Also reset remaining duration to the new value
-    remaining_duration = turns
 
-func get_expire_condition() -> Callable:
-    return expire_condition
-
-func set_expire_condition(condition: Callable) -> void:
-    expire_condition = condition
-
-# Check if this effect should expire at the given timing and turn
-func should_expire_at(timing: EffectTiming.Type, _current_turn: int) -> bool:
-    # Check timing first
-    if expire_timing != timing:
-        return false
-
-    # If a custom condition exists and is valid, use it (overrides turn count)
-    if expire_condition and expire_condition.is_valid():
-        return expire_condition.call()
-
-    # Primary expiration check: use the provided current turn compared to configured duration.
-    # This makes the method deterministic when called directly in tests/logic that pass
-    # the current turn number (e.g. should_expire_at(ROUND_START, 2) when expire_after_turns=2).
-    if _current_turn >= expire_after_turns:
-        return true
-
-    # Fallback: if remaining_duration is being used by runtime processing (process_turn),
-    # respect that as a secondary check for backward compatibility.
-    if remaining_duration == -1:
-        return false
-
-    return remaining_duration <= 0
-
-# Decrement remaining turns - called when effect is processed
-func process_turn() -> void:
-    # Ensure we're initialized
-    if remaining_duration == -1:
-        remaining_duration = expire_after_turns
-
-    if remaining_duration > 0:
-        remaining_duration -= 1
 
 # Called when the effect is first applied to an entity
 func on_applied(_target: CombatEntity) -> void:
@@ -105,12 +54,19 @@ func should_store_in_active_conditions() -> bool:
 # Override: Handle refreshing duration when same timed effect is applied
 func handle_existing_condition(_component: StatusEffectComponent, new_condition: StatusCondition, existing_condition: StatusCondition, target: CombatEntity) -> bool:
     var new_effect := new_condition.status_effect as TimedEffect
-    var existing_effect := existing_condition.status_effect as TimedEffect
 
-    # If the new effect has longer duration, refresh it
-    if existing_effect.get_expire_after_turns() < new_effect.get_expire_after_turns():
-        existing_effect.set_expire_after_turns(new_effect.get_expire_after_turns())
-        LogManager.log_event("{You are} {effect_verb} with {effect:%s} (%d turns)!" % [existing_condition.get_log_name(), new_effect.get_expire_after_turns()], {"target": target, "status_effect": existing_condition.status_effect})
+    # Compare durations from the immutable effects
+    var new_duration := new_effect.get_expire_after_turns()
+    var existing_instance := existing_condition.effect_instance
+
+    if not existing_instance:
+        push_error("Existing condition missing effect instance")
+        return false
+
+    # If the new effect has longer duration, refresh the instance
+    if existing_instance.get_remaining_turns() < new_duration:
+        existing_instance.set_duration(new_duration)
+        LogManager.log_event("{You are} {effect_verb} with {effect:%s} (%d turns)!" % [existing_condition.get_log_name(), new_duration], {"target": target, "status_effect": existing_condition.status_effect})
         return true
     else:
         LogManager.log_event("{You are} already affected by %s." % existing_condition.name, {"target": target})
@@ -118,8 +74,11 @@ func handle_existing_condition(_component: StatusEffectComponent, new_condition:
 
 # Override: Handle applying new timed effect
 func handle_new_condition(component: StatusEffectComponent, condition: StatusCondition, target: CombatEntity) -> bool:
+    # Ensure the condition has an effect instance
+    if not condition.effect_instance:
+        condition.effect_instance = EffectInstance.new(condition.status_effect)
+
     component.active_conditions[condition.name] = condition
-    initialize()
 
     # Call lifecycle method
     on_applied(target)

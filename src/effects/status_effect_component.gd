@@ -33,9 +33,9 @@ func apply_status_condition(_condition: StatusCondition, effect_target: CombatEn
     var condition := _condition.make_unique()
     var effect := condition.status_effect
 
-    # Set applied_turn if this is a TimedEffect and a turn is provided
-    if applied_turn > 0 and effect is TimedEffect:
-        (effect as TimedEffect).applied_turn = applied_turn
+    # Set applied_turn on the instance if provided
+    if applied_turn > 0 and condition.effect_instance:
+        condition.effect_instance.applied_turn = applied_turn
 
     # Use polymorphic application handling
     return effect.handle_application(self, condition, effect_target)
@@ -136,6 +136,12 @@ func process_status_effects_at_timing(timing: EffectTiming.Type, current_turn: i
         # Apply timed effects at their designated timing
         if effect is TimedEffect:
             var timed_effect := effect as TimedEffect
+            var instance := condition.effect_instance
+
+            if not instance:
+                push_error("TimedEffect condition missing effect instance: " + condition_id)
+                continue
+
             print("DEBUG: TimedEffect - expire timing: ", timed_effect.get_expire_timing(), ", current timing: ", timing)
 
             # Apply the effect if this is the correct timing
@@ -143,15 +149,15 @@ func process_status_effects_at_timing(timing: EffectTiming.Type, current_turn: i
                 print("DEBUG: Timing matches! Applying effect")
                 timed_effect.apply_effect(target)
                 # Decrement turns after applying the effect
-                timed_effect.process_turn()
-                print("DEBUG: Remaining turns after processing: ", timed_effect.get_remaining_turns())
+                instance.process_turn()
+                print("DEBUG: Remaining turns after processing: ", instance.get_remaining_turns())
                 # Emit signal for UI updates when effect is processed (duration changed)
                 effect_processed.emit(condition_id, true)
             else:
                 print("DEBUG: Timing doesn't match, skipping apply_effect")
 
             # Check if this effect should expire at this timing and turn
-            if timed_effect.should_expire_at(timing, current_turn):
+            if instance.should_expire_at(timing, current_turn):
                 print("DEBUG: Effect should expire, adding to removal list")
                 conditions_to_remove.append(condition)
             else:
@@ -185,16 +191,22 @@ func process_all_timed_effects(target: CombatEntity) -> void:
         # Process all timed effects
         if effect is TimedEffect:
             var timed_effect := effect as TimedEffect
-            print("DEBUG: Processing timed effect: ", condition_id, " (", timed_effect.get_remaining_turns(), " turns remaining)")
+            var instance := condition.effect_instance
+
+            if not instance:
+                push_error("TimedEffect condition missing effect instance: " + condition_id)
+                continue
+
+            print("DEBUG: Processing timed effect: ", condition_id, " (", instance.get_remaining_turns(), " turns remaining)")
 
             # Apply the effect
             timed_effect.apply_effect(target)
             # Decrement turns after applying the effect
-            timed_effect.process_turn()
-            print("DEBUG: Remaining turns after processing: ", timed_effect.get_remaining_turns())
+            instance.process_turn()
+            print("DEBUG: Remaining turns after processing: ", instance.get_remaining_turns())
 
             # Check if effect should now expire (0 or negative turns)
-            if timed_effect.get_remaining_turns() <= 0:
+            if instance.get_remaining_turns() <= 0:
                 print("DEBUG: Effect expired, adding to removal list")
                 conditions_to_remove.append(condition)
 
@@ -223,7 +235,7 @@ func get_all_conditions() -> Array[StatusCondition]:
 func get_effects_description() -> String:
     var descriptions: Array[String] = []
     for condition in get_all_conditions():
-        descriptions.append(condition.status_effect.get_description())
+        descriptions.append(condition.get_description())
     return ", ".join(descriptions)
 
 # Clear all status conditions

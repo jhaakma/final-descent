@@ -8,7 +8,7 @@
 script = ExtResource("2_h8ec8")
 damage_per_turn = 2
 elemental_type = 3
-expire_timing = 3
+expire_timing = 2
 expire_after_turns = 1
 expire_condition = Callable()
 applied_turn = 0

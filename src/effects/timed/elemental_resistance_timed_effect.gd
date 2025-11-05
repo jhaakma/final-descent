@@ -24,7 +24,13 @@ func on_removed(target: CombatEntity) -> void:
 
 func get_description() -> String:
     var type_name := DamageType.get_type_name(elemental_type)
-    return "%s resistance for %d turns" % [type_name, get_remaining_turns()]
+    return "%s resistance for %d turns" % [type_name, expire_after_turns]
+
+func get_description_with_instance(instance: EffectInstance) -> String:
+    if instance:
+        var type_name := DamageType.get_type_name(elemental_type)
+        return "%s resistance for %d turns" % [type_name, instance.get_remaining_turns()]
+    return get_description()
 
 func get_base_description() -> String:
     var type_name := DamageType.get_type_name(elemental_type)

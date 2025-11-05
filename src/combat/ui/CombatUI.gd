@@ -64,10 +64,7 @@ func update_display() -> void:
 
 func enable_actions() -> void:
     ## Enable action buttons for player turn
-    if not context or not context.player.should_skip_turn():
-        _set_buttons_enabled(true)
-    else:
-        _handle_player_turn_skip()
+    _set_buttons_enabled(true)
 
 func disable_actions() -> void:
     ## Disable action buttons (e.g., during enemy turn)
@@ -90,15 +87,10 @@ func _set_buttons_enabled(enabled: bool) -> void:
     if flee_btn:
         flee_btn.disabled = not enabled
 
-func _handle_player_turn_skip() -> void:
-    _set_buttons_enabled(false)
-    LogManager.log_event("{You} are stunned and skip {your} turn!", {"target": context.player})
-
 func _update_button_states() -> void:
-    if context and context.player.should_skip_turn():
-        _set_buttons_enabled(false)
-    else:
-        _set_buttons_enabled(true)
+    # Button states are now controlled by enable_actions() and disable_actions()
+    # which are called from InlineCombat based on game state
+    pass
 
 func _on_player_stats_changed() -> void:
     ## Reactive callback when player stats change - updates UI automatically

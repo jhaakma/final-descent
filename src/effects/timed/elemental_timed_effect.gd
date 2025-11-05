@@ -32,7 +32,12 @@ func apply_effect(target: CombatEntity) -> bool:
     return true
 
 func get_description() -> String:
-    return "%d %s damage for %d turns" % [damage_per_turn, DamageType.get_type_name(elemental_type), get_remaining_turns()]
+    return "%d %s damage for %d turns" % [damage_per_turn, DamageType.get_type_name(elemental_type), expire_after_turns]
+
+func get_description_with_instance(instance: EffectInstance) -> String:
+    if instance:
+        return "%d %s damage for %d turns" % [damage_per_turn, DamageType.get_type_name(elemental_type), instance.get_remaining_turns()]
+    return get_description()
 
 func get_base_description() -> String:
     return "%d %s damage for %d turns" % [damage_per_turn, DamageType.get_type_name(elemental_type), expire_after_turns]

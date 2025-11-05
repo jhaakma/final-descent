@@ -9,7 +9,6 @@ func test_elemental_timed_effect_description() -> bool:
     poison_effect.damage_per_turn = 2
     poison_effect.elemental_type = DamageType.Type.POISON
     poison_effect.expire_after_turns = 3
-    poison_effect.initialize()
 
     var expected: String = "2 Poison damage for 3 turns"
     var actual: String = poison_effect.get_description()
@@ -21,7 +20,6 @@ func test_attack_boost_description() -> bool:
     var attack_boost: AttackBoostEffect = AttackBoostEffect.new()
     attack_boost.attack_bonus = 2
     attack_boost.expire_after_turns = 10
-    attack_boost.initialize()
 
     var expected: String = "+2 ATK for 10 turns"
     var actual: String = attack_boost.get_description()
@@ -33,7 +31,6 @@ func test_regeneration_description() -> bool:
     var regen_effect: RegenerationEffect = RegenerationEffect.new()
     regen_effect.healing_per_turn = 2
     regen_effect.expire_after_turns = 5
-    regen_effect.initialize()
 
     var expected: String = "+2 HP for 5 turns"
     var actual: String = regen_effect.get_description()
@@ -45,7 +42,6 @@ func test_vitality_boost_description() -> bool:
     var vitality_boost: VitalityBoostEffect = VitalityBoostEffect.new()
     vitality_boost.max_hp_bonus = 5  # Matches BlessingOfVitality.tres
     vitality_boost.expire_after_turns = 10
-    vitality_boost.initialize()
 
     var expected: String = "+5 MAX HP for 10 turns"
     var actual: String = vitality_boost.get_description()
@@ -77,7 +73,6 @@ func test_instant_damage_description() -> bool:
 func test_stun_effect_description() -> bool:
     var stun_effect: StunEffect = StunEffect.new()
     stun_effect.expire_after_turns = 2
-    stun_effect.initialize()
 
     var expected: String = "Stunned for 2 turns"
     var actual: String = stun_effect.get_description()

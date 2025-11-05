@@ -9,10 +9,10 @@ func test_effect_timing_enum_has_all_phases() -> bool:
     return true
 
 func test_timing_phases_have_correct_values() -> bool:
-    # Ensure enum values are assigned correctly for our 4-phase system
+    # Ensure enum values are assigned correctly for our 3-phase system
     return assert_equals(EffectTiming.Type.ROUND_START, 0) and \
            assert_equals(EffectTiming.Type.TURN_START, 1) and \
-           assert_equals(EffectTiming.Type.ROUND_END, 3)
+           assert_equals(EffectTiming.Type.ROUND_END, 2)
 
 func test_timing_phases_are_ordered_correctly() -> bool:
     # Verify that our enhanced timing phases follow logical chronological order

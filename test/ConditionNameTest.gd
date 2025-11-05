@@ -7,7 +7,6 @@ func test_condition_name_vs_effect_id() -> bool:
     # Create the exact same setup as the integration test
     var player := TestCombatEntity.new()
     var poison := TestPoisonEffect.new()
-    poison.set_expire_timing(EffectTiming.Type.TURN_START)
     poison.set_expire_after_turns(2)
 
     print("Before application:")

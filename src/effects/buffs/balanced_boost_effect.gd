@@ -26,7 +26,12 @@ func get_defense_bonus() -> int:
     return defense_bonus
 
 func get_description() -> String:
-    return "+%d ATK, +%d DEF for %d turns" % [attack_bonus, defense_bonus, get_remaining_turns()]
+    return "+%d ATK, +%d DEF for %d turns" % [attack_bonus, defense_bonus, expire_after_turns]
+
+func get_description_with_instance(instance: EffectInstance) -> String:
+    if instance:
+        return "+%d ATK, +%d DEF for %d turns" % [attack_bonus, defense_bonus, instance.get_remaining_turns()]
+    return get_description()
 
 func get_base_description() -> String:
     return "+%d ATK, +%d DEF for %d turns" % [attack_bonus, defense_bonus, expire_after_turns]

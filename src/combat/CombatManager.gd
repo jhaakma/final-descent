@@ -21,7 +21,8 @@ enum PlayerAction {
     ATTACK,
     DEFEND,
     FLEE,
-    ITEM_USE
+    ITEM_USE,
+    SKIP_TURN
 }
 
 var current_state: State = State.COMBAT_START
@@ -48,11 +49,10 @@ func start_combat() -> void:
         transition_to_player_turn()
 
 func transition_to_player_turn() -> void:
+
+
     if _can_transition_to(State.PLAYER_TURN):
         current_state = State.PLAYER_TURN
-
-        # Don't process TURN_START effects here - wait for player action
-        # This allows player to see their status effects before they expire
 
         player_turn_started.emit(context)
 
@@ -62,7 +62,7 @@ func transition_to_enemy_turn() -> void:
 
         # Process TURN_START effects for the enemy immediately
         # (No UI delay for enemies - they act immediately)
-        _process_turn_start_effects(context.enemy)
+
 
         enemy_turn_started.emit(context)
 
@@ -75,13 +75,23 @@ func end_current_turn() -> void:
     if _check_combat_end_conditions():
         return
 
+
     # If both actors have acted this round, end the round
     if turns_this_round >= 2:
         print("DEBUG: Round complete, transitioning to round end")
         transition_to_round_end()
     else:
         # Continue to next actor's turn
-        _continue_to_next_actor()
+        if context.enemy.should_skip_turn():
+            # Enemy skips, count as their turn and potentially end round
+            turns_this_round += 1
+            if turns_this_round >= 2:
+                transition_to_round_end()
+            else:
+                # This shouldn't happen in a 2-actor system
+                transition_to_player_turn()
+        else:
+            transition_to_enemy_turn()
 
 func transition_to_round_end() -> void:
     if _can_transition_to(State.ROUND_END):
@@ -111,34 +121,7 @@ func _start_next_round() -> void:
     else:
         transition_to_player_turn()
 
-func _continue_to_next_actor() -> void:
-    """Continue to the next actor's turn within the current round"""
-    match current_state:
-        State.PLAYER_TURN:
-            # Player finished, now enemy's turn (if not skipping)
-            if context.enemy.should_skip_turn():
-                # Enemy skips, count as their turn and potentially end round
-                turns_this_round += 1
-                if turns_this_round >= 2:
-                    transition_to_round_end()
-                else:
-                    # This shouldn't happen in a 2-actor system
-                    transition_to_player_turn()
-            else:
-                transition_to_enemy_turn()
 
-        State.ENEMY_TURN:
-            # Enemy finished, now player's turn (if not skipping)
-            if context.player.should_skip_turn():
-                # Player skips, count as their turn and potentially end round
-                turns_this_round += 1
-                if turns_this_round >= 2:
-                    transition_to_round_end()
-                else:
-                    # This shouldn't happen in a 2-actor system
-                    transition_to_enemy_turn()
-            else:
-                transition_to_player_turn()
 
 func _process_turn_start_effects(actor: CombatEntity) -> void:
     """Process effects that trigger at the start of an individual actor's turn"""
@@ -215,6 +198,7 @@ func execute_player_action(action: PlayerAction) -> ActionResult:
     # Process TURN_START effects when player clicks action, not when buttons are enabled
     # This gives player time to see their status effects before they expire
     _process_turn_start_effects(context.player)
+    _process_turn_start_effects(context.enemy)
 
     var result: ActionResult
 
@@ -227,6 +211,8 @@ func execute_player_action(action: PlayerAction) -> ActionResult:
             result = _execute_flee()
         PlayerAction.ITEM_USE:
             result = _execute_item_use()
+        PlayerAction.SKIP_TURN:
+            result = ActionResult.create_skip_turn()
         _:
             result = ActionResult.new()  # Default fallback
 
