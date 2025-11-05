@@ -109,7 +109,6 @@ func test_signal_emissions() -> bool:
     # Use a signal tracker class to avoid lambda typing issues
     var tracker := SignalTracker.new()
 
-    state_manager.state_changed.connect(tracker.on_state_changed)
     state_manager.combat_started.connect(tracker.on_combat_started)
     state_manager.player_turn_started.connect(tracker.on_player_turn_started)
     state_manager.enemy_turn_started.connect(tracker.on_enemy_turn_started)

@@ -1,8 +1,8 @@
 class_name PlayerTurnProcessorTest extends BaseTest
-## Tests for PlayerTurnProcessor logic
+## Tests for CombatStateManager player action logic
 
 func test_player_turn_processor_attack() -> bool:
-    print("Testing PlayerTurnProcessor attack action...")
+    print("Testing CombatStateManager attack action...")
 
     # Create test setup
     var player := Player.new()
@@ -14,13 +14,13 @@ func test_player_turn_processor_attack() -> bool:
     var enemy := Enemy.new(enemy_resource)
     var context := CombatContext.new(player, enemy, enemy_resource)
 
-    var processor := PlayerTurnProcessor.new()
+    var state_manager := CombatStateManager.new(context)
 
     # Record initial enemy HP
     var initial_enemy_hp := enemy.get_current_hp()
 
     # Execute attack
-    var result := processor.execute_action(PlayerTurnProcessor.PlayerAction.ATTACK, context)
+    var result := state_manager.execute_player_action(CombatStateManager.PlayerAction.ATTACK)
 
     # Verify result type and success
     if result.action_type != ActionResult.ActionType.ATTACK:
@@ -53,11 +53,11 @@ func test_player_turn_processor_attack() -> bool:
         push_error("Result damage should match actual damage dealt")
         return false
 
-    print("✓ PlayerTurnProcessor attack test passed")
+    print("✓ CombatStateManager attack test passed")
     return true
 
 func test_player_turn_processor_defend() -> bool:
-    print("Testing PlayerTurnProcessor defend action...")
+    print("Testing CombatStateManager defend action...")
 
     # Create test setup
     var player := Player.new()
@@ -67,10 +67,10 @@ func test_player_turn_processor_defend() -> bool:
     var enemy := Enemy.new(enemy_resource)
     var context := CombatContext.new(player, enemy, enemy_resource)
 
-    var processor := PlayerTurnProcessor.new()
+    var state_manager := CombatStateManager.new(context)
 
     # Execute defend
-    var result := processor.execute_action(PlayerTurnProcessor.PlayerAction.DEFEND, context)
+    var result := state_manager.execute_player_action(CombatStateManager.PlayerAction.DEFEND)
 
     # Verify result type and success
     if result.action_type != ActionResult.ActionType.DEFEND:
@@ -94,15 +94,15 @@ func test_player_turn_processor_defend() -> bool:
         return false
 
     # Verify player has defend effect (this tests the DefendAbility integration)
-    if not player.has_status_effect("Defending"):
+    if not player.has_status_effect("defend"):
         push_error("Player should have defend status effect after defending")
         return false
 
-    print("✓ PlayerTurnProcessor defend test passed")
+    print("✓ CombatStateManager defend test passed")
     return true
 
 func test_player_turn_processor_flee_success() -> bool:
-    print("Testing PlayerTurnProcessor flee success...")
+    print("Testing CombatStateManager flee success...")
 
     # Create test setup with guaranteed flee success
     var player := Player.new()
@@ -113,10 +113,10 @@ func test_player_turn_processor_flee_success() -> bool:
     var enemy := Enemy.new(enemy_resource)
     var context := CombatContext.new(player, enemy, enemy_resource)
 
-    var processor := PlayerTurnProcessor.new()
+    var state_manager := CombatStateManager.new(context)
 
     # Execute flee
-    var result := processor.execute_action(PlayerTurnProcessor.PlayerAction.FLEE, context)
+    var result := state_manager.execute_player_action(CombatStateManager.PlayerAction.FLEE)
 
     # Verify result type and success
     if result.action_type != ActionResult.ActionType.FLEE:
@@ -139,11 +139,11 @@ func test_player_turn_processor_flee_success() -> bool:
         push_error("Successful flee should set combat_fled to true")
         return false
 
-    print("✓ PlayerTurnProcessor flee success test passed")
+    print("✓ CombatStateManager flee success test passed")
     return true
 
 func test_player_turn_processor_flee_failure() -> bool:
-    print("Testing PlayerTurnProcessor flee failure...")
+    print("Testing CombatStateManager flee failure...")
 
     # Create test setup with guaranteed flee failure
     var player := Player.new()
@@ -154,10 +154,10 @@ func test_player_turn_processor_flee_failure() -> bool:
     var enemy := Enemy.new(enemy_resource)
     var context := CombatContext.new(player, enemy, enemy_resource)
 
-    var processor := PlayerTurnProcessor.new()
+    var state_manager := CombatStateManager.new(context)
 
     # Execute flee
-    var result := processor.execute_action(PlayerTurnProcessor.PlayerAction.FLEE, context)
+    var result := state_manager.execute_player_action(CombatStateManager.PlayerAction.FLEE)
 
     # Verify result type and failure
     if result.action_type != ActionResult.ActionType.FLEE:
@@ -180,11 +180,11 @@ func test_player_turn_processor_flee_failure() -> bool:
         push_error("Failed flee should not set combat_fled to true")
         return false
 
-    print("✓ PlayerTurnProcessor flee failure test passed")
+    print("✓ CombatStateManager flee failure test passed")
     return true
 
 func test_player_turn_processor_can_process_turn() -> bool:
-    print("Testing PlayerTurnProcessor can_process_turn...")
+    print("Testing player turn processing conditions...")
 
     # Create test setup
     var player := Player.new()
@@ -194,67 +194,32 @@ func test_player_turn_processor_can_process_turn() -> bool:
     var enemy := Enemy.new(enemy_resource)
     var context := CombatContext.new(player, enemy, enemy_resource)
 
-    var processor := PlayerTurnProcessor.new()
-
-    # Test normal conditions - should be able to process
-    if not processor.can_process_turn(context):
-        push_error("Should be able to process turn under normal conditions")
+    # Test normal conditions - player is alive and not stunned
+    if not context.is_player_alive():
+        push_error("Player should be alive under normal conditions")
         return false
 
-    # Test dead player - should not be able to process
+    if player.should_skip_turn():
+        push_error("Player should not skip turn under normal conditions")
+        return false
+
+    # Test dead player
     player.take_damage(1000)  # Kill player
-    if processor.can_process_turn(context):
-        push_error("Should not be able to process turn when player is dead")
+    if context.is_player_alive():
+        push_error("Player should be dead after taking lethal damage")
         return false
 
     # Reset player and test stunned player
     player.heal(1000)  # Revive player
 
-    # Apply stun effect to player (this tests the integration with status effects)
+    # Apply stun effect to player
     var stun_effect := StunEffect.new()
     stun_effect.set_expire_after_turns(1)
     player.apply_status_effect(stun_effect)
 
-    if processor.can_process_turn(context):
-        push_error("Should not be able to process turn when player is stunned")
+    if not player.should_skip_turn():
+        push_error("Player should skip turn when stunned")
         return false
 
-    print("✓ PlayerTurnProcessor can_process_turn test passed")
-    return true
-
-func test_player_turn_processor_signal_emission() -> bool:
-    print("Testing PlayerTurnProcessor signal emission...")
-
-    # Create test setup
-    var player := Player.new()
-    var enemy_resource := EnemyResource.new()
-    enemy_resource.name = "Test Goblin"
-    enemy_resource.max_hp = 100
-    var enemy := Enemy.new(enemy_resource)
-    var context := CombatContext.new(player, enemy, enemy_resource)
-
-    var processor := PlayerTurnProcessor.new()
-
-    # Track signal emission
-    var signal_received := [false]
-    var received_result := [null]
-
-    processor.turn_action_executed.connect(func(action_result)->void:
-        signal_received[0] = true
-        received_result[0] = action_result
-    )
-
-    # Execute action
-    var result := processor.execute_action(PlayerTurnProcessor.PlayerAction.ATTACK, context)
-
-    # Verify signal was emitted
-    if not signal_received[0]:
-        push_error("turn_action_executed signal should have been emitted")
-        return false
-
-    if received_result[0] != result:
-        push_error("Signal should have passed the same ActionResult")
-        return false
-
-    print("✓ PlayerTurnProcessor signal emission test passed")
+    print("✓ Player turn processing conditions test passed")
     return true

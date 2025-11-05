@@ -202,10 +202,13 @@ func _process_damage_patterns(text: String, context: Dictionary = {}) -> String:
 
         var color: String = LogColors.DEFAULT
 
+        var damage_str = "damage"
+
         # First check if damage type is provided in context
         if context.has("damage_type"):
             var damage_type: DamageType.Type = context["damage_type"]
             color = DamageType.get_type_color(damage_type).to_html()
+            damage_str = "%s damage" % DamageType.get_type_name(damage_type)
         elif damage_type_str != "":
             # Fall back to parsing from string
             var damage_type := _string_to_damage_type(damage_type_str)
@@ -213,7 +216,7 @@ func _process_damage_patterns(text: String, context: Dictionary = {}) -> String:
                 color = DamageType.get_type_color(damage_type).to_html()
 
         # Only color the amount, not the damage type name
-        var colored := "[color=%s]%s[/color]" % [color, amount]
+        var colored := "[color=%s]%s %s[/color]" % [color, amount, damage_str]
         result = result.replace(full_match, colored)
 
     return result

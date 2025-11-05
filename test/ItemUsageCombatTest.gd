@@ -10,9 +10,8 @@ func test_scroll_usage_consumes_player_turn() -> bool:
     var enemy := Enemy.new(enemy_res)
     var context := CombatContext.new(player, enemy, enemy_res)
 
-    # Create state manager and processors
+    # Create state manager
     var state_manager := CombatStateManager.new(context)
-    var player_processor := PlayerTurnProcessor.new()
 
     # Start combat and ensure we're in player turn
     state_manager.start_combat()
@@ -24,7 +23,7 @@ func test_scroll_usage_consumes_player_turn() -> bool:
     var _initial_enemy_hp := enemy.get_current_hp()
 
     # Execute item use action
-    var result := player_processor.execute_action(PlayerTurnProcessor.PlayerAction.ITEM_USE, context)
+    var result := state_manager.execute_player_action(CombatStateManager.PlayerAction.ITEM_USE)
 
     # Verify the result is correct type
     if result.action_type != ActionResult.ActionType.ITEM_USE:

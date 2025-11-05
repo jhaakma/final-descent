@@ -46,6 +46,11 @@ func initialize_combat_display(combat_context: CombatContext) -> void:
     if label:
         label.text = "%s appears!" % [_get_a_an(enemy_name).capitalize()]
 
+    # Connect to player stats changes for reactive UI updates
+    if context.player.stats_changed.is_connected(_on_player_stats_changed):
+        context.player.stats_changed.disconnect(_on_player_stats_changed)
+    context.player.stats_changed.connect(_on_player_stats_changed)
+
     _update_resistance_labels()
     _update_weakness_labels()
     _update_enemy_stats_display()
@@ -95,12 +100,17 @@ func _update_button_states() -> void:
     else:
         _set_buttons_enabled(true)
 
+func _on_player_stats_changed() -> void:
+    ## Reactive callback when player stats change - updates UI automatically
+    _refresh_bars()
+
 func _refresh_bars() -> void:
     if not context:
         return
 
-    # Trigger player stats update
-    context.player.stats_changed.emit()
+    # Update player health bar (will be shown in RoomScreen via stats_changed signal)
+    # We don't need to manually emit stats_changed here - it's already been emitted
+    # by whatever caused the stats to change (damage, healing, status effects, etc.)
 
     # Update enemy health bar
     if foe_bar:

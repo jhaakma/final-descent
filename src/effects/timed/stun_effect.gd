@@ -2,7 +2,7 @@ class_name StunEffect extends TimedEffect
 
 func _init() -> void:
     # Initialize with default timing properties
-    set_expire_timing(EffectTiming.Type.TURN_END)
+    set_expire_timing(EffectTiming.Type.ROUND_END)
     set_expire_after_turns(1)
 
 func get_effect_id() -> String:

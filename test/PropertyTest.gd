@@ -33,12 +33,12 @@ func test_effect_timing_enum_values() -> bool:
     print("TURN_END: ", EffectTiming.Type.TURN_END)
 
     # Verify the enum values are as expected
-    if EffectTiming.Type.TURN_START != 0:
-        print("ERROR: TURN_START should be 0, got: ", EffectTiming.Type.TURN_START)
+    if EffectTiming.Type.TURN_START != 1:
+        print("ERROR: TURN_START should be 1, got: ", EffectTiming.Type.TURN_START)
         return false
 
-    if EffectTiming.Type.TURN_END != 3:
-        print("ERROR: TURN_END should be 3, got: ", EffectTiming.Type.TURN_END)
+    if EffectTiming.Type.TURN_END != 2:
+        print("ERROR: TURN_END should be 2, got: ", EffectTiming.Type.TURN_END)
         return false
 
     return true
@@ -48,9 +48,9 @@ func test_should_expire_at_minimal() -> bool:
 
     print("=== MINIMAL SHOULD_EXPIRE_AT TEST ===")
 
-    # Test with default values first
-    var result1 := effect.should_expire_at(EffectTiming.Type.TURN_END, 1)
-    print("Default should_expire_at(TURN_END, 1): ", result1)
+    # Test with default values first (default is ROUND_END, expire_after_turns = 1)
+    var result1 := effect.should_expire_at(EffectTiming.Type.ROUND_END, 1)
+    print("Default should_expire_at(ROUND_END, 1): ", result1)
     if not result1:
         print("ERROR: Default case should return true")
         return false

@@ -6,10 +6,11 @@ var active_conditions: Dictionary[String, StatusCondition] = {}
 # The owning CombatEntity
 var parent_entity: CombatEntity = null
 
-# Signals for status effect events
-signal effect_applied(condition_id: String)
-signal effect_removed(condition_id: String)
-signal effect_processed(condition_id: String, result: bool)
+# Internal signals for debugging and potential future use
+# NOTE: These are not currently connected - for internal use only
+signal effect_applied(condition_id: String)  # Emitted when effect is applied
+signal effect_removed(condition_id: String)  # Emitted when effect is removed
+signal effect_processed(condition_id: String, result: bool)  # Emitted when effect is processed
 
 # Initialise with parent CombatEntity
 func _init(parent: CombatEntity) -> void:
@@ -17,20 +18,24 @@ func _init(parent: CombatEntity) -> void:
 
 
 # Apply a StatusEffect by converting it to a generic StatusCondition, then applying the condition
-func apply_status_effect(effect: StatusEffect, effect_target: CombatEntity) -> bool:
+func apply_status_effect(effect: StatusEffect, effect_target: CombatEntity, applied_turn: int = -1) -> bool:
     if not effect:
         push_error("Attempted to apply null status effect")
         return false
     var condition := StatusCondition.from_status_effect(effect)
-    return apply_status_condition(condition, effect_target)
+    return apply_status_condition(condition, effect_target, applied_turn)
 
 # Apply a StatusCondition resource to the entity
-func apply_status_condition(_condition: StatusCondition, effect_target: CombatEntity) -> bool:
+func apply_status_condition(_condition: StatusCondition, effect_target: CombatEntity, applied_turn: int = -1) -> bool:
     if not _condition or not _condition.status_effect:
         push_error("Attempted to apply null status condition or effect")
         return false
     var condition := _condition.make_unique()
     var effect := condition.status_effect
+
+    # Set applied_turn if this is a TimedEffect and a turn is provided
+    if applied_turn > 0 and effect is TimedEffect:
+        (effect as TimedEffect).applied_turn = applied_turn
 
     # Use polymorphic application handling
     return effect.handle_application(self, condition, effect_target)
@@ -111,10 +116,7 @@ func remove_condition(condition_name: String) -> bool:
 
 # Process status effects for a general turn (legacy compatibility)
 func process_turn(target: CombatEntity) -> void:
-    # For general turn processing, we'll process TURN_START effects
-    # This maintains backward compatibility with the old interface
-    var current_turn := 1  # Default turn for general processing
-    process_status_effects_at_timing(EffectTiming.Type.ROUND_START, current_turn, target)
+    process_all_timed_effects(target)
 
 # Process status effects that should expire at a specific timing phase
 func process_status_effects_at_timing(timing: EffectTiming.Type, current_turn: int, target: CombatEntity) -> void:
@@ -143,6 +145,8 @@ func process_status_effects_at_timing(timing: EffectTiming.Type, current_turn: i
                 # Decrement turns after applying the effect
                 timed_effect.process_turn()
                 print("DEBUG: Remaining turns after processing: ", timed_effect.get_remaining_turns())
+                # Emit signal for UI updates when effect is processed (duration changed)
+                effect_processed.emit(condition_id, true)
             else:
                 print("DEBUG: Timing doesn't match, skipping apply_effect")
 

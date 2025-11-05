@@ -1,8 +1,12 @@
 # To do
 
+
+
 ## Combat flow overhaul
 - Simplify combat flow, reduce state management overhead, signals etc
-- Refactor TimedEffects to properly expire
+- PlayerTurnProcessor seems unnecessary to be split out like that
+- Refactor TimedEffects to properly expire - fix TURN_START, which requires the refactor to have an entry point between clicking an ability and that ability executing
+- Enemies still not getting affected by status effects
 
 ## Armor Resistances
 - Create Armor generators

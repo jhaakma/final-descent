@@ -35,6 +35,7 @@ StageManager="*res://src/globals/StageManager.gd"
 StatsManager="*res://src/globals/StatsManager.gd"
 LogManager="*res://src/globals/LogManager.gd"
 Util="*res://src/globals/Util.gd"
+UIEvents="*res://src/globals/UIEvents.gd"
 
 [debug]
 

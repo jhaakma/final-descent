@@ -22,9 +22,9 @@ func test_poison_on_early_combat_end() -> bool:
     # Apply poison to player
     var applied: bool = player.apply_status_effect(poison)
     print("Poison applied to player: ", applied)
-    print("Player has poison: ", player.has_status_effect("Poison"))
+    print("Player has poison: ", player.has_status_effect("poison"))
 
-    if not applied or not player.has_status_effect("Poison"):
+    if not applied or not player.has_status_effect("poison"):
         return false
 
     print("\n--- Simulating Combat Round 1 ---")
@@ -37,14 +37,14 @@ func test_poison_on_early_combat_end() -> bool:
     print("Enemy killed - HP: ", enemy.get_current_hp(), ", alive: ", enemy.is_alive())
 
     # Now simulate combat ending early due to enemy death
-    # We should process ROUND_END effects manually
-    print("\n--- Simulating Early Combat End with ROUND_END Processing ---")
+    # We should process TURN_START effects manually (simulating player's turn)
+    print("\n--- Simulating Early Combat End with TURN_START Processing ---")
 
-    # Directly process ROUND_END effects (simulating what CombatManager.end_combat() now does)
-    player.process_status_effects_at_timing(EffectTiming.Type.ROUND_END, 1)
+    # Directly process TURN_START effects (poison ticks at turn start)
+    player.process_status_effects_at_timing(EffectTiming.Type.TURN_START, 1)
 
     print("Player HP after combat end: ", player.get_current_hp())
-    print("Player still has poison: ", player.has_status_effect("Poison"))
+    print("Player still has poison: ", player.has_status_effect("poison"))
 
     # Player should have taken poison damage even though combat ended early
     if player.get_current_hp() >= initial_hp:

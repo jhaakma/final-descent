@@ -28,6 +28,12 @@ func _init() -> void:
     stats_component.health_changed.connect(_on_health_changed)
     stats_component.died.connect(_on_stats_component_died)
     stats_component.stats_changed.connect(_on_stats_changed)
+
+    # Connect status effect component signals - emit to UIEvents for centralized UI updates
+    status_effect_component.effect_removed.connect(_on_effect_changed)
+    status_effect_component.effect_applied.connect(_on_effect_changed)
+    status_effect_component.effect_processed.connect(_on_effect_changed)
+
     # Connect inventory signals
     inventory.inventory_changed.connect(_on_inventory_changed)
     reset()
@@ -99,10 +105,19 @@ func get_max_hp() -> int:
 
 # Signal handlers for health component
 func _on_health_changed(_current_hp: int, _max_hp: int) -> void:
-    pass  # This method exists so we can later handle health changes if needed
+    # Health changes trigger UI updates via event bus
+    emit_signal("stats_changed")  # Keep for backward compatibility
+    UIEvents.player_stats_changed.emit()
 
 func _on_stats_changed() -> void:
-    emit_signal("stats_changed")
+    emit_signal("stats_changed")  # Keep for backward compatibility
+    UIEvents.player_stats_changed.emit()
+
+# Signal handler for any status effect changes (applied, processed, removed)
+func _on_effect_changed(_arg1 = null, _arg2 = null) -> void:
+    # Any status effect change triggers UI updates via event bus
+    emit_signal("stats_changed")  # Keep for backward compatibility
+    UIEvents.player_status_effects_changed.emit()
 
 func _on_stats_component_died() -> void:
     # Start fade effect immediately
@@ -498,34 +513,8 @@ func get_total_defense() -> int:
     return stats_component.get_total_defense()
 
 # === STATUS EFFECT MANAGEMENT ===
-# Override the base method to emit stats_changed signal for UI updates
-func apply_status_effect(effect: StatusEffect) -> bool:
-    var result := super.apply_status_effect(effect)
-    if result:
-        emit_signal("stats_changed")
-    return result
-
-func apply_status_condition(condition: StatusCondition) -> bool:
-    var result := super.apply_status_condition(condition)
-    if result:
-        emit_signal("stats_changed")
-    return result
-
-# Override the base method to emit stats_changed signal for UI updates
-func remove_status_effect(effect: StatusEffect) -> void:
-    super.remove_status_effect(effect)
-    emit_signal("stats_changed")
-
-func remove_status_condition(condition_name: String) -> bool:
-    var result := super.remove_status_condition(condition_name)
-    if result:
-        emit_signal("stats_changed")
-    return result
-
-func clear_all_negative_status_effects() -> Array[StatusCondition]:
-    var removed_effects: Array[StatusCondition] = super.clear_all_negative_status_effects()
-    emit_signal("stats_changed")
-    return removed_effects
+# Note: Status effect changes automatically trigger stats_changed via signal handlers
+# (_on_effect_applied and _on_effect_removed) - no need to manually emit here
 
 # === COMBAT CALCULATIONS ===
 # Override to include weapon damage in total attack power

@@ -3,7 +3,6 @@ class_name CombatStateManager extends RefCounted
 ## ROUND = Complete cycle where both player and enemy have acted
 ## TURN = Individual actor's action within a round
 
-signal state_changed(new_state: State, context: CombatContext)
 signal combat_started(context: CombatContext)
 signal player_turn_started(context: CombatContext)
 signal enemy_turn_started(context: CombatContext)
@@ -18,6 +17,13 @@ enum State {
     COMBAT_END
 }
 
+enum PlayerAction {
+    ATTACK,
+    DEFEND,
+    FLEE,
+    ITEM_USE
+}
+
 var current_state: State = State.COMBAT_START
 var context: CombatContext
 var round_number: int = 1
@@ -30,7 +36,6 @@ func start_combat() -> void:
     current_state = State.COMBAT_START
     round_number = 1
     turns_this_round = 0
-    _emit_state_change()
     combat_started.emit(context)
 
     # Process ROUND_START effects for new round
@@ -45,13 +50,20 @@ func start_combat() -> void:
 func transition_to_player_turn() -> void:
     if _can_transition_to(State.PLAYER_TURN):
         current_state = State.PLAYER_TURN
-        _emit_state_change()
+
+        # Don't process TURN_START effects here - wait for player action
+        # This allows player to see their status effects before they expire
+
         player_turn_started.emit(context)
 
 func transition_to_enemy_turn() -> void:
     if _can_transition_to(State.ENEMY_TURN):
         current_state = State.ENEMY_TURN
-        _emit_state_change()
+
+        # Process TURN_START effects for the enemy immediately
+        # (No UI delay for enemies - they act immediately)
+        _process_turn_start_effects(context.enemy)
+
         enemy_turn_started.emit(context)
 
 func end_current_turn() -> void:
@@ -78,7 +90,6 @@ func transition_to_round_end() -> void:
         # Process ROUND_END status effects once per round
         _process_round_end_effects()
 
-        _emit_state_change()
         round_ended.emit(context)
 
         # Check for combat end, otherwise start next round
@@ -129,6 +140,11 @@ func _continue_to_next_actor() -> void:
             else:
                 transition_to_player_turn()
 
+func _process_turn_start_effects(actor: CombatEntity) -> void:
+    """Process effects that trigger at the start of an individual actor's turn"""
+    if actor.is_alive():
+        actor.process_status_effects_at_timing(EffectTiming.Type.TURN_START, round_number)
+
 func _process_round_start_effects() -> void:
     """Process effects that trigger at the start of each round"""
     if context.player.is_alive():
@@ -160,7 +176,10 @@ func end_combat(victory: bool) -> void:
 
     current_state = State.COMBAT_END
     context.end_combat()
-    _emit_state_change()
+
+    # Trigger UI update via event bus after processing combat end effects
+    UIEvents.player_stats_changed.emit()
+
     combat_ended.emit(context, victory)
 
 func get_current_state() -> State:
@@ -168,9 +187,6 @@ func get_current_state() -> State:
 
 func get_current_round() -> int:
     return round_number
-
-func _emit_state_change() -> void:
-    state_changed.emit(current_state, context)
 
 func _can_transition_to(new_state: State) -> bool:
     # Validate state transitions
@@ -193,3 +209,74 @@ func _check_combat_end_conditions() -> bool:
         end_combat(victory)
         return true
     return false
+
+## Execute player action and return the result
+func execute_player_action(action: PlayerAction) -> ActionResult:
+    # Process TURN_START effects when player clicks action, not when buttons are enabled
+    # This gives player time to see their status effects before they expire
+    _process_turn_start_effects(context.player)
+
+    var result: ActionResult
+
+    match action:
+        PlayerAction.ATTACK:
+            result = _execute_attack()
+        PlayerAction.DEFEND:
+            result = _execute_defend()
+        PlayerAction.FLEE:
+            result = _execute_flee()
+        PlayerAction.ITEM_USE:
+            result = _execute_item_use()
+        _:
+            result = ActionResult.new()  # Default fallback
+
+    return result
+
+func _execute_attack() -> ActionResult:
+    var total_dmg: int = context.player.get_total_attack_power()
+    var player_damage_type: DamageType.Type = context.player.get_attack_damage_type()
+    var final_damage: int = context.enemy.calculate_incoming_damage(total_dmg, player_damage_type)
+    context.enemy.take_damage(final_damage)
+
+    var weapon_instance := context.player.get_equipped_weapon_instance()
+    var weapon_name: String = weapon_instance.item.name if weapon_instance else ""
+
+    # Log the attack
+    if weapon_name != "":
+        LogManager.log_event("{You} {action} {enemy:%s} with %s for {damage:%d}!" % [context.enemy.get_name(), weapon_name, final_damage], {"target": context.player, "damage_type": player_damage_type, "action": ["strike", "strikes"]})
+    else:
+        LogManager.log_event("{You} {action} {enemy:%s} for {damage:%d}!" % [context.enemy.get_name(), final_damage], {"target": context.player, "damage_type": player_damage_type, "action": ["attack", "attacks"]})
+
+    if weapon_instance:
+        # Check if weapon has special attack effects
+        var weapon := weapon_instance.item as Weapon
+        weapon.on_attack_hit(context.enemy)
+
+    # Reduce weapon condition after logging the attack
+    context.player.reduce_weapon_condition()
+
+    return ActionResult.create_attack_result(final_damage)
+
+func _execute_defend() -> ActionResult:
+    # Use the shared defend ability for consistency
+    var defend_ability := DefendAbility.new()
+    var instance := AbilityInstance.new(defend_ability)
+    instance.execute(context.player)
+
+    return ActionResult.create_defend_result()
+
+func _execute_flee() -> ActionResult:
+    var success: bool = randf() < context.enemy_resource.avoid_chance
+
+    if success:
+        LogManager.log_event("{You} flee successfully!", {"target": context.player})
+        return ActionResult.create_flee_success()
+    else:
+        LogManager.log_event("{You} fail to flee!", {"target": context.player})
+        return ActionResult.create_flee_failure()
+
+func _execute_item_use() -> ActionResult:
+    # Item usage is handled externally (through inventory system)
+    # This action type just confirms that the player's turn was consumed
+    # The actual item effect has already been applied when this is called
+    return ActionResult.create_item_use_result()

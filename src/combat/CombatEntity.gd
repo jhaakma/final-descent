@@ -108,7 +108,7 @@ func apply_status_condition(condition: StatusCondition) -> bool:
     return status_effect_component.apply_status_condition(condition, self)
 
 func has_status_effect(effect_name: String) -> bool:
-    return status_effect_component.has_condition(effect_name)
+    return status_effect_component.has_effect(effect_name)
 
 func has_status_condition(condition_name: String) -> bool:
     return status_effect_component.has_condition(condition_name)

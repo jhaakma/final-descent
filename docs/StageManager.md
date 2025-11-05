@@ -40,7 +40,7 @@ The StageManager is a singleton that manages stage progression and boss floor de
 #### Stage Classification
 - `is_boss_floor() -> bool` - True if current floor is a boss floor
 - `is_early_stage() -> bool` - True if in first 30% of stage
-- `is_mid_stage() -> bool` - True if in 30%-70% of stage  
+- `is_mid_stage() -> bool` - True if in 30%-70% of stage
 - `is_late_stage() -> bool` - True if in 70%+ of stage (excluding boss)
 
 #### Progression
@@ -125,7 +125,12 @@ The StageManager includes comprehensive unit tests in `test/StageManagerTest.gd`
 - Save/load functionality
 - Reset functionality
 
-Run tests with: `./run-tests.sh` or via Godot's test runner.
+Run tests with:
+```bash
+make test                          # Run all tests
+make test filter=StageManager      # Run only StageManager tests
+make test failed_only=true         # Rerun only failed tests
+```
 
 ## Configuration
 Currently hardcoded values that may become configurable:

@@ -2,8 +2,6 @@ class_name CombatContext extends RefCounted
 ## Data container for combat state that gets passed between processors
 ## Follows dependency inversion - processors depend on this abstraction
 
-signal context_changed()
-
 var player: Player
 var enemy: Enemy
 var enemy_resource: EnemyResource
@@ -31,11 +29,9 @@ func set_avoid_failure(value: bool) -> void:
 
 func increment_turn() -> void:
     turn_count += 1
-    context_changed.emit()
 
 func end_combat() -> void:
     is_combat_active = false
-    context_changed.emit()
 
 func is_player_alive() -> bool:
     return player.get_hp() > 0

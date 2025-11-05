@@ -78,7 +78,7 @@ func get_active_effects_summary(entity: Dictionary) -> String:
 		summary += "  No active effects\n"
 	else:
 		for effect: Dictionary in effects:
-			var timing_value: int = effect.get("expire_timing", EffectTiming.Type.TURN_END)
+			var timing_value: int = effect.get("expire_timing", EffectTiming.Type.ROUND_END)
 			# Use raw enum value instead of get_name
 			var timing_name := str(timing_value)
 			summary += "  - %s (expires: %s, turns left: %d)\n" % [
@@ -95,7 +95,7 @@ func get_effect_expiration_timeline(entity: Dictionary) -> Array:
 	var effects: Array = entity.get("active_effects", [])
 
 	for effect: Dictionary in effects:
-		var timing_value: int = effect.get("expire_timing", EffectTiming.Type.TURN_END)
+		var timing_value: int = effect.get("expire_timing", EffectTiming.Type.ROUND_END)
 		# Use raw enum value instead of get_name
 		var timing_name := str(timing_value)
 		var expire_after_turns: int = effect.get("expire_after_turns", 0)
@@ -123,7 +123,7 @@ func trace_status_effect_applied(effect: Dictionary, target: Dictionary) -> void
 # Format effect information
 func format_effect_info(effect: Dictionary) -> String:
 	var info := "Effect: %s\n" % effect.get("name", "Unknown")
-	var timing_value: int = effect.get("expire_timing", EffectTiming.Type.TURN_END)
+	var timing_value: int = effect.get("expire_timing", EffectTiming.Type.ROUND_END)
 	# Use raw enum value instead of get_name
 	var timing_name := str(timing_value)
 	info += "expires: %s\n" % timing_name

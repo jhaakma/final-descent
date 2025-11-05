@@ -4,7 +4,7 @@ class_name TimedEffect extends RemovableStatusEffect
 @export var expire_timing: EffectTiming.Type = EffectTiming.Type.ROUND_END  # When during combat this effect should expire
 @export var expire_after_turns: int = 1  # Original duration (never changes)
 @export var expire_condition: Callable  # Optional custom expiration condition
-@export var applied_turn: int = 0  # Turn when this effect was applied (for timing calculations)
+@export var applied_turn: int = 0  # (Legacy, not used with new duration logic)
 
 # Instance variable for tracking remaining duration (not exported, so not saved in resources)
 var remaining_duration: int = -1  # -1 means not initialized yet
@@ -59,7 +59,7 @@ func set_expire_condition(condition: Callable) -> void:
     expire_condition = condition
 
 # Check if this effect should expire at the given timing and turn
-func should_expire_at(timing: EffectTiming.Type, current_turn: int) -> bool:
+func should_expire_at(timing: EffectTiming.Type, _current_turn: int) -> bool:
     # Check timing first
     if expire_timing != timing:
         return false
@@ -68,9 +68,8 @@ func should_expire_at(timing: EffectTiming.Type, current_turn: int) -> bool:
     if expire_condition.is_valid():
         return expire_condition.call()
 
-    # Check if we've reached the expiration turn
-    # The effect should expire when current_turn >= expire_after_turns
-    return current_turn >= expire_after_turns
+    # Expire if remaining_duration is 0 or less
+    return remaining_duration <= 0
 
 # Decrement remaining turns - called when effect is processed
 func process_turn() -> void:

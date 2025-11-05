@@ -47,6 +47,7 @@ help:
 	@echo "  tests        - Alias for test"
 	@echo "  run-tests    - Alias for test"
 	@echo "  test filter=name - Run tests matching filter"
+	@echo "  test failed_only=true - Run only previously failed tests"
 	@echo ""
 	@echo "Development:"
 	@echo "  clean        - Clean temporary files"
@@ -57,6 +58,7 @@ help:
 	@echo "Examples:"
 	@echo "  make test"
 	@echo "  make test filter=ScrollTest"
+	@echo "  make test failed_only=true"
 	@echo "  make clean"
 	@echo "  make setup"
 	@echo ""
@@ -99,7 +101,15 @@ test tests run-tests: setup
 	@echo "Running Final Descent tests..."
 ifdef filter
 	@echo "Filtering tests by: $(filter)"
+ifdef failed_only
+	@echo "Running only previously failed tests"
+	@"$(GODOT_CMD)" --headless --path . res://test/test_runner.tscn -- filter $(filter) failed_only
+else
 	@"$(GODOT_CMD)" --headless --path . res://test/test_runner.tscn -- filter $(filter)
+endif
+else ifdef failed_only
+	@echo "Running only previously failed tests"
+	@"$(GODOT_CMD)" --headless --path . res://test/test_runner.tscn -- failed_only
 else
 	@"$(GODOT_CMD)" --headless --path . res://test/test_runner.tscn
 endif

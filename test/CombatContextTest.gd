@@ -64,16 +64,9 @@ func test_combat_context_state_management() -> bool:
         return false
 
     # Test turn increment
-    var signal_received := [false]  # Use array to allow mutation in lambda
-    context.context_changed.connect(func()->void: signal_received[0] = true)
-
     context.increment_turn()
     if context.turn_count != 1:
         push_error("Turn count should be 1 after increment")
-        return false
-
-    if not signal_received[0]:
-        push_error("Context changed signal should have been emitted")
         return false
 
     print("✓ CombatContext state management test passed")

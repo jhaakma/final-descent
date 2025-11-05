@@ -1,5 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://c7rm5at1hk0aj"]
+[gd_scene load_steps=3 format=3 uid="uid://c7rm5at1hk0aj"]
 
+[ext_resource type="Theme" uid="uid://ch0ahyx502rlq" path="res://data/themes/theme.tres" id="1_0gay7"]
 [ext_resource type="Script" uid="uid://bo2pc80oqsjqq" path="res://src/ui/screens/game_over_screen.gd" id="1_gd380"]
 
 [node name="GameOverScreen" type="Control"]
@@ -9,6 +10,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_0gay7")
 script = ExtResource("1_gd380")
 
 [node name="ColorRect" type="ColorRect" parent="."]
@@ -113,6 +115,7 @@ alignment = 1
 [node name="RestartBtn" type="Button" parent="VBoxContainer/ButtonContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_vertical = 0
 text = "Play Again"
 
 [node name="Spacer" type="Control" parent="VBoxContainer/ButtonContainer"]
@@ -122,8 +125,5 @@ layout_mode = 2
 [node name="TitleBtn" type="Button" parent="VBoxContainer/ButtonContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_vertical = 0
 text = "Main Menu"
-
-[node name="Spacer3" type="Control" parent="VBoxContainer"]
-custom_minimum_size = Vector2(0, 50)
-layout_mode = 2

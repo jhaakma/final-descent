@@ -22,28 +22,28 @@ func test_poison_expiration() -> bool:
     print("Poison applied: ", applied)
 
     # Verify it was applied
-    var has_poison: bool = entity.has_status_effect("Poison")
+    var has_poison: bool = entity.has_status_effect("poison")
     print("Has poison: ", has_poison)
 
     if not has_poison:
         return false
 
     print("\n--- Processing Round 1 ---")
-    entity.process_status_effects_at_timing(EffectTiming.Type.ROUND_END, 1)
+    entity.process_status_effects_at_timing(EffectTiming.Type.TURN_START, 1)
     print("Health after round 1: ", entity.get_current_hp())
-    print("Still has poison: ", entity.has_status_effect("Poison"))
+    print("Still has poison: ", entity.has_status_effect("poison"))
 
-    if not entity.has_status_effect("Poison"):
+    if not entity.has_status_effect("poison"):
         print("ERROR: Poison should not expire after 1 round")
         return false
 
     print("\n--- Processing Round 2 ---")
-    entity.process_status_effects_at_timing(EffectTiming.Type.ROUND_END, 2)
+    entity.process_status_effects_at_timing(EffectTiming.Type.TURN_START, 2)
     print("Health after round 2: ", entity.get_current_hp())
-    print("Still has poison: ", entity.has_status_effect("Poison"))
+    print("Still has poison: ", entity.has_status_effect("poison"))
 
     # After 2 rounds, poison should be expired
-    if entity.has_status_effect("Poison"):
+    if entity.has_status_effect("poison"):
         print("ERROR: Poison should expire after 2 rounds")
         return false
 

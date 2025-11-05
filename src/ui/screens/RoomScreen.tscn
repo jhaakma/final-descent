@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://c0cpy5xfdy2nb"]
+[gd_scene load_steps=42 format=3 uid="uid://c0cpy5xfdy2nb"]
 
 [ext_resource type="Theme" uid="uid://ch0ahyx502rlq" path="res://data/themes/theme.tres" id="1_fqbyh"]
 [ext_resource type="Script" uid="uid://bi2w4gopbk7mv" path="res://src/ui/screens/room_screen.gd" id="1_vxldv"]
@@ -32,6 +32,7 @@
 [ext_resource type="Resource" uid="uid://bultv0ouhc8hl" path="res://data/generated/armor/generators/all_armors.tres" id="16_jjfgr"]
 [ext_resource type="Resource" uid="uid://deugb73fiqik0" path="res://data/rooms/ShrineRoomEvil.tres" id="16_og4wa"]
 [ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="17_aeo7s"]
+[ext_resource type="Resource" uid="uid://bpscdhoshmjls" path="res://data/items/potions/Antidote.tres" id="18_qfqpr"]
 
 [sub_resource type="Resource" id="Resource_4t8ue"]
 script = ExtResource("7_soduk")
@@ -74,12 +75,22 @@ pick_method = 1
 floor_min = 0
 metadata/_custom_type_script = "uid://w4ie0s4l7syw"
 
+[sub_resource type="Resource" id="Resource_c4ukq"]
+script = ExtResource("9_yjnrm")
+loot_table = Array[ExtResource("16_iu4o2")]([ExtResource("18_qfqpr")])
+generators = Array[ExtResource("10_jjfgr")]([])
+count = 1
+chance_none = 0.0
+pick_method = 0
+floor_min = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"
+
 [sub_resource type="Resource" id="Resource_ir2tr"]
 script = ExtResource("17_aeo7s")
 gold_min = 0
 gold_max = 0
 chance_gold_none = 0.0
-loot_table = Array[ExtResource("9_yjnrm")]([SubResource("Resource_3x5q2")])
+loot_table = Array[ExtResource("9_yjnrm")]([SubResource("Resource_3x5q2"), SubResource("Resource_c4ukq")])
 metadata/_custom_type_script = "uid://lj0e532l0dyu"
 
 [sub_resource type="Resource" id="Resource_ntc6d"]

@@ -53,6 +53,13 @@ func _ready() -> void:
     # Get all rooms from resources/rooms
     _load_all_rooms()
 
+    # Connect to centralized UI event bus
+    UIEvents.player_stats_changed.connect(_on_stats_changed)
+    UIEvents.player_status_effects_changed.connect(_on_status_effects_changed)
+    UIEvents.player_inventory_changed.connect(_on_inventory_updated)
+    UIEvents.ui_refresh_requested.connect(update)
+
+    # Keep legacy GameState connection for backward compatibility
     GameState.stats_changed.connect(_on_stats_changed)
     GameState.run_ended.connect(func(v: bool) -> void: emit_signal("run_ended", v))
 
@@ -178,6 +185,10 @@ func update() -> void:
 func _on_stats_changed() -> void:
     _refresh_stats()
     _refresh_buffs()  # Also refresh buffs since status effects are shown there
+
+# Called specifically when status effects change (via UIEvents)
+func _on_status_effects_changed() -> void:
+    _refresh_buffs()  # Only refresh the status effects display
 
 func _refresh_stats() -> void:
     # Show stage and floor information with boss indicator

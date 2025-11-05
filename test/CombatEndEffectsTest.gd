@@ -23,12 +23,12 @@ func test_multiple_effects_on_combat_end() -> bool:
     print("  Enemy HP: ", enemy.get_current_hp(), ", has poison: ", enemy.has_status_effect("Poison"))
 
     # Simulate a normal round 1 where both survive
-    print("\n--- Round 1 (normal round end) ---")
+    print("\n--- Round 1 (normal turn start) ---")
     var player_hp_before := player.get_current_hp()
     var enemy_hp_before := enemy.get_current_hp()
 
-    player.process_status_effects_at_timing(EffectTiming.Type.ROUND_END, 1)
-    enemy.process_status_effects_at_timing(EffectTiming.Type.ROUND_END, 1)
+    player.process_status_effects_at_timing(EffectTiming.Type.TURN_START, 1)
+    enemy.process_status_effects_at_timing(EffectTiming.Type.TURN_START, 1)
 
     print("After round 1:")
     print("  Player HP: ", player_hp_before, " -> ", player.get_current_hp())
@@ -43,11 +43,11 @@ func test_multiple_effects_on_combat_end() -> bool:
     enemy.take_damage(20) # Kill the enemy
     print("Enemy killed mid-round")
 
-    # Process ROUND_END effects as combat ends
-    print("Processing final ROUND_END effects...")
-    player.process_status_effects_at_timing(EffectTiming.Type.ROUND_END, 2)
+    # Process TURN_START effects as combat ends
+    print("Processing final TURN_START effects...")
+    player.process_status_effects_at_timing(EffectTiming.Type.TURN_START, 2)
     if enemy.is_alive():  # Only if somehow still alive
-        enemy.process_status_effects_at_timing(EffectTiming.Type.ROUND_END, 2)
+        enemy.process_status_effects_at_timing(EffectTiming.Type.TURN_START, 2)
 
     print("After combat end:")
     print("  Player HP: ", player_hp_before, " -> ", player.get_current_hp())

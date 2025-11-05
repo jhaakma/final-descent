@@ -3,6 +3,9 @@ class_name ElementalTimedEffect extends TimedEffect
 @export var damage_per_turn: int = 2
 @export var elemental_type: DamageType.Type = DamageType.Type.POISON
 
+func get_effect_id() -> String:
+    return DamageType.get_type_name(elemental_type).to_lower()
+
 func get_effect_name() -> String:
     return DamageType.get_type_name(elemental_type)
 

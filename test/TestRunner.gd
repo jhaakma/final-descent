@@ -6,6 +6,8 @@ class_name TestRunner extends Node2D
 @export var test_classes: Array[Script] = []
 var test_results: Array[TestResult] = []
 var filter_pattern: String = ""  # Filter pattern from command line
+var failed_only: bool = false  # Run only previously failed tests
+var failed_tests_file: String = "user://failed_tests.txt"  # File to store failed test names
 
 class TestResult:
     var test_name: String
@@ -25,9 +27,12 @@ func parse_command_line_args() -> void:
         if filter_next:
             filter_pattern = arg
             print("Filter pattern: '%s'" % filter_pattern)
-            break
+            filter_next = false
         elif arg == "filter":
             filter_next = true
+        elif arg == "failed_only":
+            failed_only = true
+            print("Running only previously failed tests")
 
     if filter_next and filter_pattern == "":
         print("Warning: -- filter specified but no pattern provided")
@@ -39,6 +44,45 @@ func apply_filter_to_test_classes() -> void:
     print("Applying filter: '%s'" % filter_pattern)
     # Don't filter classes here anymore - we'll filter at the method level
     # This allows filtering on method names across all classes
+
+func load_failed_tests() -> Array[String]:
+    var failed_tests: Array[String] = []
+
+    if not FileAccess.file_exists(failed_tests_file):
+        return failed_tests
+
+    var file := FileAccess.open(failed_tests_file, FileAccess.READ)
+    if not file:
+        push_error("Failed to open failed tests file: %s" % failed_tests_file)
+        return failed_tests
+
+    while not file.eof_reached():
+        var line := file.get_line().strip_edges()
+        if line != "":
+            failed_tests.append(line)
+
+    file.close()
+    return failed_tests
+
+func save_failed_tests() -> void:
+    var failed_test_names: Array[String] = []
+
+    for result in test_results:
+        if not result.passed:
+            failed_test_names.append(result.test_name)
+
+    var file := FileAccess.open(failed_tests_file, FileAccess.WRITE)
+    if not file:
+        push_error("Failed to open failed tests file for writing: %s" % failed_tests_file)
+        return
+
+    for test_name in failed_test_names:
+        file.store_line(test_name)
+
+    file.close()
+
+    if failed_test_names.size() > 0:
+        print("Saved %d failed test(s) to: %s" % [failed_test_names.size(), failed_tests_file])
 
 func _ready() -> void:
     print("=== Test Runner Started ===")
@@ -59,6 +103,7 @@ func run_tests_deferred() -> void:
     print("Tests completed.")
 
     print_results()
+    save_failed_tests()
     print("=== Test Runner Finished ===")
 
     # Force exit after a short delay
@@ -128,6 +173,20 @@ func run_test_class(test_script: Script) -> void:
     var test_instance: BaseTest = test_script.new()
     var category := test_instance.get_test_category()
     var test_methods := test_instance.get_test_methods()
+
+    # Apply failed_only filter first if enabled
+    if failed_only:
+        var failed_test_names := load_failed_tests()
+        var filtered_methods: Array[String] = []
+
+        for method_name in test_methods:
+            var method_name_clean := method_name.replace("test_", "")
+            var full_test_name := "%s::%s" % [category, method_name_clean]
+
+            if full_test_name in failed_test_names:
+                filtered_methods.append(method_name)
+
+        test_methods = filtered_methods
 
     # Apply method-level filtering if pattern is set
     if filter_pattern != "":

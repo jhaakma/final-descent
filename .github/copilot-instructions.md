@@ -25,9 +25,13 @@ Godot 4 roguelike dungeon crawler game guidelines.
 
 ## Testing
 
-- **Run**: `make test` or `make test filter=TestName` (filter only works on one class or method name)
+- **Run**:
+  - `make test` - Run all tests
+  - `make test filter=TestName` - Run specific test(s) matching filter
+  - `make test failed_only=true` - Rerun only tests that failed in the previous run
 - **Files**: Extend `BaseTest`, methods start with `test_`, return `bool`
 - **Structure**: Separate files per feature (`ScrollTest.gd`, `PotionTest.gd`)
+- **Failed Tests**: Automatically saved to `user://failed_tests.txt` for quick iteration
 
 ## Game Patterns
 

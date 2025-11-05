@@ -1,6 +1,6 @@
 class_name InlineCombat extends InlineContentBase
 ## Displays combat interface directly in the room container
-## Uses SOLID combat system with CombatStateManager, PlayerTurnProcessor, and CombatUI
+## Uses simplified combat system with CombatStateManager and CombatUI
 
 signal combat_resolved(victory: bool)
 signal combat_fled()
@@ -20,10 +20,9 @@ const CombatUIClass = preload("res://src/combat/ui/CombatUI.gd")
 @onready var defend_btn: Button = %DefendBtn
 @onready var flee_btn: Button = %FleeBtn
 
-# New SOLID combat system components
+# Combat system components
 var combat_context: CombatContext
 var state_manager: CombatStateManager
-var player_processor: PlayerTurnProcessor
 var combat_ui: CombatUIClass
 
 var enemy_resource: EnemyResource
@@ -65,9 +64,6 @@ func _initialize_combat() -> void:
 
     # Initialize state manager
     state_manager = CombatStateManager.new(combat_context)
-
-    # Initialize processors
-    player_processor = PlayerTurnProcessor.new()
 
     # Initialize UI component
     combat_ui = CombatUIClass.new()
@@ -112,7 +108,6 @@ func _setup_combat_ui() -> void:
     combat_ui.flee_requested.connect(_on_flee)
 
 func _connect_state_manager_signals() -> void:
-    state_manager.state_changed.connect(_on_state_changed)
     state_manager.combat_started.connect(_on_combat_started)
     state_manager.player_turn_started.connect(_on_player_turn_started)
     state_manager.enemy_turn_started.connect(_on_enemy_turn_started)
@@ -136,29 +131,30 @@ func _handle_enemy_first_attack() -> void:
     )
 
 # Signal handlers for state manager
-func _on_state_changed(_new_state: CombatStateManager.State, _context: CombatContext) -> void:
-    # Update UI based on state changes
-    combat_ui.update_display()
-
 func _on_combat_started(_context: CombatContext) -> void:
     # Combat has started, UI is already initialized
     pass
 
 func _on_player_turn_started(_context: CombatContext) -> void:
-    # Enable player actions
+    # Enable player actions and update UI
+    combat_ui.update_display()
     combat_ui.enable_actions()
 
 func _on_enemy_turn_started(_context: CombatContext) -> void:
-    # Disable player actions and process enemy turn
+    # Disable player actions, update UI, and process enemy turn
+    combat_ui.update_display()
     combat_ui.disable_actions()
     _process_enemy_turn()
 
 func _on_round_ended(_context: CombatContext) -> void:
-    # Round has ended, emit signal for room updates
+    # Round has ended, update UI and emit signal for room updates
+    combat_ui.update_display()
     turn_ended.emit()
 
 func _on_combat_ended(_context: CombatContext, victory: bool) -> void:
     # Combat is over
+    # Note: CombatManager already emits UIEvents.player_stats_changed after processing
+    # combat end effects, so UI will update automatically via event bus
     combat_resolved.emit(victory)
     if not victory:
         content_resolved.emit()
@@ -182,15 +178,15 @@ func _process_enemy_turn() -> void:
 
 # Combat action handlers (called by CombatUI)
 func _on_attack() -> void:
-    var result := player_processor.execute_action(PlayerTurnProcessor.PlayerAction.ATTACK, combat_context)
+    var result := state_manager.execute_player_action(CombatStateManager.PlayerAction.ATTACK)
     _handle_action_result(result)
 
 func _on_defend() -> void:
-    var result := player_processor.execute_action(PlayerTurnProcessor.PlayerAction.DEFEND, combat_context)
+    var result := state_manager.execute_player_action(CombatStateManager.PlayerAction.DEFEND)
     _handle_action_result(result)
 
 func _on_flee() -> void:
-    var result := player_processor.execute_action(PlayerTurnProcessor.PlayerAction.FLEE, combat_context)
+    var result := state_manager.execute_player_action(CombatStateManager.PlayerAction.FLEE)
     _handle_action_result(result)
 
 func _handle_action_result(result: ActionResult) -> void:
@@ -205,7 +201,7 @@ func _handle_action_result(result: ActionResult) -> void:
 func handle_item_used() -> void:
     """Handle when an item is used during combat - treat as player action"""
     # Process the item usage as a player action (consumes the turn)
-    var result := player_processor.execute_action(PlayerTurnProcessor.PlayerAction.ITEM_USE, combat_context)
+    var result := state_manager.execute_player_action(CombatStateManager.PlayerAction.ITEM_USE)
     _handle_action_result(result)
 
 func show_content() -> void:

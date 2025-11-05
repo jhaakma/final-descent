@@ -51,13 +51,21 @@ Final Descent includes a robust automated testing framework to ensure code quali
 **Via Makefile:**
 
 ```bash
-make test              # Any platform with Make
+make test                    # Run all tests
+make test filter=TestName    # Run specific test(s) matching filter
+make test failed_only=true   # Rerun only tests that failed in the previous run
 ```
 
 **Manual Execution:**
 ```bash
 godot --headless res://test/test_runner.tscn
+godot --headless res://test/test_runner.tscn -- filter TestName
+godot --headless res://test/test_runner.tscn -- failed_only
 ```
+
+**Failed Test Tracking:**
+
+The test runner automatically saves failed test names to `user://failed_tests.txt` after each run. Use `failed_only=true` to quickly iterate on fixing failures without running the entire test suite.
 
 ### Writing New Tests
 
