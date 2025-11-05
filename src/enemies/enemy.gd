@@ -68,23 +68,11 @@ func plan_action() -> void:
         planned_ability = _create_fallback_attack_instance()
         return
 
-    # Delegate decision making to the AI component (legacy compatibility)
-    # Convert instances to legacy format for AI component
-    var legacy_abilities: Array[Ability] = []
-    for instance: AbilityInstance in available_abilities:
-        if instance.ability_resource is Ability:
-            legacy_abilities.append(instance.ability_resource as Ability)
-
-    if not legacy_abilities.is_empty():
-        var selected_legacy: Ability = resource.ai_component.plan_action(self, legacy_abilities, stats_component.get_health_percentage())
-        # Find the corresponding instance
-        for instance: AbilityInstance in available_abilities:
-            if instance.ability_resource == selected_legacy:
-                planned_ability = instance
-                break
+    if not available_abilities.is_empty():
+        planned_ability = resource.ai_component.plan_action(self, available_abilities, stats_component.get_health_percentage())
     else:
-        # Fallback to first available instance
-        planned_ability = available_abilities[0] if not available_abilities.is_empty() else null
+        # Fallback to a basic attack if no abilities are available
+        planned_ability = _create_fallback_attack_instance()
 
 # Execute the ability that was planned at the start of the turn
 func perform_planned_action() -> void:

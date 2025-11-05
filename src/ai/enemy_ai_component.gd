@@ -6,16 +6,16 @@ class_name EnemyAIComponent extends Resource
 
 # Type-safe container for categorized abilities
 class CategorizedAbilities:
-    var attack: Array[Ability] = []
-    var defend: Array[Ability] = []
-    var buff: Array[Ability] = []
-    var preparation: Array[Ability] = []
-    var flee: Array[Ability] = []
-    var other: Array[Ability] = []
+    var attack: Array[AbilityInstance] = []
+    var defend: Array[AbilityInstance] = []
+    var buff: Array[AbilityInstance] = []
+    var preparation: Array[AbilityInstance] = []
+    var flee: Array[AbilityInstance] = []
+    var other: Array[AbilityInstance] = []
 
     # Helper method to get all abilities as a flat array
-    func get_all_abilities() -> Array[Ability]:
-        var all_abilities: Array[Ability] = []
+    func get_all_abilities() -> Array[AbilityInstance]:
+        var all_abilities: Array[AbilityInstance] = []
         all_abilities.append_array(attack)
         all_abilities.append_array(defend)
         all_abilities.append_array(buff)
@@ -30,15 +30,15 @@ class CategorizedAbilities:
 # - enemy: The enemy that needs to plan an action
 # - available_abilities: Array of abilities the enemy can potentially use
 # - hp_percentage: The enemy's current health as a percentage (0.0 - 1.0)
-# Returns: The selected Ability to execute, or null if no ability should be used
-func plan_action(_enemy: CombatEntity, _available_abilities: Array[Ability], _hp_percentage: float) -> Ability:
+# Returns: The selected AbilityInstance to execute, or null if no ability should be used
+func plan_action(_enemy: CombatEntity, _available_abilities: Array[AbilityInstance], _hp_percentage: float) -> AbilityInstance:
     push_error("EnemyAIComponent.plan_action() must be overridden in subclasses")
     return null
 
 # Helper method to filter abilities that can actually be used in current conditions
 # This is provided as a utility for AI implementations
-func filter_usable_abilities(enemy: CombatEntity, available_abilities: Array[Ability]) -> Array[Ability]:
-    var usable_abilities: Array[Ability] = []
+func filter_usable_abilities(enemy: CombatEntity, available_abilities: Array[AbilityInstance]) -> Array[AbilityInstance]:
+    var usable_abilities: Array[AbilityInstance] = []
     for ability in available_abilities:
         if ability.can_use(enemy):
             usable_abilities.append(ability)
@@ -46,14 +46,14 @@ func filter_usable_abilities(enemy: CombatEntity, available_abilities: Array[Abi
 
 # Helper method to select a random ability based on priority weighting
 # This is provided as a utility for AI implementations
-func select_random_ability_by_priority(abilities: Array[Ability]) -> Ability:
+func select_random_ability_by_priority(abilities: Array[AbilityInstance]) -> AbilityInstance:
     if abilities.is_empty():
         return null
 
     # Calculate total priority sum
     var total_priority: int = 0
     for ability in abilities:
-        total_priority += max(1, ability.priority)  # Ensure minimum priority of 1
+        total_priority += max(1, ability.ability_resource.priority)  # Ensure minimum priority of 1
 
     # Pick a random number within the total priority range
     var random_value: int = randi() % total_priority
@@ -61,7 +61,7 @@ func select_random_ability_by_priority(abilities: Array[Ability]) -> Ability:
     # Find the ability that corresponds to this random value
     var current_sum: int = 0
     for ability in abilities:
-        current_sum += max(1, ability.priority)
+        current_sum += max(1, ability.ability_resource.priority)
         if random_value < current_sum:
             return ability
 
@@ -76,18 +76,18 @@ func select_random_ability_by_priority(abilities: Array[Ability]) -> Ability:
 # - preparation: Multi-turn abilities that build up for stronger effects
 # - flee: Escape abilities that attempt to end combat
 # - other: Any abilities that don't fit the above categories
-func categorize_abilities_by_type(abilities: Array[Ability]) -> CategorizedAbilities:
+func categorize_abilities_by_type(abilities: Array[AbilityInstance]) -> CategorizedAbilities:
     var categorized := CategorizedAbilities.new()
 
     for ability in abilities:
         match ability.get_ability_type():
-            Ability.AbilityType.ATTACK:
+            AbilityResource.AbilityType.ATTACK:
                 categorized.attack.append(ability)
-            Ability.AbilityType.DEFEND:
+            AbilityResource.AbilityType.DEFEND:
                 categorized.defend.append(ability)
-            Ability.AbilityType.SUPPORT:
+            AbilityResource.AbilityType.SUPPORT:
                 categorized.buff.append(ability)
-            Ability.AbilityType.FLEE:
+            AbilityResource.AbilityType.FLEE:
                 categorized.flee.append(ability)
             _:
                 categorized.other.append(ability)

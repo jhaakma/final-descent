@@ -5,7 +5,7 @@ class_name AbilityResolver extends RefCounted
 static func generate_ability(
     template: EnemyTemplate.AbilityTemplate,
     element_affinity: EnemyTemplate.ElementAffinity,
-    size_category: EnemyTemplate.SizeCategory,
+    _size_category: EnemyTemplate.SizeCategory,
     level: int,
     _archetype: EnemyTemplate.EnemyArchetype
 ) -> AbilityResource:
@@ -17,7 +17,7 @@ static func generate_ability(
         EnemyTemplate.AbilityTemplate.ELEMENTAL_STRIKE:
             return _create_elemental_strike(element_affinity, level)
         EnemyTemplate.AbilityTemplate.BREATH_ATTACK:
-            return _create_breath_attack(element_affinity, size_category, level)
+            return _create_breath_attack(element_affinity, level)
         EnemyTemplate.AbilityTemplate.POISON_ATTACK:
             return _create_poison_attack(level)
         EnemyTemplate.AbilityTemplate.DEFEND:
@@ -64,17 +64,11 @@ static func _create_elemental_strike(element_affinity: EnemyTemplate.ElementAffi
     ability.damage_type = _get_damage_type(element_affinity)
     return ability
 
-## Create breath attack ability (requires LARGE or HUGE size)
+
 static func _create_breath_attack(
     element_affinity: EnemyTemplate.ElementAffinity,
-    size_category: EnemyTemplate.SizeCategory,
     level: int
 ) -> AbilityResource:
-    # Check size requirement
-    if size_category != EnemyTemplate.SizeCategory.LARGE and size_category != EnemyTemplate.SizeCategory.HUGE:
-        push_error("Breath attack requires LARGE or HUGE size category")
-        return null
-
     var ability := AttackAbility.new()
     var element_name := _get_element_name(element_affinity)
     ability.ability_name = "%s Breath" % element_name

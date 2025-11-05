@@ -5,7 +5,7 @@ class_name RandomAIComponent extends EnemyAIComponent
 # This AI is suitable for basic enemies or testing purposes
 
 # Main AI decision making method - selects a random usable ability
-func plan_action(enemy: CombatEntity, available_abilities: Array[Ability], _hp_percentage: float) -> Ability:
+func plan_action(enemy: CombatEntity, available_abilities: Array[AbilityInstance], _hp_percentage: float) -> AbilityInstance:
     if available_abilities.is_empty():
         return null
 

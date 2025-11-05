@@ -133,3 +133,59 @@ func test_enemy_generation_with_modifier() -> bool:
 
     print("Enemy generation with modifier test passed")
     return true
+
+func test_ability_generation_from_templates() -> bool:
+    print("Testing ability generation from templates...")
+
+    # Create template with specific abilities
+    var template := EnemyTemplate.new()
+    template.base_name = "Test Warrior"
+    template.archetype = EnemyTemplate.EnemyArchetype.WARRIOR
+    template.base_level = 1
+    template.element_affinity = EnemyTemplate.ElementAffinity.FIRE
+    template.size_category = EnemyTemplate.SizeCategory.MEDIUM
+    template.ability_templates = [
+        EnemyTemplate.AbilityTemplate.BASIC_ATTACK,
+        EnemyTemplate.AbilityTemplate.DEFEND,
+        EnemyTemplate.AbilityTemplate.ELEMENTAL_STRIKE
+    ]
+
+    # Create generator
+    var generator := EnemyGenerator.new()
+    generator.enemy_templates = [template]
+    generator.modifier_chance = 0.0
+
+    # Generate enemy
+    var enemy := generator.generate_enemy()
+
+    if not assert_not_null(enemy, "Failed to generate enemy"):
+        return false
+
+    # Should have exactly 3 abilities
+    if not assert_equals(enemy.abilities.size(), 3, "Expected 3 abilities"):
+        return false
+
+    # Check for basic attack ability
+    var has_basic_attack := false
+    var has_defend := false
+    var has_elemental := false
+
+    for ability in enemy.abilities:
+        if ability.ability_name == "Basic Attack":
+            has_basic_attack = true
+        elif ability.ability_name == "Defend":
+            has_defend = true
+        elif ability.ability_name == "Fire Strike":
+            has_elemental = true
+
+    if not assert_true(has_basic_attack, "Missing basic attack ability"):
+        return false
+
+    if not assert_true(has_defend, "Missing defend ability"):
+        return false
+
+    if not assert_true(has_elemental, "Missing elemental strike ability (expected 'Fire Strike')"):
+        return false
+
+    print("Ability generation from templates test passed")
+    return true

@@ -101,28 +101,30 @@ func _build_enemy_name(template: EnemyTemplate) -> String:
 func _generate_abilities(template: EnemyTemplate) -> Array[AbilityResource]:
     var abilities: Array[AbilityResource] = []
 
-    # Always add basic attack
-    var basic_attack: AbilityResource = AbilityResolver.generate_ability(
-        EnemyTemplate.AbilityTemplate.BASIC_ATTACK,
-        template.element_affinity,
-        template.size_category,
-        template.base_level,
-        template.archetype
-    )
-    if basic_attack:
-        abilities.append(basic_attack)
-
-    # Generate abilities from templates
-    for ability_template in template.ability_templates:
-        var ability: AbilityResource = AbilityResolver.generate_ability(
-            ability_template,
+    # Use template's ability list if specified, otherwise add basic attack
+    if not template.ability_templates.is_empty():
+        # Generate abilities from templates
+        for ability_template in template.ability_templates:
+            var ability: AbilityResource = AbilityResolver.generate_ability(
+                ability_template,
+                template.element_affinity,
+                template.size_category,
+                template.base_level,
+                template.archetype
+            )
+            if ability:
+                abilities.append(ability)
+    else:
+        # Fallback: always add basic attack if no templates specified
+        var basic_attack: AbilityResource = AbilityResolver.generate_ability(
+            EnemyTemplate.AbilityTemplate.BASIC_ATTACK,
             template.element_affinity,
             template.size_category,
             template.base_level,
             template.archetype
         )
-        if ability:
-            abilities.append(ability)
+        if basic_attack:
+            abilities.append(basic_attack)
 
     return abilities
 
