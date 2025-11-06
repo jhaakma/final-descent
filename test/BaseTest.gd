@@ -37,8 +37,19 @@ func run_test(method_name: String) -> bool:
     _failure_message = ""
 
     if has_method(method_name):
-        call(method_name)
-        # Test fails if any assertion failed during execution
+        # Test methods must return true on success
+        var result: Variant = call(method_name)
+
+        # If test method didn't return true, it failed
+        if result != true:
+            # Only set failure message if not already set by an assertion
+            # (assertions set both _test_failed and _failure_message)
+            if not _test_failed:
+                _test_failed = true
+                # GDScript returns false on runtime errors, null on missing return
+                # Don't add extra message - test should print its own error context
+
+        # Test fails if any assertion failed during execution OR method didn't return true
         return not _test_failed
     return false
 

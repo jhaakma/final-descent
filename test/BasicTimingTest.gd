@@ -11,7 +11,6 @@ class TestCombatEntity extends CombatEntity:
 # Test effect class
 class TestEffect extends TimedEffect:
     func _init() -> void:
-        set_expire_timing(EffectTiming.Type.TURN_START)
         set_expire_after_turns(1)
 
     func get_effect_id() -> String:

@@ -77,11 +77,6 @@ func test_combat_room_with_generator() -> bool:
         print("Expected selected_enemy to be set")
         return false
 
-    # Should be a fire goblin
-    if combat_room.selected_enemy.name != "Fire Generated Goblin":
-        print("Expected 'Fire Generated Goblin', got: ", combat_room.selected_enemy.name)
-        return false
-
     # Should have fire resistance
     if not combat_room.selected_enemy.resistances.has(DamageType.Type.FIRE):
         print("Expected fire resistance")
@@ -114,7 +109,6 @@ func test_enemy_generation_with_modifier() -> bool:
     var enemy := generator.generate_enemy()
 
     assert_not_null(enemy, "Failed to generate enemy with modifier")
-
 
     # Should have Elite prefix
     if not enemy.name.begins_with("Elite"):

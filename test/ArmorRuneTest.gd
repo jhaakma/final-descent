@@ -1,6 +1,7 @@
 class_name ArmorRuneTest extends BaseTest
 
 func test_armor_rune_enchantment_application() -> bool:
+    print("Testing ArmorRune enchantment application...")
     # Create test armor rune
     var armor_rune := ArmorRune.new()
     var test_enchantment := ConstantEffectEnchantment.new()
@@ -24,14 +25,15 @@ func test_armor_rune_enchantment_application() -> bool:
 
     # Test the callback method directly with correct parameter order (selected_armor, enchantment, item_data)
     var enchanted_armor := armor_rune._on_armor_selected(armor_instance, test_enchantment, rune_item_data)
+    var enchanted_armor_item := enchanted_armor.item as Armor
+    assert_not_null(enchanted_armor_item.enchantment, "Armor should have an enchantment")
 
-
-    assert_not_null(enchanted_armor.enchantment, "Armor should have an enchantment")
-    assert_equals(enchanted_armor.enchantment, test_enchantment, "Armor should have the correct enchantment")
-    assert_true(enchanted_armor.name.contains("of"), "Armor name (%s) should indicate enchantment" % enchanted_armor.name)
+    assert_equals(enchanted_armor_item.enchantment, test_enchantment, "Armor should have the correct enchantment")
+    assert_true(enchanted_armor_item.name.contains("of"), "Armor name (%s) should indicate enchantment" % enchanted_armor_item.name)
 
     # Verify that condition is preserved after enchantment
     assert_equals(armor_instance.item_data.current_condition, 100, "Armor condition should be preserved after enchantment")
+
 
     return true
 

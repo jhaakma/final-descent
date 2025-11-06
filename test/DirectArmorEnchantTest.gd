@@ -47,8 +47,8 @@ func test_exact_rune_usage_scenario() -> bool:
     # Call replace_item_instance exactly like ArmorRune does
     print("DEBUG: About to call replace_item_instance...")
     print("DEBUG: selected_armor has ItemData: %s" % str(selected_armor.item_data != null))
-    var success := player.replace_item_instance(selected_armor, enchanted_armor)
-    assert_true(success, "Replacement should succeed")
+    var replaced_instance := player.replace_item_instance(selected_armor, enchanted_armor)
+    assert_true(replaced_instance != null, "Replacement should succeed")
 
     # Check the final result
     var final_equipped: ItemInstance = player.equipped_items[Equippable.EquipSlot.CUIRASS]

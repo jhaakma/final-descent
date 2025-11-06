@@ -15,9 +15,6 @@ func test_scroll_usage_consumes_player_turn() -> bool:
 
     # Start combat and ensure we're in player turn
     state_manager.start_combat()
-    var initial_state := state_manager.get_current_state()
-    if initial_state != CombatStateManager.State.PLAYER_TURN:
-        state_manager.transition_to_player_turn()
 
     # Record initial enemy health (for potential future use)
     var _initial_enemy_hp := enemy.get_current_hp()

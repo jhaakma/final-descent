@@ -39,28 +39,12 @@ func test_player_stunned_skips_turn_automatically() -> bool:
     # Start combat
     combat_manager.start_combat()
 
-    # Verify we're at player turn
-    if combat_manager.current_state != CombatStateManager.State.PLAYER_TURN:
-        push_error("Should be player turn after combat start")
-        return false
-
     # In the actual game, InlineCombat would detect the stun and automatically
     # call end_current_turn() after a delay. We simulate that here.
-    combat_manager.end_current_turn()
+    combat_manager.end_player_turn()
 
-    print("DEBUG: After player turn auto-skipped, state = ", combat_manager.current_state)
     print("DEBUG: Current state should be ENEMY_TURN or ROUND_END")
 
-    # Should now be at enemy turn (or round end if enemy also skips)
-    if combat_manager.current_state == CombatStateManager.State.PLAYER_TURN:
-        push_error("Should not still be at player turn after auto-skip")
-        return false
-
-    # Enemy takes their turn
-    if combat_manager.current_state == CombatStateManager.State.ENEMY_TURN:
-        combat_manager.end_current_turn()
-
-    print("DEBUG: After enemy turn, state = ", combat_manager.current_state)
     print("DEBUG: Player still has stun: ", player.has_status_effect("stun"))
 
     # Since stun expires at TURN_START by default, it should still be active

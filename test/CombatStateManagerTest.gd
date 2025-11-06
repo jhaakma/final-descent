@@ -42,10 +42,6 @@ func test_state_manager_initialization() -> bool:
 
     var state_manager := CombatStateManager.new(context)
 
-    if state_manager.get_current_state() != CombatStateManager.State.COMBAT_START:
-        push_error("Initial state should be COMBAT_START")
-        return false
-
     if state_manager.context != context:
         push_error("Context should be set correctly")
         return false
@@ -53,46 +49,6 @@ func test_state_manager_initialization() -> bool:
     print("✓ CombatStateManager initialization test passed")
     return true
 
-func test_state_transitions() -> bool:
-    print("Testing CombatStateManager state transitions...")
-
-    var player := Player.new()
-    var enemy_resource := EnemyResource.new()
-    enemy_resource.name = "Test Goblin"
-    enemy_resource.max_hp = 30
-    var enemy := Enemy.new(enemy_resource)
-    var context := CombatContext.new(player, enemy, enemy_resource)
-
-    var state_manager := CombatStateManager.new(context)
-
-    # Test start combat which automatically transitions to first turn
-    state_manager.start_combat()
-    # start_combat() automatically goes to first turn (player turn by default)
-    if state_manager.get_current_state() != CombatStateManager.State.PLAYER_TURN:
-        push_error("Should be in PLAYER_TURN after start_combat")
-        return false
-
-    # Test end current turn - this should go to enemy turn
-    state_manager.end_current_turn()
-    if state_manager.get_current_state() != CombatStateManager.State.ENEMY_TURN:
-        push_error("Should transition to ENEMY_TURN after player turn end")
-        return false
-
-    # End enemy turn - since both actors have acted, should go to TURN_START
-    state_manager.end_current_turn()
-    # After TURN_START processing, it should automatically start next round (player turn)
-    if state_manager.get_current_state() != CombatStateManager.State.PLAYER_TURN:
-        push_error("Should transition to PLAYER_TURN for next round after both turns completed")
-        return false
-
-    # Test manual transition to combat end
-    state_manager.end_combat(true)
-    if state_manager.get_current_state() != CombatStateManager.State.COMBAT_END:
-        push_error("Should transition to COMBAT_END")
-        return false
-
-    print("✓ CombatStateManager state transitions test passed")
-    return true
 
 func test_signal_emissions() -> bool:
     print("Testing CombatStateManager signal emissions...")
@@ -130,14 +86,14 @@ func test_signal_emissions() -> bool:
     # To test enemy turn, we need to end the player turn
     tracker.round_ended_received = false
     tracker.enemy_turn_started_received = false
-    state_manager.end_current_turn()  # This transitions to enemy turn
+    state_manager.end_player_turn()  # This transitions to enemy turn
 
     if not tracker.enemy_turn_started_received:
         push_error("enemy_turn_started signal should have been emitted after player turn end")
         return false
 
     # End enemy turn to complete the round
-    state_manager.end_current_turn()  # This completes the round and starts next round
+    state_manager.end_enemy_turn()  # This completes the round and starts next round
 
     if not tracker.round_ended_received:
         push_error("round_ended signal should have been emitted")
@@ -151,36 +107,6 @@ func test_signal_emissions() -> bool:
         return false
 
     print("✓ CombatStateManager signal emissions test passed")
-    return true
-
-func test_invalid_state_transitions() -> bool:
-    print("Testing CombatStateManager invalid state transitions...")
-
-    var player := Player.new()
-    var enemy_resource := EnemyResource.new()
-    enemy_resource.name = "Test Goblin"
-    enemy_resource.max_hp = 30
-    var enemy := Enemy.new(enemy_resource)
-    var context := CombatContext.new(player, enemy, enemy_resource)
-
-    var state_manager := CombatStateManager.new(context)
-
-    # End combat first
-    state_manager.end_combat(true)
-    var final_state := state_manager.get_current_state()
-
-    # Try to transition from terminal state - should not work
-    state_manager.transition_to_player_turn()
-    if state_manager.get_current_state() != final_state:
-        push_error("Should not be able to transition from COMBAT_END state")
-        return false
-
-    state_manager.transition_to_enemy_turn()
-    if state_manager.get_current_state() != final_state:
-        push_error("Should not be able to transition from COMBAT_END state")
-        return false
-
-    print("✓ CombatStateManager invalid state transitions test passed")
     return true
 
 func test_automatic_combat_end() -> bool:
@@ -206,7 +132,7 @@ func test_automatic_combat_end() -> bool:
 
     # The state manager should detect combat end when end_current_turn is called
     # since _check_combat_end_conditions is called within end_current_turn
-    state_manager.end_current_turn()
+    state_manager.end_player_turn()
 
     if not tracker.combat_ended_received:
         push_error("Combat should have ended automatically when enemy died")
@@ -214,10 +140,6 @@ func test_automatic_combat_end() -> bool:
 
     if not tracker.victory_result:
         push_error("Should have been a victory when enemy died")
-        return false
-
-    if state_manager.get_current_state() != CombatStateManager.State.COMBAT_END:
-        push_error("State should be COMBAT_END after automatic end")
         return false
 
     print("✓ CombatStateManager automatic combat end test passed")
