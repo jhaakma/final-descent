@@ -53,15 +53,24 @@ func _update_displays() -> void:
     _setup_repair_tab()
     _setup_upgrade_tab()
 
+func get_equipment() -> Array[ItemInstance]:
+    var equipment: Array[ItemInstance] = []
+    var inventory_items: Array[ItemInstance] = GameState.player.get_item_tiles()
+
+    for item_instance in inventory_items:
+       if item_instance.item is Equippable:
+            equipment.append(item_instance)
+
+    return equipment
+
 func _setup_repair_tab() -> void:
     # Clear existing items
     for child in repair_list.get_children():
         child.queue_free()
 
-    # Get all equipped items (both weapon and armor)
-    var equipped_items: Array[ItemInstance] = GameState.player.get_all_equipped_items()
+    var equipment := get_equipment()
 
-    if equipped_items.is_empty():
+    if equipment.is_empty():
         var no_items_label: Label = Label.new()
         no_items_label.text = "No equipment to repair."
         repair_list.add_child(no_items_label)
@@ -69,7 +78,7 @@ func _setup_repair_tab() -> void:
 
     # Filter to only items that need repair
     var items_needing_repair: Array[ItemInstance] = []
-    for item_instance in equipped_items:
+    for item_instance in equipment:
         if item_instance.item_data and item_instance.item_data.current_condition < (item_instance.item as Equippable).get_max_condition():
             items_needing_repair.append(item_instance)
 
@@ -114,9 +123,9 @@ func _setup_upgrade_tab() -> void:
         child.queue_free()
 
     # Get all equipped items
-    var equipped_items: Array[ItemInstance] = GameState.player.get_all_equipped_items()
+    var equipment := get_equipment()
 
-    if equipped_items.is_empty():
+    if equipment.is_empty():
         var no_items_label: Label = Label.new()
         no_items_label.text = "No equipment to upgrade."
         upgrade_list.add_child(no_items_label)
@@ -124,7 +133,7 @@ func _setup_upgrade_tab() -> void:
 
     # Filter to only items that can be upgraded AND have valid modifiers available
     var upgradeable_items: Array[ItemInstance] = []
-    for item_instance in equipped_items:
+    for item_instance in equipment:
         var item: Equippable = item_instance.item as Equippable
         if item.can_have_modifier():
             # Check if any modifiers can apply to this item
