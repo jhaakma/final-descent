@@ -120,7 +120,8 @@ func _on_combat_started(_context: CombatContext) -> void:
     pass
 
 func _on_player_turn_started(_context: CombatContext) -> void:
-    # Enable player actions and update UI
+    # Enable player actions and update display
+    # Note: update needed for enemy state (player state updates via signals)
     combat_ui.update_display()
 
     # Check if this is the first turn and player should skip due to avoid failure
@@ -151,9 +152,10 @@ func _on_player_turn_started(_context: CombatContext) -> void:
 
 func _on_enemy_turn_started(_context: CombatContext) -> void:
     # Disable player actions, update UI, and process enemy turn
+    # Note: Player damaged on previous turn, need to show updated HP and effects
     combat_ui.update_display()
     combat_ui.disable_actions()
-        # Check if enemy should skip their turn
+    # Check if enemy should skip their turn
     if combat_context.enemy.should_skip_turn():
         LogManager.log_event("{enemy:%s} is stunned and skips their turn!" % combat_context.enemy.get_name())
         # End enemy's turn (will be handled by the round system)
@@ -165,6 +167,7 @@ func _on_enemy_turn_started(_context: CombatContext) -> void:
 
 func _on_round_ended(_context: CombatContext) -> void:
     # Round has ended, update UI and emit signal for room updates
+    # Note: ROUND_END effects may have changed entity states
     combat_ui.update_display()
     turn_ended.emit()
 
@@ -172,6 +175,10 @@ func _on_combat_ended(_context: CombatContext, victory: bool) -> void:
     # Combat is over
     # Note: CombatManager already emits UIEvents.player_stats_changed after processing
     # combat end effects, so UI will update automatically via event bus
+
+    # Clean up UI signal connections
+    combat_ui.cleanup()
+
     combat_resolved.emit(victory)
     if not victory:
         content_resolved.emit()

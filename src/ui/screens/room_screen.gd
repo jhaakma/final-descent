@@ -215,7 +215,7 @@ func _refresh_stats() -> void:
     if active_conditions.size() > 0:
         var cond_text := "\nActive Status Conditions (%d):" % active_conditions.size()
         for condition: StatusCondition in active_conditions:
-            cond_text += "\n• %s" % condition.status_effect.get_description()
+            cond_text += "\n• %s" % condition.get_description()
         hp_tooltip_text += cond_text
 
     hp_bar.tooltip_text = hp_tooltip_text

@@ -19,7 +19,7 @@ func initialize_with_condition(condition: StatusCondition) -> void:
 
     status_text.text = display_text
 
-    var description := str(effect.get_description())
+    var description := str(condition.get_description())
     # status_value.text = "[color=%s]%s[/color]" % [color, description]
     status_value.text = description
 

@@ -46,15 +46,24 @@ func initialize_combat_display(combat_context: CombatContext) -> void:
     if label:
         label.text = "%s appears!" % [_get_a_an(enemy_name).capitalize()]
 
-    # Connect to player stats changes for reactive UI updates
-    if context.player.stats_changed.is_connected(_on_player_stats_changed):
-        context.player.stats_changed.disconnect(_on_player_stats_changed)
-    context.player.stats_changed.connect(_on_player_stats_changed)
+    # Connect to UIEvents for reactive updates - single source of truth
+    # Both stats and status effect changes will trigger UI updates
+    if not UIEvents.player_stats_changed.is_connected(_on_player_state_changed):
+        UIEvents.player_stats_changed.connect(_on_player_state_changed)
+    if not UIEvents.player_status_effects_changed.is_connected(_on_player_state_changed):
+        UIEvents.player_status_effects_changed.connect(_on_player_state_changed)
 
     _update_resistance_labels()
     _update_weakness_labels()
     _update_enemy_stats_display()
     _refresh_bars()
+
+func cleanup() -> void:
+    ## Disconnect signals when combat ends
+    if UIEvents.player_stats_changed.is_connected(_on_player_state_changed):
+        UIEvents.player_stats_changed.disconnect(_on_player_state_changed)
+    if UIEvents.player_status_effects_changed.is_connected(_on_player_state_changed):
+        UIEvents.player_status_effects_changed.disconnect(_on_player_state_changed)
 
 func update_display() -> void:
     ## Update all UI elements with current combat state
@@ -92,8 +101,9 @@ func _update_button_states() -> void:
     # which are called from InlineCombat based on game state
     pass
 
-func _on_player_stats_changed() -> void:
-    ## Reactive callback when player stats change - updates UI automatically
+func _on_player_state_changed() -> void:
+    ## Reactive callback for any player state change (stats, HP, status effects)
+    ## Single handler for all combat UI updates - simplifies signal management
     _refresh_bars()
 
 func _refresh_bars() -> void:
