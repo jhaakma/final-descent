@@ -29,7 +29,7 @@ func generate_enemy_from_template(template: EnemyTemplate) -> EnemyResource:
     var hp: int = _calculate_base_stat(archetype_data.base_hp, settings.hp_level_scaling, template.base_level)
     var attack: int = _calculate_base_stat(archetype_data.base_attack, settings.attack_level_scaling, template.base_level)
     var defense: int = archetype_data.base_defense + int(settings.defense_level_scaling * template.base_level)
-    var avoid_chance: float = settings.base_avoid_chance
+    var avoid_chance: float = archetype_data.base_avoid_chance
 
     # Apply size modifiers
     var size_data := settings.get_size_data(template.size_category)

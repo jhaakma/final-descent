@@ -114,7 +114,7 @@ func _on_stats_changed() -> void:
     UIEvents.player_stats_changed.emit()
 
 # Signal handler for any status effect changes (applied, processed, removed)
-func _on_effect_changed(_arg1 = null, _arg2 = null) -> void:
+func _on_effect_changed(_arg1: Variant = null, _arg2: Variant = null) -> void:
     # Any status effect change triggers UI updates via event bus
     emit_signal("stats_changed")  # Keep for backward compatibility
     UIEvents.player_status_effects_changed.emit()

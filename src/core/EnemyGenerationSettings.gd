@@ -1,17 +1,6 @@
 class_name EnemyGenerationSettings extends Resource
 ## Configuration settings for enemy generation and stat calculation
 
-## Base stat values
-@export_group("Base Stats")
-## Starting health points for all enemies before modifiers
-@export var base_hp: int = 25
-## Starting attack damage for all enemies before modifiers
-@export var base_attack: int = 4
-## Starting defense value for all enemies before modifiers
-@export var base_defense: int = 0
-## Starting chance to avoid attacks (0.0 = never, 1.0 = always)
-@export var base_avoid_chance: float = 0.5
-
 ## Level scaling factors
 @export_group("Level Scaling")
 ## Multiplicative HP increase per level (0.25 = 25% more HP per level)
@@ -23,29 +12,51 @@ class_name EnemyGenerationSettings extends Resource
 
 ## Archetype base stats
 @export_group("Archetype Base Stats")
+
+@export_subgroup("Default")
+## Default base HP - fallback archetype
+@export var default_base_hp: int = 20
+## Default base attack - fallback archetype
+@export var default_base_attack: int = 3
+## Default base defense - fallback archetype
+@export var default_base_defense: int = 5
+## Default base avoid chance - fallback archetype
+@export var default_base_avoid_chance: float = 0.5
+
+@export_subgroup("Warrior")
 ## Warrior base HP - balanced melee combatant
 @export var warrior_base_hp: int = 25
 ## Warrior base attack - balanced damage output
 @export var warrior_base_attack: int = 4
 ## Warrior base defense - moderate defensive capability
 @export var warrior_base_defense: int = 10
+## Warrior base avoid chance - moderate evasion
+@export var warrior_base_avoid_chance: float = 0.6
 
+@export_subgroup("Berserker")
 ## Barbarian base HP - glass cannon with lower survivability
-@export var barbarian_base_hp: int = 20
+@export var berserker_base_hp: int = 20
 ## Barbarian base attack - high damage at cost of defense
-@export var barbarian_base_attack: int = 6
+@export var berserker_base_attack: int = 6
 ## Barbarian base defense - minimal defensive capability
-@export var barbarian_base_defense: int = 0
+@export var berserker_base_defense: int = 0
+## Barbarian base avoid chance - low evasion
+@export var berserker_base_avoid_chance: float = 0.3
 
+@export_subgroup("Tank")
 ## Tank base HP - high survivability tank role
-@export var tank_base_hp: int = 38
+@export var tank_base_hp: int = 40
 ## Tank base attack - lower damage for defensive role
 @export var tank_base_attack: int = 3
 ## Tank base defense - high defensive capability
 @export var tank_base_defense: int = 20
+## Tank base avoid chance - very low evasion
+@export var tank_base_avoid_chance: float = 0.8
 
 ## Size category modifiers
 @export_group("Size Modifiers")
+
+@export_subgroup("Small")
 ## Small creature HP multiplier - reduced health for agility
 @export var small_hp_modifier: float = 0.7
 ## Small creature attack multiplier - slightly reduced damage
@@ -53,11 +64,13 @@ class_name EnemyGenerationSettings extends Resource
 ## Small creature avoid bonus - harder to hit due to size
 @export var small_avoid_bonus: float = 0.2
 
+@export_subgroup("Medium")
 ## Medium creature HP multiplier - baseline size
 @export var medium_hp_modifier: float = 1.0
 ## Medium creature attack multiplier - baseline damage
 @export var medium_attack_modifier: float = 1.0
 
+@export_subgroup("Large")
 ## Large creature HP multiplier - increased bulk and survivability
 @export var large_hp_modifier: float = 1.3
 ## Large creature attack multiplier - stronger attacks due to size
@@ -67,6 +80,7 @@ class_name EnemyGenerationSettings extends Resource
 ## Large creature avoid penalty - easier to hit due to size
 @export var large_avoid_penalty: float = -0.1
 
+@export_subgroup("Huge")
 ## Huge creature HP multiplier - massive health pool
 @export var huge_hp_modifier: float = 1.8
 ## Huge creature attack multiplier - devastating attacks
@@ -97,25 +111,29 @@ func get_archetype_data(archetype: EnemyTemplate.EnemyArchetype) -> Dictionary:
             return {
                 "base_hp": warrior_base_hp,
                 "base_attack": warrior_base_attack,
-                "base_defense": warrior_base_defense
+                "base_defense": warrior_base_defense,
+                "base_avoid_chance": warrior_base_avoid_chance
             }
-        EnemyTemplate.EnemyArchetype.BARBARIAN:
+        EnemyTemplate.EnemyArchetype.BERSERKER:
             return {
-                "base_hp": barbarian_base_hp,
-                "base_attack": barbarian_base_attack,
-                "base_defense": barbarian_base_defense
+                "base_hp": berserker_base_hp,
+                "base_attack": berserker_base_attack,
+                "base_defense": berserker_base_defense,
+                "base_avoid_chance": berserker_base_avoid_chance
             }
         EnemyTemplate.EnemyArchetype.TANK:
             return {
                 "base_hp": tank_base_hp,
                 "base_attack": tank_base_attack,
-                "base_defense": tank_base_defense
+                "base_defense": tank_base_defense,
+                "base_avoid_chance": tank_base_avoid_chance
             }
         _:
             return {
-                "base_hp": warrior_base_hp,
-                "base_attack": warrior_base_attack,
-                "base_defense": warrior_base_defense
+                "base_hp": default_base_hp,
+                "base_attack": default_base_attack,
+                "base_defense": default_base_defense,
+                "base_avoid_chance": default_base_avoid_chance
             }
 
 ## Get size modifiers as a dictionary for easier access

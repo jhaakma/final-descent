@@ -1,7 +1,5 @@
 # To do
 
-# More effect timing issues
-- Enemy defend causes them to skip both current and next turn
 
 # Enemy Generation
 - Enemy template

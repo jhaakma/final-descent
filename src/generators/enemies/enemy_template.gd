@@ -3,8 +3,9 @@ class_name EnemyTemplate extends Resource
 
 ## Enemy archetype determines combat role and stat distribution
 enum EnemyArchetype {
+    DEFAULT,   ## Fallback archetype
     WARRIOR,    ## Balanced melee combatant
-    BARBARIAN,  ## High damage, lower defense
+    BERSERKER,  ## High damage, lower defense
     TANK        ## High defense, lower damage
 }
 
