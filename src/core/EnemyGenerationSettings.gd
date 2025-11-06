@@ -21,28 +21,28 @@ class_name EnemyGenerationSettings extends Resource
 ## Additive defense increase per level (0.5 = +0.5 defense per level)
 @export var defense_level_scaling: float = 0.5  # +0.5 defense per level
 
-## Archetype modifiers
-@export_group("Archetype Modifiers")
-## Warrior HP multiplier - balanced melee combatant
-@export var warrior_hp_modifier: float = 1.0
-## Warrior attack multiplier - balanced damage output
-@export var warrior_attack_modifier: float = 1.0
-## Warrior defense bonus - moderate defensive capability
-@export var warrior_defense_bonus: int = 1
+## Archetype base stats
+@export_group("Archetype Base Stats")
+## Warrior base HP - balanced melee combatant
+@export var warrior_base_hp: int = 25
+## Warrior base attack - balanced damage output
+@export var warrior_base_attack: int = 4
+## Warrior base defense - moderate defensive capability
+@export var warrior_base_defense: int = 10
 
-## Barbarian HP multiplier - glass cannon with lower survivability
-@export var barbarian_hp_modifier: float = 0.8
-## Barbarian attack multiplier - high damage at cost of defense
-@export var barbarian_attack_modifier: float = 1.4
-## Barbarian defense bonus - minimal defensive capability
-@export var barbarian_defense_bonus: int = 0
+## Barbarian base HP - glass cannon with lower survivability
+@export var barbarian_base_hp: int = 20
+## Barbarian base attack - high damage at cost of defense
+@export var barbarian_base_attack: int = 6
+## Barbarian base defense - minimal defensive capability
+@export var barbarian_base_defense: int = 0
 
-## Tank HP multiplier - high survivability tank role
-@export var tank_hp_modifier: float = 1.5
-## Tank attack multiplier - lower damage for defensive role
-@export var tank_attack_modifier: float = 0.8
-## Tank defense bonus - high defensive capability
-@export var tank_defense_bonus: int = 2
+## Tank base HP - high survivability tank role
+@export var tank_base_hp: int = 38
+## Tank base attack - lower damage for defensive role
+@export var tank_base_attack: int = 3
+## Tank base defense - high defensive capability
+@export var tank_base_defense: int = 20
 
 ## Size category modifiers
 @export_group("Size Modifiers")
@@ -90,32 +90,32 @@ static func get_instance() -> EnemyGenerationSettings:
             instance = EnemyGenerationSettings.new()
     return instance
 
-## Get archetype modifiers as a dictionary for easier access
+## Get archetype base stats as a dictionary for easier access
 func get_archetype_data(archetype: EnemyTemplate.EnemyArchetype) -> Dictionary:
     match archetype:
         EnemyTemplate.EnemyArchetype.WARRIOR:
             return {
-                "hp_modifier": warrior_hp_modifier,
-                "attack_modifier": warrior_attack_modifier,
-                "defense_bonus": warrior_defense_bonus
+                "base_hp": warrior_base_hp,
+                "base_attack": warrior_base_attack,
+                "base_defense": warrior_base_defense
             }
         EnemyTemplate.EnemyArchetype.BARBARIAN:
             return {
-                "hp_modifier": barbarian_hp_modifier,
-                "attack_modifier": barbarian_attack_modifier,
-                "defense_bonus": barbarian_defense_bonus
+                "base_hp": barbarian_base_hp,
+                "base_attack": barbarian_base_attack,
+                "base_defense": barbarian_base_defense
             }
         EnemyTemplate.EnemyArchetype.TANK:
             return {
-                "hp_modifier": tank_hp_modifier,
-                "attack_modifier": tank_attack_modifier,
-                "defense_bonus": tank_defense_bonus
+                "base_hp": tank_base_hp,
+                "base_attack": tank_base_attack,
+                "base_defense": tank_base_defense
             }
         _:
             return {
-                "hp_modifier": warrior_hp_modifier,
-                "attack_modifier": warrior_attack_modifier,
-                "defense_bonus": warrior_defense_bonus
+                "base_hp": warrior_base_hp,
+                "base_attack": warrior_base_attack,
+                "base_defense": warrior_base_defense
             }
 
 ## Get size modifiers as a dictionary for easier access

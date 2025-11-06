@@ -160,10 +160,9 @@ func _update_enemy_stats_display() -> void:
         return
 
     var attack_power := context.enemy.get_total_attack_power()
-    var current_defense := context.enemy.get_defense_bonus()
+    var current_defense := context.enemy.get_total_defense()
     var defend_bonus := context.enemy.get_defend_bonus_percentage()
     var attack_bonus := context.enemy.get_attack_bonus()
-    var defense_bonus := context.enemy.get_defense_bonus()
 
     # Build the stats text with bonuses if they exist
     var stats_text := "ATK: %d" % attack_power
@@ -177,10 +176,7 @@ func _update_enemy_stats_display() -> void:
         stats_text += " | DEF: %d%% [color=cyan](+%d%% defending)[/color]" % [current_defense, defend_bonus]
     else:
         stats_text += " | DEF: %d%%" % current_defense
-        if defense_bonus > 0:
-            stats_text += " [color=green](+%d%%)[/color]" % defense_bonus
-        elif defense_bonus < 0:
-            stats_text += " [color=red](-%d%%)[/color]" % abs(defense_bonus)
+
 
     stats_label.text = stats_text
 

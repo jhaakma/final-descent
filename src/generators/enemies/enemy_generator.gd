@@ -24,18 +24,12 @@ func generate_enemy_from_template(template: EnemyTemplate) -> EnemyResource:
     # Get generation settings
     var settings := EnemyGenerationSettings.get_instance()
 
-    # Calculate base stats from settings and level
-    var base_hp := _calculate_base_stat(settings.base_hp, settings.hp_level_scaling, template.base_level)
-    var base_attack := _calculate_base_stat(settings.base_attack, settings.attack_level_scaling, template.base_level)
-    var base_defense := settings.base_defense + int(settings.defense_level_scaling * template.base_level)
-    var base_avoid := settings.base_avoid_chance
-
-    # Apply archetype modifiers
+    # Get archetype base stats and apply level scaling
     var archetype_data := settings.get_archetype_data(template.archetype)
-    var hp: int = int(round(base_hp * archetype_data.hp_modifier))
-    var attack: int = int(round(base_attack * archetype_data.attack_modifier))
-    var defense: int = base_defense + archetype_data.defense_bonus
-    var avoid_chance: float = base_avoid
+    var hp: int = _calculate_base_stat(archetype_data.base_hp, settings.hp_level_scaling, template.base_level)
+    var attack: int = _calculate_base_stat(archetype_data.base_attack, settings.attack_level_scaling, template.base_level)
+    var defense: int = archetype_data.base_defense + int(settings.defense_level_scaling * template.base_level)
+    var avoid_chance: float = settings.base_avoid_chance
 
     # Apply size modifiers
     var size_data := settings.get_size_data(template.size_category)

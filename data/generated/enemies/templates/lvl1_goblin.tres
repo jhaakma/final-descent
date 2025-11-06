@@ -5,8 +5,8 @@
 [resource]
 script = ExtResource("1_vbukg")
 base_name = "Goblin"
-base_level = 1
-archetype = 1
+base_level = 5
+archetype = 0
 size_category = 0
 element_affinity = 7
 ability_templates = Array[int]([5, 3])
