@@ -81,10 +81,10 @@ func _calculate_base_stat(base_value: int, scaling_factor: float, level: int) ->
 func _build_enemy_name(template: EnemyTemplate) -> String:
     var name_parts: Array[String] = []
 
-    # Add element prefix if applicable
-    var element_prefix := template.get_element_prefix()
-    if not element_prefix.is_empty():
-        name_parts.append(element_prefix)
+    # # Add element prefix if applicable
+    # var element_prefix := template.get_element_prefix()
+    # if not element_prefix.is_empty():
+    #     name_parts.append(element_prefix)
 
     # Add base name
     name_parts.append(template.base_name)

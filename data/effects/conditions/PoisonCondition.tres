@@ -8,3 +8,5 @@ script = ExtResource("1_statusCondition")
 name = "Poison"
 status_effect = ExtResource("2_poisonEffect")
 log_ability_name = false
+source_type = 0
+equipment_stack_count = 0

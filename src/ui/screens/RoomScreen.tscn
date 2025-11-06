@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://c0cpy5xfdy2nb"]
+[gd_scene load_steps=23 format=3 uid="uid://c0cpy5xfdy2nb"]
 
 [ext_resource type="Theme" uid="uid://ch0ahyx502rlq" path="res://data/themes/theme.tres" id="1_fqbyh"]
 [ext_resource type="Script" uid="uid://bi2w4gopbk7mv" path="res://src/ui/screens/room_screen.gd" id="1_vxldv"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://b3c8d4h8p1q6r" path="res://src/ui/widgets/EquippedItemsWidget.tscn" id="4_equipped"]
 [ext_resource type="Resource" uid="uid://d32s4st32v1tk" path="res://data/loot/StartingLoot.tres" id="4_uffsh"]
 [ext_resource type="Resource" uid="uid://bhfn488v1wa0x" path="res://data/rooms/MimicRoomBasic.tres" id="6_smb4s"]
+[ext_resource type="Resource" uid="uid://dyu26ij11wrli" path="res://data/rooms/BlacksmithRoom01.tres" id="7_0w4ck"]
 [ext_resource type="Script" uid="uid://cuib3tlx6u7dn" path="res://src/rooms/chest_room_resource.gd" id="7_soduk"]
 [ext_resource type="Resource" uid="uid://b6x4kbxgbv6cq" path="res://data/rooms/ChestRoomBasic.tres" id="8_0ce66"]
 [ext_resource type="Resource" uid="uid://c8q63s2m5b2yx" path="res://data/rooms/ChestRoomSuperior.tres" id="9_0w4ck"]
@@ -42,8 +43,8 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_fqbyh")
 script = ExtResource("1_vxldv")
-starting_rooms = Array[ExtResource("3_soduk")]([SubResource("Resource_4t8ue"), ExtResource("10_wfawr")])
-all_rooms = Array[ExtResource("3_soduk")]([ExtResource("8_0ce66"), ExtResource("9_0w4ck"), ExtResource("10_wfawr"), ExtResource("11_hoodt"), ExtResource("6_smb4s"), ExtResource("12_kigx5"), ExtResource("13_mm5rg"), ExtResource("14_m5t1k"), ExtResource("4_31aom"), ExtResource("15_d56d7"), ExtResource("16_og4wa")])
+starting_rooms = Array[ExtResource("3_soduk")]([SubResource("Resource_4t8ue"), ExtResource("10_wfawr"), ExtResource("7_0w4ck")])
+all_rooms = Array[ExtResource("3_soduk")]([ExtResource("8_0ce66"), ExtResource("9_0w4ck"), ExtResource("10_wfawr"), ExtResource("11_hoodt"), ExtResource("6_smb4s"), ExtResource("12_kigx5"), ExtResource("13_mm5rg"), ExtResource("14_m5t1k"), ExtResource("4_31aom"), ExtResource("15_d56d7"), ExtResource("16_og4wa"), ExtResource("7_0w4ck")])
 metadata/_edit_vertical_guides_ = [-118.0]
 
 [node name="MarginContainer" type="MarginContainer" parent="."]

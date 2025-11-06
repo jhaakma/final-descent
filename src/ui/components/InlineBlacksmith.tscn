@@ -1,0 +1,89 @@
+[gd_scene load_steps=2 format=3 uid="uid://267asysvpfwm"]
+
+[ext_resource type="Script" uid="uid://ck3ccdbrsjboi" path="res://src/ui/components/inline_blacksmith.gd" id="1_blacksmith"]
+
+[node name="InlineBlacksmith" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+script = ExtResource("1_blacksmith")
+
+[node name="BlacksmithContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="HeaderContainer" type="VBoxContainer" parent="BlacksmithContainer"]
+layout_mode = 2
+
+[node name="GreetingLabel" type="Label" parent="BlacksmithContainer/HeaderContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Welcome to the Forge!"
+horizontal_alignment = 1
+
+[node name="PlayerGoldLabel" type="Label" parent="BlacksmithContainer/HeaderContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Your Gold: 0"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="BlacksmithContainer"]
+modulate = Color(1, 1, 1, 0.3)
+layout_mode = 2
+
+[node name="ServiceTabs" type="TabContainer" parent="BlacksmithContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+current_tab = 0
+
+[node name="Repair" type="ScrollContainer" parent="BlacksmithContainer/ServiceTabs"]
+layout_mode = 2
+metadata/_tab_name = "Repair"
+metadata/_tab_index = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="BlacksmithContainer/ServiceTabs/Repair"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="RepairList" type="VBoxContainer" parent="BlacksmithContainer/ServiceTabs/Repair/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Upgrade" type="ScrollContainer" parent="BlacksmithContainer/ServiceTabs"]
+visible = false
+layout_mode = 2
+metadata/_tab_name = "Upgrade"
+metadata/_tab_index = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="BlacksmithContainer/ServiceTabs/Upgrade"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="UpgradeList" type="VBoxContainer" parent="BlacksmithContainer/ServiceTabs/Upgrade/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HSeparator2" type="HSeparator" parent="BlacksmithContainer"]
+modulate = Color(1, 1, 1, 0.3)
+layout_mode = 2
+
+[node name="CloseBtn" type="Button" parent="BlacksmithContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Leave Forge"

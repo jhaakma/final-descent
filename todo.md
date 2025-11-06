@@ -1,38 +1,37 @@
 # To do
 
+## Blacksmith and Equipment Modifications
 
-# Enemy Generation
-- Enemy template
-    - Base Name (Goblin)
-    - Archetype (Warrior, Barbarian, Tank)
-    - Size (Small, Medium, Large, Huge)
-    - Abilities
+### Blacksmith Room
+Offers the folowing services:
+- Repair equipment - fee based on durability recovered
+- Upgrade equipment - Add a random modifier to a piece of equipment for a fee
+
+### Weapon and Armor Modifiers
+- Adds prefix such as "Refined", "Sharpened" etc
+- Modifiers have restrictions based on item and damage type, e.g:
+    - "Reinforced" can only be applied to armor
+    - "Sharpened" can only be applied to slashing and piercing weapons
+- Blacksmith can apply a random modifier to existing equipment for a fee
+- Piece of equipment can only have one modifier applied
+
+
+
+
+## Automate Itch.io releases
+
+
+
 
 ## Ability Mechanics
 - AI for selecting abilities
     - Logic + randomness
 
-## Delay animations
+## Game Feel
 - Short delay after player and enemy action
+- Popup windows have fade in, particle effects etc
+- Menu sound effects- install bjxr
 
-## Class System
-
-When starting a new game, add menu for selecting a class. Each class
-
-### Mage
-- Has mana pool, regenerates mana each turn and when resting
-- Can learn spells from scrolls
-- New ability: Cast Spell
-### Thief
-- Chance to dodge attacks
-- Increased chance to flee and avoid
-- New ability: Steal
-### Warrior
-- Repair tools repair double the condition amount
-- New ability: Defend (exising defend ability now limited to Warrior) - take half damage next turn
-
-
-## Merchant inventory still not always highlighting equipped item
 
 ## Status Effect stacking issues
 - Still needs work, for example, poison from a spell and poison from a weapon aren't stacking
@@ -55,9 +54,6 @@ When starting a new game, add menu for selecting a class. Each class
 Create and use a consistent theme
 Remove all unnecessary theme overrides
 
-## Weapon degradation
-- Random shrine event repairs items
-- Blacksmith room to repair or even improve gear
 
 ## Combat Enhancements
 - Status effects

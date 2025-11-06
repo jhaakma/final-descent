@@ -5,8 +5,12 @@ class_name Armor extends Equippable
 @export var armor_slot: Equippable.EquipSlot = Equippable.EquipSlot.CUIRASS
 @export var resistances: Dictionary = {}  # Damage type resistances (DamageType.Type -> bool)
 
+var _base_defense: int = 0
+var _base_condition: int = 0
+
 func _init() -> void:
     name = "Armor"
+    _base_name = ""  # Explicitly initialize base name
 
 func get_category() -> Item.ItemCategory:
     return Item.ItemCategory.ARMOR
@@ -17,6 +21,27 @@ func get_equip_slot() -> Equippable.EquipSlot:
 func is_valid_enchantment(enchant: Enchantment) -> bool:
     # Armor can only have constant effect enchantments
     return enchant is ConstantEffectEnchantment
+
+## Override to apply modifier stat changes to armor
+func _apply_modifier_to_stats() -> void:
+    super._apply_modifier_to_stats()
+
+    if not modifier:
+        return
+
+    # Store base values if not already stored
+    if _base_defense == 0:
+        _base_defense = defense_bonus
+    if _base_condition == 0:
+        _base_condition = condition
+
+    # Apply modifier bonuses to stats
+    defense_bonus = int(_base_defense * modifier.defense_modifier)
+    var new_condition: int = int(_base_condition * modifier.condition_modifier)
+
+    # If condition changed, we need to scale current_condition proportionally for equipped items
+    # This is handled in the apply_modifier method of Equippable
+    condition = new_condition
 
 func get_additional_tooltip_info() -> Array[AdditionalTooltipInfoData]:
     var info: Array[AdditionalTooltipInfoData] = super.get_additional_tooltip_info()

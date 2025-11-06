@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="EquipmentModifier" load_steps=2 format=3 uid="uid://coet8k0b75epd"]
+
+[ext_resource type="Script" uid="uid://6tg203tnwb8r" path="res://src/items/equipment_modifier.gd" id="1_tiuu0"]
+
+[resource]
+script = ExtResource("1_tiuu0")
+modifier_name = "Reinforced"
+name_prefix = "Reinforced"
+name_suffix = ""
+damage_modifier = 1.0
+defense_modifier = 1.5
+condition_modifier = 1.25
+allowed_item_types = Array[int]([1, 2, 3, 4, 5])
+allowed_damage_types = Array[int]([])
+forbidden_item_types = Array[int]([])
+metadata/_custom_type_script = "uid://6tg203tnwb8r"

@@ -6,6 +6,10 @@ signal unequip(equippable: Equippable)
 @export var condition: int = 10  # Base condition when new
 @export var enchantment: Enchantment:
     set = set_enchantment
+@export var modifier: EquipmentModifier:
+    set = set_modifier
+
+var _base_name: String = ""  # Store original name before modifier is applied
 
 enum EquipSlot {
     WEAPON,
@@ -45,6 +49,48 @@ func set_enchantment(_enchantment: Enchantment) -> void:
     else:
         push_error("Warning: Enchantment %s is not valid owner for %s" % [_enchantment.get_class(), get_class()])
 
+func set_modifier(_modifier: EquipmentModifier) -> void:
+    if not _modifier:
+        modifier = null
+        return
+
+    if not _modifier.can_apply_to(self):
+        push_error("Warning: Modifier %s is not valid for %s" % [_modifier.modifier_name, name])
+        modifier = null
+        return
+
+    modifier = _modifier
+    _apply_modifier_to_stats()
+
+## Check if this item can have a modifier applied
+func can_have_modifier() -> bool:
+    # Items can only have one modifier
+    return modifier == null
+
+## Apply a modifier to this item (returns true if successful)
+func apply_modifier(new_modifier: EquipmentModifier) -> bool:
+    if not can_have_modifier():
+        return false
+
+    if not new_modifier.can_apply_to(self):
+        return false
+
+    modifier = new_modifier
+    _apply_modifier_to_stats()
+    return true
+
+## Internal method to apply modifier stat changes
+func _apply_modifier_to_stats() -> void:
+    if not modifier:
+        return
+
+    # Store base name if not already stored
+    if _base_name == "":
+        _base_name = name
+
+    # Apply modifier prefix/suffix to base name
+    name = modifier.get_modified_name(_base_name)
+
 func get_consumable() -> bool:
     return false  # Equippable items are not consumable
 
@@ -76,6 +122,12 @@ func calculate_buy_value(item_data: ItemData = null) -> int:
 func get_additional_tooltip_info() -> Array[AdditionalTooltipInfoData]:
     var info: Array[AdditionalTooltipInfoData] = []
 
+    if modifier:
+        var modifier_info := AdditionalTooltipInfoData.new()
+        modifier_info.text = "⚒️ %s (%s)" % [modifier.modifier_name, modifier.get_description()]
+        modifier_info.color = Color(1.0, 0.85, 0.4)  # Golden color for modifiers
+        info.append(modifier_info)
+
     if enchantment:
         var enchantment_info := AdditionalTooltipInfoData.new()
         enchantment_info.text = "🔮 Enchantment: %s" % enchantment.get_description()
@@ -87,6 +139,8 @@ func get_additional_tooltip_info() -> Array[AdditionalTooltipInfoData]:
 func get_inventory_color() -> Color:
     if enchantment:
         return Color("#ac6ad8ff")  # Light purple for enchanted items
+    if modifier:
+        return Color("#ffd966ff")  # Golden for modified items
     return get_base_inventory_color()
 
 func get_base_inventory_color() -> Color:

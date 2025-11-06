@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="BlacksmithRoomResource" load_steps=6 format=3 uid="uid://dyu26ij11wrli"]
+
+[ext_resource type="Script" uid="uid://6tg203tnwb8r" path="res://src/items/equipment_modifier.gd" id="1_0dmjd"]
+[ext_resource type="Script" uid="uid://2xmniayr4qp4" path="res://src/rooms/blacksmith_room_resource.gd" id="2_t1he2"]
+[ext_resource type="Resource" uid="uid://bsu4hcmeo4rh3" path="res://data/modifiers/SharpenedModifier.tres" id="2_w3nas"]
+[ext_resource type="Resource" uid="uid://bmy7rsdfakosj" path="res://data/modifiers/HardenedModifier.tres" id="3_44xn4"]
+[ext_resource type="Resource" uid="uid://coet8k0b75epd" path="res://data/modifiers/ReinforcedModifier.tres" id="4_68l3e"]
+
+[resource]
+script = ExtResource("2_t1he2")
+repair_cost_per_condition = 2
+upgrade_cost = 75
+available_modifiers = Array[ExtResource("1_0dmjd")]([ExtResource("2_w3nas"), ExtResource("3_44xn4"), ExtResource("4_68l3e")])
+title = "Blacksmith"
+description = "Welcome!"
+weight = 10
+min_floor = 0
+max_floor = -1
+metadata/_custom_type_script = "uid://2xmniayr4qp4"

@@ -16,11 +16,11 @@ signal ui_refresh_requested
 
 ## Convenience method to trigger all player-related UI updates
 func refresh_player_ui() -> void:
-	player_stats_changed.emit()
-	player_inventory_changed.emit()
-	player_status_effects_changed.emit()
+    player_stats_changed.emit()
+    player_inventory_changed.emit()
+    player_status_effects_changed.emit()
 
 ## Convenience method to request full UI refresh
 func refresh_all_ui() -> void:
-	ui_refresh_requested.emit()
-	refresh_player_ui()
+    ui_refresh_requested.emit()
+    refresh_player_ui()
