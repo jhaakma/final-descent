@@ -648,7 +648,7 @@ func take_items(item: Item, amount: int = 1) -> Array:
 ## Replace an item instance with a modified version, handling both inventory and equipped items
 ## This is useful for enchanting, repairing, or upgrading items
 ## Returns true if the replacement was successful
-func replace_item_instance(old_instance: ItemInstance, new_item: Item) -> bool:
+func replace_item_instance(old_instance: ItemInstance, new_item: Item) -> ItemInstance:
     # Create new instance preserving ItemData and count
     var new_instance := ItemInstance.new(new_item, old_instance.item_data, old_instance.count)
 
@@ -658,7 +658,7 @@ func replace_item_instance(old_instance: ItemInstance, new_item: Item) -> bool:
         equipped_weapon = new_instance
         inventory_changed.emit()
         stats_changed.emit()
-        return true
+        return new_instance
 
     # Check if this item is currently equipped armor
     for slot: Equippable.EquipSlot in equipped_items.keys():
@@ -668,7 +668,7 @@ func replace_item_instance(old_instance: ItemInstance, new_item: Item) -> bool:
             equipped_items[slot] = new_instance
             inventory_changed.emit()
             stats_changed.emit()
-            return true
+            return new_instance
 
     # Handle inventory item - delegate to inventory component
     return inventory.replace_item_instance(old_instance, new_item)

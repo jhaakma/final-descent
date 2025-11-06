@@ -47,6 +47,7 @@ func add_item(item_instance: ItemInstance) -> bool:
 func add_item_instance(item_instance: ItemInstance) -> bool:
     # Check slot limit
     if max_slots > 0 and item_instance.item not in item_stacks and get_used_slots() >= max_slots:
+        print("Inventory full, cannot add item instance.")
         return false
 
     # Get or create stack
@@ -67,6 +68,7 @@ func add_item_instance(item_instance: ItemInstance) -> bool:
 
     item_added.emit(item_instance)
     inventory_changed.emit()
+    print("Added item instance: %s" % str(item_instance.item._get_name()))
     return true
 
 
@@ -223,21 +225,23 @@ func get_item_tiles() -> Array[ItemInstance]:
 ## Replace an item instance with a modified version
 ## This handles both inventory and equipped items seamlessly
 ## Returns true if the replacement was successful
-func replace_item_instance(old_instance: ItemInstance, new_item: Item) -> bool:
+func replace_item_instance(old_instance: ItemInstance, new_item: Item) -> ItemInstance:
     # Create new instance with same ItemData and count
     var new_instance := ItemInstance.new(new_item, old_instance.item_data, old_instance.count)
 
     # Try to remove the old instance
     if not remove_item_instance(old_instance):
-        return false
+        print("Failed to remove old item instance during replacement.")
+        return null
 
     # Try to add the new instance
     if not add_item_instance(new_instance):
         # If adding fails, try to restore the old instance
         add_item_instance(old_instance)
-        return false
+        print("Failed to add new item instance during replacement.")
+        return null
 
-    return true
+    return new_instance
 
 # === PRIVATE METHODS ===
 

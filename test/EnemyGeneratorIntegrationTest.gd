@@ -113,18 +113,21 @@ func test_enemy_generation_with_modifier() -> bool:
     # Generate enemy
     var enemy := generator.generate_enemy()
 
-    if not enemy:
-        print("Failed to generate enemy")
-        return false
+    assert_not_null(enemy, "Failed to generate enemy with modifier")
+
 
     # Should have Elite prefix
     if not enemy.name.begins_with("Elite"):
         print("Expected 'Elite' prefix, got name: ", enemy.name)
         return false
 
+    assert_true(enemy.name.begins_with("Elite"), "Expected 'Elite' prefix in name")
     # Create baseline for comparison
     template.modifier_chance = 0.0
     var baseline := generator.generate_enemy()
+
+    # Should not have prefix
+
 
     # Elite should have higher stats
     if enemy.max_hp <= baseline.max_hp:

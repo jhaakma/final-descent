@@ -16,17 +16,19 @@ func test_armor_rune_enchantment_application() -> bool:
 
     var armor_instance := ItemInstance.new(armor, item_data, 1)
 
+    GameState.player.inventory.add_item_instance(armor_instance)
+
+
     # Set up item data for the rune
     var rune_item_data := ItemData.new()
 
     # Test the callback method directly with correct parameter order (selected_armor, enchantment, item_data)
-    armor_rune._on_armor_selected(armor_instance, test_enchantment, rune_item_data)
+    var enchanted_armor := armor_rune._on_armor_selected(armor_instance, test_enchantment, rune_item_data)
 
-    # Verify the armor was enchanted
-    var enchanted_armor := armor_instance.item as Armor
+
     assert_not_null(enchanted_armor.enchantment, "Armor should have an enchantment")
     assert_equals(enchanted_armor.enchantment, test_enchantment, "Armor should have the correct enchantment")
-    assert_true(enchanted_armor.name.contains("of"), "Armor name should include enchantment in name")
+    assert_true(enchanted_armor.name.contains("of"), "Armor name (%s) should indicate enchantment" % enchanted_armor.name)
 
     # Verify that condition is preserved after enchantment
     assert_equals(armor_instance.item_data.current_condition, 100, "Armor condition should be preserved after enchantment")
@@ -105,10 +107,10 @@ func test_armor_condition_preserved_through_player_replacement() -> bool:
     print("DEBUG: Original condition: %d" % original_condition)
 
     # Replace the armor through the player (simulating the enchantment process)
-    var success := player.replace_item_instance(equipped_instance, enchanted_armor)
+    var replaced_armor := player.replace_item_instance(equipped_instance, enchanted_armor)
 
     # Verify the replacement succeeded
-    assert_true(success, "Armor replacement should succeed")
+    assert_true(replaced_armor != null, "Armor replacement should succeed")
 
     # Check that the equipped armor is now enchanted
     var new_equipped: ItemInstance = player.equipped_items[Equippable.EquipSlot.CUIRASS]

@@ -223,7 +223,7 @@ func run_single_test(test_instance: BaseTest, method_name: String, category: Str
     print("  Running: %s" % test_name)
 
     var success := test_instance.run_test(method_name)
-    var error_message := "" if success else "Test assertion failed"
+    var error_message := "" if success else test_instance.get_failure_message()
 
     if success:
         print("    ✓ PASSED")

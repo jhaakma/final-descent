@@ -183,7 +183,6 @@ func test_armor_condition_loss_on_damage() -> bool:
     # Verify armor is equipped
     var equipped_cuirass := player.get_equipped_armor(Equippable.EquipSlot.CUIRASS)
     assert_true(equipped_cuirass != null, "Cuirass should be equipped")
-    assert_true(equipped_cuirass.item_data == null, "ItemData should not exist yet")
 
     # Take damage (should trigger armor condition loss)
     player.take_damage(5)

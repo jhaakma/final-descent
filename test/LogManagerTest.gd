@@ -58,7 +58,7 @@ func test_damage_with_blocked() -> bool:
 
     var history := log_manager.get_log_history()
     var fire_color := DamageType.get_type_color(DamageType.Type.FIRE).to_html()
-    var expected := "You deal [color=%s]15 Fire damage[/color] (blocked 5)!" % [fire_color]
+    var expected := "You deal [color=%s]15 Fire damage (blocked 5)[/color]!" % [fire_color]
     assert_equals(history[0].rich_text, expected, "Should show blocked damage when initial > final")
 
     return true

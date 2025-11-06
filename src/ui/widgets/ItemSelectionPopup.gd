@@ -69,7 +69,7 @@ func _populate_item_list() -> void:
             var condition_text := " (%d/%d)" % [item_instance.item_data.current_condition, equippable.get_max_condition()]
             button.text += condition_text
 
-        if show_equipped and GameState.player.is_equipped(item_instance):
+        if show_equipped and item_instance.is_equipped:
             # button.text += " (Equipped)"
             button.modulate = Color(0.7, 0.9, 0.7)  # Light green for equipped items
 

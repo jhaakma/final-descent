@@ -44,7 +44,7 @@ func _on_use(item_data: ItemData) -> bool:
     # Completion will be signaled later
     return true
 
-func _on_armor_selected(selected_armor: ItemInstance, enchantment: Enchantment, item_data: ItemData) -> void:
+func _on_armor_selected(selected_armor: ItemInstance, enchantment: Enchantment, item_data: ItemData) -> ItemInstance:
     var armor := selected_armor.item as Armor
 
     # Validate the enchantment is compatible
@@ -52,7 +52,7 @@ func _on_armor_selected(selected_armor: ItemInstance, enchantment: Enchantment, 
         LogManager.log_warning("This enchantment cannot be applied to this armor.")
         # Signal failure
         item_action_completed.emit(false, item_data)
-        return
+        return null
 
     var player := GameState.player
 
@@ -70,10 +70,12 @@ func _on_armor_selected(selected_armor: ItemInstance, enchantment: Enchantment, 
     enchanted_armor.name = "%s of %s" % [armor.name, enchantment.get_enchantment_name()]
 
     # Use the reusable replacement method
-    if not player.replace_item_instance(selected_armor, enchanted_armor):
+    var replaced_instance := player.replace_item_instance(selected_armor, enchanted_armor)
+    if not replaced_instance:
+        print("Failed to replace armor with enchanted version.")
         LogManager.log_warning("Failed to replace armor with enchanted version.")
         item_action_completed.emit(false, item_data)
-        return
+        return null
 
     # Apply new enchantment effects if the armor is equipped
     if is_equipped:
@@ -81,9 +83,12 @@ func _on_armor_selected(selected_armor: ItemInstance, enchantment: Enchantment, 
         if enchanted_armor.enchantment is ConstantEffectEnchantment:
             (enchanted_armor.enchantment as ConstantEffectEnchantment)._on_item_equipped(enchanted_armor)
 
+    print("Successfully enchanted %s with %s." % [selected_armor.item.name, enchantment.get_enchantment_name()])
     LogManager.log_success("You have successfully enchanted your %s with %s." % [selected_armor.item.name, enchantment.get_enchantment_name()])
     # Signal successful completion
     item_action_completed.emit(true, item_data)
+
+    return replaced_instance
 
 func _on_selection_cancelled(item_data: ItemData) -> void:
     # Signal that the action was cancelled (unsuccessful)

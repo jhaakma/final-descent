@@ -138,11 +138,7 @@ func _update_inventory_action_button() -> void:
         # Weapons can always be equipped/unequipped
         # Set a fixed width to prevent layout changes
         action_button.custom_minimum_size.x = 80
-        # Simple check: if this entry represents equipped weapon, show unequip
-        if item_instance.is_equipped:
-            action_button.text = "Unequip"
-        else:
-            action_button.text = "Equip"
+        action_button.text = "Equip"
     else:
         action_button.text = "Use"
     # Reset to default width for non-weapons
@@ -179,7 +175,6 @@ func _update_background() -> void:
         # Use a proper bright green
         style_box.bg_color = Color("#264125ff")  # Bright green
         background.add_theme_stylebox_override("panel", style_box)
-
     else:
         # Default state - remove override to use theme default
         background.remove_theme_stylebox_override("panel")
