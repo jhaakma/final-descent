@@ -25,30 +25,30 @@ class_name ConfigurableAIComponent extends EnemyAIComponent
 @export_range(0.0, 1.0, 0.05) var low_health_threshold: float = 0.5
 
 # Main AI decision making method with configurable behavior
-func plan_action(enemy, available_abilities: Array[Ability], hp_percentage: float) -> Ability:
+func plan_action(enemy: CombatEntity, available_abilities: Array[AbilityInstance], hp_percentage: float) -> AbilityInstance:
     if available_abilities.is_empty():
         return null
 
     # Filter abilities that can be used in current conditions
-    var usable_abilities = filter_usable_abilities(enemy, available_abilities)
+    var usable_abilities := filter_usable_abilities(enemy, available_abilities)
 
     if usable_abilities.is_empty():
         # If no abilities can be used, pick any available ability at random
         return available_abilities[randi() % available_abilities.size()]
 
     # Categorize abilities for strategic selection
-    var categorized_abilities = categorize_abilities_by_type(usable_abilities)
+    var categorized_abilities := categorize_abilities_by_type(usable_abilities)
 
     # Select ability based on configurable parameters and current health
     return _select_configurable_ability(categorized_abilities, hp_percentage)
 
 # Configurable ability selection based on export parameters
-func _select_configurable_ability(categorized_abilities: CategorizedAbilities, hp_percentage: float) -> Ability:
-    var selected_ability: Ability = null
+func _select_configurable_ability(categorized_abilities: CategorizedAbilities, hp_percentage: float) -> AbilityInstance:
+    var selected_ability: AbilityInstance = null
 
     # Determine health state
-    var is_critical_health = hp_percentage <= critical_health_threshold
-    var is_low_health = hp_percentage <= low_health_threshold
+    var is_critical_health := hp_percentage <= critical_health_threshold
+    var is_low_health := hp_percentage <= low_health_threshold
 
     # Critical health behavior - prioritize survival
     if is_critical_health:
@@ -105,7 +105,7 @@ func _select_configurable_ability(categorized_abilities: CategorizedAbilities, h
 
         # Final fallback: pick any available ability randomly
         if selected_ability == null:
-            var all_abilities = categorized_abilities.get_all_abilities()
+            var all_abilities := categorized_abilities.get_all_abilities()
             if all_abilities.size() > 0:
                 selected_ability = all_abilities[randi() % all_abilities.size()]
 

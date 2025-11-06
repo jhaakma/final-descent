@@ -267,7 +267,10 @@ func test_blacksmith_upgrade_functionality() -> bool:
 
     # Upgrade the item
     assert_true(blacksmith.upgrade_item(item_instance), "Upgrade should succeed")
-    assert_false(sword.can_have_modifier(), "Sword should now have a modifier")
+    
+    # Check the upgraded item (not the original sword, which is unchanged)
+    var upgraded_sword := item_instance.item as Weapon
+    assert_false(upgraded_sword.can_have_modifier(), "Upgraded sword should now have a modifier")
     assert_equals(GameState.player.gold, 50, "Gold should be deducted")
 
     return true
@@ -348,8 +351,9 @@ func test_blacksmith_scales_current_condition_on_upgrade() -> bool:
     # Upgrade the item
     assert_true(blacksmith.upgrade_item(item_instance), "Upgrade should succeed")
 
-    # Check that max condition increased
-    assert_equals(sword.condition, 30, "Max condition should be 30 (20 * 1.5)")
+    # Check the upgraded item (not the original, which is unchanged)
+    var upgraded_sword := item_instance.item as Weapon
+    assert_equals(upgraded_sword.condition, 30, "Max condition should be 30 (20 * 1.5)")
 
     # Check that current condition was scaled proportionally (10/20 = 50%, so 15/30 = 50%)
     assert_equals(item_instance.item_data.current_condition, 15, "Current condition should be scaled to 15")

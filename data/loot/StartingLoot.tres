@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="LootComponent" load_steps=12 format=3 uid="uid://d32s4st32v1tk"]
+[gd_resource type="Resource" script_class="LootComponent" load_steps=14 format=3 uid="uid://d32s4st32v1tk"]
 
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="1_b2t8e"]
 [ext_resource type="Resource" uid="uid://bhke1ujhajsrw" path="res://data/lootPicks/StartingGear.tres" id="2_b2t8e"]
@@ -8,6 +8,7 @@
 [ext_resource type="Resource" uid="uid://i3cxeo8eo70w" path="res://data/items/runes/RuneOfPoison.tres" id="6_ngshb"]
 [ext_resource type="Resource" uid="uid://duwirm5y8y3ir" path="res://data/items/weapons/Warhammer.tres" id="7_qemmh"]
 [ext_resource type="Resource" uid="uid://cxkrul1kd2tmm" path="res://data/items/elixirs/ElixirOfStrength.tres" id="8_ylgyr"]
+[ext_resource type="Resource" uid="uid://clyabowguvivm" path="res://data/items/weapons/ShortSword.tres" id="9_w8osw"]
 [ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="11_jlqqn"]
 
 [sub_resource type="Resource" id="Resource_hpof5"]
@@ -30,10 +31,20 @@ pick_method = 1
 floor_min = 0
 metadata/_custom_type_script = "uid://w4ie0s4l7syw"
 
+[sub_resource type="Resource" id="Resource_756nm"]
+script = ExtResource("1_b2t8e")
+loot_table = Array[ExtResource("11_jlqqn")]([ExtResource("9_w8osw")])
+generators = Array[ExtResource("3_5rg2i")]([])
+count = 3
+chance_none = 0.0
+pick_method = 1
+floor_min = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"
+
 [resource]
 script = ExtResource("3_5kf5c")
 gold_min = 100
 gold_max = 100
 chance_gold_none = 0.0
-loot_table = Array[ExtResource("1_b2t8e")]([ExtResource("2_b2t8e"), SubResource("Resource_hpof5"), SubResource("Resource_qemmh")])
+loot_table = Array[ExtResource("1_b2t8e")]([ExtResource("2_b2t8e"), SubResource("Resource_hpof5"), SubResource("Resource_qemmh"), SubResource("Resource_756nm")])
 metadata/_custom_type_script = "uid://lj0e532l0dyu"

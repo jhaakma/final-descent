@@ -101,19 +101,33 @@ func upgrade_item(item_instance: ItemInstance) -> bool:
     if item_instance.item_data:
         old_current_condition = item_instance.item_data.current_condition
 
-    # Apply the modifier
-    if item.apply_modifier(chosen_modifier):
+    # IMPORTANT: Duplicate the item to avoid modifying all items in a stack
+    # This creates a unique copy that can be modified independently
+    var upgraded_item: Equippable = item.duplicate() as Equippable
+
+    # Apply the modifier to the duplicated item
+    if upgraded_item.apply_modifier(chosen_modifier):
         GameState.player.add_gold(-upgrade_cost)
 
         # If item has ItemData and condition changed, scale current_condition proportionally
         if item_instance.item_data and old_max_condition > 0:
-            var new_max_condition: int = item.get_max_condition()
+            var new_max_condition: int = upgraded_item.get_max_condition()
             if new_max_condition != old_max_condition:
                 # Scale current condition proportionally
                 var condition_ratio: float = float(old_current_condition) / float(old_max_condition)
                 item_instance.item_data.current_condition = int(new_max_condition * condition_ratio)
 
-        LogManager.log_event("Applied %s modifier to %s for %d gold" % [chosen_modifier.modifier_name, item.name, upgrade_cost])
+        # Check if item is in inventory - if so, replace it
+        if GameState.player.has_item(item):
+            var replaced_instance := GameState.player.replace_item_instance(item_instance, upgraded_item)
+            if not replaced_instance:
+                LogManager.log_event("Failed to replace item with upgraded version")
+                return false
+        else:
+            # Item not in inventory - update the item_instance directly (for tests)
+            item_instance.item = upgraded_item
+
+        LogManager.log_event("Applied %s modifier to %s for %d gold" % [chosen_modifier.modifier_name, upgraded_item.name, upgrade_cost])
 
         # Emit inventory changed to update UI
         GameState.player.emit_signal("inventory_changed")

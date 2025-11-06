@@ -2,12 +2,13 @@
 
 Godot 4 roguelike dungeon crawler game guidelines.
 
+
 ## Core Principles
 
 - **Architecture**: Single responsibility, component-based design, strict typing (`var health: int`)
 - **Logic**: Use enums/constants/dictionaries, avoid string matching
 - **Godot**: Use 4.4 APIs, add methods only when needed
-- **Style**: Spaces not tabs, UI in `.tscn` files, dictionaries over match statements
+- **Style**: USE SPACES NOT TABS
 - **Enums**: Use enums for fixed sets of values, never use int as types when referencing enums
 
 ## Project Structure
@@ -46,3 +47,5 @@ Godot 4 roguelike dungeon crawler game guidelines.
 - Follow existing codebase patterns
 - Use object pooling and `queue_free()` properly
 - Provide git commit messages in code blocks for completed tasks
+
+USE SPACES, not tabs!
