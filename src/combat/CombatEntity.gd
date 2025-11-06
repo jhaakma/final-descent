@@ -61,12 +61,6 @@ func get_attack_bonus() -> int:
 func get_defense_bonus() -> int:
     return get_total_defense() - get_base_defense()
 
-# Get the current effective defense percentage including defend bonus (for UI display)
-func get_current_defense_percentage() -> int:
-    # This is now just the total defense from the stats component
-    # (which includes any status effect bonuses like defend effect)
-    return get_total_defense()
-
 # Get just the defend bonus percentage (for UI display)
 func get_defend_bonus_percentage() -> int:
     # Check if we have an active defend effect
@@ -95,6 +89,8 @@ func calculate_incoming_damage(base_damage: int, damage_type: DamageType.Type = 
 
     # Ensure minimum 1 damage unless defense is very high
     final_damage = max(1, final_damage)
+
+
 
     # Then apply damage type resistance
     return resistance_component.apply_resistance(final_damage, damage_type)

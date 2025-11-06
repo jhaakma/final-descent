@@ -160,7 +160,7 @@ func _update_enemy_stats_display() -> void:
         return
 
     var attack_power := context.enemy.get_total_attack_power()
-    var current_defense := context.enemy.get_current_defense_percentage()
+    var current_defense := context.enemy.get_defense_bonus()
     var defend_bonus := context.enemy.get_defend_bonus_percentage()
     var attack_bonus := context.enemy.get_attack_bonus()
     var defense_bonus := context.enemy.get_defense_bonus()

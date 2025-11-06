@@ -153,7 +153,15 @@ func _on_enemy_turn_started(_context: CombatContext) -> void:
     # Disable player actions, update UI, and process enemy turn
     combat_ui.update_display()
     combat_ui.disable_actions()
-    _process_enemy_turn()
+        # Check if enemy should skip their turn
+    if combat_context.enemy.should_skip_turn():
+        LogManager.log_event("{enemy:%s} is stunned and skips their turn!" % combat_context.enemy.get_name())
+        # End enemy's turn (will be handled by the round system)
+    elif combat_context.enemy.is_alive():
+        # Execute enemy action
+        combat_context.enemy.perform_action()
+    # End enemy's turn
+    state_manager.end_enemy_turn()
 
 func _on_round_ended(_context: CombatContext) -> void:
     # Round has ended, update UI and emit signal for room updates
@@ -168,18 +176,6 @@ func _on_combat_ended(_context: CombatContext, victory: bool) -> void:
     if not victory:
         content_resolved.emit()
 
-func _process_enemy_turn() -> void:
-    # Check if enemy should skip their turn
-    if combat_context.enemy.should_skip_turn():
-        LogManager.log_event("{enemy:%s} is stunned and skips their turn!" % combat_context.enemy.get_name())
-        # End enemy's turn (will be handled by the round system)
-        return
-
-    if combat_context.enemy.is_alive():
-        # Execute enemy action
-        combat_context.enemy.perform_action()
-    # End enemy's turn
-    state_manager.end_current_turn()
 
 # Combat action handlers (called by CombatUI)
 func _on_attack() -> void:
@@ -203,7 +199,7 @@ func _handle_action_result(result: ActionResult) -> void:
             content_resolved.emit()
         _:
             # For all other actions, continue to turn end
-            state_manager.end_current_turn()
+            state_manager.end_player_turn()
 
 func handle_item_used() -> void:
     """Handle when an item is used during combat - treat as player action"""

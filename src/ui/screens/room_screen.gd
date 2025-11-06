@@ -203,7 +203,7 @@ func _refresh_stats() -> void:
     # Update HP bar tooltip to show buff information
     var buff_info := ""
     var attack_bonus := GameState.player.get_attack_bonus()
-    var current_def_tooltip := GameState.player.get_current_defense_percentage()
+    var current_def_tooltip := GameState.player.get_defense_bonus()
 
     if attack_bonus > 0 or current_def_tooltip > 0:
         buff_info = " (ATK +%d, DEF %d%%)" % [attack_bonus, current_def_tooltip]
@@ -223,7 +223,7 @@ func _refresh_stats() -> void:
     atk_value.text = "ATK: %s" % GameState.player.get_total_attack_display()
 
     # Show current effective defense (including defend bonus if defending)
-    var current_def := GameState.player.get_current_defense_percentage()
+    var current_def := GameState.player.get_defense_bonus()
     var defend_bonus := GameState.player.get_defend_bonus_percentage()
 
     if defend_bonus > 0:

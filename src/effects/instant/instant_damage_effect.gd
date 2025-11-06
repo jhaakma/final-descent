@@ -33,7 +33,13 @@ func apply_effect(target: CombatEntity) -> bool:
         else:
             source_name = get_effect_name()
 
-        LogManager.log_event("%s {action} {damage:%d}!" % [source_name, actual_damage], {"target": target, "damage_type": damage_type, "action": ["deals", "deals"]})
+        LogManager.log_event("%s {action} {damage}!" % [source_name], {
+            "target": target,
+            "damage_type": damage_type,
+            "action": ["deals", "deals"],
+            "initial_damage": damage_amount,
+            "final_damage": actual_damage
+        })
 
     return actual_damage > 0
 

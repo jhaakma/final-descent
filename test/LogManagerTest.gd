@@ -31,13 +31,35 @@ func test_damage_coloring() -> bool:
     var log_manager := LogManager
     log_manager.clear_log_history()
 
-    # Test damage coloring with type
-    log_manager.log_event("You deal {damage:15:FIRE} damage!")
+    # Test damage coloring with context
+    log_manager.log_event("You deal {damage}!", {
+        "damage_type": DamageType.Type.FIRE,
+        "initial_damage": 15,
+        "final_damage": 15
+    })
 
     var history := log_manager.get_log_history()
     var fire_color := DamageType.get_type_color(DamageType.Type.FIRE).to_html()
-    var expected := "You deal [color=%s]15[/color] damage!" % [fire_color]
+    var expected := "You deal [color=%s]15 Fire damage[/color]!" % [fire_color]
     assert_equals(history[0].rich_text, expected, "Should color fire damage appropriately")
+
+    return true
+
+func test_damage_with_blocked() -> bool:
+    var log_manager := LogManager
+    log_manager.clear_log_history()
+
+    # Test damage with blocked amount
+    log_manager.log_event("You deal {damage}!", {
+        "damage_type": DamageType.Type.FIRE,
+        "initial_damage": 20,
+        "final_damage": 15
+    })
+
+    var history := log_manager.get_log_history()
+    var fire_color := DamageType.get_type_color(DamageType.Type.FIRE).to_html()
+    var expected := "You deal [color=%s]15 Fire damage[/color] (blocked 5)!" % [fire_color]
+    assert_equals(history[0].rich_text, expected, "Should show blocked damage when initial > final")
 
     return true
 

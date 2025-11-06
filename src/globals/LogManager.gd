@@ -15,7 +15,7 @@ class LogColors:
 # {player:text} - Colors text blue and replaces pronouns for player context
 # {enemy:text} - Colors text red and replaces pronouns for enemy context
 # {healing:amount} - Colors healing amount green
-# {damage:amount:type} - Colors damage amount based on damage type (type is optional, defaults to BLUNT)
+# {damage} - Colors damage amount based on damage type from context (requires initial_damage, final_damage, damage_type in context)
 # {effect:name} - Colors effect name appropriately
 # {action} - Chooses between player/non-player verb forms from context["action"] array: ["player_form", "non_player_form"]
 # Standard patterns: {You}, {you}, {Your}, {your}, etc. for pronoun replacement
@@ -189,37 +189,31 @@ func _process_bonus_patterns(text: String) -> String:
         result = result.replace(full_match, colored)
     return result
 
-# Process {damage:amount:type} patterns (type is optional, can also come from context)
+# Process {damage} patterns using context (requires initial_damage, final_damage, damage_type)
 func _process_damage_patterns(text: String, context: Dictionary = {}) -> String:
-    var regex := RegEx.new()
-    regex.compile("\\{damage:([^:}]+)(?::([^}]+))?\\}")
+    if not text.contains("{damage}"):
+        return text
 
-    var result := text
-    for regex_match in regex.search_all(text):
-        var full_match := regex_match.get_string(0)
-        var amount := regex_match.get_string(1)
-        var damage_type_str := regex_match.get_string(2) if regex_match.strings.size() > 2 else ""
+    # Get damage values from context
+    var initial_damage: int = context.get("initial_damage", 0)
+    var final_damage: int = context.get("final_damage", 0)
+    var damage_type: DamageType.Type = context.get("damage_type", DamageType.Type.BLUNT)
 
-        var color: String = LogColors.DEFAULT
+    # Determine color based on damage type
+    var color: String = DamageType.get_type_color(damage_type).to_html()
+    var damage_type_name: String = DamageType.get_type_name(damage_type)
+    var blocked_str: String = ""
+    # Add blocked amount if damage was reduced
+    if initial_damage > final_damage:
+        var blocked := initial_damage - final_damage
+        blocked_str = " (blocked %d)" % blocked
 
-        var damage_str = "damage"
+    # Build the damage string
+    var damage_str := "[color=%s]%d %s damage%s[/color]" % [color, final_damage, damage_type_name, blocked_str]
 
-        # First check if damage type is provided in context
-        if context.has("damage_type"):
-            var damage_type: DamageType.Type = context["damage_type"]
-            color = DamageType.get_type_color(damage_type).to_html()
-            damage_str = "%s damage" % DamageType.get_type_name(damage_type)
-        elif damage_type_str != "":
-            # Fall back to parsing from string
-            var damage_type := _string_to_damage_type(damage_type_str)
-            if damage_type != -1:
-                color = DamageType.get_type_color(damage_type).to_html()
 
-        # Only color the amount, not the damage type name
-        var colored := "[color=%s]%s %s[/color]" % [color, amount, damage_str]
-        result = result.replace(full_match, colored)
 
-    return result
+    return text.replace("{damage}", damage_str)
 
 
 

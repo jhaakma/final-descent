@@ -37,9 +37,15 @@ func execute(_instance: AbilityInstance, caster: CombatEntity, target: CombatEnt
 
     # Log the attack using the action verb from the ability
     var action_verb: Array = get_log_action_verb()
-    var log_message: String = "{You} {action} for {damage:%d}!" % [final_damage]
+    var log_message: String = "{You} {action} for {damage}!"
 
-    LogManager.log_event(log_message, {"target": caster, "damage_type": attack_damage_type, "action": action_verb})
+    LogManager.log_event(log_message, {
+        "target": caster,
+        "damage_type": attack_damage_type,
+        "action": action_verb,
+        "initial_damage": damage,
+        "final_damage": final_damage
+    })
 
     # Apply status effect if present and chance succeeds
     if status_effect != null and randf() < effect_chance:

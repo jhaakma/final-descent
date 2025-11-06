@@ -13,10 +13,19 @@ static func execute_attack(context: CombatContext) -> ActionResult:
 	var weapon_name: String = weapon_instance.item.name if weapon_instance else ""
 
 	# Log the attack
+	var log_context := {
+		"target": context.player,
+		"damage_type": player_damage_type,
+		"initial_damage": total_dmg,
+		"final_damage": final_damage
+	}
+
 	if weapon_name != "":
-		LogManager.log_event("{You} {action} {enemy:%s} with %s for {damage:%d}!" % [context.enemy.get_name(), weapon_name, final_damage], {"target": context.player, "damage_type": player_damage_type, "action": ["strike", "strikes"]})
+		log_context["action"] = ["strike", "strikes"]
+		LogManager.log_event("{You} {action} {enemy:%s} with %s for {damage}!" % [context.enemy.get_name(), weapon_name], log_context)
 	else:
-		LogManager.log_event("{You} {action} {enemy:%s} for {damage:%d}!" % [context.enemy.get_name(), final_damage], {"target": context.player, "damage_type": player_damage_type, "action": ["attack", "attacks"]})
+		log_context["action"] = ["attack", "attacks"]
+		LogManager.log_event("{You} {action} {enemy:%s} for {damage}!" % [context.enemy.get_name()], log_context)
 
 	if weapon_instance:
 		# Check if weapon has special attack effects

@@ -32,7 +32,14 @@ func apply_effect(target: CombatEntity) -> bool:
     print("DEBUG: Final damage dealt: ", final_damage, ", Target HP after: ", target.get_current_hp())
 
     # Use new pattern-based logging
-    LogManager.log_event("{You} {action} {damage:%d} from {effect:%s}!" % [final_damage, get_effect_name()], {"target": target, "damage_type": elemental_type, "action": ["take", "takes"], "status_effect": self})
+    LogManager.log_event("{You} {action} {damage} from {effect:%s}!" % [get_effect_name()], {
+        "target": target,
+        "damage_type": elemental_type,
+        "action": ["take", "takes"],
+        "status_effect": self,
+        "initial_damage": damage_per_turn,
+        "final_damage": final_damage
+    })
 
     return true
 

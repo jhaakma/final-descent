@@ -6,10 +6,7 @@
 
 [sub_resource type="Resource" id="Resource_xfc27"]
 script = ExtResource("2_g164y")
-expire_timing = 1
 expire_after_turns = 1
-expire_condition = Callable()
-applied_turn = 0
 metadata/_custom_type_script = "uid://cfj1k6xrdhdm4"
 
 [sub_resource type="Resource" id="Resource_oi54v"]

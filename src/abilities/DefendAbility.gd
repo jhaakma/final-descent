@@ -14,6 +14,7 @@ func execute(_instance: AbilityInstance, caster: CombatEntity, _target: CombatEn
 
     # Log the defend action
     LogManager.log_event("{You} brace for defense.", {"target": caster})
+    _instance.current_state = AbilityInstance.AbilityState.COMPLETED
 
 func get_ability_type() -> AbilityResource.AbilityType:
     return AbilityResource.AbilityType.DEFEND
