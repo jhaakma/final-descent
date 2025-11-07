@@ -11,5 +11,15 @@ class_name EnemyResource extends Resource
 @export var resistances: Array[DamageType.Type] = []  # Damage types this enemy resists
 @export var weaknesses: Array[DamageType.Type] = []  # Damage types this enemy is weak to
 
+## Properties for ability template generation
+@export var level: int = 1  # Enemy level for ability scaling
+@export var element_affinity: EnemyTemplate.ElementAffinity = EnemyTemplate.ElementAffinity.NONE  # Element affinity for abilities
+
 func get_abilities() -> Array[AbilityResource]:
     return abilities
+
+func get_level() -> int:
+    return level
+
+func get_element_affinity() -> EnemyTemplate.ElementAffinity:
+    return element_affinity

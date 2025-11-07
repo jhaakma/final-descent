@@ -48,13 +48,15 @@ func generate_enemy_from_template(template: EnemyTemplate) -> EnemyResource:
     enemy.attack = attack
     enemy.defense = defense
     enemy.avoid_chance = avoid_chance
+    enemy.level = template.base_level
+    enemy.element_affinity = template.element_affinity
 
     # Apply elemental resistances and weaknesses
     enemy.resistances = template.get_elemental_resistances()
     enemy.weaknesses = template.get_elemental_weaknesses()
 
     # Generate abilities
-    enemy.abilities = _generate_abilities(template)
+    enemy.abilities = _generate_abilities(template, enemy)
 
     # Apply modifiers if applicable (before caching so modifiers affect cache key)
     var effective_modifier_chance := template.modifier_chance if template.modifier_chance > 0 else modifier_chance
@@ -92,31 +94,21 @@ func _build_enemy_name(template: EnemyTemplate) -> String:
     return " ".join(name_parts)
 
 ## Generate abilities from template
-func _generate_abilities(template: EnemyTemplate) -> Array[AbilityResource]:
+func _generate_abilities(template: EnemyTemplate, enemy: EnemyResource) -> Array[AbilityResource]:
     var abilities: Array[AbilityResource] = []
 
     # Use template's ability list if specified, otherwise add basic attack
     if not template.ability_templates.is_empty():
         # Generate abilities from templates
         for ability_template in template.ability_templates:
-            var ability: AbilityResource = AbilityResolver.generate_ability(
-                ability_template,
-                template.element_affinity,
-                template.size_category,
-                template.base_level,
-                template.archetype
-            )
-            if ability:
-                abilities.append(ability)
+            if ability_template:
+                var ability: AbilityResource = ability_template.generate_ability(enemy)
+                if ability:
+                    abilities.append(ability)
     else:
         # Fallback: always add basic attack if no templates specified
-        var basic_attack: AbilityResource = AbilityResolver.generate_ability(
-            EnemyTemplate.AbilityTemplate.BASIC_ATTACK,
-            template.element_affinity,
-            template.size_category,
-            template.base_level,
-            template.archetype
-        )
+        var basic_attack_template := BasicAttackTemplate.new()
+        var basic_attack: AbilityResource = basic_attack_template.generate_ability(enemy)
         if basic_attack:
             abilities.append(basic_attack)
 

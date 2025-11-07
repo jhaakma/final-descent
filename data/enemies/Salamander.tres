@@ -37,4 +37,6 @@ loot_component = SubResource("Resource_8hyse")
 avoid_chance = 0.5
 resistances = Array[int]([])
 weaknesses = Array[int]([])
+level = 1
+element_affinity = 0
 metadata/_custom_type_script = "uid://b4y5n724vd0ph"

@@ -1,6 +1,17 @@
-[gd_resource type="Resource" script_class="EnemyTemplate" load_steps=2 format=3 uid="uid://cul3vtqmbkrw7"]
+[gd_resource type="Resource" script_class="EnemyTemplate" load_steps=7 format=3 uid="uid://cul3vtqmbkrw7"]
 
+[ext_resource type="Script" uid="uid://bvnw3ewhagtrt" path="res://src/abilities/templates/AbilityTemplate.gd" id="1_g0ga7"]
 [ext_resource type="Script" uid="uid://c0acru57thtrf" path="res://src/generators/enemies/enemy_template.gd" id="1_vbukg"]
+[ext_resource type="Script" uid="uid://c7s8ha3rvgyex" path="res://src/abilities/templates/DefendTemplate.gd" id="2_60fgb"]
+[ext_resource type="Script" uid="uid://dgmklw3qpcg8j" path="res://src/abilities/templates/ElementalStrikeTemplate.gd" id="4_60fgb"]
+
+[sub_resource type="Resource" id="Resource_y4sja"]
+script = ExtResource("2_60fgb")
+metadata/_custom_type_script = "uid://c7s8ha3rvgyex"
+
+[sub_resource type="Resource" id="Resource_p7gf4"]
+script = ExtResource("4_60fgb")
+metadata/_custom_type_script = "uid://dgmklw3qpcg8j"
 
 [resource]
 script = ExtResource("1_vbukg")
@@ -8,7 +19,7 @@ base_name = "Goblin"
 base_level = 1
 archetype = 2
 size_category = 0
-element_affinity = 0
-ability_templates = Array[int]([5, 1])
+element_affinity = 5
+ability_templates = Array[ExtResource("1_g0ga7")]([SubResource("Resource_y4sja"), SubResource("Resource_p7gf4")])
 possible_modifiers = Array[int]([4, 3, 7, 1])
 modifier_chance = 1.0

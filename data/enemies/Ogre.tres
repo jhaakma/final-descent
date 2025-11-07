@@ -54,4 +54,6 @@ avoid_chance = 0.8
 ai_component = SubResource("Resource_ubndr")
 resistances = Array[int]([4])
 weaknesses = Array[int]([2])
+level = 1
+element_affinity = 0
 metadata/_custom_type_script = "uid://b4y5n724vd0ph"

@@ -28,15 +28,15 @@ static var type_names := {
 
 # Colors for UI display of damage types
 static var type_colors := {
-    Type.BLUNT: "#a1a1a1ff",      # Light gray
-    Type.SLASHING: "#a1a1a1ff",   # Dark goldenrod
-    Type.PIERCING: "#a1a1a1ff",   # Slate gray
-    Type.POISON: "#8cbd3dff",     # Green
-    Type.FIRE: "#ff5f2fff",       # Red-orange
+    Type.BLUNT: "#b9b9b9ff",      # Light gray
+    Type.SLASHING: "#b9b9b9ff",   # Dark goldenrod
+    Type.PIERCING: "#b9b9b9ff",   # Slate gray
+    Type.POISON: "#b3db72ff",     # Green
+    Type.FIRE: "#fd815bff",       # Red-orange
     Type.SHOCK: "#fff568ff",      # Yellow
     Type.ICE: "#71ffe0ff",        # Light blue
-    Type.DARK: "#653d80ff",       # Dark purple
-    Type.HOLY: "#ffdb67ff"        # Golden yellow
+    Type.DARK: "#856997ff",       # Dark purple
+    Type.HOLY: "#fff4ceff"        # Golden yellow
 }
 
 # Get the display name for a damage type

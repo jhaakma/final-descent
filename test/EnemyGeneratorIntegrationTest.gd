@@ -134,18 +134,18 @@ func test_enemy_generation_with_modifier() -> bool:
 func test_ability_generation_from_templates() -> bool:
     print("Testing ability generation from templates...")
 
-    # Create template with specific abilities
+    # Create template with specific abilities using helper methods
     var template := EnemyTemplate.new()
     template.base_name = "Test Warrior"
     template.archetype = EnemyTemplate.EnemyArchetype.WARRIOR
     template.base_level = 1
     template.element_affinity = EnemyTemplate.ElementAffinity.FIRE
     template.size_category = EnemyTemplate.SizeCategory.MEDIUM
-    template.ability_templates = [
-        EnemyTemplate.AbilityTemplate.BASIC_ATTACK,
-        EnemyTemplate.AbilityTemplate.DEFEND,
-        EnemyTemplate.AbilityTemplate.ELEMENTAL_STRIKE
-    ]
+
+    # Add abilities using helper methods
+    template.add_basic_attack()
+    template.add_defend()
+    template.add_elemental_strike()
 
     # Create generator
     var generator := EnemyGenerator.new()

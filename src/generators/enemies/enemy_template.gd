@@ -24,22 +24,8 @@ enum ElementAffinity {
     ICE,      ## Ice-based, resists ice, weak to fire
     SHOCK,    ## Shock-based, resists shock
     POISON,   ## Poison-based, resists poison
-    TOXIC,    ## Alias for poison (for compatibility)
     HOLY,     ## Holy-based, resists holy, weak to dark
     DARK      ## Dark-based, resists dark, weak to holy
-}
-
-## Ability templates that can be generated for enemies
-enum AbilityTemplate {
-    BASIC_ATTACK,       ## Standard attack ability (always included)
-    BASIC_STRIKE,       ## Basic melee strike
-    ELEMENTAL_STRIKE,   ## Strike with elemental damage matching affinity
-    BREATH_ATTACK,      ## Breath weapon (requires LARGE or HUGE size)
-    POISON_ATTACK,      ## Poison-based attack
-    DEFEND,             ## Defensive ability
-    HEAL,               ## Self-healing ability
-    BUFF_ATTACK,        ## Buff own attack
-    BUFF_DEFENSE        ## Buff own defense
 }
 
 ## Base properties
@@ -49,7 +35,7 @@ enum AbilityTemplate {
 @export var size_category: SizeCategory = SizeCategory.MEDIUM
 @export var element_affinity: ElementAffinity = ElementAffinity.NONE
 
-## Ability configuration
+## Ability configuration - use AbilityTemplate resources
 @export var ability_templates: Array[AbilityTemplate] = []
 
 ## Modifier configuration
@@ -65,8 +51,6 @@ func get_element_prefix() -> String:
             return "Ice"
         ElementAffinity.SHOCK:
             return "Shock"
-        ElementAffinity.POISON, ElementAffinity.TOXIC:
-            return "Toxic"
         ElementAffinity.HOLY:
             return "Holy"
         ElementAffinity.DARK:
@@ -84,8 +68,6 @@ func get_elemental_resistances() -> Array[DamageType.Type]:
             resistances.append(DamageType.Type.ICE)
         ElementAffinity.SHOCK:
             resistances.append(DamageType.Type.SHOCK)
-        ElementAffinity.POISON, ElementAffinity.TOXIC:
-            resistances.append(DamageType.Type.POISON)
         ElementAffinity.HOLY:
             resistances.append(DamageType.Type.HOLY)
         ElementAffinity.DARK:
@@ -105,3 +87,33 @@ func get_elemental_weaknesses() -> Array[DamageType.Type]:
         ElementAffinity.DARK:
             weaknesses.append(DamageType.Type.HOLY)
     return weaknesses
+
+## Helper method to add a basic attack template
+func add_basic_attack() -> EnemyTemplate:
+    ability_templates.append(BasicAttackTemplate.new())
+    return self
+
+## Helper method to add a basic strike template
+func add_basic_strike() -> EnemyTemplate:
+    ability_templates.append(BasicStrikeTemplate.new())
+    return self
+
+## Helper method to add an elemental strike template
+func add_elemental_strike() -> EnemyTemplate:
+    ability_templates.append(ElementalStrikeTemplate.new())
+    return self
+
+## Helper method to add a breath attack template
+func add_breath_attack() -> EnemyTemplate:
+    ability_templates.append(BreathAttackTemplate.new())
+    return self
+
+## Helper method to add a poison attack template
+func add_poison_attack() -> EnemyTemplate:
+    ability_templates.append(PoisonAttackTemplate.new())
+    return self
+
+## Helper method to add a defend template
+func add_defend() -> EnemyTemplate:
+    ability_templates.append(DefendTemplate.new())
+    return self
