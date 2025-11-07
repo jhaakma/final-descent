@@ -1,5 +1,4 @@
 class_name Item extends Resource
-
 ## Emitted when the item has finished its action, with success flag
 signal item_action_completed(success: bool, item_data: ItemData)
 

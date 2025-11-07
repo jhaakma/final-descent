@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" uid="uid://6tg203tnwb8r" path="res://src/items/equipment_modifier.gd" id="1_0dmjd"]
 [ext_resource type="Script" uid="uid://2xmniayr4qp4" path="res://src/rooms/blacksmith_room_resource.gd" id="2_t1he2"]
-[ext_resource type="Resource" uid="uid://bsu4hcmeo4rh3" path="res://data/modifiers/SharpenedModifier.tres" id="2_w3nas"]
-[ext_resource type="Resource" uid="uid://bmy7rsdfakosj" path="res://data/modifiers/HardenedModifier.tres" id="3_44xn4"]
-[ext_resource type="Resource" uid="uid://coet8k0b75epd" path="res://data/modifiers/ReinforcedModifier.tres" id="4_68l3e"]
+[ext_resource type="Resource" uid="uid://bsu4hcmeo4rh3" path="res://data/generated/weapons/modifiers/SharpenedModifier.tres" id="2_w3nas"]
+[ext_resource type="Resource" uid="uid://bmy7rsdfakosj" path="res://data/generated/weapons/modifiers/HardenedModifier.tres" id="3_44xn4"]
+[ext_resource type="Resource" uid="uid://coet8k0b75epd" path="res://data/generated/weapons/modifiers/ReinforcedModifier.tres" id="4_68l3e"]
 
 [resource]
 script = ExtResource("2_t1he2")

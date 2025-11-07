@@ -1,9 +1,5 @@
 # To do
 
-## Blacksmith
-- Update Blacksmith UI to use item row, show condition, equipped status etc
-- Upgrade cost based on base item value
-
 ## Automate Itch.io releases
 
 ## Ability Mechanics
