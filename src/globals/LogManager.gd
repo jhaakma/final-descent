@@ -267,6 +267,7 @@ func _process_action_patterns(text: String, context: Dictionary) -> String:
             result = result.replace(full_match, "act")
             continue
 
+
         # Determine if target is the player
         var target: CombatEntity = context.get("target", null)
         var is_player: bool = (target != null and target == GameState.player)

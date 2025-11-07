@@ -1,7 +1,8 @@
 class_name PreparationAbility extends AbilityResource
 
 @export var prepared_ability: AbilityResource = null  # The ability to execute next turn
-@export var preparation_text: String = "prepares for something..."
+@export var player_preparation_text: String = "prepare for something..."
+@export var enemy_preparation_text: String = "prepares for something..."
 
 func _init() -> void:
     ability_name = "Preparation"
@@ -11,6 +12,8 @@ func _init() -> void:
 func execute(instance: AbilityInstance, caster: CombatEntity, target: CombatEntity = null) -> void:
     # Start the preparation phase
     instance._start_execution(caster, target)
+
+    var preparation_text := player_preparation_text if caster == GameState.player else enemy_preparation_text
 
     # Log the preparation
     var caster_name := _get_target_name(caster)

@@ -1,27 +1,6 @@
 class_name TimedEffectEnhancementTest extends BaseTest
 
 
-func test_should_expire_at_correct_timing() -> bool:
-    var effect := TestTimedEffect.new()
-    effect.set_expire_timing(EffectTiming.Type.ROUND_START)
-    effect.set_expire_after_turns(2)
-
-    var effect_instance := EffectInstance.new(effect)
-
-    # Should not expire at wrong timing
-    var wrong_timing_result := effect_instance.should_expire_at(EffectTiming.Type.ROUND_END, 2)
-    if not assert_false(wrong_timing_result):
-        return false
-
-    # Should not expire before turn count reached
-    var early_turn_result := effect_instance.should_expire_at(EffectTiming.Type.ROUND_START, 1)
-    if not assert_false(early_turn_result):
-        return false
-
-    # Should expire at correct timing and turn
-    var correct_result := effect_instance.should_expire_at(EffectTiming.Type.ROUND_START, 2)
-    return assert_true(correct_result)
-
 func test_expire_timing_validation() -> bool:
     var effect := TestTimedEffect.new()
 

@@ -7,15 +7,16 @@ class_name AttackAbility extends AbilityResource
 @export var damage_type: DamageType.Type = DamageType.Type.BLUNT  # Damage type override
 @export var status_effect: StatusEffect = null  # Optional status effect to apply
 @export var effect_chance: float = 1.0  # Chance to apply status effect if present
-@export var _cooldown: int = 0  # Turns required between uses
+
 
 func _init() -> void:
     ability_name = "Attack"
     description = "A basic attack ability."
     priority = 10
+    cooldown = 0
 
 func get_cooldown() -> int:
-    return _cooldown
+    return cooldown
 
 func execute(_instance: AbilityInstance, caster: CombatEntity, target: CombatEntity) -> void:
     if target == null:

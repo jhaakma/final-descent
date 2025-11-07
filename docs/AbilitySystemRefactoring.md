@@ -50,7 +50,7 @@ Other methods requiring instance access:
 
 Enemy classes now:
 - Create `AbilityInstance` objects during initialization via `_initialize_ability_instances()`
-- Manage cooldowns via `_reduce_ability_cooldowns()` each turn
+- Manage cooldowns via `_reduce_abilitycooldowns()` each turn
 - Work with `AbilityInstance` references instead of `AbilityResource`s
 - Maintain backward compatibility with existing AI components
 

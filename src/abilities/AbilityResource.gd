@@ -5,6 +5,11 @@ class_name AbilityResource extends Resource
 @export var priority: int = 0  # Higher priority abilities are preferred in AI selection
 @export var log_action_player: String = ""  # Optional override for player action verb (e.g., "attack" instead of "use [ability_name]")
 @export var log_action_enemy: String = ""   # Optional override for enemy action verb (e.g., "attacks" or "breathes fire")
+@export var cooldown: int = 0:  # Turns required between uses
+    get:
+        return cooldown
+    set(value):
+        cooldown = max(0, value)  # Ensure cooldown is non-negative
 
 # Types of abilities for categorization and AI decision making
 enum AbilityType {
@@ -16,7 +21,7 @@ enum AbilityType {
 }
 
 func get_cooldown() -> int:
-    return 0  # Default no cooldown
+    return cooldown
 
 # Abstract method - override in subclasses to define specific ability behavior
 # Takes an AbilityInstance for access to state data like current_state, caster_ref, target_ref

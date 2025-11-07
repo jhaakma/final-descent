@@ -112,7 +112,7 @@ func perform_action() -> void:
     else:
         # No ongoing ability, plan and execute a new one
         # First reduce cooldowns on all abilities
-        _reduce_ability_cooldowns()
+        _reduce_abilitycooldowns()
         plan_action()
         perform_planned_action()
 
@@ -128,9 +128,9 @@ func get_available_ability_instances() -> Array[AbilityInstance]:
     return available
 
 # Reduce cooldowns for all ability instances
-func _reduce_ability_cooldowns() -> void:
+func _reduce_abilitycooldowns() -> void:
     for instance: AbilityInstance in ability_instances:
-        instance.reduce_cooldown()
+        instance.reducecooldown()
 
 # Create a fallback basic attack when enemy has no abilities configured
 func _create_fallback_attack_instance() -> AbilityInstance:

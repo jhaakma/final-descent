@@ -1,7 +1,7 @@
 class_name BasicAttackTemplate extends AbilityTemplate
 ## Template for generating basic attack abilities
 
-func generate_ability(_user = null) -> AbilityResource:
+func generate_ability(_user: EnemyResource = null) -> AbilityResource:
     var ability := AttackAbility.new()
     ability.ability_name = "Basic Attack"
     ability.description = "A basic attack"

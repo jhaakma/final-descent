@@ -157,7 +157,7 @@ func process_status_effects_at_timing(timing: EffectTiming.Type, current_turn: i
                 print("DEBUG: Timing doesn't match, skipping apply_effect")
 
             # Check if this effect should expire at this timing and turn
-            if instance.should_expire_at(timing, current_turn):
+            if instance.should_expire_at(timing):
                 print("DEBUG: Effect should expire, adding to removal list")
                 conditions_to_remove.append(condition)
             else:

@@ -74,7 +74,7 @@ func _start_execution(caster: CombatEntity, target: CombatEntity) -> void:
     target_ref = target
 
 # Reduce cooldown by one turn
-func reduce_cooldown() -> void:
+func reducecooldown() -> void:
     if cooldown_remaining > 0:
         cooldown_remaining -= 1
 

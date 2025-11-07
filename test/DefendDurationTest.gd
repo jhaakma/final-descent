@@ -52,7 +52,7 @@ func test_defend_effect_timing() -> bool:
     print("Enemy has defend effect after processing: %s" % enemy.has_status_effect("defend"))
 
     # Reset ability state (simulate normal combat flow)
-    enemy._reduce_ability_cooldowns()
+    enemy._reduce_abilitycooldowns()
 
     print("=== Turn 4: Player attacks again (should NOT be defended) ===")
     # Player attacks again - defend should be gone

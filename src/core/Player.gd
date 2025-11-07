@@ -82,9 +82,9 @@ func heal(amount: int) -> int:
     return stats_component.heal(amount)
 
 func take_damage(amount: int) -> int:
-    # Use unified damage calculation (now includes percentage-based defense)
-    var final_damage: int = calculate_incoming_damage(amount)
-    var actual_damage_taken: int = stats_component.take_damage(final_damage)
+    # Damage is already calculated by abilities/attacks before calling this
+    # Defense is applied in CombatEntity.calculate_incoming_damage()
+    var actual_damage_taken: int = stats_component.take_damage(amount)
 
     # Reduce armor condition if actual damage was taken
     if actual_damage_taken > 0:

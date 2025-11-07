@@ -6,7 +6,8 @@
 [resource]
 script = ExtResource("1_preparation")
 prepared_ability = ExtResource("1_k5r7t")
-preparation_text = "charges up for a powerful strike..."
+player_preparation_text = "charge up for a powerful strike..."
+enemy_preparation_text = "charges up for a powerful strike..."
 ability_name = "Power Strike"
 description = "Prepare for a devastating attack on the next turn."
 priority = 5

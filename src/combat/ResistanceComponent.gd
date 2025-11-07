@@ -44,7 +44,8 @@ func is_weak_to(damage_type: DamageType.Type) -> bool:
 func apply_resistance(base_damage: int, damage_type: DamageType.Type) -> int:
     var multiplier := get_resistance_multiplier(damage_type)
     var final_damage := int(base_damage * multiplier)
-    return max(final_damage, 1)  # Minimum 1 damage
+    # Don't apply minimum here - caller will handle it
+    return final_damage
 
 func get_resistances() -> Array[DamageType.Type]:
     return resistances.keys()

@@ -2,6 +2,10 @@ class_name BaseTest extends RefCounted
 
 # Base class for all test classes
 # Test classes should extend this and implement test methods that start with "test_"
+#
+# Optional lifecycle methods:
+# - setup(): Called before each test method runs
+# - teardown(): Called after each test method runs (even if the test fails)
 
 # Track if the current test has failed
 var _test_failed: bool = false
@@ -37,8 +41,16 @@ func run_test(method_name: String) -> bool:
     _failure_message = ""
 
     if has_method(method_name):
+        # Call setup if it exists
+        if has_method("setup"):
+            call("setup")
+
         # Test methods must return true on success
         var result: Variant = call(method_name)
+
+        # Call teardown if it exists (always, even if test failed)
+        if has_method("teardown"):
+            call("teardown")
 
         # If test method didn't return true, it failed
         if result != true:

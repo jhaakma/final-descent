@@ -69,7 +69,7 @@ func generate_ability(user:EnemyResource = null) -> AbilityResource:
     ability.damage_type = element_info.damage_type
     ability.log_action_player = element_info.action_player
     ability.log_action_enemy = element_info.action_enemy
-    ability._cooldown = 3
+    ability.cooldown = 3
     return ability
 
 

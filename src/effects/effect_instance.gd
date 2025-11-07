@@ -7,7 +7,11 @@ class_name EffectInstance extends RefCounted
 var effect: StatusEffect
 
 # Runtime state - mutable properties
-var remaining_duration: int = -1  # For timed effects, tracks remaining turns
+var remaining_duration: int = -1:  # For timed effects, tracks remaining turns
+    get:
+        return remaining_duration
+    set(value):
+        remaining_duration = value
 var applied_turn: int = 0  # Turn when effect was applied (for tracking)
 var custom_data: Dictionary = {}  # For effect-specific data that needs tracking
 
@@ -33,7 +37,7 @@ func process_turn() -> void:
         remaining_duration -= 1
 
 ## Check if this effect instance should expire at the given timing and turn
-func should_expire_at(timing: EffectTiming.Type, current_turn: int) -> bool:
+func should_expire_at(timing: EffectTiming.Type) -> bool:
     if not effect is TimedEffect:
         return false
 
@@ -42,10 +46,6 @@ func should_expire_at(timing: EffectTiming.Type, current_turn: int) -> bool:
     # Check timing first
     if timed.get_expire_timing() != timing:
         return false
-
-    # Primary expiration check: use the provided current turn compared to configured duration
-    if current_turn >= timed.expire_after_turns:
-        return true
 
     # Fallback: if remaining_duration is being used by runtime processing
     if remaining_duration == -1:

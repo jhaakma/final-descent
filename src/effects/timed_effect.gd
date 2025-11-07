@@ -2,6 +2,7 @@ class_name TimedEffect extends RemovableStatusEffect
 
 # Immutable effect configuration - these define the effect template
 @export var expire_after_turns: int = 1  # Base duration (never changes - immutable)
+@export var log_effect: bool = true  # Whether to log application/removal
 
 # Get descriptive text for UI (base description with default duration)
 # Subclasses should override this to provide magnitude, unit and turns
@@ -66,7 +67,8 @@ func handle_existing_condition(_component: StatusEffectComponent, new_condition:
     # If the new effect has longer duration, refresh the instance
     if existing_instance.get_remaining_turns() < new_duration:
         existing_instance.set_duration(new_duration)
-        LogManager.log_event("{You are} {effect_verb} with {effect:%s} (%d turns)!" % [existing_condition.get_log_name(), new_duration], {"target": target, "status_effect": existing_condition.status_effect})
+        if log_effect:
+            LogManager.log_event("{You are} {effect_verb} with {effect:%s} (%d turns)!" % [existing_condition.get_log_name(), new_duration], {"target": target, "status_effect": existing_condition.status_effect})
         return true
     else:
         LogManager.log_event("{You are} already affected by %s." % existing_condition.name, {"target": target})
@@ -83,7 +85,8 @@ func handle_new_condition(component: StatusEffectComponent, condition: StatusCon
     # Call lifecycle method
     on_applied(target)
 
-    LogManager.log_event("{You are} {effect_verb} with {effect:%s} (%d turns)!" % [condition.get_log_name(), get_duration()], {"target": target, "status_effect": condition.status_effect})
+    if log_effect:
+        LogManager.log_event("{You are} {effect_verb} with {effect:%s} (%d turns)!" % [condition.get_log_name(), get_duration()], {"target": target, "status_effect": condition.status_effect})
     component.effect_applied.emit(condition.name)
     return true
 

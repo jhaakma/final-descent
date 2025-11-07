@@ -85,17 +85,16 @@ func calculate_incoming_damage(base_damage: int, damage_type: DamageType.Type = 
     # Apply percentage reduction
     if total_defense_percentage > 0:
         var reduction_factor := total_defense_percentage / 100.0
-        final_damage = int(float(base_damage) * (1.0 - reduction_factor))
-
-    # Ensure minimum 1 damage unless defense is very high
-    final_damage = max(1, final_damage)
-
-
+        var damage_after_defense := float(base_damage) * (1.0 - reduction_factor)
+        # Add small epsilon to handle floating point precision (e.g., 1.9999999 -> 2.0)
+        # Then floor to always round down in favor of defender
+        final_damage = int(damage_after_defense + 0.0001)
 
     # Then apply damage type resistance
-    return resistance_component.apply_resistance(final_damage, damage_type)
+    final_damage = resistance_component.apply_resistance(final_damage, damage_type)
 
-
+    # Ensure minimum 1 damage at the very end (after all reductions)
+    return max(1, final_damage)
 # === STATUS EFFECT MANAGEMENT ===
 func apply_status_effect(effect: StatusEffect) -> bool:
     return status_effect_component.apply_status_effect(effect, self)
