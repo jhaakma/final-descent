@@ -50,3 +50,11 @@ static func get_type_color(type: Type) -> Color:
 # Check if a damage type is valid
 static func is_valid_type(type: Type) -> bool:
     return type in type_names
+
+# Check if a damage type is physical (melee weapon based)
+static func is_physical(type: Type) -> bool:
+    return type in [Type.BLUNT, Type.SLASHING, Type.PIERCING]
+
+# Check if a damage type is magical (elemental/energy based)
+static func is_magical(type: Type) -> bool:
+    return type in [Type.FIRE, Type.ICE, Type.SHOCK, Type.POISON, Type.HOLY, Type.DARK]

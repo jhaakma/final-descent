@@ -10,6 +10,7 @@ class_name EnemyResource extends Resource
 @export var ai_component: EnemyAIComponent = RandomAIComponent.new()
 @export var resistances: Array[DamageType.Type] = []  # Damage types this enemy resists
 @export var weaknesses: Array[DamageType.Type] = []  # Damage types this enemy is weak to
+@export var physical_attack_type: DamageType.Type = DamageType.Type.BLUNT  ## Physical damage type for basic attacks
 
 ## Properties for ability template generation
 @export var level: int = 1  # Enemy level for ability scaling

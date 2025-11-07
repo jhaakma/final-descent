@@ -47,8 +47,8 @@ func get_name() -> String:
     return resource.name
 
 func get_attack_damage_type() -> DamageType.Type:
-    # Enemies default to blunt damage unless overridden by abilities
-    return DamageType.Type.BLUNT
+    # Return the physical attack type specified in the resource
+    return resource.physical_attack_type
 
 # Set the AI component for this enemy
 func set_ai_component(new_ai_component: EnemyAIComponent) -> void:

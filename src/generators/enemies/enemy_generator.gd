@@ -50,6 +50,7 @@ func generate_enemy_from_template(template: EnemyTemplate) -> EnemyResource:
     enemy.avoid_chance = avoid_chance
     enemy.level = template.base_level
     enemy.element_affinity = template.element_affinity
+    enemy.physical_attack_type = template.physical_attack_type
 
     # Apply elemental resistances and weaknesses
     enemy.resistances = template.get_elemental_resistances()

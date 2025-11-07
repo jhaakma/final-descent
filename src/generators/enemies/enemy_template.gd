@@ -34,6 +34,7 @@ enum ElementAffinity {
 @export var archetype: EnemyArchetype = EnemyArchetype.WARRIOR
 @export var size_category: SizeCategory = SizeCategory.MEDIUM
 @export var element_affinity: ElementAffinity = ElementAffinity.NONE
+@export var physical_attack_type: DamageType.Type = DamageType.Type.BLUNT  ## Physical damage type for basic attacks
 
 ## Ability configuration - use AbilityTemplate resources
 @export var ability_templates: Array[AbilityTemplate] = []

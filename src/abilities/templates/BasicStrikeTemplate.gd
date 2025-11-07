@@ -14,4 +14,5 @@ func generate_ability(user = null) -> AbilityResource:
     ability.damage_variance = 2
     ability.log_action_player = "strike"
     ability.log_action_enemy = "strikes"
+    ability.override_damage_type = false  # Use caster's physical attack type
     return ability
