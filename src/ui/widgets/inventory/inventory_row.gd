@@ -136,7 +136,8 @@ func _update_display() -> void:
         DisplayMode.BLACKSMITH_UPGRADE:
             item_name_label.text = display_name
             if blacksmith_room:
-                price_label.text = "%d gold" % blacksmith_room.upgrade_cost
+                var upgrade_cost: int = blacksmith_room.calculate_upgrade_cost(item_instance.item)
+                price_label.text = "%d gold" % upgrade_cost
             else:
                 price_label.text = "0 gold"
             price_label.visible = true
@@ -218,8 +219,9 @@ func _update_blacksmith_repair_button() -> void:
 func _update_blacksmith_upgrade_button() -> void:
     action_button.text = "Upgrade"
     action_button.custom_minimum_size.x = 80
-    if blacksmith_room:
-        action_button.disabled = not GameState.player.has_gold(blacksmith_room.upgrade_cost)
+    if blacksmith_room and item_instance:
+        var upgrade_cost: int = blacksmith_room.calculate_upgrade_cost(item_instance.item)
+        action_button.disabled = not GameState.player.has_gold(upgrade_cost)
     else:
         action_button.disabled = true
 

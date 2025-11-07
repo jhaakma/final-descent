@@ -9,7 +9,7 @@
 [resource]
 script = ExtResource("2_t1he2")
 repair_cost_per_condition = 2
-upgrade_cost = 75
+upgrade_cost_multiplier = 1.5
 available_modifiers = Array[ExtResource("1_0dmjd")]([ExtResource("2_w3nas"), ExtResource("3_44xn4"), ExtResource("4_68l3e")])
 title = "Blacksmith"
 description = "Welcome!"

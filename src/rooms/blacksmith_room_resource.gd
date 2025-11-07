@@ -1,7 +1,7 @@
 class_name BlacksmithRoomResource extends RoomResource
 
 @export var repair_cost_per_condition: int = 2  # Gold cost per condition point to repair
-@export var upgrade_cost: int = 50  # Fixed gold cost to apply a random modifier
+@export var upgrade_cost_multiplier: float = 1.5  # Multiplier applied to item's purchase_value for upgrade cost
 @export var available_modifiers: Array[EquipmentModifier] = []  # Pool of modifiers that can be applied
 
 func is_cleared_by_default() -> bool:
@@ -42,6 +42,10 @@ func calculate_repair_cost(item: Equippable, item_data: ItemData) -> int:
 
     return missing_condition * repair_cost_per_condition
 
+## Calculate upgrade cost for an item based on its value
+func calculate_upgrade_cost(item: Item) -> int:
+    return int(item.purchase_value * upgrade_cost_multiplier)
+
 ## Repair an item to full condition
 func repair_item(item_instance: ItemInstance) -> bool:
     if not item_instance.item_data:
@@ -76,6 +80,9 @@ func upgrade_item(item_instance: ItemInstance) -> bool:
     if not item.can_have_modifier():
         LogManager.log_event("%s already has a modifier applied" % item.name)
         return false
+
+    # Calculate upgrade cost based on item value
+    var upgrade_cost: int = calculate_upgrade_cost(item)
 
     # Check if player has enough gold
     if not GameState.player.has_gold(upgrade_cost):

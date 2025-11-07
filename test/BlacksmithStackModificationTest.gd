@@ -82,7 +82,7 @@ func test_upgrade_does_not_affect_entire_stack() -> bool:
 	GameState.player.add_gold(200)
 
 	var blacksmith := BlacksmithRoomResource.new()
-	blacksmith.upgrade_cost = 50
+	blacksmith.upgrade_cost_multiplier = 1.0
 
 	# Create a modifier
 	var sharpened := EquipmentModifier.new()
@@ -97,6 +97,7 @@ func test_upgrade_does_not_affect_entire_stack() -> bool:
 	sword.name = "Iron Sword"
 	sword.condition = 20
 	sword.damage = 10
+	sword.purchase_value = 50  # With multiplier of 1.0, upgrade cost will be 50
 
 	# Add 3 copies of this sword to inventory - all generic
 	GameState.player.add_items(ItemInstance.new(sword, null, 3))
@@ -189,7 +190,7 @@ func test_upgrade_creates_unique_item_from_stack() -> bool:
 	GameState.player.add_gold(100)
 
 	var blacksmith := BlacksmithRoomResource.new()
-	blacksmith.upgrade_cost = 50
+	blacksmith.upgrade_cost_multiplier = 1.0
 
 	# Create a modifier
 	var refined := EquipmentModifier.new()
@@ -203,6 +204,7 @@ func test_upgrade_creates_unique_item_from_stack() -> bool:
 	var sword := Weapon.new()
 	sword.name = "Iron Sword"
 	sword.damage = 10
+	sword.purchase_value = 50  # With multiplier of 1.0, upgrade cost will be 50
 
 	# Add 3 generic swords
 	GameState.player.add_items(ItemInstance.new(sword, null, 3))

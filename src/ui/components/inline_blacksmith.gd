@@ -129,9 +129,9 @@ func _setup_upgrade_tab() -> void:
         upgrade_list.add_child(no_items_label)
         return
 
-    # Add info label about upgrades
+    # Add info label about upgrades (removed fixed cost - now shown per item)
     var info_label := Label.new()
-    info_label.text = "Apply a random modifier to equipment (cost: %d gold)" % blacksmith_room.upgrade_cost
+    info_label.text = "Apply a random modifier to equipment"
     info_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
     upgrade_list.add_child(info_label)
 

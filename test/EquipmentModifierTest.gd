@@ -249,7 +249,7 @@ func test_blacksmith_upgrade_functionality() -> bool:
     GameState.player.add_gold(100)
 
     var blacksmith := BlacksmithRoomResource.new()
-    blacksmith.upgrade_cost = 50
+    blacksmith.upgrade_cost_multiplier = 1.0
 
     # Create a modifier
     var refined := EquipmentModifier.new()
@@ -262,6 +262,7 @@ func test_blacksmith_upgrade_functionality() -> bool:
     var sword := Weapon.new()
     sword.name = "Sword"
     sword.damage = 10
+    sword.purchase_value = 50  # With multiplier of 1.0, upgrade cost will be 50
 
     var item_instance := ItemInstance.new(sword, null, 1)
 
@@ -283,7 +284,7 @@ func test_cannot_upgrade_already_modified_item() -> bool:
     GameState.player.add_gold(100)
 
     var blacksmith := BlacksmithRoomResource.new()
-    blacksmith.upgrade_cost = 50
+    blacksmith.upgrade_cost_multiplier = 1.0
 
     var refined := EquipmentModifier.new()
     refined.modifier_name = "Refined"
@@ -292,6 +293,7 @@ func test_cannot_upgrade_already_modified_item() -> bool:
 
     var sword := Weapon.new()
     sword.name = "Sword"
+    sword.purchase_value = 50  # With multiplier of 1.0, upgrade cost will be 50
 
     # Apply a modifier directly
     sword.apply_modifier(refined)
@@ -328,7 +330,7 @@ func test_blacksmith_scales_current_condition_on_upgrade() -> bool:
     GameState.player.add_gold(100)
 
     var blacksmith := BlacksmithRoomResource.new()
-    blacksmith.upgrade_cost = 50
+    blacksmith.upgrade_cost_multiplier = 1.0
 
     # Create a modifier that increases condition
     var reinforced := EquipmentModifier.new()
@@ -341,6 +343,7 @@ func test_blacksmith_scales_current_condition_on_upgrade() -> bool:
     var sword := Weapon.new()
     sword.name = "Sword"
     sword.condition = 20
+    sword.purchase_value = 50  # With multiplier of 1.0, upgrade cost will be 50
 
     # Create item data with current condition at 50% (10/20)
     var item_data := ItemData.new(20)
