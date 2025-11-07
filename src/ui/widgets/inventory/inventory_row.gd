@@ -9,12 +9,16 @@ signal item_selected(item_instance: ItemInstance)
 signal item_used(item_instance: ItemInstance)
 signal item_bought(item_instance: ItemInstance)
 signal item_sold(item_instance: ItemInstance)
+signal item_repaired(item_instance: ItemInstance)
+signal item_upgraded(item_instance: ItemInstance)
 
 enum DisplayMode {
-    INVENTORY,   # Show Use/Equip buttons
-    EQUIPPED,    # Show Unequip button, no green highlight
-    SHOP_BUY,    # Show Buy button with price
-    SHOP_SELL    # Show Sell button with price
+    INVENTORY,          # Show Use/Equip buttons
+    EQUIPPED,           # Show Unequip button, no green highlight
+    SHOP_BUY,           # Show Buy button with price
+    SHOP_SELL,          # Show Sell button with price
+    BLACKSMITH_REPAIR,  # Show Repair button with repair cost
+    BLACKSMITH_UPGRADE  # Show Upgrade button with upgrade cost
 }
 
 static func get_scene() -> PackedScene:
@@ -33,6 +37,7 @@ var item_instance: ItemInstance = null  # Optional ItemInstance reference for co
 var is_combat_disabled: bool = false
 var display_mode: DisplayMode = DisplayMode.INVENTORY
 var shopkeeper_gold: int = 0  # For shop contexts, to determine if items can be afforded
+var blacksmith_room: BlacksmithRoomResource = null  # For blacksmith contexts, to calculate costs
 
 func _ready() -> void:
     # Connect the background click for selection
@@ -53,6 +58,19 @@ func setup_with_custom_name(_item_tile: ItemInstance, _is_combat_disabled: bool,
 ## Setup the row for shop context
 func setup_for_shop(_item_tile: ItemInstance, _display_mode: DisplayMode, _shopkeeper_gold: int = 0) -> void:
     setup_with_mode(_item_tile,  _display_mode, false, _shopkeeper_gold)
+
+## Setup the row for blacksmith context
+func setup_for_blacksmith(_item_tile: ItemInstance, _display_mode: DisplayMode, _blacksmith_room: BlacksmithRoomResource) -> void:
+    item_instance = _item_tile
+    display_mode = _display_mode
+    is_combat_disabled = false
+    blacksmith_room = _blacksmith_room
+
+    if is_node_ready():
+        _update_display()
+        _update_action_button()
+        _update_background()
+        _update_condition_bar()
 
 ## Internal setup method with all parameters
 func setup_with_mode(_item_tile: ItemInstance, _display_mode: DisplayMode, _is_combat_disabled: bool = false, _shopkeeper_gold: int = 0) -> void:
@@ -104,6 +122,24 @@ func _update_display() -> void:
             var sell_value := item_instance.item.calculate_sell_value(item_instance.item_data)
             price_label.text = "%d gold" % sell_value
             price_label.visible = true
+        DisplayMode.BLACKSMITH_REPAIR:
+            item_name_label.text = display_name
+            if blacksmith_room and item_instance.item is Equippable:
+                var repair_cost: int = blacksmith_room.calculate_repair_cost(
+                    item_instance.item as Equippable,
+                    item_instance.item_data
+                )
+                price_label.text = "%d gold" % repair_cost
+            else:
+                price_label.text = "0 gold"
+            price_label.visible = true
+        DisplayMode.BLACKSMITH_UPGRADE:
+            item_name_label.text = display_name
+            if blacksmith_room:
+                price_label.text = "%d gold" % blacksmith_room.upgrade_cost
+            else:
+                price_label.text = "0 gold"
+            price_label.visible = true
 
     # Set simple tooltip text to trigger custom tooltip system
     tooltip_text = display_name
@@ -128,6 +164,10 @@ func _update_action_button() -> void:
             _update_shop_buy_button()
         DisplayMode.SHOP_SELL:
             _update_shop_sell_button()
+        DisplayMode.BLACKSMITH_REPAIR:
+            _update_blacksmith_repair_button()
+        DisplayMode.BLACKSMITH_UPGRADE:
+            _update_blacksmith_upgrade_button()
 
 func _update_inventory_action_button() -> void:
     # Items should remain usable during combat - combat disabled only affects weapons
@@ -162,6 +202,26 @@ func _update_shop_sell_button() -> void:
     # Check if shopkeeper can afford this item
     var sell_value := item_instance.item.calculate_sell_value(item_instance.item_data)
     action_button.disabled = shopkeeper_gold < sell_value
+
+func _update_blacksmith_repair_button() -> void:
+    action_button.text = "Repair"
+    action_button.custom_minimum_size.x = 80
+    if blacksmith_room and item_instance.item is Equippable:
+        var repair_cost: int = blacksmith_room.calculate_repair_cost(
+            item_instance.item as Equippable,
+            item_instance.item_data
+        )
+        action_button.disabled = not GameState.player.has_gold(repair_cost)
+    else:
+        action_button.disabled = true
+
+func _update_blacksmith_upgrade_button() -> void:
+    action_button.text = "Upgrade"
+    action_button.custom_minimum_size.x = 80
+    if blacksmith_room:
+        action_button.disabled = not GameState.player.has_gold(blacksmith_room.upgrade_cost)
+    else:
+        action_button.disabled = true
 
 func _update_background() -> void:
     # Create a StyleBoxFlat for custom background colors
@@ -228,6 +288,10 @@ func _on_action_button_pressed() -> void:
             item_bought.emit(item_instance)
         DisplayMode.SHOP_SELL:
             item_sold.emit(item_instance)
+        DisplayMode.BLACKSMITH_REPAIR:
+            item_repaired.emit(item_instance)
+        DisplayMode.BLACKSMITH_UPGRADE:
+            item_upgraded.emit(item_instance)
 
 ## Override to provide custom tooltip
 func _make_custom_tooltip(_for_text: String) -> Control:

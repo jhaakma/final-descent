@@ -1,27 +1,10 @@
 # To do
 
-## Blacksmith and Equipment Modifications
-
-### Blacksmith Room
-Offers the folowing services:
-- Repair equipment - fee based on durability recovered
-- Upgrade equipment - Add a random modifier to a piece of equipment for a fee
-
-### Weapon and Armor Modifiers
-- Adds prefix such as "Refined", "Sharpened" etc
-- Modifiers have restrictions based on item and damage type, e.g:
-    - "Reinforced" can only be applied to armor
-    - "Sharpened" can only be applied to slashing and piercing weapons
-- Blacksmith can apply a random modifier to existing equipment for a fee
-- Piece of equipment can only have one modifier applied
-
-
-
+## Blacksmith
+- Update Blacksmith UI to use item row, show condition, equipped status etc
+- Upgrade cost based on base item value
 
 ## Automate Itch.io releases
-
-
-
 
 ## Ability Mechanics
 - AI for selecting abilities

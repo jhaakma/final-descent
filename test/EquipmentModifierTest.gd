@@ -267,7 +267,7 @@ func test_blacksmith_upgrade_functionality() -> bool:
 
     # Upgrade the item
     assert_true(blacksmith.upgrade_item(item_instance), "Upgrade should succeed")
-    
+
     # Check the upgraded item (not the original sword, which is unchanged)
     var upgraded_sword := item_instance.item as Weapon
     assert_false(upgraded_sword.can_have_modifier(), "Upgraded sword should now have a modifier")

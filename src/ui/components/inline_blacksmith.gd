@@ -90,32 +90,10 @@ func _setup_repair_tab() -> void:
 
     # Add each item that needs repair
     for item_instance in items_needing_repair:
-        var item_row := _create_repair_row(item_instance)
+        var item_row: InventoryRow = inventory_row_scene.instantiate()
+        item_row.setup_for_blacksmith(item_instance, InventoryRow.DisplayMode.BLACKSMITH_REPAIR, blacksmith_room)
+        item_row.item_repaired.connect(_on_repair_item)
         repair_list.add_child(item_row)
-
-func _create_repair_row(item_instance: ItemInstance) -> HBoxContainer:
-    var row := HBoxContainer.new()
-    row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-
-    var item: Equippable = item_instance.item as Equippable
-    var max_condition: int = item.get_max_condition()
-    var current_condition: int = item_instance.item_data.current_condition
-    var repair_cost: int = blacksmith_room.calculate_repair_cost(item, item_instance.item_data)
-
-    # Item name and condition info
-    var name_label := Label.new()
-    name_label.text = "%s (%d/%d)" % [item.name, current_condition, max_condition]
-    name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-    row.add_child(name_label)
-
-    # Repair button
-    var repair_btn := Button.new()
-    repair_btn.text = "Repair (%d gold)" % repair_cost
-    repair_btn.disabled = not GameState.player.has_gold(repair_cost)
-    repair_btn.pressed.connect(_on_repair_item.bind(item_instance))
-    row.add_child(repair_btn)
-
-    return row
 
 func _setup_upgrade_tab() -> void:
     # Clear existing items
@@ -163,29 +141,10 @@ func _setup_upgrade_tab() -> void:
 
     # Add each upgradeable item
     for item_instance in upgradeable_items:
-        var item_row := _create_upgrade_row(item_instance)
+        var item_row: InventoryRow = inventory_row_scene.instantiate()
+        item_row.setup_for_blacksmith(item_instance, InventoryRow.DisplayMode.BLACKSMITH_UPGRADE, blacksmith_room)
+        item_row.item_upgraded.connect(_on_upgrade_item)
         upgrade_list.add_child(item_row)
-
-func _create_upgrade_row(item_instance: ItemInstance) -> HBoxContainer:
-    var row := HBoxContainer.new()
-    row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-
-    var item: Equippable = item_instance.item as Equippable
-
-    # Item name
-    var name_label := Label.new()
-    name_label.text = item.name
-    name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-    row.add_child(name_label)
-
-    # Upgrade button
-    var upgrade_btn := Button.new()
-    upgrade_btn.text = "Upgrade (%d gold)" % blacksmith_room.upgrade_cost
-    upgrade_btn.disabled = not GameState.player.has_gold(blacksmith_room.upgrade_cost)
-    upgrade_btn.pressed.connect(_on_upgrade_item.bind(item_instance))
-    row.add_child(upgrade_btn)
-
-    return row
 
 func _on_repair_item(item_instance: ItemInstance) -> void:
     if blacksmith_room.repair_item(item_instance):
