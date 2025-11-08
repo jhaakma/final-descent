@@ -11,4 +11,7 @@ description = "A strange looking chest, covered in dust."
 weight = 10
 min_floor = 5
 max_floor = -1
+tags = Array[int]([1])
+rarity = 1.0
+exclusivity_group = &""
 metadata/_custom_type_script = "uid://vtj71xewsqma"

@@ -14,4 +14,7 @@ description = "A hulking figure blocks your way."
 weight = 20
 min_floor = 15
 max_floor = -1
+tags = Array[int]([1])
+rarity = 1.0
+exclusivity_group = &""
 metadata/_custom_type_script = "uid://bqxhtkn1xkeqv"

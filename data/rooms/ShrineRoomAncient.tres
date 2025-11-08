@@ -55,4 +55,7 @@ description = "A shrine to a long-forgotten God"
 weight = 40
 min_floor = 0
 max_floor = -1
+tags = Array[int]([])
+rarity = 1.0
+exclusivity_group = &""
 metadata/_custom_type_script = "uid://bnlue0rcqdx6d"

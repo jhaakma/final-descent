@@ -7,6 +7,7 @@
 script = ExtResource("2_8tv7w")
 max_hp_bonus = 20
 expire_after_turns = 10
+log_effect = true
 metadata/_custom_type_script = "uid://bprhm4eacabtk"
 
 [resource]

@@ -12,4 +12,7 @@ description = "A worn old chest, covered in dust."
 weight = 25
 min_floor = 0
 max_floor = -1
+tags = Array[int]([2])
+rarity = 1.0
+exclusivity_group = &""
 metadata/_custom_type_script = "uid://cuib3tlx6u7dn"

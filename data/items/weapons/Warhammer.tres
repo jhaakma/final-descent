@@ -7,6 +7,7 @@
 [sub_resource type="Resource" id="Resource_xfc27"]
 script = ExtResource("2_g164y")
 expire_after_turns = 1
+log_effect = true
 metadata/_custom_type_script = "uid://cfj1k6xrdhdm4"
 
 [sub_resource type="Resource" id="Resource_oi54v"]

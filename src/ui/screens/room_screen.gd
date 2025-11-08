@@ -44,6 +44,9 @@ static var recent_room_history: Array[RoomResource] = []  # Track recent room cl
 var max_history_size: int = 3  # How many recent rooms to remember
 var weight_penalty: float = 0.01  # Multiplier for recently used rooms (0.3 = 30% of original weight)
 
+# Stage planner integration
+const USE_STAGE_PLANNER: bool = true  # Feature flag to toggle planned vs legacy generation
+
 static func get_scene() -> PackedScene:
     return preload("uid://c0cpy5xfdy2nb") as PackedScene
 
@@ -300,7 +303,20 @@ func _calculate_room_weights(valid_rooms: Array[RoomResource]) -> Array[float]:
     return weights
 
 func _generate_room() -> void:
+    # Check if we should use stage planner
+    if USE_STAGE_PLANNER and StageManager.has_stage_plan():
+        var planned_room := StageManager.get_current_planned_room()
+        if planned_room:
+            current_room = planned_room
+            print("Using planned room for floor %d: %s" % [GameState.current_floor, current_room.title])
+            current_room.on_room_entered(self)
+            _render_room()
+            return
+        else:
+            push_error("Stage plan exists but returned null room at floor %d" % GameState.current_floor)
+            # Fall through to legacy generation
 
+    # Legacy generation path
     var num_starting_rooms := starting_rooms.size()
     if num_starting_rooms > 0 and num_starting_rooms > GameState.current_floor - 1:
         current_room = starting_rooms[GameState.current_floor - 1]

@@ -16,6 +16,7 @@ script = ExtResource("4_oba20")
 damage_per_turn = 2
 elemental_type = 3
 expire_after_turns = 1
+log_effect = true
 metadata/_custom_type_script = "uid://b5iu05fqomptj"
 
 [resource]

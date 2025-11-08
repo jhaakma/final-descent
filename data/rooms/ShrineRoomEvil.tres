@@ -55,4 +55,7 @@ description = "This shrine emanates malice."
 weight = 30
 min_floor = 8
 max_floor = -1
+tags = Array[int]([])
+rarity = 1.0
+exclusivity_group = &""
 metadata/_custom_type_script = "uid://bnlue0rcqdx6d"

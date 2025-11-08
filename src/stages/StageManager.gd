@@ -16,6 +16,9 @@ var floors_per_stage: int = DEFAULT_FLOORS_PER_STAGE
 var current_stage: int = 1
 var floors_completed_in_current_stage: int = 0
 
+# Planner integration (optional)
+var current_stage_instance: StageInstance = null
+
 func _ready() -> void:
     print("StageManager initialized")
 
@@ -68,6 +71,10 @@ func advance_floor() -> void:
     elif is_boss_floor():
         boss_floor_reached.emit(current_stage)
 
+    # Advance planner pointer if present
+    if current_stage_instance:
+        current_stage_instance.advance()
+
 ## Complete the current stage and advance to the next
 func complete_stage() -> void:
     print("Stage %d completed!" % current_stage)
@@ -77,6 +84,9 @@ func complete_stage() -> void:
     current_stage += 1
     floors_completed_in_current_stage = 0
 
+    # Clear planner for next stage (external system should rebuild)
+    current_stage_instance = null
+
     print("Advanced to Stage %d" % current_stage)
     stage_changed.emit(current_stage)
 
@@ -85,6 +95,7 @@ func reset() -> void:
     print("StageManager reset")
     current_stage = 1
     floors_completed_in_current_stage = 0
+    current_stage_instance = null
 
 ## Set custom floors per stage (useful for testing or configuration)
 func set_floors_per_stage(floors: int) -> void:
@@ -131,3 +142,23 @@ func get_debug_info() -> String:
         stage_type,
         get_stage_progress() * 100
     ]
+
+## ===== Planner API (optional) =====
+
+func has_stage_plan() -> bool:
+    return current_stage_instance != null and current_stage_instance.planned_rooms.size() > 0
+
+func set_stage_instance(instance: StageInstance) -> void:
+    current_stage_instance = instance
+    # Align floors if template provided
+    if instance and instance.template:
+        floors_per_stage = instance.template.floors
+        floors_completed_in_current_stage = 0
+
+func get_current_planned_room() -> RoomResource:
+    if not has_stage_plan():
+        return null
+    var index := floors_completed_in_current_stage
+    if index >= 0 and index < current_stage_instance.planned_rooms.size():
+        return current_stage_instance.planned_rooms[index]
+    return null

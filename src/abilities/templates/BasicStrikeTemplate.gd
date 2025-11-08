@@ -1,10 +1,9 @@
 class_name BasicStrikeTemplate extends AbilityTemplate
 ## Template for generating basic strike abilities
 
-func generate_ability(user = null) -> AbilityResource:
+func generate_ability(user: EnemyResource = null) -> AbilityResource:
     var effective_level := 1
-    if user and user.has_method("get_level"):
-        effective_level = user.get_level()
+    effective_level = user.get_level()
 
     var ability := AttackAbility.new()
     ability.ability_name = "Strike"

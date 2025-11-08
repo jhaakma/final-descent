@@ -7,6 +7,7 @@
 script = ExtResource("2_giqls")
 attack_bonus = 3
 expire_after_turns = 10
+log_effect = true
 metadata/_custom_type_script = "uid://bv0ioocawgocp"
 
 [resource]

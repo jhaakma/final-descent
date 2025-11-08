@@ -11,3 +11,6 @@ description = "A cozy shop filled with various items and a friendly merchant."
 weight = 20
 min_floor = 5
 max_floor = -1
+tags = Array[int]([])
+rarity = 1.0
+exclusivity_group = &""

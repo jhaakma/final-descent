@@ -51,6 +51,7 @@ loot_component = SubResource("Resource_ukg5r")
 avoid_chance = 0.5
 resistances = Array[int]([])
 weaknesses = Array[int]([1])
+physical_attack_type = 0
 level = 1
 element_affinity = 0
 metadata/_custom_type_script = "uid://b4y5n724vd0ph"
