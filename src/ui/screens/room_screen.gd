@@ -38,11 +38,6 @@ var stored_room_actions: Array[Button] = []  # Store original room actions
 var max_history_size: int = 3  # How many recent rooms to remember
 var weight_penalty: float = 0.01  # Multiplier for recently used rooms (0.3 = 30% of original weight)
 
-# Stage management
-var current_stage_instance: StageInstance = null
-var current_stage_index: int = 0
-var floors_in_current_stage: int = 0
-
 
 static func get_scene() -> PackedScene:
     return preload("uid://c0cpy5xfdy2nb") as PackedScene
@@ -71,47 +66,19 @@ func _ready() -> void:
     # Register log display with LogManager for automatic updates
     LogManager.register_log_display(log_label)
 
-    _initialize_stage_plan()
+    # Initialize stage progression if not already done
+    if not StageProgressionManager.current_stage_instance:
+        StageProgressionManager.initialize_stages(stage_templates)
 
     _generate_room()
 
     next_btn.pressed.connect(func() -> void:
         if cleared:
-            floors_in_current_stage += 1
+            StageProgressionManager.advance_floor()
             emit_signal("room_cleared"))
     leave_btn.pressed.connect(_on_leave_run_pressed)
 
 
-
-func _initialize_stage_plan() -> void:
-    """Initialize stage plan if we don't have one yet"""
-    if current_stage_instance != null:
-        print("Stage plan already exists, skipping initialization")
-        return
-
-    # Get current stage template (use first template if nothing set)
-    if stage_templates.is_empty():
-        push_error("No stage templates configured on RoomScreen")
-        return
-
-    var template: StageTemplateResource = stage_templates[current_stage_index]
-
-    # Generate stage instance
-    var rng_seed := GameState.rng.seed
-    var stage_number := current_stage_index + 1
-    current_stage_instance = StageGenerator.generate(
-        stage_number,
-        template,
-        rng_seed,
-    )
-    floors_in_current_stage = 0
-
-    print("Stage plan initialized: %d rooms planned" % current_stage_instance.planned_rooms.size())
-
-    # Debug: Print planned rooms
-    for i in range(current_stage_instance.planned_rooms.size()):
-        var room := current_stage_instance.planned_rooms[i]
-        print("  Floor %d: %s (%s)" % [i + 1, room.title, RoomType.get_display_name(room.room_type)])
 
 # Call this to refresh all UI elements
 func update() -> void:
@@ -130,11 +97,10 @@ func _on_status_effects_changed() -> void:
 
 func _refresh_stats() -> void:
     # Show stage and floor information
-    var stage_number := current_stage_index + 1
-    var floor_in_stage := floors_in_current_stage + 1
-    var total_floors := current_stage_instance.template.floors if current_stage_instance else 10
+    var stage_number: int = StageProgressionManager.get_stage_number()
+    var floor_in_stage: int = StageProgressionManager.get_floor_in_stage()
+    var total_floors: int = StageProgressionManager.get_total_floors_in_stage()
     floor_label.text = "Stage %d: Floor %d/%d" % [stage_number, floor_in_stage, total_floors]
-
     hp_label.text = "HP: %d/%d" % [GameState.player.get_hp(), GameState.player.get_max_hp()]
     hp_bar.max_value = GameState.player.get_max_hp()
     hp_bar.value = GameState.player.get_hp()
@@ -229,31 +195,17 @@ func _trigger_combat_turn() -> void:
 
 
 func _generate_room() -> void:
-    if not current_stage_instance:
-        push_error("No stage instance available")
+    current_room = StageProgressionManager.get_current_room()
+    if not current_room:
+        push_error("No room available from StageProgressionManager")
         return
 
-    if floors_in_current_stage >= current_stage_instance.planned_rooms.size():
-        # Stage completed, advance to next stage
-        _advance_to_next_stage()
-        return
-
-    current_room = current_stage_instance.planned_rooms[floors_in_current_stage]
     print("Using planned room for floor %d: %s" % [GameState.current_floor, current_room.title])
     current_room.on_room_entered(self)
     _render_room()
 
-func _advance_to_next_stage() -> void:
-    """Advance to the next stage template"""
-    current_stage_index += 1
-    if current_stage_index >= stage_templates.size():
-        # Loop back to first stage if we run out
-        current_stage_index = 0
-
-    current_stage_instance = null
-    floors_in_current_stage = 0
-    _initialize_stage_plan()
-    _generate_room()
+# Note: Stage progression is now handled by StageProgressionManager.advance_floor()
+# which is called when the player clicks the next floor button
 
 func _render_room() -> void:
     if not current_room:

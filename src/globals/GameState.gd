@@ -37,6 +37,8 @@ func reset_run() -> void:
     player.reset()
     # Clear log history when starting a new run
     LogManager.clear_log_history()
+    # Reset stage progression
+    StageProgressionManager.reset()
 
 func next_floor() -> void:
     current_floor += 1
