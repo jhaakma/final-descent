@@ -1,17 +1,7 @@
-[gd_resource type="Resource" script_class="EnemyTemplate" load_steps=7 format=3 uid="uid://cul3vtqmbkrw7"]
+[gd_resource type="Resource" script_class="EnemyTemplate" load_steps=3 format=3 uid="uid://cul3vtqmbkrw7"]
 
 [ext_resource type="Script" uid="uid://bvnw3ewhagtrt" path="res://src/abilities/templates/AbilityTemplate.gd" id="1_g0ga7"]
 [ext_resource type="Script" uid="uid://c0acru57thtrf" path="res://src/generators/enemies/enemy_template.gd" id="1_vbukg"]
-[ext_resource type="Script" uid="uid://dderie3yqk31u" path="res://src/abilities/templates/ChargedAttackTemplate.gd" id="2_fdn4u"]
-[ext_resource type="Script" uid="uid://c1k0igbhjutsb" path="res://src/abilities/templates/RecoveryTemplate.gd" id="4_p7gf4"]
-
-[sub_resource type="Resource" id="Resource_4452o"]
-script = ExtResource("4_p7gf4")
-metadata/_custom_type_script = "uid://c1k0igbhjutsb"
-
-[sub_resource type="Resource" id="Resource_g0ga7"]
-script = ExtResource("2_fdn4u")
-metadata/_custom_type_script = "uid://dderie3yqk31u"
 
 [resource]
 script = ExtResource("1_vbukg")
@@ -21,6 +11,6 @@ archetype = 2
 size_category = 0
 element_affinity = 1
 physical_attack_type = 1
-ability_templates = Array[ExtResource("1_g0ga7")]([SubResource("Resource_4452o"), SubResource("Resource_g0ga7")])
+ability_templates = Array[ExtResource("1_g0ga7")]([])
 possible_modifiers = Array[int]([4, 3, 7, 1])
 modifier_chance = 1.0

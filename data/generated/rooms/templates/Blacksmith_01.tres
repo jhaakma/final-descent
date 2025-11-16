@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="BlacksmithRoomTemplate" load_steps=6 format=3 uid="uid://dlog7hs26nxi6"]
+
+[ext_resource type="Script" uid="uid://6tg203tnwb8r" path="res://src/items/equipment_modifier.gd" id="1_jt5eq"]
+[ext_resource type="Resource" uid="uid://bmy7rsdfakosj" path="res://data/generated/weapons/modifiers/HardenedModifier.tres" id="2_lm7xa"]
+[ext_resource type="Script" uid="uid://dr7vcib4olfe7" path="res://src/rooms/templates/BlacksmithRoomTemplate.gd" id="2_mqo2i"]
+[ext_resource type="Resource" uid="uid://coet8k0b75epd" path="res://data/generated/weapons/modifiers/ReinforcedModifier.tres" id="3_s76ds"]
+[ext_resource type="Resource" uid="uid://bsu4hcmeo4rh3" path="res://data/generated/weapons/modifiers/SharpenedModifier.tres" id="4_wxc7k"]
+
+[resource]
+script = ExtResource("2_mqo2i")
+title_variants = Array[String](["Blacksmith"])
+description_variants = Array[String](["A blacksmith tends to the forge."])
+base_repair_cost_per_condition = 2.0
+base_upgrade_cost_multiplier = 1.5
+cost_scaling_per_stage = 0.1
+available_modifiers = Array[ExtResource("1_jt5eq")]([ExtResource("2_lm7xa"), ExtResource("3_s76ds"), ExtResource("4_wxc7k")])
+rarity = 0
+min_floor = 1
+max_floor = 999
+metadata/_custom_type_script = "uid://dr7vcib4olfe7"

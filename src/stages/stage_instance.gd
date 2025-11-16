@@ -5,10 +5,18 @@ extends Resource
 
 var template: StageTemplateResource
 var generation_seed: int
-var planned_rooms: Array[RoomResource] = []   ## ordered rooms; last is boss
+var planned_rooms: Array[RoomResource] = []
 var integrity_ok: bool = true
+var stage_number: int
 
 var current_index: int = 0  ## pointer to current room
+
+func _init(p_template: StageTemplateResource, p_stage_number: int, p_seed: int, p_rooms: Array[RoomResource] = []) -> void:
+    template = p_template
+    stage_number = p_stage_number
+    generation_seed = p_seed
+    planned_rooms = p_rooms.duplicate()
+    current_index = 0
 
 func get_current_room() -> RoomResource:
     if current_index >= 0 and current_index < planned_rooms.size():

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ShopRoomTemplate" load_steps=3 format=3 uid="uid://dn4kt6cokbynh"]
+
+[ext_resource type="Resource" uid="uid://clh6idxy2sia7" path="res://data/loot/BasicShopkeeper_01.tres" id="1_lb5ge"]
+[ext_resource type="Script" uid="uid://chgmjalf1elgr" path="res://src/rooms/templates/ShopRoomTemplate.gd" id="1_rbrgj"]
+
+[resource]
+script = ExtResource("1_rbrgj")
+title_variants = Array[String](["Shop"])
+description_variants = Array[String](["A merchant offers their wares."])
+base_loot_component = ExtResource("1_lb5ge")
+gold_scaling_per_stage = 0.1
+rarity = 1
+min_floor = 1
+max_floor = 999
+metadata/_custom_type_script = "uid://chgmjalf1elgr"

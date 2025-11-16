@@ -1,7 +1,7 @@
 class_name DefendTemplate extends AbilityTemplate
 ## Template for generating defend abilities
 
-func generate_ability(_user = null) -> AbilityResource:
+func generate_ability(_user: EnemyResource) -> AbilityResource:
     var ability := DefendAbility.new()
     ability.ability_name = "Defend"
     ability.description = "Take a defensive stance"

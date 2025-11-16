@@ -8,39 +8,39 @@ var boss_room: RoomResource
 var template: StageTemplateResource
 
 func setup() -> void:
-    # Create lightweight room instances with tags
+    # Create lightweight room instances with types
     chest_room = RoomResource.new()
     chest_room.title = "Test Chest"
-    chest_room.tags = [StageTags.Tag.CHEST]
-    chest_room.rarity = 1.0
+    chest_room.room_type = RoomType.Type.CHEST
+    chest_room.rarity = Rarity.Type.COMMON
 
     combat_room1 = RoomResource.new()
     combat_room1.title = "Test Combat 1"
-    combat_room1.tags = [StageTags.Tag.COMBAT]
-    combat_room1.rarity = 1.0
+    combat_room1.room_type = RoomType.Type.COMBAT
+    combat_room1.rarity = Rarity.Type.COMMON
 
     combat_room2 = RoomResource.new()
     combat_room2.title = "Test Combat 2"
-    combat_room2.tags = [StageTags.Tag.COMBAT]
-    combat_room2.rarity = 1.0
+    combat_room2.room_type = RoomType.Type.COMBAT
+    combat_room2.rarity = Rarity.Type.COMMON
 
     rest_room = RoomResource.new()
     rest_room.title = "Test Rest"
-    rest_room.tags = [StageTags.Tag.REST]
-    rest_room.rarity = 1.0
+    rest_room.room_type = RoomType.Type.REST
+    rest_room.rarity = Rarity.Type.COMMON
 
     boss_room = RoomResource.new()
     boss_room.title = "Test Boss"
-    boss_room.tags = [StageTags.Tag.BOSS]
-    boss_room.rarity = 1.0
+    boss_room.room_type = RoomType.Type.BOSS
+    boss_room.rarity = Rarity.Type.COMMON
 
     # Create a simple template
     template = StageTemplateResource.new()
     template.floors = 5
-    template.mandatory_room_tags = [StageTags.Tag.CHEST, StageTags.Tag.REST]
-    template.optional_tag_weights = {
-        StageTags.Tag.COMBAT: 2.0,
-        StageTags.Tag.REST: 0.5
+    template.mandatory_room_types = [RoomType.Type.CHEST, RoomType.Type.REST]
+    template.optional_type_weights = {
+        RoomType.Type.COMBAT: 2.0,
+        RoomType.Type.REST: 0.5
     }
     template.boss_selector = func() -> RoomResource: return boss_room
 
@@ -114,7 +114,7 @@ func test_stage_manager_finish() -> bool:
 
     var boss := StageManager.get_current_planned_room()
     assert_true(boss != null, "Boss room should not be null")
-    assert_true(boss.has_tag(StageTags.Tag.BOSS), "Boss room should have BOSS tag")
+    assert_true(boss.room_type == RoomType.Type.BOSS, "Boss room should have BOSS type")
 
     print("  Iterations: %d" % iterations)
     print("  Boss room: %s" % boss.title)

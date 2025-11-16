@@ -5,10 +5,9 @@ signal run_ended(victory: bool)
 
 var available_rooms: Array[RoomResource] = []
 
-@export var starting_rooms: Array[RoomResource] = []
 ## Manually specify all room resources for web export compatibility
 ## When this array is populated, it will be used instead of dynamic directory scanning
-@export var all_rooms: Array[RoomResource] = []
+@export var all_rooms: Array[IRoomTemplate] = []
 
 @onready var floor_label: Label = %FloorLabel
 @onready var hp_label: Label = %HPLabel
@@ -40,12 +39,9 @@ var enemy_resource: EnemyResource = null
 var enemy_first: bool = false
 var avoid_failure: bool = false
 var stored_room_actions: Array[Button] = []  # Store original room actions
-static var recent_room_history: Array[RoomResource] = []  # Track recent room class names
 var max_history_size: int = 3  # How many recent rooms to remember
 var weight_penalty: float = 0.01  # Multiplier for recently used rooms (0.3 = 30% of original weight)
 
-# Stage planner integration
-const USE_STAGE_PLANNER: bool = true  # Feature flag to toggle planned vs legacy generation
 
 static func get_scene() -> PackedScene:
     return preload("uid://c0cpy5xfdy2nb") as PackedScene
@@ -53,8 +49,6 @@ static func get_scene() -> PackedScene:
 func _ready() -> void:
     print("RoomScreen ready")
 
-    # Get all rooms from resources/rooms
-    _load_all_rooms()
 
     # Connect to centralized UI event bus
     UIEvents.player_stats_changed.connect(_on_stats_changed)
@@ -77,6 +71,8 @@ func _ready() -> void:
     # Register log display with LogManager for automatic updates
     LogManager.register_log_display(log_label)
 
+    _initialize_stage_plan()
+
     _generate_room()
 
     next_btn.pressed.connect(func() -> void:
@@ -84,99 +80,38 @@ func _ready() -> void:
             emit_signal("room_cleared"))
     leave_btn.pressed.connect(_on_leave_run_pressed)
 
-func _load_all_rooms() -> void:
-    """Load all room resources - uses all_rooms array if populated (web export), otherwise scans directory"""
-    available_rooms.clear()
 
-    # If all_rooms is populated, use it directly (web export compatibility)
-    if all_rooms.size() > 0:
-        available_rooms = all_rooms.duplicate()
-        print("Loaded %d rooms from all_rooms array" % available_rooms.size())
-        for room in available_rooms:
-            if room:
-                print("Room loaded: %s" % room.title)
-            else:
-                print("Warning: Null room resource in all_rooms array")
+
+func _initialize_stage_plan() -> void:
+    """Initialize stage plan if StageManager doesn't have one yet"""
+    if StageManager.has_stage_plan():
+        print("Stage plan already exists, skipping initialization")
         return
 
-    # Fallback to directory scanning (development/desktop builds)
-    print("all_rooms array empty, falling back to directory scanning...")
-    var dir := DirAccess.open("res://data/rooms/")
-    if dir:
-        dir.list_dir_begin()
-        var file_name := dir.get_next()
-        var file_names: Array[String] = []
+    var current_stage := StageManager.get_current_stage()
 
-        # Collect all .tres files first
-        while file_name != "":
-            if file_name.ends_with(".tres"):
-                file_names.append(file_name)
-            file_name = dir.get_next()
+    var template : StageTemplateResource = StageTemplateResource.new()
 
-        dir.list_dir_end()
+    # Generate stage instance
+    var rng_seed := GameState.rng.seed
+    var stage_instance := StageGenerator.generate(
+        current_stage,
+        template,
+        rng_seed,
+        all_rooms,
+    )
 
-        # Sort files for consistent loading order
-        file_names.sort()
+    if not stage_instance.integrity_ok:
+        push_error("Stage generation had integrity issues")
 
-        # Load all room resources
-        for file in file_names:
-            var resource_path := "res://data/rooms/" + file
-            var room_resource := load(resource_path) as RoomResource
+    # Set the stage instance in StageManager
+    StageManager.set_stage_instance(stage_instance)
+    print("Stage plan initialized: %d rooms planned" % stage_instance.planned_rooms.size())
 
-            if room_resource:
-                available_rooms.append(room_resource)
-                print("Loaded room: ", file, " (", room_resource.title, ")")
-            else:
-                print("Warning: Failed to load room resource: ", file)
-
-        print("Total rooms loaded: ", available_rooms.size())
-
-        if available_rooms.is_empty():
-            print("Warning: No rooms were loaded from data/rooms/")
-    else:
-        print("Error: Failed to open data/rooms directory and no all_rooms specified")
-
-# Public method to reload all rooms (useful for development)
-func reload_rooms() -> void:
-    """Reload all room resources"""
-    _load_all_rooms()
-
-# Public method to populate all_rooms array from directory (useful for setup)
-func populate_all_rooms_from_directory() -> void:
-    """Helper function to populate all_rooms array by scanning directory - use in editor"""
-    all_rooms.clear()
-
-    var dir := DirAccess.open("res://data/rooms/")
-    if dir:
-        dir.list_dir_begin()
-        var file_name := dir.get_next()
-        var file_names: Array[String] = []
-
-        # Collect all .tres files first
-        while file_name != "":
-            if file_name.ends_with(".tres"):
-                file_names.append(file_name)
-            file_name = dir.get_next()
-
-        dir.list_dir_end()
-
-        # Sort files for consistent loading order
-        file_names.sort()
-
-        # Load all room resources into all_rooms array
-        for file in file_names:
-            var resource_path := "res://data/rooms/" + file
-            var room_resource := load(resource_path) as RoomResource
-
-            if room_resource:
-                all_rooms.append(room_resource)
-                print("Added to all_rooms: ", file, " (", room_resource.title, ")")
-            else:
-                print("Warning: Failed to load room resource: ", file)
-
-        print("Total rooms added to all_rooms: ", all_rooms.size())
-    else:
-        print("Error: Failed to open data/rooms directory")
+    # Debug: Print planned rooms
+    for i in range(stage_instance.planned_rooms.size()):
+        var room := stage_instance.planned_rooms[i]
+        print("  Floor %d: %s (%s)" % [i + 1, room.title, RoomType.get_display_name(room.room_type)])
 
 # Call this to refresh all UI elements
 func update() -> void:
@@ -291,79 +226,17 @@ func _trigger_combat_turn() -> void:
         current_inline_content.call("handle_item_used")
 
 
-func _calculate_room_weights(valid_rooms: Array[RoomResource]) -> Array[float]:
-    var weights: Array[float] = []
-    for room in valid_rooms:
-        var base_weight := float(room.weight)
-        # Apply penalty each time this room type appears in recent history
-        for recent_room in recent_room_history:
-            if recent_room == room:
-                base_weight *= weight_penalty
-        weights.append(base_weight)
-    return weights
-
 func _generate_room() -> void:
-    # Check if we should use stage planner
-    if USE_STAGE_PLANNER and StageManager.has_stage_plan():
-        var planned_room := StageManager.get_current_planned_room()
-        if planned_room:
-            current_room = planned_room
-            print("Using planned room for floor %d: %s" % [GameState.current_floor, current_room.title])
-            current_room.on_room_entered(self)
-            _render_room()
-            return
-        else:
-            push_error("Stage plan exists but returned null room at floor %d" % GameState.current_floor)
-            # Fall through to legacy generation
-
-    # Legacy generation path
-    var num_starting_rooms := starting_rooms.size()
-    if num_starting_rooms > 0 and num_starting_rooms > GameState.current_floor - 1:
-        current_room = starting_rooms[GameState.current_floor - 1]
-        print("Selected starting room for floor %d: %s" % [GameState.current_floor, current_room.title])
+    var planned_room := StageManager.get_current_planned_room()
+    if planned_room:
+        current_room = planned_room
+        print("Using planned room for floor %d: %s" % [GameState.current_floor, current_room.title])
         current_room.on_room_entered(self)
         _render_room()
         return
-
-    var valid_rooms : Array[RoomResource] = []
-    for room in available_rooms:
-        if room.valid_for_floor(GameState.current_floor):
-            valid_rooms.append(room)
-
-    # Calculate adjusted weights based on recent history
-    print("=== Room Generation Debug ===")
-    print("Recent room history: ", recent_room_history)
-    print("Weight penalty: ", weight_penalty)
-
-    var adjusted_weights:= _calculate_room_weights(valid_rooms)
-    var total_weight := 0.0
-    for w in adjusted_weights:
-        total_weight += w
-
-    print("Total weight: ", total_weight)
-    print("Adjusted weights: ", adjusted_weights)
-
-
-    # Weighted random selection using adjusted weights
-    var random_value := GameState.rng.randf_range(0.0, total_weight)
-    var current_weight := 0.0
-
-    for i in range(valid_rooms.size()):
-        current_weight += adjusted_weights[i]
-        if random_value <= current_weight:
-            current_room = valid_rooms[i]
-            break
-
-    if current_room:
-        # Track this room type in history
-        recent_room_history.append(current_room)
-
-        # Keep history within size limit
-        while recent_room_history.size() > max_history_size:
-            recent_room_history.pop_front()
-
-        current_room.on_room_entered(self)
-        _render_room()
+    else:
+        push_error("Stage plan exists but returned null room at floor %d" % GameState.current_floor)
+        # Fall through to legacy generation
 
 func _render_room() -> void:
     if not current_room:

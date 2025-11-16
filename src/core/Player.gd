@@ -56,6 +56,10 @@ func reset() -> void:
 func get_name() -> String:
     return name
 
+func get_level() -> int:
+    # Player's level is based on current floor for scaling purposes
+    return GameState.current_floor
+
 func get_attack_damage_type() -> DamageType.Type:
     if equipped_weapon:
         var weapon := equipped_weapon.item as Weapon

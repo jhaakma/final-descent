@@ -1,0 +1,36 @@
+[gd_resource type="Resource" script_class="LootComponent" load_steps=9 format=3 uid="uid://dbnvr8pfdii48"]
+
+[ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="1_2qidb"]
+[ext_resource type="Script" uid="uid://bluj7o55snofj" path="res://src/generators/item_generator.gd" id="2_lh7tg"]
+[ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="3_xc8lc"]
+[ext_resource type="Resource" uid="uid://bjvu3fmob3t2k" path="res://data/items/weapons/Staff.tres" id="4_tyjvw"]
+[ext_resource type="Resource" uid="uid://drc4rx6xim1bu" path="res://data/items/potions/HealthPotionMedium.tres" id="5_nroof"]
+[ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="6_mieok"]
+
+[sub_resource type="Resource" id="Resource_sybd7"]
+script = ExtResource("1_2qidb")
+loot_table = Array[ExtResource("3_xc8lc")]([ExtResource("4_tyjvw")])
+generators = Array[ExtResource("2_lh7tg")]([])
+count = 1
+chance_none = 0.9
+pick_method = 0
+floor_min = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"
+
+[sub_resource type="Resource" id="Resource_0wc5j"]
+script = ExtResource("1_2qidb")
+loot_table = Array[ExtResource("3_xc8lc")]([ExtResource("5_nroof")])
+generators = Array[ExtResource("2_lh7tg")]([])
+count = 1
+chance_none = 0.0
+pick_method = 0
+floor_min = 0
+metadata/_custom_type_script = "uid://w4ie0s4l7syw"
+
+[resource]
+script = ExtResource("6_mieok")
+gold_min = 10
+gold_max = 20
+chance_gold_none = 0.0
+loot_table = Array[ExtResource("1_2qidb")]([SubResource("Resource_sybd7"), SubResource("Resource_0wc5j")])
+metadata/_custom_type_script = "uid://lj0e532l0dyu"

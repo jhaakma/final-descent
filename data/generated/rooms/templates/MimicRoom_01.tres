@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="MimicRoomTemplate" load_steps=6 format=3 uid="uid://6s2w6rg2qy4q"]
+
+[ext_resource type="Script" uid="uid://c0acru57thtrf" path="res://src/generators/enemies/enemy_template.gd" id="1_8ej3e"]
+[ext_resource type="Script" uid="uid://ncxiegeqwtf3" path="res://src/rooms/templates/MimicRoomTemplate.gd" id="1_eafcp"]
+[ext_resource type="Script" uid="uid://ct0vsrv3vbnmr" path="res://src/generators/enemies/enemy_generator.gd" id="2_ec6ok"]
+[ext_resource type="Resource" uid="uid://3ee7u7jmak8q" path="res://data/generated/enemies/templates/lvl1_mimic.tres" id="2_gjtlf"]
+
+[sub_resource type="Resource" id="Resource_gjtlf"]
+script = ExtResource("2_ec6ok")
+enemy_templates = Array[ExtResource("1_8ej3e")]([ExtResource("2_gjtlf")])
+modifier_chance = 0.2
+metadata/_custom_type_script = "uid://ct0vsrv3vbnmr"
+
+[resource]
+script = ExtResource("1_eafcp")
+title_variants = Array[String](["Dusty Chest"])
+description_variants = Array[String](["A strange looking chest, covered in dust.", "A worn old chest, covered in dust and scratch marks."])
+mimic_enemy_generator = SubResource("Resource_gjtlf")
+rarity = 1
+min_floor = 3
+max_floor = 999
+metadata/_custom_type_script = "uid://ncxiegeqwtf3"

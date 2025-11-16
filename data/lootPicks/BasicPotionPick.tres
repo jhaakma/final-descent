@@ -1,6 +1,7 @@
-[gd_resource type="Resource" script_class="LootPick" load_steps=5 format=3 uid="uid://b3cf085lrhdjy"]
+[gd_resource type="Resource" script_class="LootPick" load_steps=6 format=3 uid="uid://b3cf085lrhdjy"]
 
 [ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="1_0f62c"]
+[ext_resource type="Script" uid="uid://bluj7o55snofj" path="res://src/generators/item_generator.gd" id="1_1e0cw"]
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="2_3o4vi"]
 [ext_resource type="Resource" uid="uid://2s77tota5kam" path="res://data/items/potions/HealthPotionSmall.tres" id="2_qggcp"]
 [ext_resource type="Resource" uid="uid://bpscdhoshmjls" path="res://data/items/potions/Antidote.tres" id="3_u75vj"]
@@ -8,6 +9,7 @@
 [resource]
 script = ExtResource("2_3o4vi")
 loot_table = Array[ExtResource("1_0f62c")]([ExtResource("2_qggcp"), ExtResource("3_u75vj")])
+generators = Array[ExtResource("1_1e0cw")]([])
 count = 1
 chance_none = 0.0
 pick_method = 0

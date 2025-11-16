@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ChestRoomTemplate" load_steps=3 format=3 uid="uid://bomqhlxhlxwdc"]
+
+[ext_resource type="Resource" uid="uid://ngft0bfn2vcd" path="res://data/loot/BasicChest_01.tres" id="1_dfh1w"]
+[ext_resource type="Script" uid="uid://53ost26kbc53" path="res://src/rooms/templates/ChestRoomTemplate.gd" id="1_xqbkq"]
+
+[resource]
+script = ExtResource("1_xqbkq")
+title_variants = Array[String](["Dusty Chest", "Wooden Chest"])
+description_variants = Array[String](["A worn old chest, covered in dust.", "The lock on this wooden chest has rusted away."])
+base_loot_component = ExtResource("1_dfh1w")
+gold_scaling_per_stage = 0.1
+chance_empty = 0.2
+rarity = 0
+min_floor = 1
+max_floor = 999
+metadata/_custom_type_script = "uid://53ost26kbc53"

@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="CombatRoomTemplate" load_steps=6 format=3 uid="uid://ctwox6au5rdix"]
+
+[ext_resource type="Script" uid="uid://cqhdwtglhf6a8" path="res://src/rooms/templates/CombatRoomTemplate.gd" id="1_0o63r"]
+[ext_resource type="Script" uid="uid://c0acru57thtrf" path="res://src/generators/enemies/enemy_template.gd" id="1_nd8fe"]
+[ext_resource type="Resource" uid="uid://cul3vtqmbkrw7" path="res://data/generated/enemies/templates/lvl1_goblin.tres" id="2_uw2db"]
+[ext_resource type="Script" uid="uid://ct0vsrv3vbnmr" path="res://src/generators/enemies/enemy_generator.gd" id="3_trqf5"]
+
+[sub_resource type="Resource" id="Resource_5450v"]
+script = ExtResource("3_trqf5")
+enemy_templates = Array[ExtResource("1_nd8fe")]([ExtResource("2_uw2db")])
+modifier_chance = 0.2
+metadata/_custom_type_script = "uid://ct0vsrv3vbnmr"
+
+[resource]
+script = ExtResource("1_0o63r")
+title_variants = Array[String](["Dark Room"])
+description_variants = Array[String](["An enemy lurks in the darkness..."])
+enemy_generator = SubResource("Resource_5450v")
+rarity = 0
+min_floor = 1
+max_floor = 999
+metadata/_custom_type_script = "uid://cqhdwtglhf6a8"

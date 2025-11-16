@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="AttackBuffTemplate" load_steps=2 format=3 uid="uid://bfbpklfn6vxgm"]
+
+[ext_resource type="Script" uid="uid://bbrmy72gaguya" path="res://src/abilities/templates/AttackBuffTemplate.gd" id="1_cbdat"]
+
+[resource]
+script = ExtResource("1_cbdat")
+metadata/_custom_type_script = "uid://bbrmy72gaguya"

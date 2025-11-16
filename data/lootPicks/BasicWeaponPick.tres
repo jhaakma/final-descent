@@ -1,15 +1,15 @@
-[gd_resource type="Resource" script_class="LootPick" load_steps=6 format=3 uid="uid://do8brech6sxxk"]
+[gd_resource type="Resource" script_class="LootPick" load_steps=5 format=3 uid="uid://do8brech6sxxk"]
 
+[ext_resource type="Script" uid="uid://bluj7o55snofj" path="res://src/generators/item_generator.gd" id="1_3qcau"]
 [ext_resource type="Script" uid="uid://dwkk6n2fa1a0c" path="res://src/items/Item.gd" id="1_3ul3r"]
-[ext_resource type="Resource" uid="uid://cttpxikq24nx" path="res://data/items/weapons/Dagger.tres" id="2_mnhtl"]
-[ext_resource type="Resource" uid="uid://clyabowguvivm" path="res://data/items/weapons/ShortSword.tres" id="3_wkehb"]
+[ext_resource type="Resource" uid="uid://cpb44fassytum" path="res://data/generated/weapons/generators/all_lvl1_iron.tres" id="2_4u13s"]
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="4_vsxr2"]
-[ext_resource type="Resource" uid="uid://bjvu3fmob3t2k" path="res://data/items/weapons/Staff.tres" id="4_vyvca"]
 
 [resource]
 script = ExtResource("4_vsxr2")
-loot_table = Array[ExtResource("1_3ul3r")]([ExtResource("2_mnhtl"), ExtResource("3_wkehb"), ExtResource("4_vyvca")])
-count = 1
+loot_table = Array[ExtResource("1_3ul3r")]([])
+generators = Array[ExtResource("1_3qcau")]([ExtResource("2_4u13s")])
+count = 3
 chance_none = null
 pick_method = 0
 floor_min = null

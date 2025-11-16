@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="EnemyTemplate" load_steps=7 format=3 uid="uid://3ee7u7jmak8q"]
+
+[ext_resource type="Script" uid="uid://bvnw3ewhagtrt" path="res://src/abilities/templates/AbilityTemplate.gd" id="1_pioxk"]
+[ext_resource type="Script" uid="uid://c0acru57thtrf" path="res://src/generators/enemies/enemy_template.gd" id="2_2yven"]
+[ext_resource type="Script" uid="uid://5uwquny1a6qc" path="res://src/abilities/templates/BasicStrikeTemplate.gd" id="2_fty3d"]
+[ext_resource type="Script" uid="uid://c7s8ha3rvgyex" path="res://src/abilities/templates/DefendTemplate.gd" id="3_7fx3d"]
+
+[sub_resource type="Resource" id="Resource_1nuj1"]
+script = ExtResource("2_fty3d")
+metadata/_custom_type_script = "uid://5uwquny1a6qc"
+
+[sub_resource type="Resource" id="Resource_rb1ay"]
+script = ExtResource("3_7fx3d")
+metadata/_custom_type_script = "uid://c7s8ha3rvgyex"
+
+[resource]
+script = ExtResource("2_2yven")
+base_name = "Mimic"
+base_level = 1
+archetype = 3
+size_category = 1
+element_affinity = 6
+physical_attack_type = 1
+ability_templates = Array[ExtResource("1_pioxk")]([SubResource("Resource_1nuj1"), SubResource("Resource_rb1ay")])
+possible_modifiers = Array[int]([3, 8, 12])
+modifier_chance = 0.1
+metadata/_custom_type_script = "uid://c0acru57thtrf"

@@ -38,12 +38,9 @@ func generate_enemy_from_template(template: EnemyTemplate) -> EnemyResource:
     defense += size_data.defense_bonus
     avoid_chance = clamp(avoid_chance + size_data.avoid_modifier, 0.0, 1.0)
 
-    # Build enemy name
-    var enemy_name := _build_enemy_name(template)
-
     # Create enemy resource
     var enemy := EnemyResource.new()
-    enemy.name = enemy_name
+    enemy.name = template.base_name
     enemy.max_hp = hp
     enemy.attack = attack
     enemy.defense = defense
@@ -80,19 +77,6 @@ func _calculate_base_stat(base_value: int, scaling_factor: float, level: int) ->
     var multiplier := 1.0 + (scaling_factor * (level - 1))
     return int(round(base_value * multiplier))
 
-## Build enemy name from template
-func _build_enemy_name(template: EnemyTemplate) -> String:
-    var name_parts: Array[String] = []
-
-    # # Add element prefix if applicable
-    # var element_prefix := template.get_element_prefix()
-    # if not element_prefix.is_empty():
-    #     name_parts.append(element_prefix)
-
-    # Add base name
-    name_parts.append(template.base_name)
-
-    return " ".join(name_parts)
 
 ## Generate abilities from template
 func _generate_abilities(template: EnemyTemplate, enemy: EnemyResource) -> Array[AbilityResource]:

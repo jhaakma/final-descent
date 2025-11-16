@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="ShrineRoomTemplate" load_steps=8 format=3 uid="uid://dl2fpx1a00d8k"]
+
+[ext_resource type="Script" uid="uid://en11h8dfnhpl" path="res://src/effects/templates/StatusConditionTemplate.gd" id="1_4gbti"]
+[ext_resource type="Resource" uid="uid://dbnvr8pfdii48" path="res://data/lootPicks/ShrineRoom_01.tres" id="1_80no1"]
+[ext_resource type="Script" uid="uid://drd78rjedp35q" path="res://src/rooms/templates/ShrineRoomTemplate.gd" id="2_32okm"]
+[ext_resource type="Script" uid="uid://c0acru57thtrf" path="res://src/generators/enemies/enemy_template.gd" id="3_5hv2m"]
+[ext_resource type="Resource" uid="uid://cul3vtqmbkrw7" path="res://data/generated/enemies/templates/lvl1_goblin.tres" id="4_epo7c"]
+[ext_resource type="Script" uid="uid://ct0vsrv3vbnmr" path="res://src/generators/enemies/enemy_generator.gd" id="5_m3nwx"]
+
+[sub_resource type="Resource" id="Resource_wk0gy"]
+script = ExtResource("5_m3nwx")
+enemy_templates = Array[ExtResource("3_5hv2m")]([ExtResource("4_epo7c")])
+modifier_chance = 0.2
+metadata/_custom_type_script = "uid://ct0vsrv3vbnmr"
+
+[resource]
+script = ExtResource("2_32okm")
+title_variants = Array[String](["Ancient Shrine"])
+description_variants = Array[String](["A shrine to an ancient god looms before you. An air of deep wisdom and benevolence overwhelms you."])
+base_blessing_cost = 20
+base_cure_cost = 15
+base_heal_cost = 10
+cost_scaling_per_stage = 0.1
+blessing_templates = Array[ExtResource("1_4gbti")]([null])
+base_loot_component = ExtResource("1_80no1")
+loot_curse_chance = 0.3
+curse_enemy_generator = SubResource("Resource_wk0gy")
+rarity = 0
+min_floor = 1
+max_floor = 999
+metadata/_custom_type_script = "uid://drd78rjedp35q"

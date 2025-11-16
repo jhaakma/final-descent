@@ -1,8 +1,12 @@
 class_name LootPickMethod extends Resource
 
 enum PickMethod {
+    ## Randomly pick N items from source list
     RANDOM,
-    ALL
+    ## Return all items from source list, as a stack of N each
+    ALL,
+    ## Randomly select one item from source list, and return as a stack of N
+    RANDOM_STACK,
 }
 
 ## Helper function to resolve either an Item or ItemGenerator to an actual Item
@@ -44,5 +48,14 @@ static var pick_methods: Dictionary[PickMethod, Callable] = {
             var item: Item = LootPickMethod._resolve_source_to_item(source)
             if item != null:
                 resolved_items.append(ItemStack.new(item, count))
+        return resolved_items,
+    PickMethod.RANDOM_STACK: func(sources: Array, count: int) -> Array[ItemStack]:
+        var resolved_items: Array[ItemStack] = []
+        if sources.size() == 0:
+            return resolved_items
+        var index := GameState.rng.randi_range(0, sources.size() - 1)
+        var item: Item = LootPickMethod._resolve_source_to_item(sources[index])
+        if item != null:
+            resolved_items.append(ItemStack.new(item, count))
         return resolved_items
 }

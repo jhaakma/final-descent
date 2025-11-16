@@ -50,6 +50,10 @@ func get_attack_damage_type() -> DamageType.Type:
     # Return the physical attack type specified in the resource
     return resource.physical_attack_type
 
+func get_level() -> int:
+    # Enemy level is based on the resource's level
+    return resource.level
+
 # Set the AI component for this enemy
 func set_ai_component(new_ai_component: EnemyAIComponent) -> void:
     resource.ai_component = new_ai_component

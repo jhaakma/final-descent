@@ -11,6 +11,10 @@ func get_name() -> String:
 func get_attack_damage_type() -> DamageType.Type:
     return DamageType.Type.BLUNT  # Default to blunt damage
 
+# Abstract method to be implemented by subclasses to provide entity level
+func get_level() -> int:
+    return 1  # Default level, override in subclasses if needed
+
 # Core combat components - shared by all combat entities
 var stats_component: StatsComponent
 var status_effect_component: StatusEffectComponent

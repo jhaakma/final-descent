@@ -6,9 +6,8 @@ class_name RoomResource extends Resource
 @export var min_floor: int = 0  # Minimum floor where this room can appear
 @export var max_floor: int = -1  # Maximum floor where this room can appear
 ## Stage/selection metadata (Phase 1)
-## Use StageTags.Tag constants when setting values in code
-@export var tags: Array[StageTags.Tag] = []       # e.g., [StageTags.Tag.CHEST]
-@export var rarity: float = 1.0                   # Relative weight within pools
+@export var room_type: RoomType.Type = RoomType.Type.NONE
+@export var rarity: Rarity.Type = Rarity.Type.COMMON
 
 class RoomAction:
     var button_text: String
@@ -70,10 +69,9 @@ func valid_for_floor(_floor: int) -> bool:
         return false
     return true
 
-## Convenience helpers
-func has_tag(tag: StageTags.Tag) -> bool:
-    return tag in tags
+## Convenience helpers (deprecated - use room_type directly)
+func has_tag(tag: RoomType.Type) -> bool:
+    return room_type == tag
 
-func add_tag(tag: StageTags.Tag) -> void:
-    if not (tag in tags):
-        tags.append(tag)
+func add_tag(tag: RoomType.Type) -> void:
+    room_type = tag

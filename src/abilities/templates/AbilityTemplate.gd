@@ -5,6 +5,6 @@ class_name AbilityTemplate extends Resource
 ## Generate an ability instance for the given user
 ## Override this method in subclasses to implement specific generation logic
 ## The user parameter is optional and can be null or any type that has relevant properties
-func generate_ability(_user: EnemyResource = null) -> AbilityResource:
+func generate_ability(_user: EnemyResource) -> AbilityResource:
     push_error("AbilityTemplate.generate_ability() must be overridden in subclasses")
     return null

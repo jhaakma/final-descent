@@ -3,7 +3,7 @@ class_name ShrineRoomResource extends RoomResource
 @export var blessing_cost: int = 10
 @export var cure_cost: int = 5  # Cost to pray for cure (same as blessing for now)
 @export var heal_cost: int = 8  # Cost to pray for healing
-@export var blessings: Array[StatusCondition] = []  # Status effects for blessings
+@export var blessing_templates: Array[StatusConditionTemplate] = []  # Templates for generating blessings
 @export var heal_amount: int = 10  # Amount healed when praying for healing
 @export var loot_component: LootComponent = LootComponent.new()
 @export var loot_curse_chance: float = 0.3  # Chance to receive a curse when looting
@@ -41,10 +41,11 @@ func _on_blessing(room_screen: RoomScreen) -> void:
         return
     GameState.player.add_gold(-blessing_cost)
 
-    # Grant a random status effect
-    if blessings.size() > 0:
-        var chosen_blessing: StatusCondition = blessings[GameState.rng.randi() % blessings.size()]
-        GameState.player.apply_status_condition(chosen_blessing)
+    # Generate a random blessing from templates based on player level
+    if blessing_templates.size() > 0:
+        var chosen_template: StatusConditionTemplate = blessing_templates[GameState.rng.randi() % blessing_templates.size()]
+        var blessing: StatusCondition = chosen_template.generate_condition(GameState.player)
+        GameState.player.apply_status_condition(blessing)
         room_screen.update()
     else:
         LogManager.log_event("You pray at the shrine, but nothing happens.")

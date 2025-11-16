@@ -1,5 +1,12 @@
 # To do
 
+## UI update bugs
+- When enhancing weapon/armor while equipped, it doesn't update the UI with new stats
+
+## LootPick generation
+May not be a bug, but something to keep an eye out for:
+- LootPicks are generated using the current_floor, so we need to make sure resolved_items is being called lazily when the player encounters the chest. Otherwise we will need to hook it into the room generation and pass the stage there
+
 ## Automate Itch.io releases
 
 ## Ability Mechanics
