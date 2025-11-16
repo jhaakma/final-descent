@@ -1,8 +1,0 @@
-[gd_resource type="Resource" script_class="StageTemplateResource" load_steps=2 format=3 uid="uid://cs3ypoxjnc1jo"]
-
-[ext_resource type="Script" uid="uid://q7mhxwhjpfyx" path="res://src/stages/stage_template_resource.gd" id="1_ruvfv"]
-
-[resource]
-script = ExtResource("1_ruvfv")
-floors = 10
-metadata/_custom_type_script = "uid://q7mhxwhjpfyx"

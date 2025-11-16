@@ -4,10 +4,9 @@ class_name StageInstance
 extends Resource
 
 var template: StageTemplateResource
+var stage_number: int
 var generation_seed: int
 var planned_rooms: Array[RoomResource] = []
-var integrity_ok: bool = true
-var stage_number: int
 
 var current_index: int = 0  ## pointer to current room
 

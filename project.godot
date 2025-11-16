@@ -31,7 +31,6 @@ config/icon="res://icon.svg"
 [autoload]
 
 GameState="*res://src/globals/GameState.gd"
-StageManager="*res://src/stages/StageManager.gd"
 StatsManager="*res://src/globals/StatsManager.gd"
 LogManager="*res://src/globals/LogManager.gd"
 Util="*res://src/globals/Util.gd"

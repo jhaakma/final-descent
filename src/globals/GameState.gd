@@ -35,16 +35,11 @@ func _ready() -> void:
 func reset_run() -> void:
     current_floor = 1
     player.reset()
-    # Reset stage manager for new run
-    StageManager.reset()
     # Clear log history when starting a new run
     LogManager.clear_log_history()
 
 func next_floor() -> void:
     current_floor += 1
-
-    # Advance stage manager
-    StageManager.advance_floor()
 
     # Process all timed status effects when transitioning floors
     player.process_all_timed_effects()
@@ -68,17 +63,12 @@ func get_current_enemy() -> Enemy:
 func get_save_data() -> Dictionary:
     var save_data := {
         "current_floor": current_floor,
-        "stage_manager": StageManager.get_save_data() if StageManager else {},
         "player": player.call("get_save_data") if player and player.has_method("get_save_data") else {}
     }
     return save_data
 
 func load_save_data(data: Dictionary) -> void:
     current_floor = data.get("current_floor", 1)
-
-    # Load stage manager data
-    if StageManager and data.has("stage_manager"):
-        StageManager.load_save_data(data.stage_manager)
 
     # Load player data (if player has save/load support)
     if player and player.has_method("load_save_data") and data.has("player"):

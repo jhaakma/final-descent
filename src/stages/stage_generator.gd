@@ -4,7 +4,7 @@ class_name StageGenerator
 extends Resource
 
 ## Public entry point
-static func generate(_stage_number: int, template: StageTemplateResource, rng_seed: int, available_rooms: Array[IRoomTemplate]) -> StageInstance:
+static func generate(_stage_number: int, template: StageTemplateResource, rng_seed: int) -> StageInstance:
 
     var rng := RandomNumberGenerator.new()
     rng.seed = rng_seed
@@ -13,7 +13,7 @@ static func generate(_stage_number: int, template: StageTemplateResource, rng_se
 
     #generate x rooms according to template
     for i in range(template.floors):
-        var chosen_room_template: IRoomTemplate = available_rooms.pick_random()
+        var chosen_room_template: IRoomTemplate = template.room_templates.pick_random()
         var generated_room: RoomResource = chosen_room_template.generate_room(_stage_number)
         planned_rooms.append(generated_room)
 

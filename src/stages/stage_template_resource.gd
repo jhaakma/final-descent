@@ -3,19 +3,27 @@
 class_name StageTemplateResource
 extends Resource
 
-@export var floors: int = 10                                                 ## total rooms including boss
+## Number of floors in this stage
+@export var floors: int = 10
+## Available room templates for this stage
+@export var room_templates: Array[IRoomTemplate] = []
 
+@export var color: Color = Color.html("#FFFFFF")  ## Theme color for the stage
 """
 
     Stage 1:
         Name: Hinterlands
-        Enemies: Goblin Scounts, bandits
         Rooms:
+            Loot:
+                - Hidden Stash
+                - Unlocked Chest
             Combat:
                 - Bandit Camp
-                - Goblin Ambush (Name: "Suspicious Clearing")
+                - Goblin Ambush (Name: "Unlocked Chest")
             Shop:
                 - Traveling Merchant
+            Blacksmith:
+                - Wandering Smithy
             Rest:
                 - Peaceful Glade
             Shrine:
