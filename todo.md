@@ -1,7 +1,26 @@
 # To do
 
-## UI update bugs
-- When enhancing weapon/armor while equipped, it doesn't update the UI with new stats
+## Quest System
+- Stages no longer have set nunmber of rooms
+- Continue to generate rooms until quset objectives are met
+- Common quest layout:
+    - Discovery: Find a mystery to solve
+    - Investigation: Find clues that point to a specific objective
+    - Objective: Find an item, kill an enemy etc
+    - Resolution: Final room is unlocked
+
+### Considerations
+How to balance the progression, prevent the player from deliberately avoiding the quest to farm rooms for loot/gold
+- Increase enemy difficulty without increasing loot/gold rewards as player spends time in a given stage?
+- Make completing the quest unavoidable, unable to skip rooms that are part of the quest
+
+## Stage Enhancements
+- Theme:
+    - Initially, stage has color the UI background is set to
+    - Later, stage can have its own music, effects etc
+- Storyline
+    - Mandatory, custom rooms at a specific floor
+
 
 ## LootPick generation
 May not be a bug, but something to keep an eye out for:

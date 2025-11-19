@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ChestRoomTemplate" load_steps=3 format=3 uid="uid://bce2c466lf7f4"]
+
+[ext_resource type="Resource" uid="uid://ngft0bfn2vcd" path="res://data/loot/BasicChest_01.tres" id="1_lcs4x"]
+[ext_resource type="Script" uid="uid://53ost26kbc53" path="res://src/rooms/templates/ChestRoomTemplate.gd" id="2_nfwcv"]
+
+[resource]
+script = ExtResource("2_nfwcv")
+title_variants = Array[String](["Hidden Stash"])
+description_variants = Array[String](["You spot a stash of treasure tucked behind some loose stones."])
+open_noun = "stash"
+base_loot_component = ExtResource("1_lcs4x")
+gold_scaling_per_stage = 0.1
+rarity = 0
+min_floor = 1
+max_floor = 999
+metadata/_custom_type_script = "uid://53ost26kbc53"

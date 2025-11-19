@@ -25,7 +25,7 @@ func test_combat_room_generation() -> bool:
     template.description_variants = ["Enemies ahead!", "Danger!"]
     template.enemy_generator = test_enemy_generator
 
-    var room := template.generate_room(1)
+    var room := template.generate_room(1) as CombatRoomResource
 
     assert_true(room != null, "Room should be generated")
     assert_true(room is CombatRoomResource, "Should be CombatRoomResource")
@@ -42,16 +42,13 @@ func test_chest_room_generation() -> bool:
     template.title_variants = ["Treasure Chest"]
     template.base_loot_component = test_loot_component
     template.gold_scaling_per_stage = 0.1
-    template.chance_empty = 0.2
 
-    var room := template.generate_room(1)
+    var room := template.generate_room(1) as ChestRoomResource
 
     assert_true(room != null, "Room should be generated")
     assert_true(room is ChestRoomResource, "Should be ChestRoomResource")
     assert_true(room.room_type == RoomType.Type.CHEST, "Room type should be CHEST")
     assert_true(room.loot_component != null, "Loot component should be set")
-    assert_equals(room.chance_empty, 0.2, "Chance empty should match")
-
     print("  Generated chest room: %s" % room.title)
     return not _test_failed
 
@@ -63,7 +60,7 @@ func test_rest_room_generation() -> bool:
     template.heal_scaling_per_stage = 0.15
     template.rest_message_variants = ["You rest...", "You feel refreshed."]
 
-    var room := template.generate_room(1)
+    var room := template.generate_room(1) as RestRoomResource
 
     print("  DEBUG: room = %s, room type = %s" % [room, room.get_class() if room else "null"])
     assert_true(room != null, "Room should be generated")
@@ -86,7 +83,7 @@ func test_shrine_room_generation() -> bool:
     template.base_loot_component = test_loot_component
     template.loot_curse_chance = 0.3
 
-    var room := template.generate_room(2)
+    var room := template.generate_room(2) as ShrineRoomResource
 
     assert_true(room != null, "Room should be generated")
     assert_true(room is ShrineRoomResource, "Should be ShrineRoomResource")
@@ -105,7 +102,7 @@ func test_shop_room_generation() -> bool:
     template.base_loot_component = test_loot_component
     template.gold_scaling_per_stage = 0.1
 
-    var room := template.generate_room(3)
+    var room := template.generate_room(3) as ShopkeeperRoomResource
 
     assert_true(room != null, "Room should be generated")
     assert_true(room is ShopkeeperRoomResource, "Should be ShopkeeperRoomResource")
@@ -123,7 +120,7 @@ func test_blacksmith_room_generation() -> bool:
     template.base_upgrade_cost_multiplier = 1.5
     template.cost_scaling_per_stage = 0.1
 
-    var room := template.generate_room(3)
+    var room := template.generate_room(3) as BlacksmithRoomResource
 
     assert_true(room != null, "Room should be generated")
     assert_true(room is BlacksmithRoomResource, "Should be BlacksmithRoomResource")
@@ -140,7 +137,7 @@ func test_mimic_room_generation() -> bool:
     template.title_variants = ["Suspicious Chest"]
     template.mimic_enemy_generator = test_enemy_generator
 
-    var room := template.generate_room(1)
+    var room := template.generate_room(1) as MimicChestRoomResource
 
     print("  DEBUG: room = %s, room type = %s" % [room, room.get_class() if room else "null"])
     assert_true(room != null, "Room should be generated")

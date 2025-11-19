@@ -4,6 +4,9 @@ class_name MimicRoomTemplate extends IRoomTemplate
 @export var title_variants: Array[String] = ["Treasure Chest"]
 @export var description_variants: Array[String] = ["A chest sits before you."]
 @export var mimic_enemy_generator: EnemyGenerator
+@export var loot_component: LootComponent
+@export var button_label: String = "Open Chest"
+@export var button_tooltip: String = "Open the chest to see what's inside"
 
 func get_room_type() -> RoomType.Type:
     return RoomType.Type.MIMIC
@@ -25,9 +28,11 @@ func generate_room(stage: int) -> RoomResource:
 
     var room := MimicChestRoomResource.new()
     room.mimic_enemy = mimic_enemy_generator.generate_enemy() if mimic_enemy_generator else null
-
+    room.loot_component = RoomGenerator.scale_loot_component(loot_component, stage, 0.1)
     room.title = get_title()
     room.description = get_description()
+    room.button_label = button_label
+    room.button_tooltip = button_tooltip
     apply_common_properties(room)
 
     RoomGenerator.cache[cache_key] = room

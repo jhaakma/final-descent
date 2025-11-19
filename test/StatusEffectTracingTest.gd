@@ -144,12 +144,12 @@ func test_debugger_effect_summary_format() -> bool:
 
 # Helper methods for testing
 func _has_class(_class_name: String) -> bool:
-    var script_path = "res://src/core/" + _class_name + ".gd"
+    var script_path:= "res://src/core/" + _class_name + ".gd"
     return ResourceLoader.exists(script_path)
 
 func _create_combat_debugger() -> Object:
     if _has_class("CombatDebugger"):
-        var script = load("res://src/core/CombatDebugger.gd")
+        var script:= load("res://src/core/CombatDebugger.gd")
         if script:
             return script.new()
     return null

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="RestRoomTemplate" load_steps=2 format=3 uid="uid://swa88sshqevu"]
+
+[ext_resource type="Script" uid="uid://c7w7cp6e5ptok" path="res://src/rooms/templates/RestRoomTemplate.gd" id="1_vrmmf"]
+
+[resource]
+script = ExtResource("1_vrmmf")
+title_variants = Array[String](["Peaceful Glade"])
+description_variants = Array[String](["This looks like a safe place to rest."])
+base_heal_amount = 4
+heal_scaling_per_stage = 0.15
+rest_message_variants = Array[String]([])
+rarity = 0
+min_floor = 1
+max_floor = 999
+metadata/_custom_type_script = "uid://c7w7cp6e5ptok"

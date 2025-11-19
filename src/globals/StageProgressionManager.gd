@@ -7,9 +7,6 @@ var current_stage_instance: StageInstance = null
 var current_stage_index: int = 0
 var floors_in_current_stage: int = 0
 
-signal stage_completed
-signal stage_initialized(stage_instance: StageInstance)
-
 func initialize_stages(templates: Array[StageTemplateResource]) -> void:
     """Initialize with stage templates - called once at run start"""
     stage_templates = templates
@@ -48,8 +45,6 @@ func _initialize_current_stage() -> void:
         var room := current_stage_instance.planned_rooms[i]
         print("  Floor %d: %s (%s)" % [i + 1, room.title, RoomType.get_display_name(room.room_type)])
 
-    emit_signal("stage_initialized", current_stage_instance)
-
 func get_current_room() -> RoomResource:
     """Get the current room for the current floor in the current stage"""
     if not current_stage_instance:
@@ -71,8 +66,6 @@ func advance_floor() -> void:
 
 func _advance_to_next_stage() -> void:
     """Advance to the next stage template"""
-    emit_signal("stage_completed")
-
     current_stage_index += 1
     if current_stage_index >= stage_templates.size():
         # Loop back to first stage if we run out
@@ -81,12 +74,6 @@ func _advance_to_next_stage() -> void:
     current_stage_instance = null
     floors_in_current_stage = 0
     _initialize_current_stage()
-
-func is_stage_complete() -> bool:
-    """Check if the current stage is complete"""
-    if not current_stage_instance:
-        return false
-    return floors_in_current_stage >= current_stage_instance.planned_rooms.size()
 
 func get_stage_number() -> int:
     """Get the current stage number (1-indexed)"""

@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="MimicRoomTemplate" load_steps=12 format=3 uid="uid://c82egxlfl72el"]
+
+[ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="1_4ks8l"]
+[ext_resource type="Script" uid="uid://ncxiegeqwtf3" path="res://src/rooms/templates/MimicRoomTemplate.gd" id="1_qyn4d"]
+[ext_resource type="Script" uid="uid://c0acru57thtrf" path="res://src/generators/enemies/enemy_template.gd" id="1_vvtpa"]
+[ext_resource type="Resource" uid="uid://cul3vtqmbkrw7" path="res://data/generated/enemies/templates/lvl1_goblin.tres" id="2_2i13v"]
+[ext_resource type="Resource" uid="uid://coqnmr4wr3swg" path="res://data/lootPicks/Scrolls.tres" id="2_yvbw6"]
+[ext_resource type="Resource" uid="uid://do8brech6sxxk" path="res://data/lootPicks/BasicWeaponPick.tres" id="3_d0u2v"]
+[ext_resource type="Script" uid="uid://ct0vsrv3vbnmr" path="res://src/generators/enemies/enemy_generator.gd" id="3_p385e"]
+[ext_resource type="Resource" uid="uid://dj6ctr2a52bmx" path="res://data/lootPicks/Runes.tres" id="4_u6am7"]
+[ext_resource type="Script" uid="uid://lj0e532l0dyu" path="res://src/loot/loot_component.gd" id="5_d0vd4"]
+
+[sub_resource type="Resource" id="Resource_tgwri"]
+script = ExtResource("5_d0vd4")
+gold_min = 10
+gold_max = 50
+chance_gold_none = 0.0
+loot_table = Array[ExtResource("1_4ks8l")]([ExtResource("2_yvbw6"), ExtResource("3_d0u2v"), ExtResource("4_u6am7")])
+metadata/_custom_type_script = "uid://lj0e532l0dyu"
+
+[sub_resource type="Resource" id="Resource_d5n5m"]
+script = ExtResource("3_p385e")
+enemy_templates = Array[ExtResource("1_vvtpa")]([ExtResource("2_2i13v")])
+modifier_chance = 0.2
+metadata/_custom_type_script = "uid://ct0vsrv3vbnmr"
+
+[resource]
+script = ExtResource("1_qyn4d")
+title_variants = Array[String](["Peaceful Glade"])
+description_variants = Array[String](["This looks like a spot to rest."])
+mimic_enemy_generator = SubResource("Resource_d5n5m")
+loot_component = SubResource("Resource_tgwri")
+button_label = "Rest (+5 HP)"
+button_tooltip = "You feel uneasy about this place..."
+rarity = 1
+min_floor = 1
+max_floor = 999
+metadata/_custom_type_script = "uid://ncxiegeqwtf3"

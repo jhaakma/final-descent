@@ -6,7 +6,7 @@
 [ext_resource type="Script" uid="uid://q7mhxwhjpfyx" path="res://src/stages/stage_template_resource.gd" id="3_tvfit"]
 [ext_resource type="PackedScene" uid="uid://cp3266w0ukw23" path="res://src/ui/widgets/inventory/InventoryContainer.tscn" id="3_vun85"]
 [ext_resource type="PackedScene" uid="uid://b3c8d4h8p1q6r" path="res://src/ui/widgets/EquippedItemsWidget.tscn" id="4_equipped"]
-[ext_resource type="Resource" uid="uid://cs3ypoxjnc1jo" path="res://data/generated/stages/Hinterlands.tres" id="4_ldec3"]
+[ext_resource type="Resource" uid="uid://cs3ypoxjnc1jo" path="res://data/generated/stages/Hinterlands/Hinterlands.tres" id="4_ldec3"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hoodt"]
 
