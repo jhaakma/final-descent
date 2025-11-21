@@ -1,0 +1,114 @@
+name: "Godot Export and Upload"
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version (e.g. v0.0.1 or v1.2.3)"
+        required: true
+        type: string
+
+jobs:
+  export-and-upload:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # needed to create releases
+    env:
+      GODOT_VERSION: 4.4.1
+      # Name of your HTML5 export preset as defined in export_presets.cfg
+      GODOT_EXPORT_PRESET: "Web"
+      # Output folder and file
+      EXPORT_PATH: web_export
+      EXPORT_FILE: index.html
+      # Itch.io info (set these as GitHub Secrets!)
+      BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+      ITCH_GAME: merlord/final-descent
+      # Channel name on itch (e.g., "html5" or "web")
+      ITCH_CHANNEL: web
+      # Version passed in from workflow_dispatch input
+      VERSION: ${{ github.event.inputs.version }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache Godot editor
+        uses: actions/cache@v4
+        id: cache-godot
+        with:
+          path: ~/.local/share/godot
+          key: godot-${{ env.GODOT_VERSION }}
+
+      - name: Download Godot editor (Linux headless)
+        if: steps.cache-godot.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ~/.local/share/godot
+          cd ~/.local/share/godot
+          wget https://downloads.tuxfamily.org/godotengine/${GODOT_VERSION}/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip -O godot.zip
+          unzip godot.zip
+          mv Godot_v${GODOT_VERSION}-stable_linux.x86_64 godot
+          chmod +x godot
+          rm godot.zip
+
+      - name: Ensure Godot is executable
+        run: chmod +x ~/.local/share/godot/godot
+
+      - name: Install Butler
+        run: |
+          BUTLER_VERSION=15.24.0
+          curl -L https://broth.itch.ovh/butler/linux-amd64/${BUTLER_VERSION}/archive/default > butler.zip
+          unzip butler.zip -d butler
+          chmod +x butler/butler
+          sudo mv butler/butler /usr/local/bin/butler
+
+      - name: Verify Butler version
+        run: butler -V
+
+      - name: Create export directory
+        run: mkdir -p "$EXPORT_PATH"
+
+      - name: Export Godot project (HTML5/Web)
+        run: |
+          ~/.local/share/godot/godot \
+            --headless \
+            --path . \
+            --export-release "$GODOT_EXPORT_PRESET" \
+            "$EXPORT_PATH/$EXPORT_FILE"
+
+      - name: List export output
+        run: ls -R "$EXPORT_PATH"
+
+      - name: Zip build for itch.io and GitHub Release
+        run: |
+          cd "$EXPORT_PATH"
+          zip -r ../web-build.zip .
+
+      - name: Upload to itch.io via Butler
+        env:
+          BUTLER_API_KEY: ${{ env.BUTLER_API_KEY }}
+        run: |
+          butler push \
+            web-build.zip \
+            "$ITCH_GAME:$ITCH_CHANNEL" \
+            --userversion "${{ env.VERSION }}"
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.VERSION }}
+          release_name: ${{ env.VERSION }}
+          draft: false
+          prerelease: false
+
+      - name: Upload web build asset to GitHub Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./web-build.zip
+          asset_name: web-build.zip
+          asset_content_type: application/zip
