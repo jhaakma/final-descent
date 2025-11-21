@@ -27,7 +27,8 @@ func generate_room(stage: int) -> RoomResource:
         return RoomGenerator.cache[cache_key] as MimicChestRoomResource
 
     var room := MimicChestRoomResource.new()
-    room.mimic_enemy = mimic_enemy_generator.generate_enemy() if mimic_enemy_generator else null
+    var stage_number := StageProgressionManager.get_stage_number()
+    room.mimic_enemy = mimic_enemy_generator.generate_enemy(stage_number) if mimic_enemy_generator else null
     room.loot_component = RoomGenerator.scale_loot_component(loot_component, stage, 0.1)
     room.title = get_title()
     room.description = get_description()

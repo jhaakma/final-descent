@@ -67,8 +67,8 @@ func _ready() -> void:
     LogManager.register_log_display(log_label)
 
     # Initialize stage progression if not already done
-    if not StageProgressionManager.current_stage_instance:
-        StageProgressionManager.initialize_stages(stage_templates)
+
+    StageProgressionManager.initialize_stages(stage_templates)
 
     _generate_room()
 

@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://w4ie0s4l7syw" path="res://src/loot/loot_pick.gd" id="1_4ks8l"]
 [ext_resource type="Script" uid="uid://ncxiegeqwtf3" path="res://src/rooms/templates/MimicRoomTemplate.gd" id="1_qyn4d"]
 [ext_resource type="Script" uid="uid://c0acru57thtrf" path="res://src/generators/enemies/enemy_template.gd" id="1_vvtpa"]
-[ext_resource type="Resource" uid="uid://cul3vtqmbkrw7" path="res://data/generated/enemies/templates/lvl1_goblin.tres" id="2_2i13v"]
+[ext_resource type="Resource" uid="uid://cul3vtqmbkrw7" path="res://data/generated/enemies/templates/goblin.tres" id="2_2i13v"]
 [ext_resource type="Resource" uid="uid://coqnmr4wr3swg" path="res://data/lootPicks/Scrolls.tres" id="2_yvbw6"]
 [ext_resource type="Resource" uid="uid://do8brech6sxxk" path="res://data/lootPicks/BasicWeaponPick.tres" id="3_d0u2v"]
 [ext_resource type="Script" uid="uid://ct0vsrv3vbnmr" path="res://src/generators/enemies/enemy_generator.gd" id="3_p385e"]

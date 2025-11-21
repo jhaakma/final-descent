@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="StageTemplateResource" load_steps=8 format=3 uid="uid://cs3ypoxjnc1jo"]
+[gd_resource type="Resource" script_class="StageTemplateResource" load_steps=9 format=3 uid="uid://cs3ypoxjnc1jo"]
 
 [ext_resource type="Script" uid="uid://1ynpmdera1jp" path="res://src/rooms/templates/IRoomTemplate.gd" id="1_78i6j"]
 [ext_resource type="Resource" uid="uid://swa88sshqevu" path="res://data/generated/stages/Hinterlands/rooms/Rest_01_Hinterlands.tres" id="2_78i6j"]
@@ -7,10 +7,11 @@
 [ext_resource type="Script" uid="uid://q7mhxwhjpfyx" path="res://src/stages/stage_template_resource.gd" id="5_jvxte"]
 [ext_resource type="Resource" uid="uid://c5mjn05352unn" path="res://data/generated/stages/Hinterlands/rooms/Blacksmith_01_Hinterlands.tres" id="5_qeb5y"]
 [ext_resource type="Resource" uid="uid://c82egxlfl72el" path="res://data/generated/stages/Hinterlands/rooms/Ambush_01_Hinterlands.tres" id="6_2vkvn"]
+[ext_resource type="Resource" uid="uid://hr0evlrxacrd" path="res://data/generated/stages/Hinterlands/rooms/Merchant_01_Hinterlands.tres" id="7_shy1s"]
 
 [resource]
 script = ExtResource("5_jvxte")
 floors = 10
-room_templates = Array[ExtResource("1_78i6j")]([ExtResource("2_78i6j"), ExtResource("3_qeb5y"), ExtResource("4_2vkvn"), ExtResource("5_qeb5y"), ExtResource("6_2vkvn")])
+room_templates = Array[ExtResource("1_78i6j")]([ExtResource("2_78i6j"), ExtResource("3_qeb5y"), ExtResource("4_2vkvn"), ExtResource("5_qeb5y"), ExtResource("6_2vkvn"), ExtResource("7_shy1s")])
 color = Color(0.169867, 0.56, 0.1344, 1)
 metadata/_custom_type_script = "uid://q7mhxwhjpfyx"

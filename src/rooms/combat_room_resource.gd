@@ -12,7 +12,8 @@ func build_actions(_actions_grid: GridContainer, _room_screen: RoomScreen) -> vo
     # Generate or select enemy
     if enemy_generator and not enemy_generator.enemy_templates.is_empty():
         # Use generator to create enemy
-        selected_enemy = enemy_generator.generate_enemy()
+        var stage_number := StageProgressionManager.get_stage_number()
+        selected_enemy = enemy_generator.generate_enemy(stage_number)
     elif not enemy_list.is_empty():
         # Fall back to enemy list
         selected_enemy = enemy_list[GameState.rng.randi_range(0, enemy_list.size() - 1)]

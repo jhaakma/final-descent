@@ -9,7 +9,6 @@ func setup() -> void:
     test_enemy_generator = EnemyGenerator.new()
     var enemy_template := EnemyTemplate.new()
     enemy_template.base_name = "Test Goblin"
-    enemy_template.base_level = 1
     enemy_template.archetype = EnemyTemplate.EnemyArchetype.WARRIOR
     enemy_template.size_category = EnemyTemplate.SizeCategory.MEDIUM
     test_enemy_generator.enemy_templates = [enemy_template]

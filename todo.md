@@ -1,5 +1,8 @@
 # To do
 
+## Game Over screen
+- When no more stages are available, show a game over screen with stats
+
 ## Quest System
 - Stages no longer have set nunmber of rooms
 - Continue to generate rooms until quset objectives are met
@@ -8,6 +11,9 @@
     - Investigation: Find clues that point to a specific objective
     - Objective: Find an item, kill an enemy etc
     - Resolution: Final room is unlocked
+
+## Automate Itch.io releases
+- https://learn-monogame.github.io/how-to/automate-release/
 
 ### Considerations
 How to balance the progression, prevent the player from deliberately avoiding the quest to farm rooms for loot/gold
@@ -26,7 +32,7 @@ How to balance the progression, prevent the player from deliberately avoiding th
 May not be a bug, but something to keep an eye out for:
 - LootPicks are generated using the current_floor, so we need to make sure resolved_items is being called lazily when the player encounters the chest. Otherwise we will need to hook it into the room generation and pass the stage there
 
-## Automate Itch.io releases
+
 
 ## Ability Mechanics
 - AI for selecting abilities

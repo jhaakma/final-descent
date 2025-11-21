@@ -16,7 +16,6 @@ metadata/_custom_type_script = "uid://c7s8ha3rvgyex"
 [resource]
 script = ExtResource("2_2yven")
 base_name = "Mimic"
-base_level = 1
 archetype = 3
 size_category = 1
 element_affinity = 6

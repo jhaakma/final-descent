@@ -41,18 +41,24 @@ func show_room() -> void:
     s.run_ended.connect(_on_run_ended)
 
 func _on_room_cleared() -> void:
+    # Check if all stages are completed (victory condition)
+    if StageProgressionManager.are_all_stages_completed():
+        show_game_over(true)
+        return
+
     GameState.next_floor()
     show_room()
 
 func _on_run_ended(victory: bool) -> void:
     if victory:
-        show_title()  # Victory goes back to title for now
+        show_game_over(true)  # Victory shows game over with victory screen
     else:
-        show_game_over()  # Defeat shows game over screen
+        show_game_over(false)  # Defeat shows game over screen
 
-func show_game_over() -> void:
+func show_game_over(victory: bool = false) -> void:
     _clear_layer()
     var s: GameOverScreen = GameOverScreen.get_scene().instantiate()
+    s.initialize(victory)
     screen_layer.add_child(s)
     s.restart_requested.connect(_on_restart_requested)
     s.return_to_title_requested.connect(_on_return_to_title_requested)

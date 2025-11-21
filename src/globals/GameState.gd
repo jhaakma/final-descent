@@ -32,6 +32,13 @@ func _ready() -> void:
     player.death_fade_start.connect(func() -> void: emit_signal("death_fade_start"))
     player.death_with_delay.connect(func() -> void: emit_signal("run_ended", false))
 
+    # Connect stage progression signals
+    StageProgressionManager.all_stages_completed.connect(_on_all_stages_completed)
+
+func _on_all_stages_completed() -> void:
+    """Called when all stages have been completed - trigger victory"""
+    emit_signal("run_ended", true)
+
 func reset_run() -> void:
     current_floor = 1
     player.reset()

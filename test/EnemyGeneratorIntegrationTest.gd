@@ -10,7 +10,6 @@ func test_enemy_generator_basic_creation() -> bool:
     var template := EnemyTemplate.new()
     template.base_name = "Test Goblin"
     template.archetype = EnemyTemplate.EnemyArchetype.WARRIOR
-    template.base_level = 1
     template.element_affinity = EnemyTemplate.ElementAffinity.NONE
     template.size_category = EnemyTemplate.SizeCategory.MEDIUM
 
@@ -20,7 +19,7 @@ func test_enemy_generator_basic_creation() -> bool:
     generator.modifier_chance = 0.0  # No modifiers for basic test
 
     # Generate enemy
-    var enemy := generator.generate_enemy()
+    var enemy := generator.generate_enemy(1)
 
     if not enemy:
         print("Failed to generate enemy")
@@ -52,7 +51,6 @@ func test_combat_room_with_generator() -> bool:
     var template := EnemyTemplate.new()
     template.base_name = "Generated Goblin"
     template.archetype = EnemyTemplate.EnemyArchetype.WARRIOR
-    template.base_level = 2
     template.element_affinity = EnemyTemplate.ElementAffinity.FIRE
     template.size_category = EnemyTemplate.SizeCategory.SMALL
 
@@ -95,7 +93,6 @@ func test_enemy_generation_with_modifier() -> bool:
     var template := EnemyTemplate.new()
     template.base_name = "Slime"
     template.archetype = EnemyTemplate.EnemyArchetype.WARRIOR
-    template.base_level = 1
     template.element_affinity = EnemyTemplate.ElementAffinity.NONE
     template.size_category = EnemyTemplate.SizeCategory.MEDIUM
     template.possible_modifiers = [EnemyModifierResolver.ModifierType.ELITE]
@@ -106,7 +103,7 @@ func test_enemy_generation_with_modifier() -> bool:
     generator.enemy_templates = [template]
 
     # Generate enemy
-    var enemy := generator.generate_enemy()
+    var enemy := generator.generate_enemy(1)
 
     assert_not_null(enemy, "Failed to generate enemy with modifier")
 
@@ -118,7 +115,7 @@ func test_enemy_generation_with_modifier() -> bool:
     assert_true(enemy.name.begins_with("Elite"), "Expected 'Elite' prefix in name")
     # Create baseline for comparison
     template.modifier_chance = 0.0
-    var baseline := generator.generate_enemy()
+    var baseline := generator.generate_enemy(1)
 
     # Should not have prefix
 
@@ -138,7 +135,6 @@ func test_ability_generation_from_templates() -> bool:
     var template := EnemyTemplate.new()
     template.base_name = "Test Warrior"
     template.archetype = EnemyTemplate.EnemyArchetype.WARRIOR
-    template.base_level = 1
     template.element_affinity = EnemyTemplate.ElementAffinity.FIRE
     template.size_category = EnemyTemplate.SizeCategory.MEDIUM
 
@@ -153,7 +149,7 @@ func test_ability_generation_from_templates() -> bool:
     generator.modifier_chance = 0.0
 
     # Generate enemy
-    var enemy := generator.generate_enemy()
+    var enemy := generator.generate_enemy(1)
 
     if not assert_not_null(enemy, "Failed to generate enemy"):
         return false

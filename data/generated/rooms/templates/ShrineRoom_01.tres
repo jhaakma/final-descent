@@ -4,7 +4,7 @@
 [ext_resource type="Resource" uid="uid://dbnvr8pfdii48" path="res://data/lootPicks/ShrineRoom_01.tres" id="1_80no1"]
 [ext_resource type="Script" uid="uid://drd78rjedp35q" path="res://src/rooms/templates/ShrineRoomTemplate.gd" id="2_32okm"]
 [ext_resource type="Script" uid="uid://c0acru57thtrf" path="res://src/generators/enemies/enemy_template.gd" id="3_5hv2m"]
-[ext_resource type="Resource" uid="uid://cul3vtqmbkrw7" path="res://data/generated/enemies/templates/lvl1_goblin.tres" id="4_epo7c"]
+[ext_resource type="Resource" uid="uid://cul3vtqmbkrw7" path="res://data/generated/enemies/templates/goblin.tres" id="4_epo7c"]
 [ext_resource type="Script" uid="uid://ct0vsrv3vbnmr" path="res://src/generators/enemies/enemy_generator.gd" id="5_m3nwx"]
 
 [sub_resource type="Resource" id="Resource_wk0gy"]

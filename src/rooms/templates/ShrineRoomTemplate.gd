@@ -38,7 +38,8 @@ func generate_room(stage: int) -> RoomResource:
     room.blessing_templates = blessing_templates.duplicate()
     room.loot_component = RoomGenerator.scale_loot_component(base_loot_component, stage, 0.1)
     room.loot_curse_chance = loot_curse_chance
-    room.curse_enemy = curse_enemy_generator.generate_enemy() if curse_enemy_generator else null
+    var stage_number := StageProgressionManager.get_stage_number()
+    room.curse_enemy = curse_enemy_generator.generate_enemy(stage_number) if curse_enemy_generator else null
 
     room.title = get_title()
     room.description = get_description()

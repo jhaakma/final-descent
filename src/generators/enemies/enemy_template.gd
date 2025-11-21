@@ -30,7 +30,6 @@ enum ElementAffinity {
 
 ## Base properties
 @export var base_name: String = "Enemy"
-@export var base_level: int = 1
 @export var archetype: EnemyArchetype = EnemyArchetype.WARRIOR
 @export var size_category: SizeCategory = SizeCategory.MEDIUM
 @export var element_affinity: ElementAffinity = ElementAffinity.NONE

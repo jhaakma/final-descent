@@ -8,7 +8,7 @@ class_name EnemyGenerator extends Resource
 var cache: Dictionary = {}
 
 ## Generate a random enemy from the configured templates
-func generate_enemy() -> EnemyResource:
+func generate_enemy(stage_number: int) -> EnemyResource:
     if enemy_templates.is_empty():
         push_error("EnemyGenerator: No enemy templates configured")
         return null
@@ -17,18 +17,18 @@ func generate_enemy() -> EnemyResource:
     var template: EnemyTemplate = enemy_templates[GameState.rng.randi_range(0, enemy_templates.size() - 1)]
 
     # Generate enemy from template
-    return generate_enemy_from_template(template)
+    return generate_enemy_from_template(template, stage_number)
 
 ## Generate an enemy from a specific template
-func generate_enemy_from_template(template: EnemyTemplate) -> EnemyResource:
+func generate_enemy_from_template(template: EnemyTemplate, stage_number: int) -> EnemyResource:
     # Get generation settings
     var settings := EnemyGenerationSettings.get_instance()
 
     # Get archetype base stats and apply level scaling
     var archetype_data := settings.get_archetype_data(template.archetype)
-    var hp: int = _calculate_base_stat(archetype_data.base_hp, settings.hp_level_scaling, template.base_level)
-    var attack: int = _calculate_base_stat(archetype_data.base_attack, settings.attack_level_scaling, template.base_level)
-    var defense: int = archetype_data.base_defense + int(settings.defense_level_scaling * template.base_level)
+    var hp: int = _calculate_base_stat(archetype_data.base_hp, settings.hp_level_scaling, stage_number)
+    var attack: int = _calculate_base_stat(archetype_data.base_attack, settings.attack_level_scaling, stage_number)
+    var defense: int = archetype_data.base_defense + int(settings.defense_level_scaling * stage_number)
     var avoid_chance: float = archetype_data.base_avoid_chance
 
     # Apply size modifiers
@@ -45,7 +45,7 @@ func generate_enemy_from_template(template: EnemyTemplate) -> EnemyResource:
     enemy.attack = attack
     enemy.defense = defense
     enemy.avoid_chance = avoid_chance
-    enemy.level = template.base_level
+    enemy.level = stage_number
     enemy.element_affinity = template.element_affinity
     enemy.physical_attack_type = template.physical_attack_type
 
