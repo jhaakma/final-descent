@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write  # needed to create releases
+
     env:
       GODOT_VERSION: 4.4.1
       # Name of your HTML5 export preset as defined in export_presets.cfg
@@ -32,26 +33,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Cache Godot editor
-        uses: actions/cache@v4
-        id: cache-godot
+      # New: use chickensoft setup-godot instead of wget+tuxfamily
+      - name: Setup Godot
+        uses: chickensoft-games/setup-godot@v2
         with:
-          path: ~/.local/share/godot
-          key: godot-${{ env.GODOT_VERSION }}
-
-      - name: Download Godot editor (Linux headless)
-        if: steps.cache-godot.outputs.cache-hit != 'true'
-        run: |
-          mkdir -p ~/.local/share/godot
-          cd ~/.local/share/godot
-          wget https://downloads.godotengine.org/?version=${GODOT_VERSION}&flavor=stable&slug=linux.x86_64.zip&platform=linux.64 -O godot.zip
-          unzip godot.zip
-          mv Godot_v${GODOT_VERSION}-stable_linux.x86_64 godot
-          chmod +x godot
-          rm godot.zip
-
-      - name: Ensure Godot is executable
-        run: chmod +x ~/.local/share/godot/godot
+          version: ${{ env.GODOT_VERSION }}
+          use-dotnet: false
+          include-templates: true
 
       - name: Install Butler
         run: |
@@ -69,7 +57,7 @@ jobs:
 
       - name: Export Godot project (HTML5/Web)
         run: |
-          ~/.local/share/godot/godot \
+          godot \
             --headless \
             --path . \
             --export-release "$GODOT_EXPORT_PRESET" \
