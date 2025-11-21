@@ -89,13 +89,22 @@ func test_combat_room_with_generator() -> bool:
 func test_enemy_generation_with_modifier() -> bool:
     print("Testing enemy generation with modifier...")
 
+    # Create elite modifier
+    var elite_modifier := EnemyModifier.new()
+    elite_modifier.modifier_name = "Elite"
+    elite_modifier.name_prefix = "Elite"
+    elite_modifier.health_modifier = 1.5
+    elite_modifier.attack_modifier = 1.3
+    elite_modifier.defense_modifier = 1.2
+    elite_modifier.rarity_weight = 1.0
+
     # Create template
     var template := EnemyTemplate.new()
     template.base_name = "Slime"
     template.archetype = EnemyTemplate.EnemyArchetype.WARRIOR
     template.element_affinity = EnemyTemplate.ElementAffinity.NONE
     template.size_category = EnemyTemplate.SizeCategory.MEDIUM
-    template.possible_modifiers = [EnemyModifierResolver.ModifierType.ELITE]
+    template.modifier_pool = [elite_modifier]
     template.modifier_chance = 1.0  # Always apply
 
     # Create generator
@@ -113,12 +122,18 @@ func test_enemy_generation_with_modifier() -> bool:
         return false
 
     assert_true(enemy.name.begins_with("Elite"), "Expected 'Elite' prefix in name")
-    # Create baseline for comparison
-    template.modifier_chance = 0.0
-    var baseline := generator.generate_enemy(1)
-
-    # Should not have prefix
-
+    
+    # Create baseline for comparison with a fresh generator to avoid cache
+    var baseline_template := EnemyTemplate.new()
+    baseline_template.base_name = "Slime"
+    baseline_template.archetype = EnemyTemplate.EnemyArchetype.WARRIOR
+    baseline_template.element_affinity = EnemyTemplate.ElementAffinity.NONE
+    baseline_template.size_category = EnemyTemplate.SizeCategory.MEDIUM
+    baseline_template.modifier_chance = 0.0
+    
+    var baseline_generator := EnemyGenerator.new()
+    baseline_generator.enemy_templates = [baseline_template]
+    var baseline := baseline_generator.generate_enemy(1)
 
     # Elite should have higher stats
     if enemy.max_hp <= baseline.max_hp:

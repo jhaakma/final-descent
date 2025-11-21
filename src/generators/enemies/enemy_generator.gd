@@ -101,17 +101,16 @@ func _generate_abilities(template: EnemyTemplate, enemy: EnemyResource) -> Array
 
 ## Apply a random modifier to the enemy
 func _apply_random_modifier(enemy: EnemyResource, template: EnemyTemplate) -> void:
-    var modifier_type: EnemyModifierResolver.ModifierType
+    # Use template's modifier pool if specified
+    if template.modifier_pool.is_empty():
+        return
 
-    # Use template's possible modifiers if specified
-    if not template.possible_modifiers.is_empty():
-        modifier_type = template.possible_modifiers[GameState.rng.randi_range(0, template.possible_modifiers.size() - 1)]
-    else:
-        # Select random modifier using weighted selection
-        modifier_type = EnemyModifierResolver.select_random_modifier()
+    # Select random modifier from pool
+    var modifier: EnemyModifier = EnemyModifierResolver.select_random_modifier(template.modifier_pool)
 
-    # Apply the modifier
-    EnemyModifierResolver.apply_modifier_to_enemy(modifier_type, enemy)
+    if modifier:
+        # Apply the modifier
+        modifier.apply_to_enemy(enemy)
 
 ## Generate cache key for enemy
 func _get_cache_key(name: String, hp: int, attack: int, defense: int) -> String:

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="EnemyModifier" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/generators/enemies/enemy_modifier.gd" id="1_swift"]
+
+[resource]
+script = ExtResource("1_swift")
+modifier_name = "Swift"
+health_modifier = 0.8
+attack_modifier = 1.1
+defense_modifier = 1.0
+avoid_chance_modifier = 0.3
+name_prefix = "Swift"
+name_suffix = ""
+additional_abilities = Array[Resource]([])
+additional_resistances = Array[int]([])
+additional_weaknesses = Array[int]([])
+rarity_weight = 1.0
+can_stack = false

@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="EnemyModifier" load_steps=3 format=3 uid="uid://catkr2drq280i"]
+
+[ext_resource type="Script" uid="uid://bn114y7jrm4cf" path="res://src/abilities/AbilityResource.gd" id="1_4yhcw"]
+[ext_resource type="Script" uid="uid://bxqe6m0smqcnc" path="res://src/generators/enemies/enemy_modifier.gd" id="1_tiny"]
+
+[resource]
+script = ExtResource("1_tiny")
+modifier_name = "Tiny"
+health_modifier = 0.5
+attack_modifier = 0.7
+defense_modifier = 0.9
+avoid_chance_modifier = 0.4
+name_prefix = "Tiny"
+name_suffix = ""
+additional_abilities = Array[ExtResource("1_4yhcw")]([])
+additional_resistances = Array[int]([])
+additional_weaknesses = Array[int]([])
+rarity_weight = 1.2
+can_stack = false

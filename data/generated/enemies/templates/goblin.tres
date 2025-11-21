@@ -1,16 +1,50 @@
-[gd_resource type="Resource" script_class="EnemyTemplate" load_steps=3 format=3 uid="uid://cul3vtqmbkrw7"]
+[gd_resource type="Resource" script_class="EnemyTemplate" load_steps=8 format=3 uid="uid://cul3vtqmbkrw7"]
 
-[ext_resource type="Script" uid="uid://bvnw3ewhagtrt" path="res://src/abilities/templates/AbilityTemplate.gd" id="1_g0ga7"]
-[ext_resource type="Script" uid="uid://c0acru57thtrf" path="res://src/generators/enemies/enemy_template.gd" id="1_vbukg"]
+[ext_resource type="Script" uid="uid://bvnw3ewhagtrt" path="res://src/abilities/templates/AbilityTemplate.gd" id="1_idhbh"]
+[ext_resource type="Script" uid="uid://bxqe6m0smqcnc" path="res://src/generators/enemies/enemy_modifier.gd" id="2_m37yo"]
+[ext_resource type="Script" uid="uid://bn114y7jrm4cf" path="res://src/abilities/AbilityResource.gd" id="3_idhbh"]
+[ext_resource type="Resource" uid="uid://ddtf3lmwdexmo" path="res://data/abilities/FireBreath.tres" id="4_m37yo"]
+[ext_resource type="Script" uid="uid://c0acru57thtrf" path="res://src/generators/enemies/enemy_template.gd" id="4_o0654"]
+
+[sub_resource type="Resource" id="Resource_m37yo"]
+script = ExtResource("2_m37yo")
+modifier_name = "Scout"
+health_modifier = 0.7
+attack_modifier = 1.3
+defense_modifier = 0.9
+avoid_chance_modifier = 0.5
+name_prefix = ""
+name_suffix = "Scout"
+additional_abilities = Array[ExtResource("3_idhbh")]([])
+additional_resistances = Array[int]([])
+additional_weaknesses = Array[int]([])
+rarity_weight = 1.0
+can_stack = false
+metadata/_custom_type_script = "uid://bxqe6m0smqcnc"
+
+[sub_resource type="Resource" id="Resource_k7gyh"]
+script = ExtResource("2_m37yo")
+modifier_name = "Elder"
+health_modifier = 1.0
+attack_modifier = 1.3
+defense_modifier = 1.3
+avoid_chance_modifier = 0.5
+name_prefix = ""
+name_suffix = "Elder"
+additional_abilities = Array[ExtResource("3_idhbh")]([ExtResource("4_m37yo")])
+additional_resistances = Array[int]([])
+additional_weaknesses = Array[int]([7])
+rarity_weight = 1.0
+can_stack = false
+metadata/_custom_type_script = "uid://bxqe6m0smqcnc"
 
 [resource]
-script = ExtResource("1_vbukg")
+script = ExtResource("4_o0654")
 base_name = "Goblin"
-base_level = 2
 archetype = 2
-size_category = 0
+size_category = 1
 element_affinity = 1
 physical_attack_type = 1
-ability_templates = Array[ExtResource("1_g0ga7")]([])
-possible_modifiers = Array[int]([4, 3, 7, 1])
+ability_templates = Array[ExtResource("1_idhbh")]([])
+modifier_pool = Array[ExtResource("2_m37yo")]([SubResource("Resource_m37yo"), SubResource("Resource_k7gyh")])
 modifier_chance = 1.0

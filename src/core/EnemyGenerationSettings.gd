@@ -15,7 +15,7 @@ class_name EnemyGenerationSettings extends Resource
 
 @export_subgroup("Default")
 ## Default base HP - fallback archetype
-@export var default_base_hp: int = 20
+@export var default_base_hp: int = 30
 ## Default base attack - fallback archetype
 @export var default_base_attack: int = 3
 ## Default base defense - fallback archetype
@@ -25,7 +25,7 @@ class_name EnemyGenerationSettings extends Resource
 
 @export_subgroup("Warrior")
 ## Warrior base HP - balanced melee combatant
-@export var warrior_base_hp: int = 25
+@export var warrior_base_hp: int = 35
 ## Warrior base attack - balanced damage output
 @export var warrior_base_attack: int = 4
 ## Warrior base defense - moderate defensive capability
@@ -35,7 +35,7 @@ class_name EnemyGenerationSettings extends Resource
 
 @export_subgroup("Berserker")
 ## Barbarian base HP - glass cannon with lower survivability
-@export var berserker_base_hp: int = 20
+@export var berserker_base_hp: int = 30
 ## Barbarian base attack - high damage at cost of defense
 @export var berserker_base_attack: int = 6
 ## Barbarian base defense - minimal defensive capability
@@ -45,7 +45,7 @@ class_name EnemyGenerationSettings extends Resource
 
 @export_subgroup("Tank")
 ## Tank base HP - high survivability tank role
-@export var tank_base_hp: int = 40
+@export var tank_base_hp: int = 50
 ## Tank base attack - lower damage for defensive role
 @export var tank_base_attack: int = 3
 ## Tank base defense - high defensive capability
@@ -58,7 +58,7 @@ class_name EnemyGenerationSettings extends Resource
 
 @export_subgroup("Small")
 ## Small creature HP multiplier - reduced health for agility
-@export var small_hp_modifier: float = 0.7
+@export var small_hp_modifier: float = 0.8
 ## Small creature attack multiplier - slightly reduced damage
 @export var small_attack_modifier: float = 0.8
 ## Small creature avoid bonus - harder to hit due to size

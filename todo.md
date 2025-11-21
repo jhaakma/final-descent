@@ -1,8 +1,5 @@
 # To do
 
-## Game Over screen
-- When no more stages are available, show a game over screen with stats
-
 ## Quest System
 - Stages no longer have set nunmber of rooms
 - Continue to generate rooms until quset objectives are met

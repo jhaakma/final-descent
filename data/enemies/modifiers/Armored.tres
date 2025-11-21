@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="EnemyModifier" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/generators/enemies/enemy_modifier.gd" id="1_armored"]
+
+[resource]
+script = ExtResource("1_armored")
+modifier_name = "Armored"
+health_modifier = 1.0
+attack_modifier = 1.0
+defense_modifier = 1.5
+avoid_chance_modifier = 0.0
+name_prefix = "Armored"
+name_suffix = ""
+additional_abilities = Array[Resource]([])
+additional_resistances = Array[int]([])
+additional_weaknesses = Array[int]([])
+rarity_weight = 0.8
+can_stack = false

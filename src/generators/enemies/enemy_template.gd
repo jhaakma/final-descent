@@ -39,7 +39,7 @@ enum ElementAffinity {
 @export var ability_templates: Array[AbilityTemplate] = []
 
 ## Modifier configuration
-@export var possible_modifiers: Array[EnemyModifierResolver.ModifierType] = []
+@export var modifier_pool: Array[EnemyModifier] = []
 @export var modifier_chance: float = 0.0  ## Chance to apply a modifier (0.0 = never, 1.0 = always)
 
 ## Get element prefix for naming

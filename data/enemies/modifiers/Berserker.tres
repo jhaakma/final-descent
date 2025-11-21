@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="EnemyModifier" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/generators/enemies/enemy_modifier.gd" id="1_berserker"]
+
+[resource]
+script = ExtResource("1_berserker")
+modifier_name = "Berserker"
+health_modifier = 1.2
+attack_modifier = 1.8
+defense_modifier = 0.7
+avoid_chance_modifier = 0.0
+name_prefix = "Berserker"
+name_suffix = ""
+additional_abilities = Array[Resource]([])
+additional_resistances = Array[int]([])
+additional_weaknesses = Array[int]([])
+rarity_weight = 0.6
+can_stack = false

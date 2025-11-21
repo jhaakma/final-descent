@@ -7,7 +7,8 @@
 script = ExtResource("2_bkulx")
 damage_per_turn = 2
 elemental_type = 2
-duration = 3
+expire_after_turns = 1
+log_effect = true
 metadata/_custom_type_script = "uid://b5iu05fqomptj"
 
 [resource]
@@ -18,8 +19,10 @@ override_damage_type = true
 damage_type = 2
 status_effect = SubResource("Resource_m7p0w")
 effect_chance = 0.25
-cooldown = 0
 ability_name = "Flame Breath"
 description = "A powerful breath of flame."
 priority = 0
+log_action_player = ""
+log_action_enemy = ""
+cooldown = 0
 metadata/_custom_type_script = "uid://b3hu85dtjat08"
