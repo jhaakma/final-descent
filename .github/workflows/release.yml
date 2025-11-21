@@ -18,7 +18,7 @@ jobs:
       # Name of your HTML5 export preset as defined in export_presets.cfg
       GODOT_EXPORT_PRESET: "Web"
       # Output folder and file
-      EXPORT_PATH: web_export
+      EXPORT_PATH: export
       EXPORT_FILE: index.html
       # Itch.io info (set these as GitHub Secrets!)
       BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
@@ -44,7 +44,7 @@ jobs:
         run: |
           mkdir -p ~/.local/share/godot
           cd ~/.local/share/godot
-          wget https://downloads.tuxfamily.org/godotengine/${GODOT_VERSION}/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip -O godot.zip
+          wget https://downloads.godotengine.org/?version=${GODOT_VERSION}&flavor=stable&slug=linux.x86_64.zip&platform=linux.64 -O godot.zip
           unzip godot.zip
           mv Godot_v${GODOT_VERSION}-stable_linux.x86_64 godot
           chmod +x godot
